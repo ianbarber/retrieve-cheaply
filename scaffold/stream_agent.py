@@ -179,7 +179,12 @@ class StreamAgent:
         except Exception:
             return ""
         lines = src.splitlines() or [""]
-        body = "\n".join(f"{i+1:>3}| {ln}" for i, ln in enumerate(lines))
+        if len(lines) > 250:   # degenerate bloat guard: never re-feed a runaway file in full
+            shown = lines[:250]
+            body = "\n".join(f"{i+1:>3}| {ln}" for i, ln in enumerate(shown))
+            body += f"\n... (file has {len(lines)} lines; truncated — it has grown far beyond the original)"
+        else:
+            body = "\n".join(f"{i+1:>3}| {ln}" for i, ln in enumerate(lines))
         return f"Current `{path}` (edit against THIS exact text):\n{body}"
 
     @staticmethod
@@ -320,7 +325,12 @@ class StreamAgent:
         if self.temperature and self.temperature > 0:
             torch.manual_seed(self.seed)
         t = 0
+        CTX_CAP = 24000   # hard context cap (model max 32768): bail before indexing errors
         while t < self.max_new:
+            if len(out_ids) + int(prompt_ids.shape[1]) > CTX_CAP:
+                bailed = True
+                events.append({"tok": t, "type": "bail", "reason": "context_overflow"})
+                break
             nxt = self._next_token(logits)
             if nxt == eos:
                 # EOS = end of THIS turn, not necessarily the task. Continue into a
