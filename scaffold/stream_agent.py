@@ -116,7 +116,7 @@ class StreamAgent:
                  max_new_tokens=3000, max_tests=8, max_turns=12, max_bad=5,
                  max_reads=6, edit_mode="search", temperature=0.0, seed=0,
                  debounce=0, pause_align=False, announce_lsp=False, c_eager=False,
-                 syntax_gate=False, device=None):
+                 syntax_gate=False, rich_signal=False, device=None):
         assert condition in ("A", "C", "D")
         assert edit_mode in ("search", "rewrite", "line")
         self.temperature, self.seed = temperature, seed
@@ -127,6 +127,7 @@ class StreamAgent:
         self.debounce, self.pause_align, self.announce_lsp = debounce, pause_align, announce_lsp
         self.c_eager = c_eager   # C: deliver the diagnostic immediately after each edit (post-edit hook) vs batched at the next yield
         self.syntax_gate = syntax_gate   # D: only deliver a live diagnostic when the file currently PARSES (suppress self-inflicted mid-edit syntax-error squiggles)
+        self.rich_signal = rich_signal   # append go-to-def/hover-style context (signature/fields of the symbols the diagnostic names) to each delivered diagnostic
         self.model, self.tok, self.env = model, tok, env
         self.cond, self.latency = condition, latency_tokens
         self.max_new, self.max_tests, self.max_turns = max_new_tokens, max_tests, max_turns
@@ -199,6 +200,43 @@ class StreamAgent:
             else:
                 lines.append(str(d))
         return "\n".join(lines)
+
+    def _enrich_diag(self, diag_text, src):
+        """Go-to-def/hover-lite: pyrefly backticks the symbols it names; resolve each
+        to its def/class in the current file and append the signature (+ a class's
+        field lines). Constructive context, not just the error."""
+        names = []
+        for nm in re.findall(r"`([A-Za-z_][A-Za-z0-9_]*)`", diag_text):
+            if nm not in names:
+                names.append(nm)
+        lines = src.splitlines()
+        ctx = []
+        for nm in names[:5]:
+            for i, ln in enumerate(lines):
+                if re.match(rf"\s*(?:def|class)\s+{re.escape(nm)}\b", ln):
+                    indent = len(ln) - len(ln.lstrip())
+                    ctx.append(f"L{i+1}: {ln.strip()}")
+                    if ln.lstrip().startswith("class"):
+                        for j in range(i + 1, min(i + 8, len(lines))):
+                            s = lines[j]
+                            if s.strip() and (len(s) - len(s.lstrip())) > indent:
+                                ctx.append(f"L{j+1}:   {s.strip()}")
+                            elif s.strip():
+                                break
+                    break
+        if ctx:
+            diag_text += "\ndefinitions:\n" + "\n".join(ctx[:10])
+        return diag_text
+
+    def _diag_text(self, path):
+        """Formatted (and optionally enriched) current diagnostics for `path`."""
+        d = self._fmt_diag(self.env.pyrefly_diagnostics(path))
+        if d and self.rich_signal:
+            try:
+                d = self._enrich_diag(d, self.env.read_file(path))
+            except Exception:
+                pass
+        return d
 
     def _next_token(self, logits):
         if self.temperature and self.temperature > 0:
@@ -336,7 +374,7 @@ class StreamAgent:
                         gated = True
                         d_dirty_at = t   # reset settle timer; retry when parseable
                 if settled and at_pause and not gated:
-                    diag = self._fmt_diag(self.env.pyrefly_diagnostics(target_file))
+                    diag = self._diag_text(target_file)
                     if diag and diag != d_last_delivered:
                         splice(DIAG_OPEN + diag + DIAG_CLOSE)
                         d_last_delivered = diag
@@ -357,7 +395,7 @@ class StreamAgent:
                     if fail_streak >= self.max_bad:
                         bailed = True; events.append({"tok": t, "type": "bail", "reason": "rewrite_fail_streak"}); break
                     if self.cond in ("C", "D") and ok:
-                        diag = self._fmt_diag(self.env.pyrefly_diagnostics(target_file))
+                        diag = self._diag_text(target_file)
                         if self.cond == "C" and diag:
                             c_diag_queue.append(diag)
                             events.append({"tok": t, "type": "diag_sync_queued", "text": diag})
@@ -389,7 +427,7 @@ class StreamAgent:
                     if self.cond == "D" and self.debounce > 0 and ok:
                         d_dirty_at = t   # settle timer; re-query at delivery (debounced)
                     elif self.cond in ("C", "D") and ok:
-                        diag = self._fmt_diag(self.env.pyrefly_diagnostics(epath))
+                        diag = self._diag_text(epath)
                         if self.cond == "C" and diag:
                             if self.c_eager:
                                 turns += 1
@@ -423,7 +461,7 @@ class StreamAgent:
                     events.append({"tok": t, "type": "bail", "reason": "edit_fail_streak"})
                     break
                 if self.cond in ("C", "D") and ok:
-                    diag = self._fmt_diag(self.env.pyrefly_diagnostics(target_file))
+                    diag = self._diag_text(target_file)
                     if self.cond == "C" and diag:
                         # sync: queue for the next USER observation (turn boundary)
                         c_diag_queue.append(diag)

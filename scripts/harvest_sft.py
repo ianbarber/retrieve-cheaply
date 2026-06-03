@@ -29,13 +29,22 @@ ap.add_argument("--model", default="Qwen/Qwen2.5-Coder-7B-Instruct")
 ap.add_argument("--max-new", type=int, default=2200)
 ap.add_argument("--debounce", type=int, default=24)
 ap.add_argument("--pause-align", action="store_true", default=True)
-ap.add_argument("--announce-lsp", action="store_true", default=True)
+# deployment config = D-gate (the audited best live config): announce OFF, syntax-gate ON
+ap.add_argument("--announce-lsp", action="store_true", default=False)
+ap.add_argument("--syntax-gate", action="store_true", default=True)
+ap.add_argument("--rich-signal", action="store_true", default=False)
 ap.add_argument("--c-eager", action="store_true")
 ap.add_argument("--names", default=None)
+ap.add_argument("--split", default=None, choices=[None, "train", "eval"],
+                help="train = even-indexed tasks (harvest these); eval = odd-indexed (held out)")
 ap.add_argument("--min-train-tokens", type=int, default=10, help="drop trivially-short trajectories")
 A = ap.parse_args()
 
 tasks = TASKS if not A.names else [t for t in TASKS if t["name"] in set(A.names.split(","))]
+if A.split == "train":
+    tasks = [t for i, t in enumerate(tasks) if i % 2 == 0]
+elif A.split == "eval":
+    tasks = [t for i, t in enumerate(tasks) if i % 2 == 1]
 conds = A.conds.split(",")
 
 print(f"[load] {A.model}  conds={conds} seeds={A.seed_start}..{A.seed_start+A.seeds-1} temp={A.temp}", flush=True)
@@ -60,7 +69,8 @@ for task in tasks:
             agent = StreamAgent(model, tok, env, condition=c, max_new_tokens=A.max_new,
                                 edit_mode="line", temperature=A.temp, seed=seed,
                                 debounce=A.debounce, pause_align=A.pause_align,
-                                announce_lsp=A.announce_lsp, c_eager=A.c_eager)
+                                announce_lsp=A.announce_lsp, c_eager=A.c_eager,
+                                syntax_gate=A.syntax_gate, rich_signal=A.rich_signal)
             r = agent.run(build_prompt(task), "sol.py")
             attempted += 1
             env.close()

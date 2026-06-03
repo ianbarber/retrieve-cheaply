@@ -35,6 +35,7 @@ ap.add_argument("--pause-align", action="store_true", help="D: deliver at a newl
 ap.add_argument("--announce-lsp", action="store_true", help="D: tell the model LSP feedback is inline")
 ap.add_argument("--c-eager", action="store_true", help="C: post-edit hook (deliver diag immediately) vs batched at yield")
 ap.add_argument("--syntax-gate", action="store_true", help="D: only deliver live diag when the file parses (suppress self-inflicted syntax squiggles)")
+ap.add_argument("--rich-signal", action="store_true", help="append go-to-def/hover-style context (signatures/fields) to each diagnostic")
 A = ap.parse_args()
 
 tasks = TASKS if not A.names else [t for t in TASKS if t["name"] in set(A.names.split(","))]
@@ -71,7 +72,7 @@ for task in tasks:
                                 temperature=A.temp, seed=seed,
                                 debounce=A.debounce, pause_align=A.pause_align,
                                 announce_lsp=A.announce_lsp, c_eager=A.c_eager,
-                                syntax_gate=A.syntax_gate)
+                                syntax_gate=A.syntax_gate, rich_signal=A.rich_signal)
             t0 = time.time()
             r = agent.run(build_prompt(task), "sol.py")
             dt = time.time() - t0
