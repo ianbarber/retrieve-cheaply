@@ -1,8 +1,9 @@
 # Streams: How (and whether) to deliver live LSP feedback to a coding agent
 
-*Draft write-up — 2026-06-03. Status: n=84/condition complete and audited; n=168
-power-up in flight (see §9). All numbers reproducible from `runs/agent/*.json` via the
-analysis snippets in `log.md`.*
+*Draft write-up — 2026-06-03. Status: zero-shot result final at n=168/condition
+(audited at n=84; powered to 12 seeds). Follow-ups (richer signal, SFT) in flight.
+All numbers reproducible from `runs/agent/*.json` via the analysis snippets in
+`log.md`.*
 
 ## TL;DR
 
@@ -157,12 +158,22 @@ is the lever; whether you deliver is nearly a wash** for an untrained model.
 ## 5. Result 3 — the parity band (and a cautionary tale about "best")
 
 At n=84, eager-sync led the table (0.595) and we were tempted to crown it. Fresh seeds
-(6–11, in-flight power-up to n=168) regressed C-eager to 0.452; combined estimates so
-far: C-lazy 0.530, C-eager 0.524, A 0.482. The eager-vs-lazy adjacency was never
-significant (p=0.56), and the regression confirms the audit's warning that the
-"monotonic ordering" was point-estimate storytelling. What survives at higher n:
-batched sync slightly above none, everything well-delivered within a few points of
-everything else. The headline effect remains the hygiene gap.
+regressed it to 0.452, and the final n=168 table locks the parity band:
+
+| condition | resolve (n=168) | Wilson 95% |
+|---|---|---|
+| C-lazy | 0.530 | [0.45, 0.60] |
+| C-eager | 0.524 | [0.45, 0.60] |
+| D-gate | 0.482 | [0.41, 0.56] |
+| A (none) | 0.482 | [0.41, 0.56] |
+| D-plain | 0.458 | [0.38, 0.53] |
+
+**Every pairwise McNemar p > 0.26** — D-gate vs A is exactly balanced (12/12
+discordant pairs, p=1.0), and eager-vs-lazy lands at p=1.0: the n=84 "eager is best"
+ordering was point-estimate storytelling, exactly as the audit warned. What survives:
+*properly-delivered feedback of any timing ≈ no feedback* for this untrained model;
+sync trends ~+0.04 over none (n.s.). Only the badly-delivered live condition escapes
+the band, downward (0.345). Delivery, in this regime, can only subtract.
 
 ## 6. Mechanism — the self-inflicted squiggle loop
 

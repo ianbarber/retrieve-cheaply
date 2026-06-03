@@ -965,4 +965,16 @@ Ran the audit's two clean arms (announce-OFF), seeds 0-5, paired with existing A
 
 ---
 
+## 2026-06-03 — FINAL n=168 zero-shot result: the PARITY BAND locks. Write-up pushed to private GH (ianbarber/streams). Follow-ups launched (rich-signal; SFT queued).
+
+**Final n=168 (14 tasks × 12 seeds):** C-lazy 0.530, C-eager 0.524, D-gate 0.482, A 0.482, D-plain 0.458 — **ALL pairwise McNemar p>0.26** (D-gate vs A exactly balanced 12/12, p=1.0; C-eager vs C-lazy p=1.0 — the eager "lead" at 6 seeds fully evaporated). D-naive (announce, ungated) remains the only condition outside the band: 0.345 (n=84), significantly below batched (p=.0002/.006), hygiene effect vs D-gate p=.041.
+
+**LOCKED ZERO-SHOT CONCLUSION:** for an untrained 7B coding agent with a test loop, properly-delivered type-checker feedback of ANY timing ≈ no feedback (0.46–0.53 band); delivery can only subtract (naive-live −14pp), not add. "How you deliver" is the only lever that moved, and only downward.
+
+**Ops:** WRITEUP.md drafted; private repo github.com/ianbarber/streams created + pushed (code, log, results, write-up; 3 commits). Context-explosion harness hole found mid-run (degenerate file bloat × per-turn file-view re-feed → 58k tokens > 32k ctx) → hard 24k context cap + 250-line file-view truncation; 4 overflow bails in final data, cleanly handled; fix pushed.
+
+**Follow-ups (R3, the "beat the band" question):** (1) RICH-SIGNAL running: `rich_signal` appends go-to-def/hover-style context (signatures/fields of backticked symbols) to diagnostics; arms D-gate+rich and C-eager+rich at seeds 0-5. (2) SFT queued behind it: harvest train-split (even-index tasks) at seeds 100-111 (disjoint from eval) in D-gate deployment config → LoRA (--max-len 4000) → eval on HELD-OUT odd tasks (D-gate ± adapter; A ± adapter control). SFT data validity gate done earlier (old set stale; harvester emits deployment-format {input_ids,labels} with observation masking). Task #46.
+
+---
+
 <!-- Add new entries above this line. Format: ## YYYY-MM-DD — short title -->
