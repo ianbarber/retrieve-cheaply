@@ -1,8 +1,8 @@
 # Streams: How (and whether) to deliver live LSP feedback to a coding agent
 
-*Draft write-up — 2026-06-03. Status: zero-shot result final at n=168/condition
-(audited at n=84; powered to 12 seeds). Follow-ups (richer signal, SFT) in flight.
-All numbers reproducible from `runs/agent/*.json` via the analysis snippets in
+*Write-up — 2026-06-04. Status: complete. Zero-shot result final at n=168/condition
+(audited at n=84; powered to 12 seeds); follow-ups (richer signal, SFT) done — see
+§9. All numbers reproducible from `runs/agent/*.json` via the analysis snippets in
 `log.md`.*
 
 ## TL;DR
@@ -243,13 +243,27 @@ Honest methods notes — each materially changed our conclusions when fixed:
   localization) or task sources where type signal aligns with the bug.
 - **n=84 per condition for the audited results**; an n=168 power-up is completing
   (A/C arms done — see §5; live arms in flight). Parity claims are bounded by these n.
-- **Zero-shot only.** Everything above is an *untrained* model. Two follow-ups now
-  starting: **(a) self-distillation SFT** — train on the model's own resolved
-  trajectories (observation tokens masked) in the deployment format and re-measure
-  whether a trained model can pull live delivery *above* the parity band; **(b)
-  richer constructive signals** — deliver hover/go-to-def-style context (signatures,
-  available fields) alongside diagnostics, testing whether the channel's *content*
-  rather than timing is the binding constraint.
+- **Follow-up (a): richer constructive signal — band holds.** Appending
+  go-to-def/hover context (the actual signature/fields of every symbol a diagnostic
+  names) nudged the live arm up (0.524 vs 0.500; the only 2 discordant pairs both
+  favoured rich) and left eager-sync flat (0.607 vs 0.595, p=1.0). Texture: rename
+  and key-type tasks went to ceiling with context — it helps precisely where "what
+  does this symbol look like now" is the question — but content is not the binding
+  constraint either.
+- **Follow-up (b): self-distillation SFT — no transfer, and a circularity finding.**
+  We harvested resolved deployment-format trajectories from train-split tasks
+  (62 demos, disjoint seeds), LoRA-trained with observation tokens masked, and
+  evaluated on held-out tasks with a no-feedback control arm. Result: **zero
+  held-out gain in feedback-use** (D-gate ± adapter exactly balanced, p=1.0), while
+  train-task gains appeared *more strongly in the no-feedback control* (+0.26,
+  p=0.007) — i.e. pure task memorization. The mechanistic reason is the interesting
+  part: harvested demos averaged only ~364 trained tokens — short, clean solves in
+  which the diagnostic channel was barely exercised. **Because feedback adds nothing
+  zero-shot, successful zero-shot trajectories contain almost no feedback-use to
+  distill: rejection-sampled self-distillation selects for easy solves, not channel
+  exploitation.** Bootstrapping feedback-use needs demonstrations where the
+  diagnostic is load-bearing by construction (e.g. revision-style supervision), or
+  RL against feedback-dependent rewards — future work.
 - The strongest version of the live-feedback hypothesis — that it pays off when
   feedback arrives *during* long uninterruptible generations — is under-tested here:
   our agent's actions are short. Tasks with genuinely long single-pass generations are

@@ -988,4 +988,23 @@ Rich-signal (go-to-def/hover context appended to diagnostics), seeds 0-5 vs plai
 
 ---
 
+## 2026-06-03 — SFT round 1: harvest thin (27 demos / ~7 optimizer steps) → topping up before the expensive eval.
+
+First harvest: 27/84 resolved (32%) on the train split @ seeds 100-111; short clean solves (mean 364 train tok). LoRA trained (loss 0.16) but ~7 steps is too thin to judge — NOT spending the 6h eval on it. Chained instead: +12 seeds harvest (112-123, → data2.jsonl) → retrain on combined (~55-60 demos, runs/adapters/dgate_sft_v2) → eval D-gate+adapter (84) → eval A+adapter (84, control). Claim rides on the 7 HELD-OUT odd-index tasks; A±adapter separates "learned to use feedback" from "got better at bugs generally". Note: 2 harvested demos are from the no-signal control task (config) — generic-fix demos, acceptable. Task #46.
+
+---
+
+## 2026-06-04 — SFT RESULT: zero held-out transfer; train-task gains are memorization (A-control proves it). The circularity finding. Program COMPLETE.
+
+Combined harvest 62 demos (27+35, 42% resolve on train split, seeds 100-123) → LoRA v2 (loss 0.17) → eval all 14 tasks @ seeds 0-5, D-gate ± adapter and A ± adapter.
+
+**Held-out (odd) tasks — the claim:** D-gate+SFT 22/42 = D-gate base 22/42 EXACTLY (b=7,c=7,p=1.0). A+SFT 21/42 vs A base 26/42 (slightly worse, n.s.). **Zero feedback-use transfer.**
+**Train (even) tasks — memorization check:** D-gate+SFT 0.667 vs 0.476 (p=.077); **A+SFT 0.595 vs 0.333 (p=.007)** — the NO-FEEDBACK arm gained MORE → the LoRA learned the training tasks' fixes, not feedback-use. Control did its job.
+
+**THE CIRCULARITY FINDING (mechanism):** harvested demos avg ~364 trained tokens — short clean solves where the diag channel was barely exercised. Because feedback adds nothing zero-shot (the parity band), successful zero-shot trajectories contain almost no feedback-use to distill → **rejection-sampled self-distillation selects for easy solves, not channel exploitation.** Bootstrapping feedback-use needs demos where the diagnostic is load-bearing by construction (revision-style supervision à la R0b) or RL on feedback-dependent rewards. Future work.
+
+**PROGRAM COMPLETE — final scorecard:** timing ✗ (parity band, n=168, all p>.26) · hygiene ✓ but downward-only (naive-live −14pp, p≈.04 vs gated; 78% self-inflicted mechanism) · content ~flat (rich-signal nudge, band holds) · training ✗ at this scale (memorization, circularity). WRITEUP.md finalized; repo current. Task #46 done.
+
+---
+
 <!-- Add new entries above this line. Format: ## YYYY-MM-DD — short title -->
