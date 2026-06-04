@@ -107,7 +107,8 @@ empirical result.
 unblock LLMs with parallel input/output streams; Hooper et al.
 [hooper2026speculative] interleave clock tokens and asynchronous events into a single
 stream for real-time agents; GhostShell [gong2025ghostshell] streams function calls
-for robotics; Ginart et al. [ginart2024async] schedule asynchronous tool use. These
+for robotics; Ginart et al. [ginart2024async] schedule asynchronous tool use; AsyncVoice
+[lin2025asyncvoice] lets users interrupt and steer a live reasoning stream. These
 works build the *mechanism* for live input; our study measures whether one canonical
 application of that mechanism — live diagnostics for coding — actually pays, and
 finds the answer hinges on delivery discipline rather than the mechanism itself.
@@ -116,9 +117,10 @@ finds the answer hinges on delivery discipline rather than the mechanism itself.
 RL-CLS [zhang2025rlcls] use execution/compiler/language-server signals as *training
 rewards*; DeepSWE [deepswe2025] scales RL for agentic software engineering. In
 contrast we study the *inference-time* channel: whether and how diagnostics should be
-shown to a frozen agent. Production agent frameworks increasingly bundle LSP-derived
-context [claudecodelsp2025]; our results suggest concrete hygiene requirements for
-such integrations.
+shown to a frozen agent. Community tooling already retrofits LSP-derived context
+onto production agent harnesses [claudecodelsp2025], and recent work RL-trains
+agents around a single LSP-style navigation tool [zhang2025onetool]; our results
+suggest concrete hygiene requirements for such integrations.
 
 **Self-correction, distraction, and inference-time repair.** Our mechanism connects
 three established lines. First, the self-correction literature: Self-Refine
@@ -130,7 +132,9 @@ the feedback is externally generated but, mid-edit, describes a transient state 
 is therefore *unreliable about the task*. Second, the distraction literature: Shi et
 al. [shi2023distracted] show LLMs are measurably degraded by irrelevant context;
 self-inflicted diagnostics are irrelevant context injected at the worst possible
-moment. Third, inference-time repair: Self-Debugging [chen2023selfdebug] establishes
+moment — and since context length alone degrades performance even with perfect
+retrieval [du2025contextlength], observation design for agents is an active
+optimization target in its own right [kang2025acon]. Third, inference-time repair: Self-Debugging [chen2023selfdebug] establishes
 that *test execution* feedback supports iterative repair — consistent with our
 finding that the test loop, which all conditions share, carries essentially all the
 usable signal. Finally, our circularity finding (§6.2) is a feedback-channel
@@ -141,9 +145,11 @@ the behaviours that were not needed to succeed.
 **Benchmarks and evaluation.** Our tasks are synthetic by necessity: on real
 decontaminated SWE-rebench instances [swerebench2025], the 7B agent cannot solve
 even oracle-localized bugs, and a type checker is structurally blind to the logic
-errors those bugs comprise (Appendix A) — an instance of the broader observation
-that benchmark realism and signal isolation trade off [swebenchillusion2025,
-swebenchverified]. Bjarnason et al. [bjarnason2026randomness] document the
+errors those bugs comprise (Appendix A); we therefore use synthetic tasks for
+signal isolation, noting separately that reported gains on canonical benchmarks
+such as SWE-bench Verified [swebenchverified] can reflect memorization rather than
+reasoning [swebenchillusion2025] — a further argument for controlled,
+freshly-authored task suites. Bjarnason et al. [bjarnason2026randomness] document the
 seed-variance pathologies of agentic evals; our 6→12-seed power-up, which dissolved
 an apparent "eager is best" ordering, is a worked example of exactly that hazard,
 and motivates our paired-seed McNemar methodology.
@@ -497,4 +503,5 @@ See `bibliography.md` for full BibTeX. Citation keys used above:
 [swebenchverified] [swebenchillusion2025] [bjarnason2026randomness]
 [claudecodelsp2025] [pyrefly] [hui2024qwen25coder] [hu2022lora] [nvidiadgxspark]
 [madaan2023selfrefine] [shinn2023reflexion] [huang2024cannot] [shi2023distracted]
-[chen2023selfdebug] [zelikman2022star].
+[chen2023selfdebug] [zelikman2022star] [zhang2025onetool] [lin2025asyncvoice]
+[du2025contextlength] [kang2025acon].

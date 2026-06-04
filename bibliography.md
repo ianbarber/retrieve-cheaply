@@ -12,7 +12,7 @@ Architectural substrate. Stream-aware RoPE, learnable stream embeddings, cross-s
 ```bibtex
 @article{su2026multistream,
   title   = {Multi-Stream {LLM}s: Unblocking Language Models with Parallel Streams of Thoughts, Inputs and Outputs},
-  author  = {Su and Yang and Li and Geiping, Jonas},
+  author  = {Su, Guinan and Yang, Yanwu and Li, Xueyan and Geiping, Jonas},
   journal = {arXiv preprint arXiv:2605.12460},
   year    = {2026},
   url     = {https://arxiv.org/abs/2605.12460}
@@ -167,6 +167,7 @@ Contamination audit. Cited as a contamination-defense motivation; informs the he
 
 ```bibtex
 @article{swebenchillusion2025,
+  author  = {Liang, Shanchao and Garg, Spandan and {Zilouchian Moghaddam}, Roshanak},
   title   = {The {SWE}-Bench Illusion: When State-of-the-Art {LLM}s Remember Instead of Reason},
   journal = {arXiv preprint arXiv:2506.12286},
   year    = {2025},
@@ -253,8 +254,8 @@ Native LSP support with edit-hook diagnostics. Production precedent for Conditio
 
 ```bibtex
 @misc{claudecodelsp2025,
-  title  = {{LSP} Tools: Bringing {IDE} Intelligence to {C}laude {C}ode},
-  author = {{Anthropic}},
+  title  = {{LSP} Tools: Bringing {IDE} Intelligence to {C}laude {C}ode (community plugin)},
+  author = {Allen, Robert},
   year   = {2025},
   month  = dec,
   url    = {https://zircote.com/blog/2025/12/lsp-tools-plugin-for-claude-code/}
@@ -279,7 +280,7 @@ Native LSP support with edit-hook diagnostics. Production precedent for Conditio
   title  = {{SWE}-rebench: A Continuously Updated, Decontaminated Benchmark for Software Engineering Agents},
   author = {{Nebius}},
   year   = {2025},
-  note   = {\url{https://huggingface.co/datasets/nebius/SWE-rebench}}
+  note   = {arXiv:2505.20411; dataset: \url{https://huggingface.co/datasets/nebius/SWE-rebench}}
 }
 
 @inproceedings{madaan2023selfrefine,
@@ -292,7 +293,7 @@ Native LSP support with edit-hook diagnostics. Production precedent for Conditio
 
 @inproceedings{shinn2023reflexion,
   title     = {Reflexion: Language Agents with Verbal Reinforcement Learning},
-  author    = {Shinn, Noah and Cassano, Federico and Gopinath, Ashwin and Narasimhan, Karthik and Yao, Shunyu},
+  author    = {Shinn, Noah and Cassano, Federico and Berman, Edward and Gopinath, Ashwin and Narasimhan, Karthik and Yao, Shunyu},
   booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
   year      = {2023},
   note      = {arXiv:2303.11366}
@@ -327,4 +328,32 @@ Native LSP support with edit-hook diagnostics. Production precedent for Conditio
   booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
   year      = {2022},
   note      = {arXiv:2203.14465}
+}
+
+@misc{zhang2025onetool,
+  title  = {One Tool Is Enough: Reinforcement Learning for Repository-Level LLM Agents},
+  author = {Zhang, Yifan and others},
+  year   = {2025},
+  note   = {arXiv:2512.20957. RepoNavigator: a single LSP-style jump-to-definition tool, RL-trained.}
+}
+
+@misc{lin2025asyncvoice,
+  title  = {AsyncVoice Agent: Real-Time Explanation for LLM Planning and Reasoning},
+  author = {Lin, and others},
+  year   = {2025},
+  note   = {arXiv:2510.16156. Interruptible real-time dialogue with a live LLM reasoning stream.}
+}
+
+@misc{du2025contextlength,
+  title  = {Context Length Alone Hurts LLM Performance Despite Perfect Retrieval},
+  author = {Du, and others},
+  year   = {2025},
+  note   = {arXiv:2510.05381}
+}
+
+@misc{kang2025acon,
+  title  = {{ACON}: Optimizing Context Compression for Long-Horizon LLM Agents},
+  author = {Kang, and others},
+  year   = {2025},
+  note   = {arXiv:2510.00615. Observation/history compression for agents.}
 }
