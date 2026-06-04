@@ -211,7 +211,7 @@ model can read a splice.
 
 ## 5. Main results
 
-### 5.1 The parity band
+### 5.1 No detectable benefit from any proper delivery
 
 Final fix-rates over 14 tasks × 12 seeds (n = 168 paired units per condition):
 
@@ -308,7 +308,7 @@ We retract the intermediate claim and note the lesson: matched-pair subsets of
 agentic runs are small and seductive, and efficiency claims require the same power
 discipline as accuracy claims.
 
-## 6. Can anything beat the band?
+## 6. Can anything add value to the channel?
 
 ### 6.1 Richer signal content
 
