@@ -260,3 +260,71 @@ Native LSP support with edit-hook diagnostics. Production precedent for Conditio
   url    = {https://zircote.com/blog/2025/12/lsp-tools-plugin-for-claude-code/}
 }
 ```
+
+@article{hui2024qwen25coder,
+  title   = {Qwen2.5-Coder Technical Report},
+  author  = {Hui, Binyuan and Yang, Jian and Cui, Zeyu and others},
+  journal = {arXiv preprint arXiv:2409.12186},
+  year    = {2024}
+}
+
+@inproceedings{hu2022lora,
+  title     = {{LoRA}: Low-Rank Adaptation of Large Language Models},
+  author    = {Hu, Edward J. and Shen, Yelong and Wallis, Phillip and Allen-Zhu, Zeyuan and Li, Yuanzhi and Wang, Shean and Chen, Weizhu},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2022}
+}
+
+@misc{swerebench2025,
+  title  = {{SWE}-rebench: A Continuously Updated, Decontaminated Benchmark for Software Engineering Agents},
+  author = {{Nebius}},
+  year   = {2025},
+  note   = {\url{https://huggingface.co/datasets/nebius/SWE-rebench}}
+}
+
+@inproceedings{madaan2023selfrefine,
+  title     = {Self-Refine: Iterative Refinement with Self-Feedback},
+  author    = {Madaan, Aman and Tandon, Niket and Gupta, Prakhar and others},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2023},
+  note      = {arXiv:2303.17651}
+}
+
+@inproceedings{shinn2023reflexion,
+  title     = {Reflexion: Language Agents with Verbal Reinforcement Learning},
+  author    = {Shinn, Noah and Cassano, Federico and Gopinath, Ashwin and Narasimhan, Karthik and Yao, Shunyu},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2023},
+  note      = {arXiv:2303.11366}
+}
+
+@inproceedings{huang2024cannot,
+  title     = {Large Language Models Cannot Self-Correct Reasoning Yet},
+  author    = {Huang, Jie and Chen, Xinyun and Mishra, Swaroop and others},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2024},
+  note      = {arXiv:2310.01798}
+}
+
+@inproceedings{shi2023distracted,
+  title     = {Large Language Models Can Be Easily Distracted by Irrelevant Context},
+  author    = {Shi, Freda and Chen, Xinyun and Misra, Kanishka and others},
+  booktitle = {International Conference on Machine Learning (ICML)},
+  year      = {2023},
+  note      = {arXiv:2302.00093}
+}
+
+@misc{chen2023selfdebug,
+  title  = {Teaching Large Language Models to Self-Debug},
+  author = {Chen, Xinyun and Lin, Maxwell and Sch{\"a}rli, Nathanael and Zhou, Denny},
+  year   = {2023},
+  note   = {arXiv:2304.05128}
+}
+
+@inproceedings{zelikman2022star,
+  title     = {{STaR}: Bootstrapping Reasoning With Reasoning},
+  author    = {Zelikman, Eric and Wu, Yuhuai and Mu, Jesse and Goodman, Noah D.},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2022},
+  note      = {arXiv:2203.14465}
+}
