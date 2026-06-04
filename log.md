@@ -1007,4 +1007,12 @@ Combined harvest 62 demos (27+35, 42% resolve on train split, seeds 100-123) →
 
 ---
 
+## 2026-06-04 — Publication pass: citation audit (1 misattribution fixed) + repo cleanup (208→~70 files); stats reproduction script added.
+
+**Citation audit (web-verified, every identifier fetched):** all 25 bibliography IDs resolve to the claimed works. One BLOCKING fix: `claudecodelsp2025` was misattributed to Anthropic — it is a third-party community-plugin blog post (Robert Allen / zircote); re-attributed and the §2 sentence reworded. One overstretch: the SWE-Bench-Illusion cite was wrapped in a "realism vs signal-isolation trade-off" claim the paper doesn't make (it's a contamination/memorization study) — reworded to cite it correctly. Author-field fixes (Su et al. full names, Reflexion +Berman, Illusion authors, SWE-rebench paper ID). Four verified missed-work citations added (RepoNavigator 2512.20957, AsyncVoice 2510.16156, context-length 2510.05381, ACON 2510.00615).
+
+**Repo audit + cleanup (paper-reader framing):** deleted all era-1 multi-stream code (~70 files: g1/g3–g6 scripts, lsp delivery layers, training/, configs/, eval/, era-1 tests) and the D-pivot probe scripts; purged runs/ partials/smokes/pilots; CONSOLIDATED D-plain seeds 6-11 (checkpoint 4 tasks + resume 10 tasks → `synth_dplain_s6.json`, 84 rows verified) before purging — the audit caught that the partial was load-bearing. experiment_plan.md + WRITEUP.md → docs/history/ with superseded headers; runs/i_eval → runs/isolation (paper-section names); swe results → runs/rebench/. **`scripts/analysis/stats.py`** (was root audit.py) now reproduces EVERY paper statistic from the committed files — verified exact — closing the audit's finding that the n=168 headline table previously had no committed reproduction path. All READMEs rewritten for paper-readers incl. the condition→flag→file table and the debounce-defaults reproducibility trap. PAPER.md Appendix B updated accordingly. Deleted material remains in git history.
+
+---
+
 <!-- Add new entries above this line. Format: ## YYYY-MM-DD — short title -->
