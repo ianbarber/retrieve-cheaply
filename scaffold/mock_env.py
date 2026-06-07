@@ -130,3 +130,122 @@ class MockEnv:
     def current_patch(self): return self.read_file()
     def close(self):
         import shutil; shutil.rmtree(self.ws, ignore_errors=True)
+
+
+class MultiFileEnv:
+    """Multi-file workspace environment: the bug lives in a TARGET file whose type
+    definitions live in OTHER files the model has not been shown. This is the
+    setting where the checker's knowledge is NON-REDUNDANT with the model's context
+    (the single-file suite's information-redundancy confound, PAPER §9).
+
+    - real pyrefly over the whole workspace (cross-file diagnostics)
+    - read_file/apply_line_edit dispatch on any workspace file
+    - behavioural tests run in a FRESH subprocess with the workspace on sys.path
+    - rework accounting identical to MockEnv (target-file edits)
+    """
+
+    def __init__(self, files: dict, target: str, test_src: str, force_diag=None):
+        import sys
+        self.ws = tempfile.mkdtemp(prefix="mfenv_")
+        self.files = dict(files)
+        self.target = target
+        self.test_src = test_src
+        self.force_diag = force_diag
+        for rel, content in files.items():
+            p = os.path.join(self.ws, rel)
+            os.makedirs(os.path.dirname(p), exist_ok=True) if os.path.dirname(rel) else None
+            with open(p, "w") as f: f.write(content)
+        with open(os.path.join(self.ws, "pyrefly.toml"), "w") as f:
+            f.write("[tool.pyrefly]\nproject-includes = [\"*.py\"]\n")
+        subprocess.run([PYREFLY, "init"], cwd=self.ws, capture_output=True, text=True)
+        self._py = sys.executable
+        self.chars_written = 0
+        self.chars_deleted_after_first = 0
+        self.first_write_done = False
+        self.n_edits = 0
+        self.edit_regions = {}
+
+    def _abspath(self, rel):
+        p = os.path.normpath(os.path.join(self.ws, rel))
+        if not p.startswith(self.ws):
+            raise ValueError(f"path escapes workspace: {rel}")
+        return p
+
+    def read_file(self, path=None):
+        with open(self._abspath(path or self.target)) as f:
+            return f.read()
+
+    def list_files(self):
+        return sorted(self.files.keys())
+
+    def apply_line_edit(self, path, start, end, new_text):
+        path = path or self.target
+        try:
+            cur = self.read_file(path)
+        except FileNotFoundError:
+            return False, f"no such file: {path}"
+        lines = cur.splitlines(keepends=True)
+        n = len(lines)
+        if not (1 <= start <= end <= n):
+            return False, f"line range {start}-{end} out of bounds ({path} has {n} lines)"
+        removed = "".join(lines[start - 1:end])
+        nt = new_text if new_text.endswith("\n") else new_text + "\n"
+        new = "".join(lines[:start - 1]) + nt + "".join(lines[end:])
+        self.chars_written += len(nt)
+        if self.first_write_done:
+            self.chars_deleted_after_first += len(removed)
+        self.first_write_done = True
+        self.n_edits += 1
+        with open(self._abspath(path), "w") as f:
+            f.write(new)
+        return True, "ok"
+
+    def pyrefly_diagnostics(self, path=None):
+        """Whole-workspace check; cross-file errors surface at the use sites."""
+        if self.force_diag is not None:
+            return self.force_diag
+        try:
+            r = subprocess.run([PYREFLY, "check", "--output-format", "json"],
+                               cwd=self.ws, capture_output=True, text=True, timeout=30)
+            data = json.loads(r.stdout or "{}")
+        except Exception:
+            return ""
+        diags = data.get("errors", []) if isinstance(data, dict) else []
+        out = []
+        for d in diags[:10]:
+            line = d.get("line", "?")
+            fp = os.path.basename(d.get("path", "") or "")
+            code = d.get("name", "diag")
+            msg = (d.get("concise_description") or d.get("description") or "")[:160]
+            out.append(f"[error] {fp} L{line} {code}: {msg}")
+            if isinstance(line, int):
+                self.edit_regions[line] = self.edit_regions.get(line, 0) + 1
+        return "\n".join(out)
+
+    def run_tests(self):
+        runner = os.path.join(self.ws, "_run_tests.py")
+        with open(runner, "w") as f:
+            f.write("import sys, os\nsys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))\n"
+                    + self.test_src + "\nprint('PASS')\n")
+        try:
+            r = subprocess.run([self._py, runner], cwd=self.ws, capture_output=True,
+                               text=True, timeout=20)
+            ok = r.returncode == 0 and "PASS" in r.stdout
+            fail = "" if ok else (r.stderr.strip().splitlines()[-1] if r.stderr.strip() else "test failed")
+        except subprocess.TimeoutExpired:
+            ok, fail = False, "timeout"
+        return {"resolved": ok, "f2p_pass": int(ok), "f2p_total": 1,
+                "p2p_pass": 0, "p2p_total": 0, "failure": fail[:300]}
+
+    def metrics(self):
+        rr = self.chars_deleted_after_first / max(self.chars_written, 1)
+        cycles = sum(v - 1 for v in self.edit_regions.values() if v > 1)
+        return {"rework_ratio": round(rr, 3), "n_edits": self.n_edits,
+                "edit_error_cycles": cycles, "chars_written": self.chars_written,
+                "chars_deleted_after_first": self.chars_deleted_after_first}
+
+    def current_patch(self):
+        return self.read_file(self.target)
+
+    def close(self):
+        import shutil; shutil.rmtree(self.ws, ignore_errors=True)
