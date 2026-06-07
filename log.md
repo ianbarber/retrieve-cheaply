@@ -1025,4 +1025,18 @@ Combined harvest 62 demos (27+35, 42% resolve on train split, seeds 100-123) →
 
 ---
 
+## 2026-06-07 — MULTI-FILE RESULT: removing the redundancy confound makes the channel matter. C-eager > A by +18pp, p=0.017 (vs single-file parity).
+
+(HF hub metadata stall hung the first launch 12h with 0 weights loaded; relaunched with HF_HUB_OFFLINE=1 — now standard for all launches.)
+
+**Run 1 (A / C-eager / C-eager+rich × 10 tasks × 6 seeds, n=60 each):**
+- A 20/60 = 0.333 | C-eager 31/60 = 0.517 | C-eager+rich 33/60 = 0.550.
+- **C-eager > A: paired one-sided p=0.017 (b=17,c=6); C+rich > A p=0.004 (b=17,c=4).** SIGNIFICANT — vs single-file where best delivery vs none was +4.8pp p=0.13. Ian's redundancy hypothesis CONFIRMED: when the checker's knowledge is NOT already in context, the channel adds real value.
+- Gradient (pre-registered): plain A 10/30→C 16/30 (p1=0.073, channel substitutes for reading the unseen file); rich C 12/24→+rich 14/24 (p1=0.25, right direction, underpowered — 2 discordant); control noisy at n=6.
+- **Caveat to characterize:** A mean_reads ≈ 0.90 ≈ feedback arms — the no-feedback 7B mostly does NOT read the unseen files to compensate (first rollout: 0 reads/0 edits/budget-out). So the gap = "feedback hands you the fact" + "weak agent doesn't think to read." Both real; want the split.
+
+**Run 2 launched:** D-gate, D-gate+rich (seeds 0-5) + A, C-eager power-up (seeds 6-11) → n=120 on core arms. Answers the original question — does LIVE (D-gate) beat SYNC (C-eager) — now that there is headroom. Task #48.
+
+---
+
 <!-- Add new entries above this line. Format: ## YYYY-MM-DD — short title -->
