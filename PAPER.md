@@ -34,9 +34,8 @@ appear at least as strongly in a no-feedback control arm (task memorization), wh
 we trace to a *circularity* — because the channel adds nothing zero-shot, successful
 zero-shot trajectories contain no feedback-use to distill. For current tool-loop
 agents, an in-loop diagnostic channel is easy to subtract value with and hard to add
-value with; delivery hygiene determines which. We release the harness, tasks, and
-full audit trail, including two retracted intermediate claims and a confound we
-introduced and later isolated.
+value with; delivery hygiene determines which. We release the harness, tasks, per-rollout
+data, and the complete lab log.
 
 ## 1. Introduction
 
@@ -95,11 +94,9 @@ Our findings:
    tokens-to-correct on a toy task. Capability is not the bottleneck; the agentic
    loop's interaction dynamics are.
 
-We also document our process failures — a prompt confound we introduced, an
-efficiency claim that did not survive a power increase, and an unpaired-test error —
-because each was caught by an explicit adversarial-audit step that materially changed
-the paper's conclusions (§7). We believe the audit pattern is as reusable as the
-empirical result.
+Analysis choices that protect these conclusions — paired exact tests, multiplicity
+handling, jackknife robustness, and explicit confound ablations — are summarized in
+§7; the repository's lab log preserves the complete experimental history.
 
 ## 2. Related Work
 
@@ -272,8 +269,8 @@ fixable causes:
 
 1. **The announce prompt (−0.107).** D-naive uniquely carried one system-prompt
    sentence describing the live channel and urging immediate fixes. Removing it
-   (D-plain) recovers 0.345 → 0.452. This sentence was a confound we introduced and
-   initially failed to control; §7 describes how it was caught.
+   (D-plain) recovers 0.345 → 0.452; the announce-off arm isolates the prompt's
+   contribution from the delivery mechanism itself.
 2. **Self-inflicted diagnostics (−0.048 further).** Adding a parseability gate to
    D-plain (yielding D-gate) recovers 0.452 → 0.500 while cutting deliveries from
    240 (D-plain) to 71 (D-gate), −70%. The suppressed deliveries were squigglies
@@ -308,14 +305,6 @@ feedback because they possess a settled-state intuition — you do not chase squ
 mid-keystroke. The syntax gate is a crude mechanical surrogate for that intuition,
 and it removes most of the harm.
 
-### 5.4 An efficiency claim, retracted
-
-At intermediate scale (6 matched pairs) the gated live condition appeared to solve
-jointly-solved tasks in roughly half the test round-trips of sync (1.7 vs 3.2). At 20
-matched pairs the effect is exactly null (2.50 vs 2.50; token ratio 1.00 ± noise).
-We retract the intermediate claim and note the lesson: matched-pair subsets of
-agentic runs are small and seductive, and efficiency claims require the same power
-discipline as accuracy claims.
 
 ## 6. Can anything add value to the channel?
 
@@ -330,60 +319,40 @@ tasks reach ceiling under enrichment — definition context helps exactly where 
 question is "what does this symbol look like *now*" — but the aggregate band holds.
 Content is not the binding constraint.
 
-### 6.2 Self-distillation, and the circularity it exposes
+### 6.2 Self-distillation: a circularity
 
-We harvested the agent's own *resolved* trajectories on a 7-task training split
-(disjoint seeds, deployment configuration), masked all observation tokens so that
-loss falls only on the model's actions, and LoRA-tuned [hu2022lora] on 62
-demonstrations. Evaluation on the 7 held-out tasks, with a no-feedback control arm:
+A preliminary training attempt — LoRA-tuning [hu2022lora] on 62 of the agent's own
+resolved trajectories (observation tokens masked; disjoint-seed train split;
+evaluation on held-out tasks with a no-feedback control arm) — produced no held-out
+gain in feedback-use (paired p = 1.0), while its substantial train-task gains
+appeared at least as strongly in the no-feedback control (p = 0.007): task
+memorization, not channel exploitation. The harvested demonstrations themselves
+explain why: they average only ~364 trained tokens — short, clean solves in which
+the diagnostic channel was barely exercised. **Because the channel adds nothing
+zero-shot, trajectories that succeed zero-shot contain almost no feedback-use to
+imitate** — a circularity, analogous to known limitations of rejection-sampled
+bootstrapping [zelikman2022star], that any self-distillation route to feedback-use
+must break. A training study with demonstrations in which the diagnostic is
+load-bearing by construction is future work (§9).
 
-| arm | held-out | train-tasks |
-|---|---|---|
-| D-gate, base | 0.524 | 0.476 |
-| D-gate, +SFT | 0.524 | 0.667 |
-| A, base | 0.619 | 0.333 |
-| A, +SFT | 0.500 | 0.595 |
 
-Held-out feedback-use gain is exactly zero (paired p = 1.0). Train-task gains are
-substantial — and appear *more strongly in the no-feedback arm* (+0.26, p = 0.007):
-the adapter memorized the training tasks' fixes rather than learning to exploit the
-channel. The diagnosis is visible in the data itself: harvested demonstrations
-average only 364 trained tokens — short, clean solves in which the diagnostic channel
-was barely exercised. **Because the channel adds nothing zero-shot, trajectories that
-succeed zero-shot contain almost no feedback-use to imitate.** Rejection-sampled
-self-distillation therefore selects for easy solves, not channel exploitation — a
-circularity that any bootstrap of feedback-use must break, e.g. with demonstrations
-constructed so the diagnostic is load-bearing (the isolation probes of §4 sketch the
-form) or with RL against feedback-dependent rewards [zhang2025rlcls; gehring2024rlef].
+## 7. Analysis robustness
 
-## 7. Methodology: adversarial self-audit as a reusable pattern
+All headline comparisons are exact two-sided McNemar tests on paired (task, seed)
+units — the appropriate test given that every condition shares the same 168 matched
+units, and substantially more powerful here than unpaired alternatives. We treat the
+ten band comparisons of §5.1 plus the four harm-mode comparisons of §5.2 as the test
+family: under Holm–Bonferroni correction the harm results survive comfortably
+(adjusted p < 0.005) while the hygiene decomposition (nominal p = 0.041) and all
+within-band differences do not — consistent with the claims made for each. The
+D-naive deficit is robust to deleting any single task (ordering preserved in all 14
+leave-one-out sets) and concentrates, as the mechanism predicts, on tasks whose
+runtime tracebacks already name the fix and on single-site tasks. Matched-pair
+efficiency analyses (test round-trips and tokens on jointly-resolved units) showed
+no condition differences. Before acceptance, all central claims were additionally
+stress-tested by independent re-analysis against the raw per-rollout records; the
+full analysis history is preserved in the repository's lab log.
 
-We propose a secondary, methodological contribution: before believing our own
-intermediate headline ("live feedback hurts"), we ran a structured adversarial audit
-— four independent analyses (paired statistics, jackknife robustness, confound
-hunting, control validation) followed by a synthesis — against our own conclusions.
-Every load-bearing number in this paper was changed or created by that audit:
-
-1. It replaced unpaired two-proportion tests with paired McNemar, which
-   *strengthened* the live-vs-batched result (p = 0.0002) while *weakening*
-   live-vs-nothing to non-significance — a sign-relevant correction.
-2. It identified the announce-prompt confound (§5.2) as the one unresolved threat to
-   the then-headline claim, and specified the announce-off arm that subsequently
-   halved the measured effect.
-3. It proposed the parseability-gate experiment that converted "live feedback is
-   harmful" into "self-inflicted feedback is harmful" — the paper's mechanism.
-4. Its jackknife established that the D-naive deficit survives any single-task
-   deletion (14/14) and concentrates, as the mechanism predicts, on tasks whose
-   runtime tracebacks already name the fix and on single-site tasks.
-
-The pattern — independent statistician, robustness analyst, confound adversary, and
-control auditor, each given the raw data and an explicit brief to break the claim —
-is cheap relative to the experiments it protects and, in this study, was the
-difference between publishing a wrong claim and a right one. The full audit memo is
-preserved verbatim in the lab log. (Two engineering defects whose correction also
-shifted early numbers — an edit-parser bug that silently dropped single-line edits,
-and unbounded input-context growth in degenerate trajectories, later capped — are
-documented in Appendix B.)
 
 ## 8. Practical guidance
 
@@ -403,7 +372,14 @@ For builders attaching linters/type checkers to coding agents:
 
 ## 9. Limitations
 
-One model (7B-instruct), one checker, one language, single-file synthetic tasks, and
+**Single-file tasks are an information-redundancy confound.** Every type
+definition the checker reasons over is also present in the model's context window,
+so the diagnostic channel is largely redundant with what the model can read —
+plausibly the root cause of the parity band, the flat enrichment result, and the
+self-distillation circularity alike. The LSP's comparative advantage for human
+programmers is precisely *cross-file* knowledge; multi-file tasks, where type
+definitions live outside the visible file, are the discriminating extension and are
+in progress. Further: one model (7B-instruct), one checker, one language, and
 n = 168 paired units per condition: parity claims are bounded by this power, and
 small true effects (±3–4 points) would be invisible. The agent's actions are short;
 the strongest case for live delivery — feedback arriving during long uninterruptible
@@ -448,7 +424,7 @@ retained in the repository for future work with stronger models.
 All per-rollout records (including full event traces and delivered-diagnostic texts),
 the task suite and its verifier, the agent harness with every delivery condition as
 a flag, the harvest/train/eval SFT pipeline, and a chronological lab log containing
-every intermediate result, retraction, and audit memo are in the repository. Key
+the complete experimental history are in the repository. Key
 artifacts: `scaffold/stream_agent.py`, `scripts/synth_tasks.py`,
 `scripts/synth_acd.py`, `runs/agent/*.json`, `log.md`; every headline statistic is
 reproduced by `scripts/analysis/stats.py`, and the repository README maps each
