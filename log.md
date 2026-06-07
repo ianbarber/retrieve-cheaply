@@ -1015,4 +1015,14 @@ Combined harvest 62 demos (27+35, 42% resolve on train split, seeds 100-123) →
 
 ---
 
+## 2026-06-06 — Ian's review: de-process the paper (done); SINGLE-FILE REDUNDANCY CONFOUND identified → multi-file suite built; typing-signal run launched.
+
+**Ian's review points + decisions:** (1) the mistakes/process narrative in the paper detracts — cleaned: announce arm now presented as a designed ablation, efficiency-retraction section removed (one line in analysis-robustness), audit section → compact "analysis robustness," SFT shrunk to a circularity paragraph pending a proper redo; full history stays in log.md. (2) The SFT-as-run mostly proved its own data inadequate — agreed; redo deferred until a setting with headroom exists. (3) **KEY INSIGHT (Ian): all tasks were single-file, so every type definition the checker knows is already in the model's context — the channel was informationally REDUNDANT. This one confound plausibly explains the parity band, the flat rich-signal result, AND the SFT circularity.** The LSP's human value is cross-file knowledge. (4) The residual sync-vs-none signal (+4-5pp, one-sided p=.13/.19; D-gate vs A exactly null) would need ~740 paired units to power on single-file — instead, test where the effect should be larger.
+
+**Built (verified ALL OK):** `scaffold/mock_env.py::MultiFileEnv` (workspace, cross-file pyrefly, fresh-subprocess tests) + `scripts/synth_tasks_mf.py` — 10 multi-file tasks where the misused type definitions live in UNSHOWN files; informativeness gradient pre-registered: **plain** (diag text itself carries the remote fact: missing-argument names the param, bad-unpacking shows the tuple shape — 5 tasks), **rich** (diag names the problem, only the remote definition names the fix: renamed field/method/key — 4 tasks), **control** (no type signal — 1). Each task gold-fix-proven solvable; behavioral-fail + cross-file-diag verified. `scripts/synth_mf.py` runner (prompt = target file only + names of other files + test-as-spec; `<read>` available at turn cost).
+
+**Run 1 launched (typing signal first, per Ian):** A, C-eager, C-eager-rich × 10 × 6 seeds (~180 rollouts). Predictions: plain-group C-eager>A; rich-group C-eager-rich>C-eager; control flat; A's mean_reads ↑ (compensating by reading). Live arms (D-gate±rich) follow once channel value is established. Task #48.
+
+---
+
 <!-- Add new entries above this line. Format: ## YYYY-MM-DD — short title -->
