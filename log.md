@@ -1063,4 +1063,14 @@ I reported the n=60 multi-file result ("C-eager > A +18pp, p=0.017; redundancy h
 
 ---
 
+## 2026-06-08 — Multi-file POWERED (n=120): same parity band as single-file. Live=none exactly. Redundancy hypothesis dead; the negative is now REPLICATED across two task regimes.
+
+Partial-context multi-file, n=120: A 0.400, D-gate(live) 0.408, C-eager(sync) 0.458 — overlapping CIs. Paired: **D-gate vs A p1=0.500 (EXACTLY null — live does NOT beat none at power; the n=60 p=0.020 was seed luck)**; C-eager vs D-gate p1=0.189; C-eager vs A p1=0.174. All n.s. Same picture as single-file: channel doesn't significantly help; live <= sync ~ none.
+
+**Preread 2x2 NOT yet trustworthy:** preread arms were only seeds 0-5 (the seeds we now KNOW were lucky for C-eager); n=60 preread "channel helps p1=0.032" is almost certainly the same artifact (and points backwards from the redundancy prediction: full-context+sync 0.533 > partial+sync 0.458). Launched preread seeds 6-11 to complete it honestly before reading anything in.
+
+**Meta:** the type-checker channel's non-significant ~+5pp benefit now REPLICATES across single-file (n=168, +4.8pp p=0.13) and multi-file (n=120, +5.8pp p=0.17). Engineering non-redundant cross-file info did not help -> closes the "info was redundant / tasks too easy" escape hatch -> a STRONGER, twice-replicated negative. Only significant delivery effect anywhere remains the naive-live HARM (single-file hygiene/self-inflicted-squiggle, n=84). Decision pending preread: paper framing = "no significant benefit bounded ~5pp across two regimes; bad delivery hurts; delivery timing among proper deliveries within noise" rather than chasing a ~5pp effect (would need ~700+ paired units). Task #48.
+
+---
+
 <!-- Add new entries above this line. Format: ## YYYY-MM-DD — short title -->
