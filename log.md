@@ -1093,4 +1093,14 @@ The preread 2x2 (n=120/cell) — and unlike the partial-context mirage, this one
 
 ---
 
+## 2026-06-08 — CONFIRMED at n=180 (p=0.0005, all 3 seed-blocks agree). + live-under-full-context: SYNC captures the benefit, LIVE does not. The delivery-mechanism finding lands.
+
+Preread channel effect CONFIRMED, stronger with power: n=180 preread-A 74/180=0.411, preread-C-eager 104/180=0.578; PC>PA b=51 c=21 one-sided p=0.0003, two-sided p=0.0005. Seed-block trust test PASSES all 3 blocks (PA 22/24/28, PC 32/37/35 — every block favors PC). Robust positive.
+
+**Live under full context (preread-D-gate, n=60 s0-5, confirming to n=120):** preread none 0.367 / live(D-gate) 0.400 / sync(C-eager) 0.533. **Live ~ none (p1=0.377); sync > live (p1=0.092).** Synchronous post-edit delivery captures the feedback+context benefit; LIVE mid-stream delivery does NOT — same hygiene/self-inflicted/distraction mechanism (mid-stream splice can't be cleanly connected to context). Consistent with sync>=live throughout the project. n=120 confirmation launched.
+
+**THESIS CRYSTALLIZING (paper restructure target):** (1) WHEN does checker feedback help an agent? Only when the relevant code is in context — feedback+context are COMPLEMENTS; the diagnostic is an attention/localization signal not an info carrier (preread p=0.0005, robust; full-context-alone null; 42% of no-feedback failures never read the needed file). (2) HOW to deliver it? SYNCHRONOUSLY — live mid-stream fails to capture the benefit (live~none under full context) and naive live actively hurts (single-file hygiene, 78% self-inflicted, p<0.005). (3) The LONG-CONTEXT INVERSION: more context -> channel MORE valuable (attention-direction), not less. Counterintuitive, novel, well-powered, timely. Came from Ian's single-file observation. Task #48.
+
+---
+
 <!-- Add new entries above this line. Format: ## YYYY-MM-DD — short title -->
