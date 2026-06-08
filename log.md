@@ -1121,4 +1121,17 @@ Reviewer reproduced every headline number exactly. The 0.41->0.58 preread sync-v
 
 ---
 
+## 2026-06-08 — Built the two decisive arms (clean-live; type/syntax filter); smoke-verified; launched n=120 preread run.
+
+Per Ian (yes on both): implemented `clean_delivery` (D delivers debounced diagnostic as a clean USER turn + file view, NOT a raw ‹diag› splice — isolates delivery FORMAT from timing, fixes the 22% marker-leakage bug) and `diag_filter` type|syntax (deliver only cross-file TYPE errors vs only self-inflicted SYNTAX/scope — isolates type-localization from anti-thrashing). Both in stream_agent.py + synth_mf.py. Smoke-verified: clean-live fired 8 diags as clean turns, 0 marker leak; type-filter delivered only type codes.
+
+**Decisive run launched (preread, n=120 each, ~18h):**
+1. clean-live (D, debounce+pause+syntax-gate+clean-delivery) — vs sync 0.578 (timing test: if clean-live ~ sync, the sync>live gap was FORMAT/leakage; if clean-live ~ raw-live 0.400, it's TIMING).
+2. type-only sync (C-eager, diag-filter=type) — mechanism.
+3. syntax-only sync (C-eager, diag-filter=syntax) — mechanism (if syntax-only ~ full-sync 0.578 and type-only ~ none 0.411, anti-thrashing dominates; if reversed, type-localization dominates).
+
+Then: reframe paper around what survives + these results; REPEAT the skeptic review. NOTE: marker-leakage bug also confounds single-file PAPER.md live claims — reframe must caveat or re-run those too. (Intermittent HF-hub hang recurred on one launch despite HF_HUB_OFFLINE=1; direct relaunch fixed — set env inline per command.) Task #48.
+
+---
+
 <!-- Add new entries above this line. Format: ## YYYY-MM-DD — short title -->
