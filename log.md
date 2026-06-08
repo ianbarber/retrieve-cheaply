@@ -1073,4 +1073,24 @@ Partial-context multi-file, n=120: A 0.400, D-gate(live) 0.408, C-eager(sync) 0.
 
 ---
 
+## 2026-06-08 — POSITIVE, SEED-ROBUST result: feedback + in-context code are COMPLEMENTS. Full-context+sync significantly beats all (p=0.001). The long-context question INVERTS.
+
+The preread 2x2 (n=120/cell) — and unlike the partial-context mirage, this one PASSES the seed-block check (both halves agree):
+
+              partial ctx    full ctx (preread)
+  none        0.400          0.383
+  +sync       0.458          0.575   <- highest cell
+
+- **Channel effect significant ONLY under full context:** preread sync-vs-none p1=0.001 (b=37,c=14); partial p1=0.174 (n.s.).
+- **Full context ALONE does nothing:** preread-A 0.383 ~ partial-A 0.400 (p1=0.667) — stuffing all files in the prompt does not help the no-feedback agent.
+- It is the COMBINATION. By group: plain p1=0.017, rich p1=0.047 (both type-signal groups independently significant), control noisy.
+- **Seed-block check (the decisive test the partial result failed): PASSES.** seeds 0-5 PA22/PC32, seeds 6-11 PA24/PC37 — both halves favor PC strongly (partial result had DISAGREEING halves; this one agrees).
+- **Mechanism:** partial-A mean_reads=0.94, 32% zero-read; 30/72 partial-A failures NEVER read any file. The agent does not reliably gather context itself. Full context + diagnostic localizes the bug within the now-complete context.
+
+**INTERPRETATION:** feedback and in-context code are COMPLEMENTS not substitutes. The diagnostic's value is as a LOCALIZATION/ATTENTION signal, only actionable when the relevant code is present (which the agent won't assemble alone). **This inverts Ian's long-context question: with everything in the window, the LSP channel becomes MORE valuable, not less** — role shifts from information-delivery to attention-direction (cf. context-length-hurts-with-perfect-retrieval, du2025contextlength). The project's first robust POSITIVE, and counterintuitive.
+
+**Discipline note:** trusting this (vs the retracted n=60) because: n=120, BOTH seed-blocks agree, p=0.001 (not marginal), significant in 2 groups independently, null control, corroborating reads mechanism — every check the mirage failed. STILL launched confirmation (+6 seeds -> n=180 on preread-A/C) + preread-D-gate (live under full context = the delivery-mechanism question in the regime where feedback works) before building the paper on it. Task #48.
+
+---
+
 <!-- Add new entries above this line. Format: ## YYYY-MM-DD — short title -->
