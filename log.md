@@ -1154,4 +1154,16 @@ Verdict: every task fails behaviourally + is gold-solvable (good artifact), but 
 
 ---
 
+## 2026-06-09 — Killed intermediate arms (Ian); interim claim-2 read; built task set v2 (15 tasks clearing hardened bar); sending for review.
+
+**Killed the v1-task decisive arms** (clean-live partial only, type/syntax never ran) per Ian: interpret what we have, plan a fresh run on high-confidence tasks. Stopped the babysitting /loop (sentinel runs/agent/.monitor_stop).
+
+**Interim claim-2 (clean-live partial, 6 tasks, n=72 matched):** none 0.375, raw-live 0.417, **clean-live 0.389**, sync 0.556. clean-live ~ raw-live (p=0.77) ~ none (p=1.0); **sync > clean-live p=0.043.** => the marker-leakage/FORMAT fix did NOT close the sync>live gap. The skeptic's "it's just format" hypothesis is REFUTED on this data — live fails to capture the benefit even delivered cleanly. CAVEAT: gated/debounced live still delivers FEWER diagnostics than sync (count/gating confound remains) -> fresh run needs an UNGATED-clean-live arm to isolate pure timing.
+
+**Task set v2 (`scripts/synth_tasks_mf2.py`, 15 tasks, ALL pass the hardened verifier):** rebuilt after both reviews. Design bar enforced: (R1) multi-file non-redundant; (R2) test<=>diag<=>correct — gold is BOTH test-green AND pyrefly-clean, test fully constrains every site (kills v1 reversers); (R3) no transcription (verifier flags fix-token-in-diagnostic); (R4) no spec in comments; (R5) realistic (no strawmen). 8 RICH (field/method rename, generic-widened int->list, enum member rename, callback-sig 1->2 args, obj-vs-tuple return, field-type int->str, arity drift) where only the remote def names the fix; 4 PLAIN; 3 CONTROL (truthiness/off-by-one/wrong-op logic bugs, 0 type signal, matched multi-file structure). Verifier also checks false-all-clear.
+
+**Plan:** (1) send v2 for a fresh practitioner/skeptic review + expansion toward ~20-24 for power; (2) revise; (3) ONE clean powered run on v2 across the full channel matrix — context {partial, preread} x delivery {none, sync-eager, sync-lazy, live-raw, live-clean, live-clean-UNGATED} x content {plain via group, rich via group} + mechanism {type-only, syntax-only} — the real final data; intermediate (v1) results superseded. Task #48.
+
+---
+
 <!-- Add new entries above this line. Format: ## YYYY-MM-DD — short title -->
