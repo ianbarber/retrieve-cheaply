@@ -1134,4 +1134,24 @@ Then: reframe paper around what survives + these results; REPEAT the skeptic rev
 
 ---
 
+## 2026-06-09 — TASK-SET deep-dive (practitioner/HN lens): tasks clean+solvable but NOT yet defensible; the 2 reversers are explained TASK ARTIFACTS; rework list.
+
+Verdict: every task fails behaviourally + is gold-solvable (good artifact), but as EVIDENCE the suite has structural problems:
+- **Single-file: type def is in the visible file -> channel is 100% REDUNDANT** -> can only test localization/batching, never signal-value. Confirms the reframe; single-file cannot carry "type signal helps".
+- **~Half the diagnostics are TRANSCRIPTION** (fmt_signature_drift, ctor_param_added, mf_signature_drift, mf_ctor_param: "Missing argument `unit`" -> add unit="") -> inflates apparent channel value. Label or harden.
+- **The 2 reversers are TASK ARTIFACTS, fully explained (NOT a feedback finding):**
+  - mf_optional_return: test UNDER-CONSTRAINS — line_price's None branch is never exercised, so you can pass GREEN with 2 pyrefly errors still live; feedback then pushes the model PAST a passing test into churning an untested path. + a misleading 2nd diag (bad-return on the annotation).
+  - mf_typeddict_key: correct key `total` is nowhere visible and the PLAIN diag never names it -> model must guess; guessing `count` -> pyrefly goes SILENT (valid key) but test still fails -> FALSE ALL-CLEAR. A rich task graded with a plain channel.
+  - Root cause both: the diagnostic and the test DISAGREE about "done", and feedback makes the model trust the diagnostic. Fix: every test must fully constrain every edited site.
+- **Control not clean:** mf_control_truthiness changes 4 things at once (remote file is a bare constant not a violated type; single-site; spec in a test comment). config_truthiness_distractor gold_note FALSELY claims pyrefly flags it (fires 0) — a mislabeled 2nd control.
+- **records_arity_drift resolves 0% everywhere** despite being fully-specified+easy -> indicts the AGENT/harness, contaminates difficulty calibration.
+- **Contrived (strawman):** dict_key_type_drift/mf_key_type (`idx[str(k)]`), mutable_default_none (not the classic `tags=[]` bug), return_container_ripple (`max(scores, key=lambda kv: scores[kv])`).
+- **Bug-class imbalance:** heavily weighted to add-None-guard + rename-symbol — exactly the classes where a type checker is MOST redundant with reading. **Only 2 genuinely channel-necessary "rich" tasks: mf_field_rename, mf_method_rename.**
+
+**Rework list (no agent change):** cut/rewrite the 3 strawmen; harden/label the 4 transcription tasks; FIX the 2 reversers (constrain line_price w/ unknown sku + kill the bad-return diag; grade typeddict with rich channel or add a test that fails the `count` guess); harden the control (real remote type, multi-site, spec in assertions not comments); add DISCRIMINATING bug-classes where the checker shines and the fix isn't readable: protocol/duck-type mismatch, wrong generic param across files, enum/Literal misuse, None-vs-empty at an API boundary; move all spec intent out of test comments.
+
+**Implication:** the multi-file result is the right vehicle but needs the cleaned task set before it is publishable; the genuine signal-value evidence currently rests on just 2 tasks. Current decisive arms (clean-live/type/syntax, running) still worth finishing — claim 2 (delivery format) is task-independent. Task #48.
+
+---
+
 <!-- Add new entries above this line. Format: ## YYYY-MM-DD — short title -->
