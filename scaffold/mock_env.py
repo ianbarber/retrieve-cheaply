@@ -178,6 +178,96 @@ class MultiFileEnv:
     def list_files(self):
         return sorted(self.files.keys())
 
+    def goto_definition(self, symbol):
+        """REAL go-to-definition (not an oracle): AST-resolve `symbol` against the LIVE workspace and return the
+        source span of its top-level definition (class/def/assignment), exactly as an LSP go-to-def would — derived
+        from the codebase, with no privileged knowledge of which symbol or what the answer is. Returns (src, path)
+        or (None, None) if unresolved (e.g. the name is not defined anywhere -> a real LSP miss)."""
+        import ast as _ast
+        for path in self.list_files():
+            try:
+                src = self.read_file(path)
+                tree = _ast.parse(src)
+            except Exception:
+                continue
+            lines = src.splitlines()
+            for node in tree.body:   # top-level only (module-scope defs), like go-to-def on an imported name
+                name = None
+                if isinstance(node, (_ast.ClassDef, _ast.FunctionDef, _ast.AsyncFunctionDef)):
+                    name = node.name
+                elif isinstance(node, _ast.Assign):
+                    tgts = [t.id for t in node.targets if isinstance(t, _ast.Name)]
+                    name = symbol if symbol in tgts else None
+                if name == symbol:
+                    end = getattr(node, "end_lineno", node.lineno)
+                    span = "\n".join(lines[node.lineno - 1:end])
+                    return span, path
+        return None, None
+
+    def lsp_definition(self, symbol):
+        """OPT-IN live LSP go-to-definition: drive a real `pyrefly lsp` daemon over THIS workspace and return the
+        symbol's definition as (span_text, path) — the SAME shape as goto_definition — so the cheap <defn> action is
+        backed by a production language server instead of our AST resolver. Validated to agree with goto_definition
+        12/12 on the effic suite (scripts/validate_pyrefly_lsp.py).
+
+        DEADLOCK GOTCHA: pyrefly daemons deadlock under concurrency — this spawns ONE daemon, queries, and kills it,
+        and must be called SEQUENTIALLY (the eval loop already is). On any error (no daemon, null result, timeout) it
+        returns (None, None) — callers should fall back to the AST resolver, never hang. Reuses the validated client
+        in scripts/validate_pyrefly_lsp.py."""
+        try:
+            import importlib.util, sys as _sys
+            mod = _sys.modules.get("validate_pyrefly_lsp")
+            if mod is None:
+                _here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                _path = os.path.join(_here, "scripts", "validate_pyrefly_lsp.py")
+                spec = importlib.util.spec_from_file_location("validate_pyrefly_lsp", _path)
+                mod = importlib.util.module_from_spec(spec)
+                _sys.modules["validate_pyrefly_lsp"] = mod
+                spec.loader.exec_module(mod)
+            # ground-truth defining file (to prefer a cross-file use-site); harmless if it misses
+            _, defpath = self.goto_definition(symbol)
+            files = {p: self.read_file(p) for p in self.list_files()}
+            rel, _ls0, _ls1, span = mod.lsp_definition_for_task(files, symbol, defpath, self.ws)
+            if rel is None:
+                return None, None
+            # The LSP's textDocument/definition returns the definition LOCATION (a line/range), not the
+            # full body — the raw span is just `class Account:` / `def f(...):`. A go-to-definition *tool*
+            # returns the definition itself: expand the LSP-resolved location to the enclosing top-level
+            # node's full source span (the same body goto_definition returns, the form the model consumes).
+            # The LSP drives the RESOLUTION; we fetch the body at the location it found.
+            import ast as _ast
+            try:
+                src = files.get(rel) or self.read_file(rel)
+                line1 = int(_ls0 or 0) + 1   # 0-based LSP line -> 1-based
+                tree = _ast.parse(src); lines = src.splitlines()
+                for node in tree.body:
+                    if isinstance(node, (_ast.ClassDef, _ast.FunctionDef, _ast.AsyncFunctionDef, _ast.Assign)):
+                        end = getattr(node, "end_lineno", node.lineno)
+                        if node.lineno <= line1 <= end:
+                            return "\n".join(lines[node.lineno - 1:end]), rel
+            except Exception:
+                pass
+            return (span or None), rel
+        except Exception:
+            return None, None
+
+    def find_references(self, symbol):
+        """REAL find-references: scan the live workspace for files that USE `symbol` (whole-word), excluding its
+        definition site. Returns a sorted list of paths (an LSP references result), derived from the codebase."""
+        import re as _re
+        pat = _re.compile(r"\b" + _re.escape(symbol) + r"\b")
+        _, defpath = self.goto_definition(symbol)
+        hits = []
+        for path in self.list_files():
+            if path == defpath:
+                continue
+            try:
+                if pat.search(self.read_file(path)):
+                    hits.append(path)
+            except Exception:
+                continue
+        return sorted(hits)
+
     def apply_line_edit(self, path, start, end, new_text):
         path = path or self.target
         try:

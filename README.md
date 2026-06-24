@@ -1,57 +1,71 @@
-# Streams
+# Streams — making a language server pay off for a coding agent
 
-**Does live, in-stream type-checker feedback help an LLM coding agent?**
-Mostly no — and delivered naively, it actively hurts. This repo is the complete
-evidence base for the preprint:
+**A language server's *information* is redundant for a capable, self-retrieving
+coding agent — but its *retrieval efficiency* is a trainable preference.** This repo
+is the complete evidence base and reproducible recipe for the tech report:
 
-> **[PAPER.md](./PAPER.md)** — *When Squigglies Don't Help: Delivery Hygiene and the
-> Limits of Live Type-Checker Feedback for Coding Agents*
+> **[PAPER.md](./PAPER.md)** — *Making a Language Server Pay Off for a Coding Agent:
+> Train It to Retrieve Cheaply*
 
-**The result in one breath (n=168 paired units/condition, 14 tasks x 12 seeds,
-Qwen2.5-Coder-7B + Pyrefly):** every properly-delivered feedback configuration —
-eager sync, lazy sync, hygiene-gated live — and the no-feedback baseline land at
-fix-rates 0.46–0.53 with no detectable difference (min pairwise p = 0.12). A naive
-live channel falls to 0.345 (p = 0.0002 vs eager sync): 78% of its diagnostics
-describe the model's own half-finished edits, and gating those out recovers it.
-Richer diagnostics and self-distillation SFT both fail to add value (the SFT gains
-are task memorization, exposed by a no-feedback control).
+**The result in one breath (Qwen2.5-Coder-7B + real Pyrefly):** a coding agent will
+not, on its own, prefer a language server's cheap go-to-definition (`<defn>`, ~tens of
+tokens) over an expensive whole-file `<read>` (~thousands). Default use is ~2%;
+explicitly *telling* it to prefer the LSP leaves it at ~0%; offline imitation does not
+move it. But **on-policy** supervised fine-tuning of the preference works: use climbs
+from ~0% to ~100% go-to-definition and the agent spends **~4.5× fewer input tokens at
+matched success** (headline 3086→688 tokens on definition-sufficient tasks; success
+0.65→1.00 on the mixed boundary suite, McNemar p=1.5e-5). The cheap action is *real* —
+validated 12/12 against a live `pyrefly lsp` daemon — and the agent learns the
+**boundary**: it still `<read>`s when a definition is genuinely insufficient. The method
+transfers to a ~4× larger model (Qwen3.6-27B: 0→100% use, 5.5× fewer tokens).
+
+## The recipe (for practitioners)
+
+1. **Attach the LSP for efficiency, not information.** Give the agent a real
+   go-to-definition action, not diagnostics — a capable agent already reads what
+   diagnostics would tell it; the cost saving is what's left on the table.
+2. **Train the preference; don't prompt it.** Asking ("prefer the LSP") does ~nothing.
+3. **Train it on-policy.** Offline demonstrations never show "the expensive action was
+   available and I chose the cheap one." Relabel the agent's *own* reads into
+   go-to-definitions and fine-tune on that (on-policy SFT / DAgger round-0).
+4. **Preserve the boundary.** Mix in tasks that genuinely need a full read, so the
+   agent learns *when* the cheap action suffices instead of blindly always-`<defn>`.
+
+See §2 of `PAPER.md` for the full method, caveats, and scope.
 
 ## Start here
 
 | | |
 |---|---|
-| `PAPER.md` | the preprint (results, stats, mechanism, retractions) |
-| `log.md` | the complete chronological lab log — every run, decision, audit, and retraction, unedited |
-| `scripts/analysis/stats.py` | **reproduce every headline number**: `python scripts/analysis/stats.py` |
+| `PAPER.md` | the tech report — method, results, the recipe, and what doesn't work |
+| `log.md` | the complete chronological lab log — every run, decision, audit, retraction, unedited |
+| `scripts/run_relabel2.sh` | reproduce the headline on-policy relabel experiment (harvest → SFT → retest) |
+| `scripts/analysis/stats.py` | **reproduce every headline number** from the committed `runs/`: `python scripts/analysis/stats.py` (checks each figure against `PAPER.md`) |
 
-## The experiment in one table
+`analysis/stats.py` recomputes the full recipe table — headline 3086→688 (4.5×), the
+relabel-only and matched-outcome controls, the real-LSP run, the read-required
+boundary, the GRPO corroboration, and the 27B transfer — straight from the result
+JSONs, and the `run_*.sh` drivers in `scripts/` re-run the experiments that produce them.
 
-| paper condition | invocation (scripts/synth_acd.py) | result files (seeds 0–5 / 6–11) |
-|---|---|---|
-| A (none) | `--conds A` | `synth_power.json[A]` / `synth_ac_s6.json[A]` |
-| C-lazy (batched at pause) | `--conds C` | `synth_power.json[C]` / `synth_ac_s6.json[C]` |
-| C-eager (post-edit hook) | `--conds C --c-eager` | `synth_ceager.json` / `synth_ceager_s6.json` |
-| D-naive (live + announce) | `--conds D --debounce 24 --pause-align --announce-lsp` | `synth_power.json[D]` (n=84; named `D-tuned` in log.md) |
-| D-plain (live) | `--conds D --debounce 24 --pause-align` | `synth_dplain.json` / `synth_dplain_s6.json` |
-| D-gate (live, parse-gated) | `--conds D --debounce 24 --pause-align --syntax-gate` | `synth_dgate.json` / `synth_dgate_s6.json` |
+## Core code
 
-Note: the paper's D arms all use `--debounce 24 --pause-align`; the script's bare
-defaults are debounce 0 / no pause-align (the un-debounced immediate splice).
-Rich-signal arms add `--rich-signal`; SFT eval adds `--adapter runs/adapters/dgate_sft_v2`.
+- `scaffold/` — the non-blocking continuous-stream coding agent (`stream_agent.py`,
+  every retrieval action as a flag) and the task environment with real Pyrefly
+  (`mock_env.py`, including the `<defn>` go-to-definition resolver).
+- `scripts/synth_tasks_effic.py` — the definition-sufficient task suite;
+  `scripts/synth_tasks_efficread.py` — the read-required boundary tasks.
+- `scripts/synth_mf.py` — the condition runner (rollouts, harvest, retest).
+- `scripts/sft_lora.py` — the on-policy LoRA-SFT trainer (the key training step).
+- `scripts/validate_pyrefly_lsp.py` — validates `<defn>` against a live pyrefly LSP daemon.
+- `scripts/grpo_cost.py` + `run_grpo.sh` — the cost-reward GRPO alternative (scoped/optional;
+  the SFT relabel is the headline).
 
 ## Layout
 
-- `scaffold/` — the non-blocking continuous-stream agent (every delivery condition
-  as a flag) and the single-file task environment with real Pyrefly.
-- `scripts/` — task suite + verifier (`synth_tasks.py`), condition runner
-  (`synth_acd.py`), isolation probes (`i_eval*.py`, paper §4), SFT pipeline
-  (`harvest_sft.py`, `d_sft.py`), analysis (`analysis/stats.py`).
-- `runs/` — committed result data: `agent/` (all condition rollouts, per-rollout
-  event traces incl. delivered diagnostics), `isolation/` (§4), `rebench/`
-  (Appendix A real-repo groundwork), `adapters/` (the §6.2 LoRA). See `runs/README.md`.
-- `harness/` + `lsp/` — the real-SWE-rebench pipeline (paper Appendix A only).
-- `docs/history/` — superseded design docs from the project's earlier eras, kept
-  for provenance (`experiment_plan.md`, `WRITEUP.md`).
+- `runs/agent/` — the committed efficiency-recipe result JSONs (the PRE/POST retests
+  reproduced by `analysis/stats.py`); `runs/sft/` holds the trained LoRA adapters
+  (git-ignored binaries). Some earlier-phase data still lives under `runs/` as legacy.
+- `docs/` — paper figures and the efficiency bibliography.
 - `bibliography.md` — BibTeX for the paper.
 
 Hardware: single NVIDIA DGX Spark (GB10, 128GB unified), everything local.

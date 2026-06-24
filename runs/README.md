@@ -1,26 +1,23 @@
 # runs/ — committed result data
 
-Every file here backs a specific paper section. Finalized JSONs have shape
-`{"rows": {"<cond>": [row, ...]}}`; each row carries task, seed, resolved,
-token/test counts, and the full event trace (including every delivered
-diagnostic's text). NOTE: condition keys inside files are the harness letters
-(A/C/D) — the paper-name mapping and exact flag recipes are in the root README
-and `scripts/analysis/stats.py`.
+The efficiency-recipe result JSONs that back `PAPER.md`. Finalized JSONs have shape
+`{"rows": {"A": [row, ...]}}`; each row carries `task`, `seed`, `resolved`,
+`in_tokens`, `n_lsp` (>0 = used `<defn>`), `n_reads` (>0 = used `<read>`), and the
+event trace. **Reproduce every headline number:** `python scripts/analysis/stats.py`
+from the repo root (it reads exactly the files below and checks each against `PAPER.md`).
 
-| file | paper | contents |
+| file(s) | PAPER section | what it shows |
 |---|---|---|
-| agent/synth_power.json | 5.1, 5.2 | A, C-lazy, **D-naive** (log name: D-tuned), seeds 0-5 |
-| agent/synth_ac_s6.json | 5.1 | A, C-lazy, seeds 6-11 |
-| agent/synth_ceager.json / _s6 | 5.1 | C-eager, seeds 0-5 / 6-11 |
-| agent/synth_dplain.json / _s6 | 5.1, 5.2 | D-plain, seeds 0-5 / 6-11 (_s6 merged from checkpoint+resume; see log 2026-06-02/03) |
-| agent/synth_dgate.json / _s6 | 5.1, 5.2 | D-gate, seeds 0-5 / 6-11 |
-| agent/synth_dgate_rich.json, synth_ceager_rich.json | 6.1 | rich-signal arms, seeds 0-5 |
-| agent/synth_dgate_sft.json, synth_a_sft.json | 6.2 | adapter evals (D-gate+SFT, A+SFT), seeds 0-5 |
-| isolation/forward_r0.json | 4 | forward injection 16/16 vs 0/16 |
-| isolation/revise_r0b.json | 4 | backward revision 10/10 vs 3/10 |
-| isolation/toy_efficiency_r0c.json | 4 | toy live-vs-sync efficiency (70 vs 139 tok) |
-| rebench/candidates.jsonl, provisioned.jsonl, provision_report.json | App. A | SWE-rebench selection: 25 -> 8 provisioned -> 4 well-formed |
-| rebench/swe_acd.json, swe_region.json | App. A | real-repo agent runs (incl. the 0/3 oracle-localized result) |
-| adapters/dgate_sft_v2/ | 6.2 | the LoRA adapter (62 demos, observation-masked) |
+| `agent/reallsp_base.json` / `reallsp_sft.json` | §5.1 headline | defn-sufficient PRE→POST: 0→100% `<defn>`, 3086→688 tokens (4.5×), success 0.65→1.00 |
+| `agent/effic_retest_base.json` / `relabel2_retest.json` | §5.1 relabel-only | the relabel method in isolation: 0→100%, 3086→724 (4.3×) |
+| `agent/powered_retest_base{,_x}.json` / `powered_retest_sft{,_x}.json` | §5.1 pilot | matched-outcome lead-`<defn>` pilot: 2108→675 (3.1×), success p=6.3e-14 |
+| `agent/effic_readtrained_retest.json` vs `powered_retest_sft.json` | §5.3 isolation control | read-trained vs defn-trained at matched outcome: 3191→684 (4.7×), p=6.8e-4 |
+| `agent/lsp_base.json` / `lsp_sft.json` | §5/item-3 | real `pyrefly lsp` daemon driving `<defn>`: 0→100%, 2894→689, 0.58→1.00 |
+| `agent/reallsp_*.json` (read-required subset) | §5.2 boundary | non-degeneracy: read-rate stays ~100%, success 0.54→0.83 |
+| `agent/grpo_retest.json`, `grpo_harvest_0..4.json`, `grpo_retest_round1.json` | §5.3 GRPO | cost-RL corroboration: clean retest 86% defn / 663 tok / 100%; harvest 37→48→86% |
+| `agent/27b_base.json` / `27b_retest.json` | §Limitations | Qwen3.6-27B transfer: 0→100%, 4058→726 (5.5×), 0.96→1.00 |
 
-Reproduce all headline numbers: `python scripts/analysis/stats.py` from the repo root.
+`sft/` holds the trained LoRA adapters (git-ignored binaries): `effic_lora_powered`
+(headline), `effic_lora_relabel2` (relabel), `effic_lora_relabel2_27b` (27B),
+`effic_lora_grpo` (GRPO), `effic_lora` (read-trained, for the isolation control).
+Other `agent/*.json` are recipe-phase harvests and ablations referenced in `log.md`.

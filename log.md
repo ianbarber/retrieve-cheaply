@@ -1186,4 +1186,941 @@ Review of `scripts/synth_tasks_mf2.py` (15 tasks, all pass verifier). Verdict: R
 
 ---
 
+## 2026-06-09 — FRAMING decision (Ian): tasks are an UPPER BOUND on type-feedback value, not representative of general coding. Scope the claim accordingly.
+
+Ian asked: are the tasks intentionally things a type checker should help with (an upper bound), not representative of general work? YES, by construction — every non-control task is selected so pyrefly fires a guiding diagnostic. So rich/plain = the FAVORABLE/type-checkable subset (conditional/UPPER-BOUND value), NOT the population value of attaching a checker to general coding (real logic bugs are type-blind; our real-SWE-rebench pilot got 0 bug-relevant diagnostics). DECOMPOSITION (why the design still works): the ANTI-THRASHING/edit-error value (linter catching the model's own broken edits) is GENERAL — shows up even in the controls; the TYPE-LOCALIZATION value is the narrow upper-bound part. So controls = type-blind regime (≈ general edit-hygiene floor), rich/plain = type-checkable ceiling; type-only/syntax-only arms decompose them. Population value ≈ general-component + P(type-checkable)·type-component. PAPER must state this external-validity scope explicitly and NOT claim "type feedback helps coding agents in general" — claim is "value where the checker can speak + how to deliver it." Keep/strengthen controls (they represent the complement). Task #48.
+
+---
+
 <!-- Add new entries above this line. Format: ## YYYY-MM-DD — short title -->
+
+## 2026-06-09 — v2 task fixes landed (ALL OK) + intermediate arms retired
+
+**Task fixes applied (per v2 review):**
+- Relabeled rich_generic_widened / rich_field_type_change / rich_arity_drift → group="plain"
+  (the diagnostic TEXT conveys the remote fact; not genuinely channel-necessary).
+- CUT rich_enum_member: its test named ACTIVE/PAUSED (fix leak); a clean rich enum needs a
+  remote-factory design — deferred to expansion.
+- Replaced plain_bad_index_key (`t[str(k)]` strawman, R5 violation) with plain_composite_key
+  (remote dict re-keyed to tuple[str,int], indexed by bare str — realistic schema drift).
+- Added 2 genuinely-rich tasks (diagnostic names the BREAK, only the remote DEF supplies the FIX,
+  fix token absent from test): rich_const_rename (renamed remote constant via import),
+  rich_value_object (remote dict values became Money objects; .cents lives only in money.py).
+- Added 4th control: ctrl_accumulator_reset (accumulator reset inside loop; type-invisible).
+- Extended verifier R3: leak check now scans the TEST source too (a fix token in the test means
+  solvable without the remote = R1 violation). Caught plain_none_default_arg's generic "[]" token
+  → tightened to "extend([])".
+
+**Verifier: ALL OK.** N=17 {rich:6, plain:7, control:4}. Every task: buggy→FAIL+pyrefly-fires,
+gold→PASS+pyrefly-clean, no leak, controls fire 0 type errors.
+
+**Intermediate arms — interpret-and-retire (per Ian: "kill the intermediate arms once we have this,
+interpret whatever data we have, plan a fresh run once we have good tasks"):**
+- clean-live completed 72 rollouts (6 tasks × 12 seeds). type-only / syntax-only never started.
+- CLAIM 2 (format vs timing), n=72 matched: none 0.375 / raw-live 0.417 / clean-live 0.389 / sync 0.556.
+  clean-live≈raw-live (p=0.774) — clean format does NOT recover the gap (marker bug was not the cause).
+  sync>clean-live (b=21 c=9, p=0.043). clean-live≈none (p=1.000). => value is synchronous TIMING,
+  not delivery format. Corroborates single-file (sync 0.578 vs none 0.411, p=5e-4). Caveat n=72.
+- CLAIM 3 (type-only vs syntax-only anti-thrashing decomposition): NO DATA — deferred to fresh run.
+- Retiring intermediate arms; NOT relaunching on v1 tasks. Babysit loop purpose served.
+
+NEXT: adversarial review of the strengthened v2 set, then ONE clean powered run across the full
+channel matrix on v2 (the real final data, incl. the mechanism arms).
+
+## 2026-06-09 — adversarial review #2 of v2 set: TWO BLOCKERS found + fixed; set finalized (ALL OK, N=20)
+
+A second adversarial reviewer (HN/practitioner + channel-necessity lens) audited the strengthened v2 set.
+Verdict: 5/6 rich tasks genuinely channel-necessary, but it surfaced **two blocking infra bugs** that
+would have invalidated the final run, plus several quality holes.
+
+**BLOCKERS (both fixed):**
+- B1: synth_mf.py imported the BROKEN v1 suite (`from scripts.synth_tasks_mf import TASKS_MF`) — the
+  final paper run would have used v1 (the reversers!). Fixed: import `synth_tasks_mf2 import TASKS_MF2 as
+  TASKS_MF`. Verified the 20 mf2 tasks expose every key the runner reads (name/group/files/target/test).
+- B2: `--rich-signal` enrichment (`_diag_text`) scanned only the TARGET file for the named symbol's def —
+  but on rich tasks the def is REMOTE, so enrichment appended nothing (no-op exactly where it should
+  matter). Fixed: `_enrich_diag` now scans the whole workspace (`env.list_files()`). NOTE: --rich-signal
+  is NOT in the planned final matrix (content axis = task GROUP, not the flag), so this didn't block the
+  run, but the enrichment arm is now usable.
+
+**Quality fixes:**
+- Demoted rich_callback_sig -> plain_callback_sig: the diagnostic prints the full new sig `(int,int)->int`,
+  so the arity (the remote fact) is in the diagnostic => plain, not rich.
+- Renamed mislabeled plain tasks (were `rich_*` with group=plain): generic_widened, field_type_change,
+  arity_drift. Name prefix now matches group (avoids miscount).
+- A1 ARTIFACT FIXED — plain_optional_get: the 0-fallback made a truthiness fix (`v or 0`) behaviourally
+  identical to gold, so the distractor didn't bite. Redesigned: missing->-1 sentinel, configured 0 must
+  survive as 0 => `v or -1`/`if v` both clobber the 0 and FAIL the test; only `is not None` passes. Added
+  wrong_typevalid=`v or -1` so the verifier now PROVES the test gates it ("guarded"). Renamed files
+  (settings.py/fill.py) to de-dup from ctrl_truthiness.
+- VERIFIER BUG FIXED: the R2 false-all-clear guard was (a) dead code (no task defined wrong_typevalid) and
+  (b) inverted/unwired (`fc="BAD" if wf_clean and wf_fail` — that's the GOOD case, and `ok` ignored it).
+  Now: HOLE (type-valid wrong fix PASSES test) is a hard failure wired into `ok`; "guarded" = test rejects
+  it; "fires" = the wrong variant itself trips pyrefly.
+- Stripped the `+ 0` tell from generic_widened (buggy now `return scores()[name]`, fires bad-return).
+
+**New rich tasks (reviewer proposed 6; I kept the 3 that survive the test<=>diag invariant):**
+- KEPT rich_protocol_rename (Protocol method draw->render; runtime AttributeError + missing-attribute),
+  rich_attr_moved (attr moved into inherited meta["tag"]; runtime AttributeError + missing-attribute),
+  plain_overload (overload returns list[str]; diagnostic reveals the type => plain).
+- DROPPED rich_newtype (NewType is runtime-identity: buggy PASSES the test => violates test<=>diag),
+  rich_enum_rename (same trap as cut enum_member: test leaks the name, or Status(1) solves it without the
+  remote), rich_alias_retyped (diagnostic surfaces underlying list[int] => dup of generic_widened/plain).
+
+**FINAL v2 SET: N=20 {rich:7, plain:9, control:4}. Verifier ALL OK.** Genuine-rich item-n=7 (reviewer
+target was 10-12; further rich requires novel bug-classes that don't collapse to transcription/runtime-
+identity — noted as future work). Runner wired to v2. Ready for the powered run.
+
+DEFERRED (documented, non-blocking): populate wrong_typevalid for the remaining non-control tasks (only
+optional_get guarded so far); minor realism polish (none_default_arg `extend(None)` is slightly synthetic);
+strip local-var hint in return_obj_vs_tuple. The B2 enrichment fix is untested end-to-end (no rich-signal
+arm in the planned matrix).
+
+NEXT DECISION: scope the final powered run (full channel matrix is ~9-10 arms × 240 rollouts ≈ multi-day
+on one GPU) — present scope/seed tradeoff to Ian before committing GPU-days.
+
+## 2026-06-11 — oracle positive-control arm BUILT + QUEUED (run after the 9-arm final)
+
+WHY: the 6 partial arms are a null (sync≈none, live trends negative) and arm 7 (preread) is
+tracking toward null too (early 12/20: none 0.625 / sync 0.677, p=0.49 — NOT the single-file
++17pp complementarity). A null is only credible with a positive control proving the channel CAN
+move behavior. Hypothesis for the null: the type signal is SQUEEZED — redundant with the failing
+test (and, in preread, with the visible code), and where it's novel (partial) it's un-actionable
+because the 7B won't navigate to the remote file. Live injection also seems to derail the small model.
+
+IMPLEMENTED: scaffold/stream_agent.py gained `oracle_hint` — when set, _diag_text() delivers the
+oracle string IN PLACE OF the pyrefly diagnostic, gated the same way (only while the file still
+errors). scripts/synth_mf.py gained `--oracle {loc,fix}`; build_oracle() derives the hint per task
+from buggy-target vs gold_target via difflib (auto, no manual authoring):
+  loc = "bug on line(s) 5, 9 — type/contract mismatch. Fix those." (perfect WHERE, no fix value)
+  fix = the gold replacement lines verbatim (the answer; ceiling of helpful feedback)
+Verified: compiles; hint previews correct for field_rename/value_object/const_rename.
+
+QUEUED: scripts/run_oracle.sh runs the partial-context ladder paired on final_partial_AC's seed grid:
+  none(A, existing) -> pyrefly(C, existing) -> oracle-loc -> oracle-fix
+  -> runs/agent/final_oracle_loc.json, final_oracle_fix.json (C --c-eager --oracle loc|fix, 8 seeds)
+DIAGNOSIS: climb at oracle-loc => bottleneck is localization; only at oracle-fix => execution;
+flat even at oracle-fix => model/harness can't act on feedback at all (paradigm needs rethink).
+BABYSIT must, after the 9-arm analysis, launch `nohup bash scripts/run_oracle.sh` detached and
+keep watching final_oracle_loc/fix, then McNemar each vs final_partial_AC cond A (none).
+
+## 2026-06-11 — steered-prompt arm (gentle) added to the follow-up queue
+
+Reason (Ian's question): the run does almost NO steering. SYS_LINE only OFFERS the read tool
+("To READ another file for context: <read .../>") and has one generic, all-conditions line
+("A static analyzer may also surface diagnostics; use them to catch mistakes early"); announce_lsp
+(the explicit "use the checker") is OFF in the final matrix. Nothing links a diagnostic to reading
+the named file. So the null may be partly a PROMPTING gap (latent-but-unelicited channel value).
+
+IMPLEMENTED: stream_agent gained `steer_hint` (appended to the system prompt). synth_mf gained
+`--steer {gentle,directive}`. GENTLE text (chosen): "Note: the static type-checker's diagnostics are
+reliable — when one appears, treat it as a real problem and address it. If a diagnostic refers to a
+name (a field, function, or import) that comes from another file, reading that file is usually the
+quickest way to find the correct fix." (directive variant also implemented, not run.)
+
+DESIGN: 2x2 partial-context, paired on final_partial_AC's seed grid:
+  plain{A=none, C=pyrefly} [DONE] vs steered{A,C} [final_steer_AC.json, --conds A,C --c-eager --steer gentle]
+  KEY = the INTERACTION: does steering help C (pyrefly) MORE than A (none)? -> channel value is
+  latent-but-unelicited. steered-A vs plain-A alone = "does telling it to read help regardless."
+
+QUEUE: consolidated into scripts/run_followups.sh (oracle_loc, oracle_fix, steer_AC). Compiles.
+*** BABYSIT TODO: when all 7 final_* arms are done, run the 9-arm analysis, THEN launch
+    `nohup bash scripts/run_followups.sh > /tmp/run_followups.out 2>&1 &` and keep babysitting
+    final_oracle_loc/fix + final_steer_AC; McNemar oracle rungs vs final_partial_AC.A,
+    and the steered 2x2 interaction. Update the /loop prompt to this at the next heartbeat. ***
+
+## 2026-06-11 — FINAL 9-ARM RESULT (n=160/arm, 20 tasks x 8 seeds, Qwen2.5-Coder-7B, real pyrefly)
+
+VERDICT: a clean NULL — NOTHING survives Holm across the primary family (all Holm p >= 0.67).
+The single-file complementarity (+17pp, p=5e-4) does NOT replicate on multi-file at this power.
+
+Resolve rates (overall | rich | plain | control):
+  partial none(A)   0.456 | .46 .47 .41      PREREAD none(A)  0.537 | .59 .51 .50
+  partial sync(C)   0.481 | .50 .47 .47       PREREAD sync(C)  0.594 | .68 .60 .44
+  raw-live 0.425 | clean-live 0.425 | clean-ungated 0.412 | type-only 0.431 | syntax-only 0.481
+
+CLAIM 1 COMPLEMENTARITY: preread sync vs none = +5.7pp, McNemar b28 c19 p=0.243 (excl-duds p=0.184),
+  seed-block AGREE (both halves favor sync). Interaction: preread gap +5.6pp vs partial gap +2.5pp
+  -> directionally on-hypothesis but tiny + n.s. Underpowered, not a replication.
+CLAIM 2 TIMING-vs-FORMAT: sync~none (p=0.67); ALL live arms slightly NEGATIVE vs none (raw .425,
+  clean .425, ungated .412); raw-live seed-block DISAGREE (noise). No delivery mode helps; live mildly hurts.
+CLAIM 3 MECHANISM: type-only~none (p=0.56), syntax-only~none (p=0.64), full-sync~syntax-only (p=1.0). Nothing.
+
+THE TWO REAL SIGNALS (both honest, both underpowered):
+  (a) CONTEXT is the lever, not the diagnostic: prereading the remote files lifts resolution
+      ~+8-11pp (none .456->.537, sync .481->.594); the type channel adds little on top.
+  (b) Under PREREAD-SYNC the gain is GROUP-DIFFERENTIAL in the predicted direction: rich +9pp
+      (.59->.68), plain +9pp (.51->.60), but control -6pp (.50->.44) — feedback helps
+      type-checkable tasks and is NOISE on type-blind ones. On-message but n.s. (n/group 56/72/32).
+
+INTERPRETATION: the type signal is SQUEEZED — redundant with the failing test (and, in preread,
+the visible code), and where novel (partial) it's un-actionable (the 7B won't navigate; reads=0).
+The oracle ladder + steered 2x2 (now launched) disambiguate localization vs execution vs prompting.
+Paper pivots from "complementarity helps" to "when, and why, type feedback fails to help a 7B" +
+the context-is-the-lever finding, pending the follow-up controls.
+
+## Interpretation note (pre-oracle) — "are LSPs useless for agents?" (2026-06-11)
+Provisional read while PHASE-B runs. The data does NOT yet support "LSPs are useless for agents";
+it supports a narrower, mechanism-flavored claim. Pinning this BEFORE the oracle arm decides it,
+so the framing isn't retrofitted to the result.
+- CLEAN NEGATIVE (own it): the *Streams thesis* — that live/in-stream delivery beats batch-sync —
+  is negative. D arms 0.41-0.42 sit BELOW do-nothing (A 0.456). Streaming diagnostics hurt.
+- NOT ESTABLISHED: "LSP signal is worthless." Confounds: (1) one 7B model; (2) single-shot,
+  test-bounded, cross-file type-bug repair = ONE use of an LSP (diagnostics-as-correction), not
+  nav/autocomplete; (3) n=18x8, underpowered vs a true ~+5pp; (4) mechanism points at AGENCY not
+  signal — preread (file in context) shows the rich/plain +9pp sync lift, partial (must <read>)
+  does not; rich_attr_moved under oracle-LOC fails with reads=0 (knows WHERE, won't retrieve).
+- DECIDER = final_oracle_fix. If handing the GOLD FIX still doesn't lift pass@1 -> capability floor
+  ("this 7B can't act on any feedback"), which says ~nothing about LSPs. If it DOES lift -> the
+  realistic-arm null is a retrieval/elicitation problem, and "useless" is the wrong word.
+- PREFERRED HEADLINE: not "LSPs useless" (one model, easily rebutted) but "retrieval/context is the
+  lever, not feedback delivery": +8-11pp from putting the file in context, ~0 (and can hurt) from
+  streaming a diagnostic at it. The negative becomes mechanistic (agent's failure = not-reading),
+  not dismissive.
+
+## FOLLOWUP RESULTS — oracle ladder + steered (2026-06-12, complete, duds-excl n=144/arm)
+ORACLE LADDER (partial context, paired on final_partial_AC):
+  none .451 / sync .472 / oracle-LOC .250 / oracle-FIX .389
+  loc vs none b40/c11 p<0.001 (rich+plain b32/c10 p=0.001)  -> perfect LOCALIZATION significantly HARMS
+  fix vs none b33/c24 p=0.289 (rich+plain b26/c19 p=0.371)  -> the GOLD FIX does NOT beat doing nothing
+  fix vs loc  b6/c26  p=0.001                               -> fix >> loc (monotonic recovery, but only to baseline)
+  seed-block fix vs none deltas [-0.056,-0.069] (both halves agree fix <= none)
+  => EXECUTION/CAPABILITY FLOOR: the 7B can't convert even the handed answer into a passing edit above its own
+     baseline; and prescriptive mid-stream injection DERAILS (loc worst). Localization is NOT the bottleneck.
+  CAVEAT: oracle gated on pyrefly firing -> controls never receive it (their numbers are noise; judged on rich+plain).
+
+STEERED 2x2 (gentle system-prompt nudge to trust diagnostics + read the named remote file):
+  plain A .451 / C .472 (C-A +.021)   steer A .549 / C .576 (C-A +.028)
+  INTERACTION (steer C-A)-(plain C-A) = +.007  -> steering does NOT unlock the diagnostic channel
+  steerA vs plainA b19/c33 p=0.070 (seed-block +.111/+.083 BOTH halves agree)
+  steerC vs plainC b21/c36 p=0.063 (seed-block +.194/+.014)
+  => the steer nudge LIFTS BOTH arms ~+10pp (robust for A), but EQUALLY -> it boosts general AGENCY/retrieval,
+     not diagnostic value. CORRECTION to the earlier interim read: the +10pp is NOT task-order bias; it survived
+     the full 8-seed run with seed-block agreement (esp. cond A).
+
+BOTTLENECK VERDICT: not localization (harms), not feedback availability (gold fix doesn't help). The binding
+constraints are (1) under-retrieval / agency — a generic "go read the file" nudge buys ~+10pp — and (2) weak
+execution — even handed the fix it doesn't clear baseline. The realistic diagnostic channel stays null; prompting
+moves the AGENT, not the CHANNEL. Motivates: PHASE-C MoE smoke (does scale lift the execution ceiling AND make
+the channel matter?) and the auto-inject/auto-read feature directions that bypass retrieval.
+
+## PHASE-C SMOKE VERDICT — Qwen3.6-35B-A3B (2026-06-12, 4 seeds, duds-excl, descriptive)
+MoE rich+plain: none .929 / sync 1.000 / oracle-fix .982   (overall: none .903 / sync .972 / fix .958)
+by group none: ctrl .81 plain .89 rich .96 ; sync: ctrl .88 plain 1.0 rich 1.0 ; fix: ctrl .88 plain .96 rich 1.0
+McNemar rich+plain: sync vs none b0/c4 p=0.125 (seedblock +.107/+.036) ; oracle-fix vs none b1/c4 p=0.375 (+.071/+.036) ; fix vs sync b1/c0 p=1.0
+DECISION (rule: rerun iff (a) oracle-fix lift AND (b) sync>none, ELSE pause+harden):
+  (a) and (b) BOTH hold in DIRECTION, but HEADROOM ceiling fires (none rich+plain .929>=.9): the 35B SATURATES the
+  suite, so the lifts are thin residual-headroom wisps (n=4 discordant, p>0.1, NOT significant). Cannot be a powered
+  green-light. => INCONCLUSIVE-by-ceiling.
+ENCOURAGING NUANCE (the real signal): the DIRECTION FLIPPED FAVORABLY vs the 7B —
+  7B: sync +.021 (flat), oracle-fix -.062 (HURT).  MoE: sync +.071 (b0/c4 STRICTLY dominant), oracle-fix +.053 (HELPS).
+  i.e. where the 7B couldn't use feedback (oracle-fix hurt), the 35B's residual shows feedback HELPING — consistent
+  with the capability-floor interpretation (feedback becomes usable with scale).
+VERDICT: NOT a clean (a)&(b) green-light (ceiling). PAUSE the as-is rerun. The binding constraint is now the TASK
+  SUITE: too easy for a 35B (and too hard for the 7B — both models at extremes). NEXT = harder/more discriminating
+  tasks (brainstorm §3: multi-edit cascading refactors, exploration-heavy, hallucinated-API), then re-probe at MoE
+  scale where the favorable direction could become a real powered effect. Constructive path, NOT a negative paper.
+
+## v3 CALIBRATION VERDICT (2026-06-13) — NOT CALIBRATED; the band is empty for single-shot repair
+v3 HARD suite (synth_tasks_mf3, 7 tasks, compositional D2-weighted, verifier ALL OK + 4 Python-expert
+reviewers no-holes). Calibration (4 seeds):
+  35B (Qwen3.6-35B-A3B) none(A) 1.000 (28/28, ALL 7 tasks 4/4) / sync(C) 1.000  -> G1 FAIL (ceiling), G2 moot.
+  7B (Qwen2.5-Coder-7B) oracle-fix 0.321 (rich 5/12, plain 2/8, control 2/8)    -> G4 FAIL (<0.5).
+=> BOTH ENDS FAIL. The two models BRACKET OUT the entire single-shot difficulty axis: easy enough for the
+7B to ACT -> the 35B ceilings; hard enough to challenge the 35B -> the 7B can't execute even handed the gold
+fix. The discriminating band for single-shot cross-file diagnostic-as-correction is EMPTY for this 7B<->35B pair.
+MECHANISM (the real result): the 35B self-retrieves the remote files (reads=2), so by R1's design the fix-info
+it reads makes the diagnostic REDUNDANT; the 7B under-reads AND can't execute. There is no capability regime
+where single-shot repair both NEEDS the diagnostic and can ACT on it -- a genuine boundary on
+diagnostics-as-correction, not a build failure. Compositional bug complexity does NOT escape it (both facts are
+in the remote def the strong model reads).
+NEXT: abandon "harder single-shot bugs". PIVOT to a STRUCTURALLY different task class where reading-one-file is
+INSUFFICIENT, so the LSP carries non-redundant info even for a strong self-retriever:
+  - COMPLETENESS / find-refs / blast-radius (Phase 2 cross-file editing, brainstorm §3.1): rename across N files;
+    the model can read a file but still miss site k-of-n; pyrefly enumerates ALL sites = info reading can't give.
+  - PREVENTION / NAVIGATION (autocomplete-style hallucination suppression; large unfamiliar workspaces).
+
+## mf4 BLAST-RADIUS CALIBRATION VERDICT (2026-06-14) — near-ceiling; completeness whisper only
+v4 multi-file blast-radius suite (3 tasks; multi-file editing harness built+verified; 2 Python-expert
+reviewers: valid, R1/R2 hold, 1 minor alias-hole in blast_const_rename). Calibration (4 seeds):
+  35B (Qwen3.6-35B-A3B) none(A) 0.917 (rich 7/8, control 4/4) / sync(C) 1.000  -> G1 FAIL (near-ceiling, 0.917>0.80).
+  C-A=+0.083; McNemar sync-vs-none b0/c1 p=1.0 (sync STRICTLY dominant — the 1 site the 35B missed unaided, sync
+  caught — but n=1 discordant, NOT powered). cond A: mean 2.8 tests / 3.2 edits / 0.7 reads (the 35B BRUTE-FORCES
+  completeness via the test loop, rarely missing a visible site).
+  7B oracle-fix 0.083 (1/12) -> G4 FAIL: the 7B can't apply the multi-file gold (partly an oracle-format artifact +
+  a genuine multi-file-edit floor); note it DID solve blast_field_rename under plain sync (iterative pyrefly guidance).
+THIRD CEILING (v2 easy single-shot, v3 hard compositional single-shot, v4 small multi-file). THROUGH-LINE: the 35B
++ the test loop solves anything where it can SEE/REACH the sites; the diagnostic adds value ONLY when sites are
+HIDDEN from the model. The completeness MECHANISM is real (sync caught the missed site; cond A iterates to find
+them) but under-stressed at small, full-visibility scale.
+NEXT LEVER (both reviewers): PARTIAL VISIBILITY (sites must be DISCOVERED via <read>, NOT shown — so a missed read
+is a missed site only the cross-file diagnostic reveals) + DISTRACTOR sites (old token that must NOT change) +/or
+SCALE (10+ files); close the blast_const_rename alias-import hole. STRATEGIC ALTERNATIVE: consolidate the boundary
+result — diagnostics-as-correction is redundant for a capable self-retrieving model across a wide difficulty range.
+
+## mf5 PARTIAL-VISIBILITY SMOKE (2026-06-15) — *** THE CHANNEL DISCRIMINATES ***
+v5 partial-visibility blast-radius (1 task partial_field_rename: col->x in 5 HIDDEN site-modules among 6
+distractors, only the primary shown; --max-reads 8 vs 11 modules). 35B, 4 seeds, cond A,C c-eager:
+  cond A(none): 0.25 (1/4)  reads 7.8 (HIT cap) edits 2.5 (incomplete) tests 2.2
+  cond C(sync): 1.00 (4/4)  reads 7.8 (the RIGHT modules) edits 4.0 (complete) tests 1.0
+  GAP C-A = +0.75. McNemar direction b0/c3 (sync strictly dominant). Smoke (n=4, 1 task) -> strong
+  DIRECTIONAL signal, not yet powered.
+MECHANISM CONFIRMED: cond A exhausts its read budget hunting the HIDDEN sites blindly and edits incompletely
+-> fails; cond C gets pyrefly's cross-file site list -> reads exactly the broken modules, edits completely,
+solves with 1 test. The diagnostic carries NON-REDUNDANT info (WHICH cross-file modules are broken) that the
+model cannot get by reading (can't read all) or the test loop (green/red, no location).
+=> Resolves the whole arc: diagnostics-as-CORRECTION are redundant for a capable self-retriever (v2/v3/v4 all
+ceilinged), but the cross-file COMPLETENESS/find-refs channel is non-redundant when SITES ARE HIDDEN + reads
+capped. LSP value = DISCOVERY, not correction.
+NEXT: cond A 0.25 is a touch below the [0.40,0.80] band (read cap 8 vs 11 modules is tight) — tune (max-reads
+up / fewer distractors) to land cond A in-band; then EXPAND to a multi-task mf5 suite (rich + plain + control
+analogues) + POWERED run (8 seeds, Holm) to confirm. This is the paper's positive result.
+
+## mf5 PARTIAL-VISIBILITY CONFIRMATION (2026-06-15) — *** CONFIRMED: type-specific, non-redundant ***
+35B, 4 seeds, --max-reads 8. RICH (partial_field_rename + partial_const_rename): none(A) 0.000 / sync(C) 1.000,
+C-A=+1.00, McNemar b0/c8 p=0.008. CONTROL (partial_logic_control, pyrefly-blind): A 0.000 / C 0.000, C-A=+0.00.
+Per-task: both rich 0->1 (capA_reads 7.8/8 every time); control 0->0 (capA_reads 7.0).
+=> CLEAN DISSOCIATION. The cross-file type-diagnostic completeness channel is (a) NON-REDUNDANT — the 35B
+literally cannot solve unaided (0%) because it can't discover the hidden sites within the read budget, and
+(b) TYPE-SPECIFIC — the same iteration loop with no type signal (control) yields nothing (0->0), so the value
+is pyrefly's cross-file ENUMERATION of broken sites, not generic feedback/turns.
+THE COMPLETE STORY: diagnostics-as-CORRECTION are redundant for a capable self-retriever (v2 easy, v3 hard
+compositional, v4 small multi-file all CEILINGED — the model reads files + the test loop finds visible sites);
+the cross-file COMPLETENESS/find-refs channel is NON-REDUNDANT + type-specific when sites are HIDDEN and reads
+are capped (mf5). LSP value for a capable coding agent = DISCOVERY, not correction.
+NOTE: cond A=0 is a near-floor (max-reads 8 vs 11 modules); the gap is the strongest form of non-redundancy
+(necessity). For the paper, a READ-BUDGET DOSE-RESPONSE (vary --max-reads; cond A rises toward C as reads->#modules)
+would show the channel's value as a function of how expensive manual discovery is.
+NEXT: POWERED run — 8 seeds, more rich tasks (method/import/attr renames) + 2 controls + a read-budget sweep,
+McNemar+Holm. Then write up the positive (mf5) paired with the v2/v3/v4 negatives.
+
+## mf5 FREE-READ DIAGNOSTIC (2026-06-16) — *** the mf5 "positive" was a READ-CAP ARTIFACT ***
+Re-ran mf5 with a GENEROUS budget (--max-reads 20 --max-turns 30 --max-new 4000) to test the skepticism that the
++1.00 gap was just the arbitrary read cap. 35B, 4 seeds:
+  RICH: cond A success 0.88 (was 0.00 at cap 8!) / cond C 1.00.  reads-to-solve A 10.4 / C 9.0; in_tokens A 2391 / C 2206.
+  CONTROL: A 1.00 / C 1.00.
+TWO NEGATIVES: (1) the cond-A=0 success gap was a CAP ARTIFACT — with free reads the 35B recovers to 0.88 (it CAN
+find the hidden sites by reading; we'd forbidden it). (2) the efficiency benefit is MARGINAL — cond C reads 9.0 vs
+cond A 10.4 (~13% fewer reads, ~8% fewer tokens): the model reads ~9-10 of 11 modules REGARDLESS of the diagnostic;
+it does NOT exploit pyrefly's site-list to skip reading (reads defensively).
+=> The mf5 partial-visibility "positive result" does NOT survive honest measurement. It collapses into the project
+through-line: a capable self-retriever reads what it needs (and more), so the LSP channel is largely redundant —
+now confirmed for the COMPLETENESS channel, not just correction. Behavioral nugget: even handed a perfect find-refs
+list, the agent still reads almost everything (doesn't trust/exploit it for efficiency).
+OPEN: the only non-artificial way the completeness channel could matter is at SCALE — when #modules far exceeds
+what any agent will read (e.g. 60-100), reading is GENUINELY expensive/impractical (not a rigged cap), so either C
+reads ~5 vs A reads ~50 (real efficiency) or A can't cover the space and fails (real navigation). Finding that
+CROSSOVER (#modules where the diagnostic starts to matter) is the honest version of the efficiency claim.
+
+---
+
+## 2026-06-18 — mf5 SCALE SWEEP (efficiency, measured): NO CROSSOVER → consolidate the negative
+
+**Setup (the honest version of the token-efficiency claim).** After conceding the mf5 +1.00 partial-visibility gap was a READ-CAP ARTIFACT (cond A recovers 0.00→0.88 with free reads), tested whether find-refs (cond C = pyrefly's cross-file site list) earns its keep NON-artificially at SCALE. Same task (`partial_field_rename`, 5 hidden sites), FIXED GENEROUS budget (`--max-reads 30 --max-turns 40`), Qwen3.6-35B-A3B `--gpu-only`, 3 seeds, conds A,C. Swept repo size via `MF5_NDISTRACT`: N=15/40/80 distractor modules = **21/46/86 files**. Hypothesis: as the repo grows past the budget, reading-to-FIND the sites gets too expensive → cond A degrades while cond C (handed the sites) stays flat.
+
+**Curve (runs/agent/mf5_sweep_{15,40,80}.json):**
+
+| N | files | A succ | C succ | A reads | C reads | A in_tok | C in_tok |
+|---|-------|--------|--------|---------|---------|----------|----------|
+| 15 | 21 | 1.00 | 1.00 | 7.67 | 7.33 | 2280 | 2166 |
+| 40 | 46 | 1.00 | 1.00 | 7.00 | 7.00 | 2138 | 2138 |
+| 80 | 86 | 1.00 | 1.00 | 6.33 | 6.33 | 2463 | 2515 |
+
+A−C reads: +0.33 / 0.00 / 0.00. **NO CROSSOVER.** Cond A holds **1.00** at a *flat ~6–8 reads* as the repo grows 4×; reads do NOT scale with repo size (they slightly fall). The 35B navigates straight to the broken sites regardless of how many distractors surround them — it does not brute-force-scan, so it never approaches the 30-read budget, and find-refs is redundant on BOTH success and efficiency. Neither premise behind the realistic case bit: reading is not expensive (≤8 files at 86-file scale) and navigation is not hard (no read inflation with N).
+
+**VERDICT — consolidate the negative.** Across the full matrix the LSP channel is redundant for a capable self-retriever:
+- CORRECTION (v2 easy / v3 hard-compositional / v4 small-multifile): all CEILING — the 35B reads remote files unprompted and one-shots the fix; sync/oracle add nothing (oracle-loc even HARMS, p<0.001; oracle-fix doesn't beat none = capability floor).
+- COMPLETENESS / find-refs (mf4 / mf5 / this sweep): redundant at tractable scale — the agent finds all sites cheaply (≤8 reads @ 86 files); the +1.00 mf5 gap was an artifact of an arbitrary read cap.
+**Honest caveats for the write-up:** (1) 7B shows a capability FLOOR (can't act even on the gold fix) — the channel can't help a model that can't execute; a footnote, not a result. (2) The partial-visibility positive was real only under an artificial read cap — we found and retracted it ourselves. (3) Untested: genuinely AMBIGUOUS navigation (sites with no import/name trail to follow) and repos beyond single-GPU agent budgets — the honest boundary of the claim.
+
+**Recommendation:** do NOT power this — there is no effect to power. Write up the negative ("for a capable agent that already self-retrieves, type-checker diagnostics — sync or in-stream — are largely redundant for both correction and find-completeness at tractable repo scale"), with the oracle ladder as the clean capability-vs-channel separator and the artifact retraction as a methods-honesty note.
+
+---
+
+## 2026-06-19 — NAV + PREVENTION oracle smokes: both channels REDUNDANT → the negative is now COMPLETE
+
+Probed the two LSP channels untested after correction/completeness/scale all came up redundant. Both attack a
+DIFFERENT failure mode (brainstorm §1.2 "agency-vs-signal": features that REMOVE a decision — auto-inject find-refs /
+completion / signature-help). Oracle-first (perfect channel computed from the gold task; no daemon). Qwen3.6-35B-A3B
+`--gpu-only`, 4 seeds, cond A (no LSP) vs cond C (oracle channel injected up front). New harness: `<grep>` workspace
+search tool (the agent's realistic find-refs alternative) + `n_attractor_edits` metric (hallucinated symbols emitted).
+
+**Navigation** (`np_nav.json`; renamed re-export defeats grep; A=grep+read vs C=find-refs site list). Design
+neutralizes the test-as-nav-oracle (top-level value mismatch, no traceback; arg-swap fix so the only hard part is
+FINDING the aliased sites).
+
+| cond | group | n | succ | reads | greps |
+|---|---|---|---|---|---|
+| A | nav (aliased) | 4 | **1.00** | 12.0 | 1.75 |
+| C | nav (aliased) | 4 | **1.00** | 5.25 | 0.25 |
+| A | control (greppable) | 4 | 0.75 | 4.75 | 0 |
+| C | control (greppable) | 4 | 0.25 | 4.75 | 0 |
+
+Smoking gun: cond A greps the canonical `combine` → misses the aliased sites by design → FALLS BACK to reading
+(s0 read 26 files) and solves anyway. **Equal success (both 1.00); find-refs only saves reads (12→5).** Navigation is
+self-served by call-graph reading; find-refs is efficiency-only, not capability. (control thin/noisy at n=4 — the
+arg-swap reasoning itself is flaky — but the channel lifts nothing.)
+
+**Prevention** (`np_pcomp.json` completion / `np_psig.json` signature; A=read lib vs C=true member-list/signature
+injected). Metric = `n_attractor_edits` (did the model EMIT a hallucinated `.get`/wrong-call?).
+
+| suite | cond | rich succ | **rich attr_edits** | rich reads | read-lib-first |
+|---|---|---|---|---|---|
+| pcomp | A | 0.92 | **0.00** | 1.17 | 12/12 |
+| pcomp | C | 1.00 | **0.00** | 0.75 | — |
+| psig  | A | 0.92 | **0.00** | 1.58 | 12/12 |
+| psig  | C | 1.00 | **0.00** | 1.00 | — |
+
+**G-P1 FAILS for BOTH**: rich cond A `attr_edits = 0.0` across all 12+12 rollouts — the 35B **never emitted a
+hallucinated member/call** because it **reads `lib.py` first in 12/12 (both)**, learns the real API/signature, and
+writes correct code first try. Even psig's type-clean value-swap (`rich_optional_swap`) — read-the-signature suffices.
+The prevention premise ("the model confidently guesses without checking") does NOT hold: it reads defensively. Cond C
+shaves reads (1.17→0.75, 1.58→1.0) and nudges success (0.92→1.0 = one rollout) — a TINY efficiency win, never a
+capability one; the hallucination it would prevent does not occur. Controls (familiar API) ≈ no-op as designed.
+
+**COMPLETE ARC — the unifying mechanism is SELF-RETRIEVAL.** Across every channel type, the LSP is redundant for a
+capable agent in a test-driven loop:
+- correction (v2/v3/v4): reads remote defs, one-shots the fix; oracle-loc HARMS, oracle-fix = capability floor.
+- completeness/find-refs (mf4/mf5/scale-sweep): reads the sites; the +1.00 mf5 gap was a read-cap artifact (retracted).
+- navigation (nav): reads the call graph when grep fails; find-refs efficiency-only.
+- prevention completion+signature (pcomp/psig): reads the lib; zero hallucination → nothing to prevent.
+The LSP's value to HUMANS (live squigglies, jump-to-ref, autocomplete) is about saving a lookup; an agent that reads
+rather than guesses doesn't need it. **RECOMMENDATION: consolidate the clean negative/boundary paper.** Oracle ladder
+= the capability-vs-channel separator; self-retrieval = the unifying mechanism. Honest caveats: 7B capability floor
+(can't act even on gold — a footnote, the channel can't help a model that can't execute); the mf5 read-cap artifact
+(found+retracted ourselves); the consistent marginal efficiency wins (C shaves a read — real but not a capability
+effect, and small because workspaces are small; would grow at repo scale, same story as the scale sweep). Open
+frontiers NOT pursued (the honest edge): a model that does NOT self-retrieve (mid-capability, reads-insufficiently —
+risks the capability-floor confound), or genuinely non-readable facts (runtime/dynamic). All infra reusable
+(suites nav/pcomp/psig, `<grep>` tool, `--channel` oracle injection, hallucination metric, `--dry-run`).
+
+---
+
+## 2026-06-19 — EFFICIENCY-as-policy steer-smoke: prompting does NOT elicit LSP preference → training is the gap (Ian's hypothesis confirmed)
+
+The one axis untested by everything prior: not whether the LSP INFORMS (redundant — the model reads & learns the
+same) but whether USING the LSP is a more token-efficient retrieval ACTION than reading, and whether the model can be
+made to PREFER it. Built PULL LSP actions <defn sym/> (go-to-def/hover) + <findrefs sym/> (oracle-backed, ~6-line
+responses) the model can ELECT instead of <read>; an effic suite where the needed symbol lives in a ~14k-char
+biglib.py (a <read> returns the whole file ~3500 tok; <defn> returns ~6 lines ~50 tok — 50-100x cheaper). 35B,
+4 seeds, 2 tasks, cond A, 3 policy arms differing ONLY in prompt/tools. (Read-truncation confound caught+fixed:
+read cap 4000->16000 so the big lib returns fully and the read arm SUCCEEDS rather than failing on truncation.)
+
+| arm   | tools/prompt                         | success | mean in_tokens | reads | n_lsp |
+|-------|--------------------------------------|---------|----------------|-------|-------|
+| read  | <read> only                          | 1.00    | 4217           | 1.0   | 0     |
+| lsp   | + <defn>/<findrefs> available        | 1.00    | 4258           | 1.0   | **0** |
+| steer | + hard prompt "PREFER the LSP"       | 1.00    | 4340           | 1.0   | **0** |
+
+**The model NEVER used the LSP tool — n_lsp=0 in ALL 24 rollouts, including the steered arm.** Verified it is not a
+parsing bug: the model never emitted `<defn>`/`<findrefs>` text at all (0/8 in steer); the steer config was correctly
+applied; the stream shows it read the full lib. in_tokens is FLAT (~4217/4258/4340) — it reads the big file every
+time, and the steer instruction even adds a few tokens it ignores. The ~3500-token saving a <defn> would give is real
+and available, but the model will not take it. **VERDICT (c) NEEDS TRAINING: a prompt does NOT shift the strong
+read-the-file policy.** Mechanism: the model does not EXPERIENCE token cost, so it has no reason to weigh the cheap
+<defn> against its read habit; a "prefer it" instruction gives no counterweight. Only a training signal that prices
+tokens (RL reward) or demonstrates the behavior (SFT) would instill the preference.
+
+**CRITICAL corollary for the self-distillation plan.** Ian's cheaper path was "hard-prompt a teacher to prefer the LSP,
+then self-distill the solved trajectories." But the steer arm IS that hard-prompted teacher, and it produced ZERO
+LSP-using trajectories — so there is **nothing to clone**. The cheap prompted-teacher distillation route is BLOCKED.
+To unblock, the elicitation must FORCE the behavior, not request it:
+  - **forced-tool arm** (next cheap step): DISABLE <read> for the lib (or penalize it) so the model MUST use <defn>/
+    <findrefs> to solve. This (a) confirms the model CAN solve via the LSP at ~50 tok vs ~3500 (the efficacy +
+    economics, the upper bound), and (b) HARVESTS the gold LSP-using trajectories for SFT. Then SFT the student on
+    them and re-run the steer-smoke: does the preference now stick UNPROMPTED?
+  - if SFT-on-forced-trajectories doesn't generalize -> **RL** with reward = solve at minimum tokens (LSP actions
+    available, <read> allowed but token-priced). This is the proper-but-heavy path.
+
+NET for the paper: the project's full result is now (1) LSP feedback as INFORMATION is redundant across every channel
+(correction/completeness/navigation/prevention) because a capable agent self-retrieves; (2) the only residual value
+is token-EFFICIENCY (LSP-query << file-read), which is a POLICY the model does not adopt by default OR under
+instruction — establishing the training problem as the real open contribution. Infra all reusable: <defn>/<findrefs>
+pull tools, --lsp-tools, --steer preferlsp, effic suite, n_lsp metric, 16k read cap.
+
+---
+
+## 2026-06-19 — 7B OPSD-harvest feasibility: GO. Forced-tool arm manufactures clean LSP-using teacher trajectories
+
+Ian's plan: OPSD with a FORCED-tool arm as teacher — block <read> so the model MUST use <defn>, harvest the solved
+LSP-using rollouts, LoRA-SFT the 7B, re-test if the preference sticks unprompted. (This fixes the blocker that
+free-sampling can't: in the wild n_lsp=0, so there are no LSP trajectories to keep.) Built force_lsp (deny reads of
+non-editable files under the NORMAL prompt -> trajectories stay in the deployment distribution). 7B feasibility smoke
+(Qwen2.5-Coder-7B, effic suite, 6 seeds x 2 tasks):
+
+| arm    | task     | success | reads | n_lsp | note |
+|--------|----------|---------|-------|-------|------|
+| read   | account  | 0.33    | 0.5   | 0     | failures had reads=0 -> 7B GUESSED .deposit/.balance -> thrashed (the 7B often doesn't retrieve at all) |
+| read   | transfer | 1.00    | 0.0   | 0     | GUESSABLE -> no retrieval needed -> useless as an efficiency probe |
+| forced | account  | 0.50    | 0.0   | 2.0   | blocked -> queries <defn sym="Account"> -> real def -> correct .credit/.worth edit -> pass |
+| forced | transfer | 1.00    | 0.0   | 0     | still guesses |
+
+HARVEST = 3/6 account rollouts (s1,s2,s5) resolved AND used <defn sym="Account"> (s2,s5 clean: 1 edit/1 test). The
+forced arm DOES manufacture clean teacher trajectories the wild model never produces. VERDICT: **GO — 7B self-distill
+is viable.** (Fixed a redirect bug en route: the first run's block message used a literal placeholder <defn sym="NAME">
+which the weak 7B copied verbatim -> queried "NAME" -> useless; the block now names available symbols + a real example.
+Minor residual: the 7B still wastes one call on the "<the symbol name>" example literal before self-correcting to
+"Account" — tighten the redirect to drop the copyable literal.)
+
+RECOMMENDED NEXT (the OPSD pipeline; one new piece = the SFT loop):
+1. EXPAND the effic suite to ~10-15 NON-GUESSABLE retrieval tasks (drop transfer-style guessable APIs — retrieval must
+   be REQUIRED; un-guessable member/signature names like Account.credit/.worth).
+2. Bigger forced harvest (more seeds/tasks) -> the SFT training set (sft_input_ids/sft_labels are already captured per
+   rollout; filter to resolved AND used-a-real-<defn>).
+3. BUILD the LoRA-SFT loop (the only piece not yet in the harness) and SFT the 7B on the harvested trajectories.
+4. RE-RUN the steer-smoke (read available, NO block, NO steer) = the payoff: does n_lsp rise UNPROMPTED and in_tokens
+   drop toward ~700 (vs the ~4200 read baseline)? That answers Ian's whole hypothesis: can training instill the
+   token-efficient LSP-preference that prompting could not.
+Infra reusable: force_lsp read-block, <defn>/<findrefs> pull tools, --lsp-tools/--force-lsp/--steer preferlsp, effic
+suite, n_lsp + sft-label capture.
+
+---
+
+## 2026-06-19 — OPSD payoff: NULL on the literal <defn>-preference, but training DOES move the retrieval policy (distribution gap = the key lesson)
+
+Ian's hypothesis: prompting can't make the model prefer the cheap <defn> over reading (35B n_lsp=0 even steered) —
+can OPSD TRAINING? Forced-tool harvest (block <read> -> 7B must use <defn>) -> 23 clean teacher trajectories (9 of 12
+tasks) -> LoRA-SFT 7B (3 epochs, 0.53% params, loss 0.17->0.15) -> re-test with LSP tools available, NO block/steer.
+Adapter confirmed loaded (config.adapter=runs/sft/effic_lora).
+
+PRE (wild 7B) vs POST (SFT'd):
+| arm | succ | n_lsp | %use-<defn> | reads | %retrieve | in_tok |
+|-----|------|-------|-------------|-------|-----------|--------|
+| PRE  overall | 0.65 | 0.02 | 2% | 0.50 | 42% | 3086 |
+| POST overall | **0.83** | **0.00** | **0%** | 0.77 | **67%** | **3484** |
+| PRE  seen-9  | 0.56 | 0.03 | 3% | 0.67 | 56% | 3865 |
+| POST seen-9  | **0.81** | 0.00 | 0% | 1.00 | **86%** | 4350 |
+| PRE  unseen-3| 0.92 | 0.00 | 0% | 0.00 | 0%  | 751 |
+| POST unseen-3| 0.92 | 0.00 | 0% | 0.08 | 8%  | 887 |
+
+**NARROW verdict — NULL (slightly counter):** the SFT'd model uses <defn> LESS, not more (0% vs 2%), and in_tokens
+went UP (3484 vs 3086; seen 4350 vs 3865). The token-efficiency goal was NOT achieved — training on forced-<defn>
+trajectories did not instill a <defn> preference.
+
+**BROAD verdict — the retrieval policy IS trainable:** the SFT clearly shifted behavior — %retrieve 42->67 (seen
+56->86), reads 0.5->0.77, and success 0.65->0.83 (seen 0.56->0.81). The model went from guess-and-thrash to
+retrieve-then-solve. But it retrieves via its native <read>, not <defn>.
+
+**MECHANISM — the distribution gap (the headline methodological lesson):** the harvest BLOCKED reads, so the
+trajectories demonstrate "<defn> is HOW to retrieve when you can't read," NOT "<defn> is BETTER THAN an available
+read." The model generalized the right META-behavior (retrieve before acting) but executed it through its
+stronger-prior, now-available <read> at inference. It learned the right behavior on the wrong axis. To teach the
+SPECIFIC cheap-tool preference, the harvest must show <defn> CHOSEN OVER an available read.
+
+**CAVEATS (honest):** (1) the success gain is concentrated on SEEN tasks (in the SFT set) -> partly possible
+solution-memorization, not purely a learned-retrieval skill. (2) the UNSEEN-3 (transfer/point/matrix) are GUESSABLE
+(already 0.92, reads=0) so they do NOT cleanly test whether retrieval generalizes — a real generalization test needs
+HELD-OUT tasks that REQUIRE retrieval. (3) only 23 trajectories, 3 epochs.
+
+**RECOMMENDATION (next experiments, in order):**
+1. PREFERENCE harvest: keep <read> available during harvest but DISADVANTAGE it (truncate/charge-tokens/penalize) so
+   the model's solved trajectories show <defn> chosen OVER read -> re-SFT -> does POST n_lsp finally rise? (the direct
+   fix for the distribution gap).
+2. CLEAN generalization: hold out several NON-GUESSABLE (retrieval-required) tasks from the SFT set; measure
+   retrieve-behavior + success on them to separate "learned to retrieve" from "memorized solutions".
+3. RL escalation (now well-motivated): training demonstrably moves the retrieval policy (+25pp), so an explicit
+   token-cost reward could push it to <defn> specifically — the policy is trainable, it just needs the right objective.
+
+**PROJECT NARRATIVE (this strengthens the thesis, doesn't weaken it):** the LSP is info-redundant across every channel
+(correction/completeness/navigation/prevention) because the agent self-retrieves; its only residual value is
+token-EFFICIENCY, which is a POLICY the model adopts neither by default, nor under prompting (35B), nor under naive
+forced-distillation (this run) — yet the retrieval policy IS trainable (SFT shifted it +25pp). So "make the agent
+prefer the cheap LSP retrieval" is a real, open, training-shaped problem, and the distribution-gap finding is the
+concrete next step. Infra all reusable: force_lsp, <defn>/<findrefs>, --save-sft, sft_lora.py, effic suite, OPSD pipeline.
+
+---
+
+## 2026-06-19 — Path-A DAgger: POSITIVE. On-policy cost-aware imitation makes the cheap-LSP preference a LEARNABLE POLICY (the gap offline RFT couldn't close)
+
+After the offline RFT null (trained on the model's own <read> action -> reinforced reading), the lit review
+(Ross-Bagnell compounding error; STaR's blind spot; DAgger/AggreVaTe arXiv:1406.5979; Revisiting-DAgger arXiv:2605.12913)
+diagnosed it as off-policy exposure bias and prescribed on-policy cost-aware imitation with the rule oracle
+(read X -> defn X is cost-dominant: same info, ~70x cheaper = AggreVaTe dominance). Implemented as DAgger round-0:
+lead <defn sym> as the TRAINED first action under the DEPLOYMENT prompt (reads available), model continues on-policy ->
+CLEAN defn-first, READ-FREE trajectories (NO <read> for SFT to clone). Harvest 9 train tasks, 8 seeds -> 71/72 solved,
+all 72 read-free (vs the prior 23 read-contaminated). LoRA-SFT 7B (3ep). Re-test all 12 (3 held out), reads available,
+NO lead/force/steer. Adapter confirmed loaded (config.adapter=runs/sft/effic_lora_dagger).
+
+PRE (wild 7B) vs POST (DAgger-SFT):
+| set | succ | %use-<defn> | reads | in_tok |
+|-----|------|-------------|-------|--------|
+| PRE  overall  | 0.65 | 2%   | 0.5 | 3086 |
+| POST overall  | **0.98** | **100%** | 0.0 | **743** |
+| PRE  seen-9   | 0.72 | 3%   | 0.5 | 2857 |
+| POST seen-9   | 0.97 | 100% | 0.0 | 741 |
+| PRE  unseen-3 | 0.42 | 0%   | 0.5 | 3775 |
+| POST unseen-3 | **1.00** | **100%** | 0.0 | **751** |
+
+VERDICT — **POSITIVE and generalizing.** The SFT'd model ELECTS <defn> in 100% of rollouts UNPROMPTED (vs 2% wild),
+reads nothing, SOLVES MORE (0.98 vs 0.65), at ~4x fewer tokens (743 vs 3086). It holds on the HELD-OUT tasks
+(0%->100% use-defn, 0.42->1.00 success) -> a learned POLICY, not memorization. On-policy cost-aware imitation CLOSED
+the exact gap that offline RFT could not — and the off-policy-null vs on-policy-success contrast is itself a clean
+methods point (Ross-Bagnell / STaR predicted it). Note the unseen-3 success jump (0.42->1.0): the wild model FAILED
+those by guessing+thrashing; forced retrieval via <defn> both saves tokens AND fixes correctness.
+
+PROJECT THESIS NOW COMPLETE & COHERENT:
+1. LSP feedback as INFORMATION is redundant across every channel (correction v2/v3/v4; completeness mf4/mf5/scale;
+   navigation; prevention completion+signature) — a capable agent self-retrieves.
+2. The only residual value is the LSP-as-EFFICIENT-TOOL (cheap <defn> retrieval vs expensive <read>).
+3. That efficiency is a POLICY the model adopts NEITHER by default, NOR under prompting (35B steered n_lsp=0),
+   NOR under naive offline distillation/RFT (n_lsp->0, even counter) — BUT IS LEARNABLE via ON-POLICY cost-aware
+   imitation (DAgger/AggreVaTe): 2%->100% use, +33pp success, 4x fewer tokens, generalizing.
+=> The contribution: type-checker/LSP feedback is informationally redundant for a self-retrieving coding agent; its
+   real value is token-efficient retrieval, which is a trainable policy that prompting and offline cloning cannot
+   instill but on-policy imitation can. The method matters as much as the signal.
+
+RECOMMENDED NEXT:
+1. POWER it: more seeds/tasks; DAgger rounds 2..K (roll out the SFT'd student, relabel any residual reads); the
+   tokens-to-solve curve; McNemar on success + a paired token test; a larger held-out generalization suite.
+2. HONEST CAVEAT to check FIRST (the one real risk): all effic tasks are defn-SUFFICIENT by construction, so we can't
+   see whether the model now OVER-prefers <defn> and fails tasks that genuinely NEED a full <read>. Add a few
+   read-required tasks and confirm it learned "prefer defn WHEN sufficient," not "always defn." This is the gate
+   before any powered claim.
+3. Path B cost-RL (GRPO token-cost reward, OTC-PO/IKEA templates) as the principled scale-up + the cleanest
+   "prefer the cheaper action" framing — now strongly motivated (the policy is demonstrably trainable).
+Infra reusable: lead_defn, force_lsp, <defn>/<findrefs>, --save-sft, sft_lora.py, effic suite, run_dagger.sh,
+docs/plan_opsd_efficiency_2026-06-19.md (lit review + both paths).
+
+---
+
+## 2026-06-20 — POWERED DAgger run: POSITIVE + BOUNDARY HELD (non-degenerate, generalizing policy)
+
+Powered the Path-A positive on the effmix suite (12 defn-sufficient + 6 read-required boundary tasks), with the
+validity gate. Mixed harvest (lead-<defn> on defn tasks, lead-<read> on read tasks) -> 139 clean trajectories
+(107 defn-first + 32 read-first; CAUGHT+FIXED an sft_lora filter bug that had dropped all read trajectories, which
+would have manufactured the always-defn collapse the gate exists to detect) -> LoRA-SFT 7B 3ep -> PRE(wild)+POST(sft)
+retest all 18, reads available, no lead/steer. Adapter confirmed loaded. Train 9 defn+4 read; held out 3 defn + 2 read.
+
+PRE (wild) vs POST (DAgger-SFT):
+| set | succ | %use-<defn> | %read | in_tok |
+|-----|------|-------------|-------|--------|
+| DEFN-SUFFICIENT overall  | 0.65 -> **1.00** | 0% -> **100%** | 41% -> 0% | 3086 -> **687** |
+|   seen-9                 | 0.72 -> 1.00 | 0->100 | 38->0 | 2857 -> 675 |
+|   held-out-3             | 0.42 -> **1.00** | 0->100 | 50->0 | 3775 -> **722** |
+| READ-REQUIRED overall    | 0.58 -> **0.79** | 0% -> 50% | 45% -> **100%** | 3508 -> 4918 |
+|   name-hidden            | -> succ 0.69, %read 100 |
+|   many-symbol            | -> succ 1.00, %read 100, %defn 0 (reads once instead of 4 defns) |
+
+STATS: McNemar on SUCCESS (n=72 pairs): POST-only-solved 25, PRE-only-solved 3, **exact p=2.7e-5** (highly sig).
+Token test (solved-in-both): DEFN-SUFFICIENT PRE 2304 -> POST 677 (**3.4x** by mean; paired sign p=0.15 — underpowered
+at n=31 because PRE's solved subset is the easy cases it guessed cheaply). READ-REQUIRED PRE 2054 -> POST 4431 (POST
+reads MORE = correct, tokens up as they should be).
+
+VERDICT — **SUCCESS, boundary HELD.** (1) DEFN-SUFFICIENT: the trained model ELECTS <defn> in 100% of rollouts (from
+0%), solves ALL (incl held-out 0.42->1.00), at ~3-4.5x fewer tokens. (2) READ-REQUIRED: it did NOT collapse to
+always-defn — %read STAYED 100%, success ROSE 0.58->0.79; on many-symbol tasks it reads ONCE instead of 4 defns
+(0% defn there, by economic choice). So the model learned the actual BOUNDARY: "defn when sufficient, read when
+needed." Success gain is highly significant (p=2.7e-5) and GENERALIZES to held-out tasks. HONEST CAVEAT: the
+token-savings MAGNITUDE is large (3-4x mean) but its strict paired significance is modest at this sample size — the
+efficiency-token p-value wants more seeds; the success/policy result is rock-solid.
+
+=> THE PROJECT'S POSITIVE RESULT IS POWERED AND CLEAN: type-checker/LSP feedback is informationally redundant for a
+self-retrieving agent (correction/completeness/navigation/prevention all redundant); its REAL value is token-efficient
+retrieval (cheap <defn> vs expensive <read>); that efficiency is a POLICY the model adopts NEITHER by default, NOR
+under prompting (35B steered n_lsp=0), NOR under offline RFT (null/counter) — but IS LEARNABLE, GENERALIZING, and
+NON-DEGENERATE via on-policy cost-aware imitation (DAgger/AggreVaTe). The off-policy-null vs on-policy-success
+contrast + the boundary-preservation are the clean methods story.
+
+RECOMMENDED NEXT: (1) one more seed-batch on defn-sufficient to tighten the token p-value (cheap); (2) WRITE-UP now —
+review the Nous research-paper-writing guide; core note = you CAN benefit from an LSP (its EFFICIENCY), it requires
+TRAINING the model, with the why (self-retrieval) + what-doesn't-work (prompting, offline cloning) rundown; (3) optional
+Path B cost-RL (GRPO token reward) for the cleanest "prefer the cheaper action" framing + to push the token magnitude.
+Infra: lead_defn/lead_read, force_lsp, effmix suite, sft_lora.py (filter fixed), analyze_dagger.py, run_dagger_powered.sh.
+
+**POOLED (2026-06-20, 12 seeds, defn-sufficient):** token magnitude now significant. Paired token test
+(solved-in-both, n=84): PRE 2108 -> POST 675 tok, POST cheaper 59/84, exact two-sided sign p=2.7e-4 (was p~0.15 at
+n=31). All-rollout mean 3406->720 (4.7x), success 0.60->0.98. Success McNemar (n=144 pairs): c=57 b=3 p=6.2e-14.
+%use-defn 0->100. => the efficiency claim is FULLY POWERED on both success and token magnitude. adapter confirmed loaded.
+
+---
+
+## 2026-06-20 — Efficiency ISOLATED (read-retrieval vs defn-retrieval, matched success) + relabel bug fixed
+
+(A) EFFICIENCY ISOLATION (the clean control separating "LSP saves tokens" from "retrieval helps success"): a
+read-trained model (retrieves via <read>, success 83%, 3484 tok) vs the defn-trained model (retrieves via <defn>,
+success 100%, 687 tok). On tasks BOTH solve (n=40): read-retrieval 3191 tok -> defn-retrieval 684 tok = **4.7x cheaper,
+defn cheaper on 31/40, exact sign p=0.00068**. Both models retrieve, so the saving is the ACTION CHOICE (cheap defn vs
+expensive read), not retrieval-vs-guess. Efficiency claim isolated and significant.
+
+REPRODUCIBILITY NOTE (not a result): an earlier --relabel implementation masked the read-attempt turn in place, leaving
+the read+redirect in the model's context so <defn> was never trained as a first action from the clean prompt; it did
+not transfer. Fixed to DROP that prefix from the SFT trace (model's own <defn> becomes the first trained action from the
+clean prompt). The proper relabel test = relabel2 (running). The buggy variant is not a contrast/ablation — it was a bug.
+
+---
+
+## 2026-06-20 — RELABEL2: the PROPER on-policy relabel WORKS (the method, DAgger earned)
+
+The genuine relabel (roll out the wild agent; when it reaches for `<read>` of a non-editable file the rule oracle
+redirects; the agent picks `<defn>` ITSELF — its own symbol; DROP the read-attempt+redirect prefix and keep the agent's
+own definition-first continuation, so the trained first action from the clean deployment prompt is the AGENT'S OWN
+go-to-definition). NO gold action injected — only the retrieval CHANNEL of the agent's own behaviour is relabelled.
+
+Pipeline: harvest 9 defn tasks (force-lsp + relabel, 8 seeds) -> 72 rows scanned -> 18 clean teacher trajectories kept
+-> LoRA SFT effic_lora_relabel2 (loss 0.38->0.18) -> retest 12 defn-sufficient tasks x 4 seeds (n=48), adapter verified
+== runs/sft/effic_lora_relabel2.
+
+RESULT (POST relabel2 vs PRE powered_retest_base, defn-suff seeds0-3, n=48):
+  %use-defn   0%   -> 100%   (48/48)
+  %use-read   42%  -> 0%
+  resolved    65%  -> 98%    (31/48 -> 47/48)
+  mean in_tok 3086 -> 724    (4.3x fewer; median 2929 -> 674)
+  paired: POST cheaper 37/48, worse 11, exact two-sided sign p=2.2e-4.
+
+=> The on-policy relabel of the agent's OWN retrieval action instills the cheap-retrieval preference (0->100% defn,
+65->98% success, 4.3x fewer tokens) — reproducing the powered lead-<defn> result WITHOUT any injected/teacher-forced
+action. This EARNS the DAgger/AggreVaTe framing and is the method the report presents: "on-policy cost-aware imitation
+— relabel the agent's own retrieval to go-to-definition." The teacher-forced lead-<defn> is a corroborating pilot /
+stepping stone, NOT a separate featured method. (Prereq bug fixed this session: the force-lsp redirect's literal
+self-closing <defn .../>/<findrefs .../> EXAMPLE tags were being matched as the model's action because the action-search
+cursors weren't advanced past the spliced redirect obs; fixed stream_agent.py ~672 by advancing read_from/grep_from/
+lsp_from to len(emitted). Sanity-gated: trained <defn> with the model's OWN real symbol confirmed before SFT. Bug fix,
+reproducibility note only — not a contrast.)
+
+Draft updated: §4 method now features the genuine relabel (lead-defn demoted to pilot); §5.1 leads with the relabel2
+numbers. NEXT: real-LSP headline reproduction (effmix, real resolver), then tech-report review.
+
+---
+
+## 2026-06-21 — REAL-LSP HEADLINE: the value-add reproduces with a REAL go-to-definition resolver
+
+Re-ran the full headline (effmix 18 tasks x 4 seeds = 72/arm) with <defn> backed by the REAL resolver
+(mock_env.goto_definition: AST over the live workspace, NO oracle dict). PRE = untrained 7B; POST = effic_lora_powered
+(adapter verified == runs/sft/effic_lora_powered).
+
+DEFN-SUFFICIENT (n=48, real resolver):
+  PRE  %defn 0   %read 42  succ 65%  mean_in_tok 3086
+  POST %defn 100 %read 0   succ 100% mean_in_tok 688
+  paired tokens 3086->688 (4.5x), POST cheaper 37/48, exact sign p=2.2e-4
+  success McNemar: POST-only-solve b=17, PRE-only c=0, exact p=1.5e-5
+READ-REQUIRED boundary (n=24):
+  PRE  %defn 0   %read 42  succ 54%  mean_in_tok 2632
+  POST %defn 50  %read 100 succ 83%  mean_in_tok 4844
+
+=> The headline holds with a REAL tool, not an oracle: on defn-sufficient tasks the trained agent ELECTS the real
+go-to-definition 100% (from 0), solves ALL (from 65%), at 4.5x fewer tokens (p=2.2e-4). On read-required boundary tasks
+it did NOT collapse to always-defn — %read STAYS 100% and success RISES 54->83%; tokens there go UP (2632->4844) because
+the trained agent correctly pays the read cost to actually solve genuinely read-required tasks (the efficiency win is on
+defn-sufficient work; on read-required work it spends to succeed — an honest, non-degenerate tradeoff). The real
+resolver returns content identical to the earlier oracle (validated 12/12), so this converts "we trained a preference
+for a magic cheap action" into "we made a real LSP value-add." ALL <defn> results in the report now use the real
+resolver. NEXT: tech-report critical+writing review -> incorporate.
+
+## 2026-06-21 — Tech-report reviewer pass v2 (incorporated)
+v2 critical+writing review: all four results HOLD (real resolver / efficiency isolated / genuine on-policy relabel /
+real-LSP headline reproduces). Applied 8 FIX-NOW writing+scoping edits to docs/PAPER_draft.md (single primary headline
+number 3086->688 4.5x with the other 3 token numbers labelled; 2%-vs-0% default-use disambiguated; oracle/coverage role
+stated honestly in recipe+§4+limitations; "no oracle" softened to match the dead-fallback in code; boundary %defn=50/
+%read=100 clarified; citation "all verified" softened to flag the 2 unverified 2026 IDs; cut v1 process-residue ->
+docs/review_v1.md). Appended "## Reviewer pass v2 — open items for Ian": (1) mechanism-distinct held-out eval where
+defn-sufficiency is NOT surface-predictable [highest value], (2) a 2nd model scale, (3) real pyrefly-LSP-client
+replication, (4) report held-out use/tokens separately + non-clone held-out family, (5) optional Path-B cost-RL.
+Shippable core today = C1+C2+C3 at 7B on synthetic suites, C4 scoped to motivation. Draft v0.4.
+
+---
+
+## 2026-06-21 — ITEM 1 (surface-decoupled "judge coverage"): POSITIVE on surface-keyed, CONFOUNDED on must-read
+
+New suite effic_dc = 6 pairs x {A defn-sufficient _a, B defn-stub _b}, prompts BYTE-IDENTICAL within a pair (R7), real
+<defn>. Tests whether the trained model JUDGES coverage from the <defn> return vs pattern-matches the task surface.
+Ran PRE (untrained) + POST (effic_lora_powered), 12 tasks x4 seeds/arm. (Op note: a hang was a STALE pyrefly-init
+daemon from an old killed session deadlocking the shared socket — purged all pyrefly procs, re-ran clean. An initial
+run with a CHASEABLE stub `sym=_impl_k` showed the same coverage-judging; B was then HARDENED to an opaque subscript
+`sym=_TBL[pos]` (names no _impl_, shuffled table) to block the one-hop defn-chase — that hardened run is the result.)
+
+HARDENED RESULT (PRE -> POST, per surface-identical variant):
+  A defn-sufficient:  PRE succ79 %defn0 %read54 tok2909  ->  POST succ100 %defn83 %read17 meanDefn0.8 tok1205
+  B stub-MUST-READ:   PRE succ75 %defn0 %read54 tok4837  ->  POST succ88  %defn88 %read17 meanDefn1.2 tok1706
+  POST B escalation breakdown (n=24): solved-via-READ=3, 2+defn-chase=3, 1-defn=15, edit-on-stub-FAIL=2.
+
+VERDICT:
+ (+) NOT SURFACE-KEYED (the reviewer's open concern, answered): despite identical surface, POST adapts to the <defn>
+   RETURN — more defn calls on B (1.2 vs 0.8), higher cost (1706 vs 1205 tok), and almost never a blind edit-on-stub
+   (2/24). It judges coverage from what retrieval returns, not from the task shape. On A it uses one cheap defn and
+   solves 100% at 1205 tok.
+ (-) CONFOUND on the must-read sub-claim: of the 15 one-defn B-solves, 10 were ONE-SHOT (n_tests=1) guesses with ZERO
+   retrieval -> B is partly GUESSABLE (the gold behaviour is inferable from name/docstring despite the value-kind
+   attractor guard, which only checks ONE idiomatic wrong-guess). So when cheap retrieval is blocked, the *efficient*
+   trained model often GUESSES rather than escalating to a READ (reads stay flat at 0.2 on B vs A). The behavioural
+   TEST LOOP is a second escape hatch (any test-driven agent can brute-force from test feedback). => the suite cleanly
+   shows "judges coverage / not surface-keyed" but CANNOT cleanly establish "reads when defn insufficient": with a
+   behavioural test loop + guessable targets, "must read" is fundamentally unachievable (consistent with the project's
+   self-retrieval thesis — a capable test-driven agent rarely *has* to read).
+
+NET for the report: item-1 upgrades C2/generalization on the SURFACE-KEYED question (the model judges coverage from the
+return, not the suite's task shape). The stronger "learns to read on insufficiency" remains open and is arguably
+ill-posed given the test loop. A fully clean must-read test would need non-inferable (arbitrary-constant) target
+behaviour AND a test that hides expected outputs — flagged for Ian; not pursued autonomously (diminishing returns, core
+question answered).
+
+---
+
+## 2026-06-21 — ITEM 2 (scale): the relabel method TRANSFERS to Qwen3.6-27B (kills the 7B-only objection)
+
+Re-ran the genuine on-policy relabel pipeline on Qwen3.6-27B (qwen3_5 hybrid-reasoning arch, default thinking-on
+config). Transformers 5.9 loads it; it emits parseable <read>/<defn>/<edit>/<test> despite <think> (no harness change
+needed); sft_lora accepts qwen3_5 (no LoRA-target fix); LoRA trains on the 128GB unified box with no OOM (loss
+0.30->0.09). Lighter seeds than the 7B headline (PRE/POST 2 seeds, harvest 4 seeds; 32/36 clean trajectories kept).
+
+RESULT (12 defn-sufficient tasks, n=24/arm; adapter verified == runs/sft/effic_lora_relabel2_27b):
+  PRE  (wild 27B):  %defn=0   %read=96  succ=96%  mean_in_tok=4058 (median 4154)
+  POST (relabel):   %defn=100 %read=0   succ=100% mean_in_tok=726  (median 710)
+  matched-success (solved-in-both, n=23): 4019 -> 726 tok = 5.5x cheaper.
+
+VERDICT: the bigger, MORE capable model is the SAME story as the 7B — wild 27B is capable (96% success) but solves by
+READING the whole file (96% read, 0% defn, 4058 tok); the genuine relabel flips it to 100% go-to-definition use, 0%
+read, at maintained-or-better success (96->100%) and 5.5x fewer input tokens. The token win is actually LARGER than the
+7B's (~4.5x) because the wild 27B reads even more aggressively. => the cheap-retrieval preference is NOT a small-model
+artifact; the on-policy relabel method TRANSFERS across a 4x scale jump AND across a different model generation/family
+(Qwen2.5-Coder-7B dense -> Qwen3.6-27B reasoning). This directly answers the dominant reviewer scope objection
+("cost-preference shown only at 7B"). CAVEATS (honest): lighter seeds than the 7B headline (scale CHECK, not powered);
+default thinking-on config (the <think> tokens are OUTPUT, do not inflate the input-token efficiency metric); same
+effic defn-sufficient suite. Infra: run_relabel2_27b.sh, effic_lora_relabel2_27b.
+
+## 2026-06-21 — ITEM 3 (pyrefly-LSP) SCOPED, needs Ian: pyrefly exposes only `lsp` server + `check` (no one-shot
+definition CLI). go-to-def needs a JSON-RPC LSP client (~2h + the known daemon-deadlock care). The AST resolver is
+already a real oracle-free go-to-def (claim holds), so item 3 is VALIDATION not capability. Plan + 3 options in
+docs/plan_item3_pyrefly_lsp.md (rec: (A) standalone validation script, ~2h, low-risk; or (C) leave as-is). Not
+auto-implemented (over the don't-guess bar + deadlock risk). Draft open-item-3 updated.
+
+## 2026-06-21 — ITEM 5 (cost-RL GRPO) SCOPED -> DEFERRED. Feasible by gluing synth_mf rollouts (resolved+in_tokens) +
+sft_lora's manual LoRA backward loop (swap CE -> advantage-weighted PG); ~150 lines. Deferred per Ian's "if straight-
+forward": NOT low-risk (PG tuning) + GPU-expensive (multi-round harvests) + not needed (SFT relabel already the powered
+headline). Plan + cheapest-informative spec in docs/plan_costrl.md. Draft open-item-5 updated.
+
+## 2026-06-21 — FOLLOW-UPS COMPLETE. Items 1-5: (1) surface-decoupled judge-coverage = POSITIVE (not surface-keyed),
+must-read confounded (flagged); (2) 27B scale = method TRANSFERS (0->100% defn, 5.5x cheaper, kills 7B-only); (3)
+pyrefly-LSP = scoped, needs Ian (plan); (4) held-out reported separately (5.2x); (5) cost-RL = scoped, deferred (plan).
+All written to log + memory + docs/PAPER_draft.md. Open for Ian: item-1 guessability fix, item-3 option A/C, item-5 go/no-go.
+
+---
+
+## 2026-06-22 — ITEM 1 (surface-decoupled) — RETRACTED coverage-judging claim: the suite's fix is DELEGATION, not retrieval
+
+Guessability fix landed cleanly (arbitrary non-inferable gold + sha256 hash-only tests + _TBL[pos] stub; verifier ALL OK;
+guess-rate 42%->0%, test-loop blocked). Clean eval (non-guessable), 12 tasks x4, PRE vs POST(effic_lora_powered):
+  PRE  A succ54 %defn0 %read46 ; B succ50 %defn0 %read50   (untrained reads/reimplements/thrashes)
+  POST A succ100 %defn100 %read0 meanDefn1.0 ; B succ88 %defn100 %read0 meanDefn1.0
+INSPECTION (the catch): EVERY POST solve — 24/24 A and 21/21 B — fixes the bug by DELEGATING: `return combine(a,b)`
+(call the helper), NEVER by reimplementing the rule. Because the gold fix is delegation, it works IDENTICALLY whether
+`<defn helper>` returns the full body (A) or the opaque stub `helper = _TBL[pos]` (B) — `helper` resolves to the real
+impl at runtime either way. So the agent NEVER needs the arbitrary body, and the A/B "coverage" distinction does NOT
+gate solving. The earlier "judges coverage / not surface-keyed" reading (and the guessable run's apparent A-vs-B defn
+delta) was an ARTIFACT: the model just learned "confirm the helper with one <defn>, then delegate", which is robust to
+the stub for the trivial reason that delegation doesn't read the body.
+
+=> RETRACT the §5.1c "judges coverage from the return" claim. The surface-decoupled suite, as built (both the guessable
+and the non-guessable versions), does NOT isolate coverage-judging — its gold fix is delegation. What it DOES show
+(honest, smaller): the trained model delegates efficiently (1 <defn> to confirm the helper + a call, ~100%/88% A/B)
+where the untrained reads/reimplements/thrashes (~50%) — consistent with the efficiency story (cheap defn-confirm +
+delegate beats read-and-reimplement) but NOT a coverage-judging result.
+
+SCOPE: this affects ONLY item 1 (the decouple suite). The MAIN results are unaffected — the effic suite's fixes
+genuinely require the RETRIEVED API (e.g. "use .credit not .deposit", knowable only from the Account defn), not
+delegation; efficiency-isolation / relabel / real-LSP headline / 27B-scale all stand. A clean coverage-judging test
+would need a NO-DELEGATION task where the fix REQUIRES the retrieved body (inline reimplementation, no helper to call) —
+flagged for Ian, not auto-built (item 1 has now hit two distinct confounds; the main story doesn't need it).
+
+---
+
+## 2026-06-22 — ITEM 3 (pyrefly-LSP) DONE: <defn> == a live language server, and the headline reproduces with it
+
+(1) VALIDATION: scripts/validate_pyrefly_lsp.py drives a real `pyrefly lsp` daemon (stdio JSON-RPC) and queries
+textDocument/definition for the 12 effic symbols -> 12/12 AGREE with mock_env.goto_definition on file+defining-line
+(0 disagree, 0 error). So the cheap <defn> action resolves to the same definition a production language server does.
+(2) CONTENT FIX: the LSP returns the definition LOCATION (a line), not the body, so a drop-in --lsp-defn run handed the
+model `class Account:` without methods and it thrashed. Patched mock_env.lsp_definition to EXPAND the LSP-resolved
+location to the enclosing top-level node's full source span (the LSP drives RESOLUTION; the tool returns the body at
+that location -- exactly what a go-to-definition tool does). Re-smoke then solved via live-LSP <defn> (1 defn, 0 reads,
+728 tok).
+(3) PROPER RUN (--lsp-defn, <defn> backed by the live daemon, 12 defn tasks x2 seeds; daemon spawned+killed per defn,
+strictly sequential, no deadlock): PRE %defn0/%read25/succ58/2894tok -> POST(effic_lora_powered) %defn100/%read0/
+succ100/689tok = ~4.2x cheaper. This MATCHES the AST-resolver headline (POST ~700tok, 100% defn, 100% succ).
+=> the cheap-<defn> value-add HOLDS when <defn> is a REAL pyrefly language-server call, not just our static resolver.
+Item 3 fully resolved (validation + working live-LSP run). Opt-in --lsp-defn (mock_env.lsp_definition / stream_agent
+use_lsp_defn / synth_mf --lsp-defn) is sequential-only (daemon-per-defn cost + deadlock risk) -> default AST path for
+bulk runs (validated equal); --lsp-defn confirms the live-server equivalence. Infra: validate_pyrefly_lsp.py,
+run_lsp_headline.sh. Op note: daemon-spawning commands must launch via a script-file + standalone nohup in this harness.
+
+---
+
+## 2026-06-23 — ITEM 5 (cost-RL GRPO) DONE as scoped: mechanism trains cleanly; 1 round does NOT corroborate
+
+The optional RL baseline (Path-B). Built scripts/grpo_cost.py + run_grpo.sh: group-sample rollouts per task ->
+reward r = resolved ? 1 - lambda*min(in_tok/4000,1) : 0 -> group-normalized advantage (r-mean)/(std+1e-6) ->
+advantage-weighted policy-gradient on the model's OWN action tokens (reuse the SFT label mask). lambda is the
+token-cost knob, so a *resolved-cheaply* rollout out-rewards a *resolved-expensively* one — the same prefer-cheap
+signal the SFT relabel instills, but via reward instead of imitation.
+
+(1) MECHANISM — RUNS + TRAINS CLEANLY. Round-0 wild harvest: 48/72 solved, ~2048 mean in_tok, 18/48 use-defn (~38%).
+Round-1 PG: loss 0.0496->0.0482->0.0456->0.0405 (monotone down), NO OOM on the 128GB box (after the F.cross_entropy
+reduction='none' loss rewrite — see runs/agent/.grpo_note), adapter saved (161MB) and loads/runs in inference. So the
+cost-RL machinery is real and demonstrated end-to-end.
+
+(2) RESULT — 1 ROUND DOES NOT MOVE THE OPERATING POINT (honest negative). Retest of the round-1 adapter
+(runs/agent/grpo_retest.json, config.adapter==runs/sft/effic_lora_grpo, 9 defn tasks x2 seeds, --lsp-tools, n=18):
+  use-defn   6% (1/18)   -- DOWN from the 38% wild baseline (NOT toward the SFT ~100%)
+  mean in_tok 3041 (all) / 1645 (solved) -- UP from 2048 baseline; incl. a 13.7k-tok thrash outlier on store_defn
+  resolved   61% (11/18) -- ~= baseline (no success gain)
+A single PG round at lr1e-5, K=4 is a weak/under-converged nudge; it did not bend the policy toward cheap <defn>, and
+actually regressed defn-usage with an added thrash tail. (Full multi-round harvest was early-stopped at the budget
+guardrail after round-1 trained clean — the point was to demonstrate the mechanism, not to win a tuning bake-off.)
+
+VERDICT (no spin): cost-RL GRPO is mechanism-demonstrated (trains cleanly, no OOM, adapter produced) but a single round
+does NOT corroborate the SFT relabel — it needs more rounds / tuning to converge. The on-policy SFT relabel remains the
+efficient HEADLINE path (~100% defn, ~700 tok, ~100% succ); GRPO is scoped, demonstrated, and left as future-work, not
+a competing result. The main story is unaffected (GRPO was always the *optional* corroborating baseline). Infra:
+grpo_cost.py, run_grpo.sh, _grpo_retest.sh; recipe note runs/agent/.grpo_note.
+
+---
+
+## 2026-06-24 — ITEM 5 UPDATE (full multi-round GRPO): CONVERGES, corroborates the SFT relabel
+
+Ran the full 4-round run_grpo.sh (K=4 PG steps/round, G=8 rollouts/task, N=4 rounds, lambda=0.5, lr=1e-5). The batch-2
+single-round read ("does not corroborate") was UNDER-TRAINING, not a real negative — across rounds the policy converges.
+
+HARVEST TRAJECTORY (train distribution, --force-lsp --relabel, n=72/round):
+  round0/1 (wild):     resolved 48/72  mean_in_tok 2048  use-defn 18/48 (37%)
+  round2 (r1 adapter): resolved 60/72  mean_in_tok 1740  use-defn 29/60 (48%)
+  round3 (r1+2):       resolved 69/72  mean_in_tok  790  use-defn 59/69 (86%)   <- peak
+  round4 (r1+2+3):     resolved 65/72  mean_in_tok 1011  use-defn 52/65 (80%)   <- mild PG wobble off the peak
+Even store_defn, the round-0 thrasher (~4200 tok, unresolved), resolves in ~63 tok by round 4.
+
+DEFINITIVE CLEAN RETEST (round-4 adapter runs/sft/effic_lora_grpo, --conds A --lsp-tools, NO --force-lsp, n=36):
+  resolved 36/36 (100%)   mean_in_tokens 663   use-defn 31/36 (86%)
+COMPARE: round0 baseline 67%res/2048tok/38%defn ; round-1 retest (under-trained) 61%/3041/6% (grpo_retest_round1.json) ;
+SFT relabel operating point ~100%defn/~700tok/~100%res.
+
+VERDICT (POSITIVE, replaces the batch-2 1-round negative): multi-round cost-RL GRPO CONVERGES to essentially the SFT
+operating point (86% defn, 663 tok = 3.1x cheaper than baseline, 100% solved) on a clean held-out eval. Two different
+training objectives — cost-aware on-policy imitation (the headline relabel) and a token-cost RL reward (GRPO) — instill
+the SAME cheap-retrieval preference. This is an independent corroboration of the headline. Caveats: needs ~3-4 rounds (a
+single PG round under-trains and even regresses to 6% defn); mild round-to-round oscillation (r3 86% -> r4 80% on the
+harvest); small retest n=36; GRPO is NOT cheaper to RUN (multi-round harvests vs one relabel pass) so SFT stays the
+headline RECIPE and GRPO is the corroboration, not a replacement. Round-1 retest archived at grpo_retest_round1.json;
+final at grpo_retest.json. Infra unchanged: grpo_cost.py, run_grpo.sh.
+
+---
+
+## 2026-06-24 — ITEM 1 (no-delegation coverage suite) — HONEST NEGATIVE: floored, third distinct issue
+
+Built scripts/synth_tasks_effic_nodel.py (12 tasks = 6 A/B pairs; verifier ALL OK 12) to fix the batch-2 DELEGATION
+confound: gold fix must INLINE-transcribe an arbitrary multi-entry SPEC table (values-only scrambled tuple, key->value
+only in source comments), so there is no callable to forward to. Escape audit was clean (delegation/introspection/
+guessing/stub-pattern all blocked). Ran PRE (base 7B) vs POST (effic_lora_powered), --suite effic_nodel --lsp-tools
+--conds A --seeds 3, n=36/arm.
+
+RESULT (runs/agent/item1_nodel_{pre,post}.json):
+  PRE  : 0/36 resolved (A 0/18, B 0/18)
+  POST : 3/36 resolved (A 3/18, B 0/18); on B, POST reads 3/3 + uses defn 2-3/3 (correct retrieval BEHAVIOR) but solves 0
+  clean coverage pairs (POST solves both A&B, PRE solves A-only): 0/6
+
+VERDICT (honest negative, no spin): the suite is FLOORED — neither model solves even variant A (where the full defn is
+handed over), so there is no A-vs-B success contrast to read. In fixing delegation we made the fix require correctly
+transcribing an arbitrary table inline, which the 7B cannot do (floors at 0-3/18 on A) -> the suite ends up testing
+TRANSCRIPTION ABILITY, not coverage-judging. POST does show the right retrieval behaviour on B (escalates to <read> on
+the stub) but can't produce the correct edit. Item 1 has now hit THREE distinct issues: (1) guessability, (2)
+delegation, (3) difficulty floor. The main efficiency story does not depend on it; §5.1c stays RETRACTED and item 1 is
+left as an honest open. Did NOT auto-build a 4th iteration (per "focus on results, not the journey"). If wanted, a clean
+coverage test would need either a stronger model that can transcribe (e.g. 27B) or a fix whose content is short enough
+that the 7B's edit ability isn't the binding constraint. Infra: synth_tasks_effic_nodel.py, _item1_eval.sh.

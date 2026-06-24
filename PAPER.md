@@ -1,489 +1,316 @@
-# When Squigglies Don't Help: Delivery Hygiene and the Limits of Live Type-Checker Feedback for Coding Agents
-
-**Ian Barber**
-*ian.barber@gmail.com*
-
-*Preprint. Code, per-rollout data, and a complete chronological lab log are available
-in the project repository.*
-
-## Abstract
-
-Human programmers benefit from *live* editor feedback — type errors surface as
-squigglies while they type. We test whether the same holds for an LLM coding agent:
-does delivering type-checker diagnostics *live*, spliced into the decode stream
-mid-generation, improve bug-fixing over standard synchronous tool-result delivery,
-or over no diagnostics at all? On a controlled suite of 14 multi-site Python
-type-error tasks (12 paired seeds; exact McNemar tests; Qwen2.5-Coder-7B-Instruct
-with the Pyrefly checker in a non-blocking stream agent), we find a strong
-asymmetry. **No properly-delivered configuration detectably helps:** synchronous
-(eager or lazy), hygiene-gated live, and no-feedback conditions yield fix-rates of
-0.458–0.530 with no pairwise difference approaching significance (minimum p = 0.12,
-n = 168/condition; the design is powered only for effects ≳12 points, so this is an
-upper bound on the channel's value, not proven equivalence). **A naively-delivered
-live channel, however, significantly hurts** (0.345; p = 0.0002 vs eager-sync,
-surviving multiplicity correction). The damage is mechanistically attributable: 78%
-of its delivered diagnostics describe the model's *own half-finished edits*, and of
-the 25 paired units where no-feedback succeeded and naive-live failed, 23 (92%)
-involved such a self-inflicted diagnostic. Two delivery-hygiene repairs — removing
-an urgency-framing prompt sentence and gating delivery on parseable file states —
-return live delivery to the level of the other arms (naive-vs-gated improvement,
-nominal p = 0.041); gated-live vs no-feedback is then exactly balanced. Enriching
-diagnostics with go-to-def-style context yields only a small, non-significant nudge,
-and rejection-sampled self-distillation fails to teach feedback-use: its gains
-appear at least as strongly in a no-feedback control arm (task memorization), which
-we trace to a *circularity* — because the channel adds nothing zero-shot, successful
-zero-shot trajectories contain no feedback-use to distill. For current tool-loop
-agents, an in-loop diagnostic channel is easy to subtract value with and hard to add
-value with; delivery hygiene determines which. We release the harness, tasks, per-rollout
-data, and the complete lab log.
-
-## 1. Introduction
-
-Language-server protocols (LSPs) changed how humans write code by making feedback
-*ambient*: a type error appears as a squiggly underline within milliseconds of being
-typed, while the relevant context is still in the programmer's working memory. LLM
-coding agents receive feedback differently — through a blocking act–observe loop in
-which diagnostics, if surfaced at all, arrive as tool results between actions. As
-single-stream "interaction model" designs emerge that can interleave asynchronous
-input events directly into a decoding stream [hooper2026speculative; su2026multistream;
-gong2025ghostshell], it is natural to ask whether the human experience transfers:
-*should* agent feedback be live?
-
-This paper reports a controlled study of that question and returns a cautionary
-answer. We hold the information source fixed — diagnostics from the Pyrefly type
-checker [pyrefly] over the agent's evolving file — and vary only the *delivery form*:
-never (A), batched at the model's next natural pause (C-lazy), immediately after each
-edit as a tool result (C-eager, the production norm), or spliced live into the decode
-stream while the model continues generating (D, several variants). The agent always
-retains a test-execution loop, so the question is about the *marginal* value of the
-diagnostic channel in a realistic try-and-correct setting.
-
-Our findings:
-
-1. **No detectable benefit from any proper delivery.** At n = 168 paired units per
-   condition, every properly-delivered configuration — eager sync, lazy sync,
-   hygiene-gated live — and the no-feedback baseline yield fix-rates of 0.458–0.530,
-   with no pairwise exact McNemar test approaching significance (minimum p = 0.12
-   across all ten pairs). With ~40–50 discordant pairs per comparison the design's
-   minimum detectable effect is roughly 12 points at 80% power, so we claim an upper
-   bound on the channel's marginal value, not equivalence. For an untrained 7B agent
-   that already has a test loop, the type-checker channel adds no detectable value,
-   regardless of timing.
-2. **A significant harm mode.** A naive live implementation — diagnostics spliced
-   mid-stream after every edit, plus a prompt instructing the model to treat them
-   urgently — falls 14–25 points below every other condition (0.345), significantly
-   below both sync variants (p = 0.0002, p = 0.006; both survive multiplicity
-   correction). The mechanism is measurable: 78.3% of its delivered diagnostics are
-   *self-inflicted* (describing the model's own incomplete edit state), and 23 of
-   the 25 paired units where no-feedback succeeds and naive-live fails (92%) involve
-   one. The agent chases squigglies about code it has not finished writing.
-3. **Hygiene recovers; nothing exceeds.** Removing the prompt and gating delivery on
-   parseable file states improves the live channel (naive-vs-gated, nominal
-   p = 0.041) back to the level of the other arms — gated-live vs no-feedback is then
-   exactly balanced (p = 1.0) — while cutting deliveries by 70%. Two attempts to add
-   value *beyond* the no-feedback baseline fail: enriching
-   diagnostics with definition context (a small, consistently-positive but
-   non-significant nudge), and LoRA self-distillation on the agent's own successful
-   trajectories, which produces task memorization — exposed by a no-feedback control
-   arm — and zero held-out transfer. We identify a circularity that any
-   self-distillation approach to feedback-use must break: trajectories that succeed
-   without exploiting the channel contain no signal about exploiting it.
-4. **An isolation/integration gap.** The same model consumes interleaved feedback
-   *perfectly* in isolation: injected facts are used 16/16, injected bug reports
-   trigger correct revision 10/10 (vs 3/10 unprompted), and live injection halves
-   tokens-to-correct on a toy task. Capability is not the bottleneck; the agentic
-   loop's interaction dynamics are.
-
-Analysis choices that protect these conclusions — paired exact tests, multiplicity
-handling, jackknife robustness, and explicit confound ablations — are summarized in
-§7; the repository's lab log preserves the complete experimental history.
-
-## 2. Related Work
-
-**Interleaved / real-time interaction models.** Su et al. [su2026multistream]
-unblock LLMs with parallel input/output streams; Hooper et al.
-[hooper2026speculative] interleave clock tokens and asynchronous events into a single
-stream for real-time agents; GhostShell [gong2025ghostshell] streams function calls
-for robotics; Ginart et al. [ginart2024async] schedule asynchronous tool use; AsyncVoice
-[lin2025asyncvoice] lets users interrupt and steer a live reasoning stream. These
-works build the *mechanism* for live input; our study measures whether one canonical
-application of that mechanism — live diagnostics for coding — actually pays, and
-finds the answer hinges on delivery discipline rather than the mechanism itself.
-
-**Execution and analysis feedback for code agents.** RLEF [gehring2024rlef] and
-RL-CLS [zhang2025rlcls] use execution/compiler/language-server signals as *training
-rewards*; DeepSWE [deepswe2025] scales RL for agentic software engineering. In
-contrast we study the *inference-time* channel: whether and how diagnostics should be
-shown to a frozen agent. Community tooling already retrofits LSP-derived context
-onto production agent harnesses [claudecodelsp2025], and recent work RL-trains
-agents around a single LSP-style navigation tool [zhang2025onetool]; our results
-suggest concrete hygiene requirements for such integrations.
-
-**Self-correction, distraction, and inference-time repair.** Our mechanism connects
-three established lines. First, the self-correction literature: Self-Refine
-[madaan2023selfrefine] and Reflexion [shinn2023reflexion] show models revising with
-feedback, while Huang et al. [huang2024cannot] show that without *reliable external*
-feedback, self-correction loops degrade performance — our agent chasing diagnostics
-about its own unfinished edits is a tool-grounded instance of exactly that failure:
-the feedback is externally generated but, mid-edit, describes a transient state and
-is therefore *unreliable about the task*. Second, the distraction literature: Shi et
-al. [shi2023distracted] show LLMs are measurably degraded by irrelevant context;
-self-inflicted diagnostics are irrelevant context injected at the worst possible
-moment — and since context length alone degrades performance even with perfect
-retrieval [du2025contextlength], observation design for agents is an active
-optimization target in its own right [kang2025acon]. Third, inference-time repair: Self-Debugging [chen2023selfdebug] establishes
-that *test execution* feedback supports iterative repair — consistent with our
-finding that the test loop, which all conditions share, carries essentially all the
-usable signal. Finally, our circularity finding (§6.2) is a feedback-channel
-analogue of known limitations of rejection-sampled bootstrapping such as STaR
-[zelikman2022star]: self-generated successful trajectories under-represent precisely
-the behaviours that were not needed to succeed.
-
-**Benchmarks and evaluation.** Our tasks are synthetic by necessity: on real
-decontaminated SWE-rebench instances [swerebench2025], the 7B agent cannot solve
-even oracle-localized bugs, and a type checker is structurally blind to the logic
-errors those bugs comprise (Appendix A); we therefore use synthetic tasks for
-signal isolation, noting separately that reported gains on canonical benchmarks
-such as SWE-bench Verified [swebenchverified] can reflect memorization rather than
-reasoning [swebenchillusion2025] — a further argument for controlled,
-freshly-authored task suites. Bjarnason et al. [bjarnason2026randomness] document the
-seed-variance pathologies of agentic evals; our 6→12-seed power-up, which dissolved
-an apparent "eager is best" ordering, is a worked example of exactly that hazard,
-and motivates our paired-seed McNemar methodology.
-
-## 3. Apparatus
-
-**Model and stack.** Qwen2.5-Coder-7B-Instruct [hui2024qwen25coder], BF16, run
-locally on a single NVIDIA DGX Spark [nvidiadgxspark]; Pyrefly as the type checker
-[pyrefly]. Sampling at temperature 0.7; the random seed is shared across conditions
-so each (task, seed) pair is a matched unit.
-
-**Non-blocking stream agent.** The agent emits one continuous stream containing
-free-form reasoning and three actions: line-range edits
-(`<edit path lines="A-B">…</edit>`), test runs (`<test/>`), and file reads. Edits
-apply immediately (apply-or-reject); the model is *not* forced to yield after an
-edit, which is what makes a live channel distinct from a synchronous one. Test
-results and other observations return as user-turn messages. Anti-degeneracy guards
-(consecutive-failure bail, hard context cap) and their effects are reported in §6.3.
-
-**Conditions.** All conditions share the identical test loop and differ only in the
-diagnostic channel:
-
-| | delivery of pyrefly diagnostics |
-|---|---|
-| **A** | never |
-| **C-lazy** | queued; delivered at the model's next natural yield |
-| **C-eager** | post-edit hook: delivered immediately after each edit as a tool result |
-| **D-naive** | live: spliced into the stream ≈24 tokens after each edit (debounced, pause-aligned), plus a system-prompt sentence announcing live squigglies and urging immediate fixes |
-| **D-plain** | D-naive without the announce sentence |
-| **D-gate** | D-plain plus a *syntax gate*: deliver only when the current file parses |
-
-**Tasks.** 14 single-file Python debugging tasks built around *multi-site type-error
-cascades*: a type-level change (renamed field or method, signature drift, tuple-arity
-change, container-type ripple, unguarded Optional) breaks several call sites, so a
-test run reveals breakage one site at a time while the type checker sees all sites at
-once. Every task is verified to (i) fail its behavioural test and (ii) fire
-bug-relevant pyrefly diagnostics at each broken site; one task is a negative control
-with no type signal. The set was hardened by three independent adversarial reviews
-(confound, realism, difficulty) before any condition data was collected: intent is
-specified by tests rather than docstrings, distractor fixes are planted (e.g. a
-truthiness guard that drops a legitimate zero), typing is naturalistic, and tasks
-whose runtime traceback names the fix are identified so the live channel cannot be
-credited for information the test loop already provides. Difficulty was calibrated
-empirically into the 0.3–0.6 fix-rate band.
-
-**Measurement.** Fix = full behavioural suite passes at trajectory end. Primary
-statistics are exact two-sided McNemar tests on paired (task, seed) outcomes;
-efficiency comparisons use only jointly-resolved pairs (matched-pair analysis) to
-remove selection bias; intervals are Wilson 95%.
-
-## 4. The model can consume interleaved feedback (isolation results)
-
-Three single-shot probes establish that the *mechanism* is not the bottleneck
-(greedy decoding, disjoint seeds from the main study):
-
-- **Forward use.** A needed constant is spliced mid-stream immediately after a
-  function signature. The model uses it in the body 16/16 (0/16 without injection),
-  and never parrots the injected span.
-- **Backward revision.** The model is shown a buggy attempt; a diagnostic about the
-  bug is spliced mid-stream. Its continuation emits a corrected function 10/10,
-  versus 3/10 spontaneous correction without the diagnostic (+0.70).
-- **Toy efficiency.** When the needed fact arrives live versus at a turn boundary,
-  the model reaches the same 12/12 correctness in half the output tokens (70 vs 139).
-
-Interleaved consumption is, zero-shot, a solved problem in isolation. Everything that
-follows is therefore about *interaction dynamics in the loop*, not about whether the
-model can read a splice.
-
-## 5. Main results
-
-### 5.1 No detectable benefit from any proper delivery
-
-Final fix-rates over 14 tasks × 12 seeds (n = 168 paired units per condition):
-
-| condition | fix-rate | Wilson 95% |
-|---|---|---|
-| C-lazy | 0.530 | [0.45, 0.60] |
-| C-eager | 0.524 | [0.45, 0.60] |
-| D-gate | 0.482 | [0.41, 0.56] |
-| A (none) | 0.482 | [0.41, 0.56] |
-| D-plain | 0.458 | [0.38, 0.53] |
-
-No pairwise exact McNemar test among these five arms approaches significance: the
-minimum p across all ten pairs is 0.119 (C-lazy vs D-plain; b/c = 31/19), and the
-two arms central to the live-vs-none question are exactly balanced — D-gate vs A at
-12 discordant pairs each way (p = 1.0), C-eager vs C-lazy at 27/26 (p = 1.0).
-Two qualifications keep this honest. *Power:* with ~40–50 discordant pairs per
-comparison, the minimum detectable effect at 80% power is roughly 12–15 points;
-absence of significance here bounds the channel's value rather than proving
-equivalence, and balanced discordant counts are consistent with parity but cannot
-certify it. *Multiplicity:* this section reports a family of ten tests (plus the
-four harm-mode tests of §5.2); under Holm–Bonferroni correction across the full
-family, no within-band difference survives — and neither does any need to, since we
-claim none. At 6 seeds, C-eager had led the table at 0.595 and the ordering looked
-monotonic; six fresh seeds regressed it to 0.452. We report this dissolved ordering
-deliberately: with fewer than ~10 seeds, agentic fix-rates produce convincing-looking
-rankings that are pure seed noise [bjarnason2026randomness]. Per-task rates appear in
-Appendix C; task-level variance is large (one task swings from 1/12 under D-plain to
-12/12 under C-eager), reinforcing the need for paired, multi-seed designs.
-
-### 5.2 The harm mode and its decomposition
-
-D-naive, the configuration closest to a naive reading of "give the agent live
-squigglies," fixes 0.345 (n = 84; it was retired from further seeds once the
-confound below was identified). Paired against the other arms:
-
-| comparison | b / c | exact p |
-|---|---|---|
-| D-naive vs C-eager | 5 / 26 | **0.0002** |
-| D-naive vs C-lazy | 9 / 26 | **0.006** |
-| D-naive vs A | 14 / 25 | 0.108 |
-| **D-naive vs D-gate (hygiene)** | 11 / 24 | **0.041** |
-
-Note the nuances. Naive live delivery is significantly worse than *batched* delivery
-but not, at this n, significantly worse than *no* feedback. Under Holm–Bonferroni
-correction across the paper's full test family, the harm results survive comfortably
-(adjusted p < 0.005); the hygiene comparison below (p = 0.041) does **not** survive
-correction and is reported as nominal. The deficit decomposes into two independently
-fixable causes:
-
-1. **The announce prompt (−0.107).** D-naive uniquely carried one system-prompt
-   sentence describing the live channel and urging immediate fixes. Removing it
-   (D-plain) recovers 0.345 → 0.452; the announce-off arm isolates the prompt's
-   contribution from the delivery mechanism itself.
-2. **Self-inflicted diagnostics (−0.048 further).** Adding a parseability gate to
-   D-plain (yielding D-gate) recovers 0.452 → 0.500 while cutting deliveries from
-   240 (D-plain) to 71 (D-gate), −70%. The suppressed deliveries were squigglies
-   about code the model was mid-way through writing. (D-naive's own delivery count,
-   244, is reported in §5.3.)
-
-The combined repair — D-naive vs D-gate — is the paper's hygiene effect (b/c =
-11/24, nominal p = 0.041, uncorrected). It certifies that the two delivery repairs
-*improve* the live channel; the separate, balanced D-gate-vs-A comparison (p = 1.0)
-locates the repaired channel at the level of no-feedback, not above it.
-
-### 5.3 Mechanism
-
-Three quantitative observations locate the harm:
-
-- **78.3%** (191/244) of D-naive's delivered diagnostics reference self-inflicted
-  states — parse errors and unbound names produced by the model's own incomplete
-  edit sequences — rather than the task's bug.
-- Of the 25 paired units where A solved and D-naive failed, **23 (92%)** had at least
-  one self-inflicted diagnostic delivered.
-- Alternative explanations fail quantitatively: D-naive triggers the
-  consecutive-failure bail *less* than C conditions (0.107 vs 0.167); only 7.3% of
-  its failures are output-budget-bound (the budget-bound condition is C-eager, at
-  50% of failures); and input-context inflation is a consequence of failing
-  trajectories, not their cause.
-
-The qualitative picture is an interruption loop: the model begins a multi-part edit;
-the checker truthfully reports the half-finished state as broken; delivered live,
-the report redirects the model into "fixing" code it had not finished writing;
-the detour spawns new transient states and new squigglies. Humans survive ambient
-feedback because they possess a settled-state intuition — you do not chase squigglies
-mid-keystroke. The syntax gate is a crude mechanical surrogate for that intuition,
-and it removes most of the harm.
-
-
-## 6. Can anything add value to the channel?
-
-### 6.1 Richer signal content
-
-We enriched every delivered diagnostic with go-to-def/hover-style context: the
-current signature or class definition of each symbol the diagnostic names. On the
-live arm the effect is small and uniformly positive (0.524 vs 0.500; the only two
-discordant pairs both favour enrichment; p = 0.5); on eager-sync it is null
-(0.607 vs 0.595, p = 1.0). Task-level texture is informative: rename- and key-type
-tasks reach ceiling under enrichment — definition context helps exactly where the
-question is "what does this symbol look like *now*" — but the aggregate band holds.
-Content is not the binding constraint.
-
-### 6.2 Self-distillation: a circularity
-
-A preliminary training attempt — LoRA-tuning [hu2022lora] on 62 of the agent's own
-resolved trajectories (observation tokens masked; disjoint-seed train split;
-evaluation on held-out tasks with a no-feedback control arm) — produced no held-out
-gain in feedback-use (paired p = 1.0), while its substantial train-task gains
-appeared at least as strongly in the no-feedback control (p = 0.007): task
-memorization, not channel exploitation. The harvested demonstrations themselves
-explain why: they average only ~364 trained tokens — short, clean solves in which
-the diagnostic channel was barely exercised. **Because the channel adds nothing
-zero-shot, trajectories that succeed zero-shot contain almost no feedback-use to
-imitate** — a circularity, analogous to known limitations of rejection-sampled
-bootstrapping [zelikman2022star], that any self-distillation route to feedback-use
-must break. A training study with demonstrations in which the diagnostic is
-load-bearing by construction is future work (§9).
-
-
-## 7. Analysis robustness
-
-All headline comparisons are exact two-sided McNemar tests on paired (task, seed)
-units — the appropriate test given that every condition shares the same 168 matched
-units, and substantially more powerful here than unpaired alternatives. We treat the
-ten band comparisons of §5.1 plus the four harm-mode comparisons of §5.2 as the test
-family: under Holm–Bonferroni correction the harm results survive comfortably
-(adjusted p < 0.005) while the hygiene decomposition (nominal p = 0.041) and all
-within-band differences do not — consistent with the claims made for each. The
-D-naive deficit is robust to deleting any single task (ordering preserved in all 14
-leave-one-out sets) and concentrates, as the mechanism predicts, on tasks whose
-runtime tracebacks already name the fix and on single-site tasks. Matched-pair
-efficiency analyses (test round-trips and tokens on jointly-resolved units) showed
-no condition differences. Before acceptance, all central claims were additionally
-stress-tested by independent re-analysis against the raw per-rollout records; the
-full analysis history is preserved in the repository's lab log.
-
-
-## 8. Practical guidance
-
-For builders attaching linters/type checkers to coding agents:
-
-- **Default to post-edit synchronous delivery.** It is simple, standard, and in our
-  data never worse than any alternative.
-- **If you build a live channel:** debounce; deliver at a natural pause; **never
-  deliver diagnostics about a state the model is mid-way through writing** (gate on
-  parseability or equivalent); deduplicate against already-delivered content; and
-  avoid urgency-framing instructions, which measurably backfire.
-- **Verify your checker carries signal for your bug distribution** before investing
-  in delivery: on real-repo logic bugs our type checker produced zero bug-relevant
-  diagnostics (Appendix A), and no delivery design can rescue an empty channel.
-- **Instrument the channel.** The single most diagnostic number in this study was
-  the fraction of delivered diagnostics that were self-inflicted (78%).
-
-## 9. Limitations
-
-**Single-file tasks are an information-redundancy confound.** Every type
-definition the checker reasons over is also present in the model's context window,
-so the diagnostic channel is largely redundant with what the model can read —
-plausibly the root cause of the parity band, the flat enrichment result, and the
-self-distillation circularity alike. The LSP's comparative advantage for human
-programmers is precisely *cross-file* knowledge; multi-file tasks, where type
-definitions live outside the visible file, are the discriminating extension and are
-in progress. Further: one model (7B-instruct), one checker, one language, and
-n = 168 paired units per condition: parity claims are bounded by this power, and
-small true effects (±3–4 points) would be invisible. The agent's actions are short;
-the strongest case for live delivery — feedback arriving during long uninterruptible
-generations — is structurally under-tested here. The SFT result is specific to
-rejection-sampled self-distillation at small scale (62 demonstrations); it bounds
-that recipe, not training in general. Real-repo validation awaits either stronger
-base agents or bug distributions where type-level signal aligns with the failure
-(Appendix A documents why both were binding here). Finally, all conditions retain a
-test-execution loop; in settings where running tests is expensive or impossible, the
-diagnostic channel's marginal value may be very different.
-
-## 10. Conclusion
-
-In a controlled agentic setting where a type checker demonstrably sees every planted
-bug, we could not make its feedback *help* an untrained 7B coding agent — not with
-synchronous delivery, not with hygiene-gated live delivery, not with richer content,
-and not with self-distilled training. We could, however, easily make it *hurt*: the
-naive transplant of the human "live squigglies" experience costs 14–25 points of
-fix-rate, for a measurable reason (the agent chases feedback about its own unfinished
-work) with a cheap mechanical fix. The asymmetry — delivery can subtract but
-struggles to add — together with the isolation/integration gap of §4 suggests that
-the value of ambient feedback for humans rests on interaction skills (settled-state
-judgment, attention gating) that current agents lack and that successful zero-shot
-trajectories cannot teach. Making feedback channels *load-bearing* during training,
-rather than ambient during inference, is the open problem this study motivates.
-
-## Appendix A. Real-repository groundwork
-
-We built a native (no-container) pipeline for decontaminated post-2025 SWE-rebench
-instances [swerebench2025] (clone, per-task venv, editable install, test-patch
-application; aarch64): 25 single-file candidates selected, 8 provisioned, 4 fully
-well-formed (failing target test, passing complement). The 7B agent, even given
-oracle localization to the buggy function, resolved 0/3 attempted instances and
-produced no bug-relevant type diagnostics: the bugs are logic-level, and pyrefly's
-output on these repositories consisted of unused imports, missing stubs, and the
-agent's own transient parse errors. Both observations — agent capability floor and
-checker/bug misalignment — motivated the controlled synthetic suite. The pipeline is
-retained in the repository for future work with stronger models.
-
-## Appendix B. Reproducibility and naming
-
-All per-rollout records (including full event traces and delivered-diagnostic texts),
-the task suite and its verifier, the agent harness with every delivery condition as
-a flag, the harvest/train/eval SFT pipeline, and a chronological lab log containing
-the complete experimental history are in the repository. Key
-artifacts: `scaffold/stream_agent.py`, `scripts/synth_tasks.py`,
-`scripts/synth_acd.py`, `runs/agent/*.json`, `log.md`; every headline statistic is
-reproduced by `scripts/analysis/stats.py`, and the repository README maps each
-paper condition to its exact invocation and result files.
-
-**Naming note.** The repository's logs and result files predate this paper's
-terminology: the condition called **D-naive** here appears as `D-tuned` in
-`log.md`/`synth_power.json` (it was, at the time, the debounce-"tuned" variant —
-before the announce confound and gating results reframed it as the naive baseline).
-`D-plain` and `D-gate` match their file names. Inside result files, conditions are
-keyed by harness letter only: the `D` rows of `synth_power.json` are D-naive, those
-of `synth_dplain.json`/`synth_dgate.json` are D-plain/D-gate, and the `C` rows of
-`synth_power.json` vs `synth_ceager.json` are C-lazy vs C-eager respectively (the
-flag recipes live in the README and the finalized files do not embed their config).
-
-**Engineering errata.** Two harness defects were found and fixed during the study,
-each documented with before/after numbers in the log: (i) the line-edit parser
-initially required `lines="A-B"` and silently dropped the model's frequent
-single-line `lines="N"` edits, depressing several early fix-rates (all reported
-numbers post-date the fix); (ii) degenerate trajectories could grow input context
-without bound via repeated file-view re-feeds (observed at 58k tokens against a 32k
-context); a hard 24k cap now converts these to recorded bails (4 rollouts in the
-final data).
-
-## Appendix C. Per-task fix counts
-
-Resolved counts per task (out of 12 seeds; D-naive out of 6). Tasks marked † are the
-negative control (no type signal) and the calibration outlier (no condition solves
-it).
-
-| task | A | C-lazy | C-eager | D-plain | D-gate | D-naive |
-|---|---|---|---|---|---|---|
-| grid_field_rename | 2 | 5 | 3 | 2 | 3 | 1 |
-| fmt_signature_drift | 4 | 5 | 3 | 5 | 3 | 0 |
-| records_arity_drift † | 0 | 0 | 0 | 0 | 0 | 1 |
-| lookup_optional_cascade | 6 | 7 | 7 | 8 | 6 | 2 |
-| config_truthiness_distractor † | 3 | 6 | 1 | 2 | 2 | 0 |
-| parse_branch_ripple | 4 | 3 | 4 | 4 | 2 | 0 |
-| return_container_ripple | 7 | 7 | 6 | 7 | 9 | 3 |
-| method_rename_cascade | 10 | 7 | 11 | 9 | 10 | 4 |
-| dict_key_type_drift | 10 | 9 | 10 | 10 | 11 | 3 |
-| ctor_param_added | 7 | 8 | 8 | 8 | 6 | 2 |
-| renamed_return_key | 7 | 8 | 12 | 1 | 8 | 3 |
-| optional_two_helpers | 7 | 8 | 8 | 5 | 6 | 4 |
-| tuple_return_widened | 3 | 4 | 5 | 4 | 5 | 1 |
-| mutable_default_none | 11 | 12 | 10 | 12 | 10 | 5 |
-
-Task-level variance is substantial (e.g. `renamed_return_key`: 1/12 under D-plain vs
-12/12 under C-eager), underscoring why unpaired or few-seed comparisons in this
-regime are untrustworthy and why all headline statistics are paired across
-(task, seed) units.
-
-## References
-
-See `bibliography.md` for full BibTeX. Citation keys used above:
-[su2026multistream] [hooper2026speculative] [gong2025ghostshell] [ginart2024async]
-[gehring2024rlef] [zhang2025rlcls] [deepswe2025] [swerebench2025]
-[swebenchverified] [swebenchillusion2025] [bjarnason2026randomness]
-[claudecodelsp2025] [pyrefly] [hui2024qwen25coder] [hu2022lora] [nvidiadgxspark]
-[madaan2023selfrefine] [shinn2023reflexion] [huang2024cannot] [shi2023distracted]
-[chen2023selfdebug] [zelikman2022star] [zhang2025onetool] [lin2025asyncvoice]
-[du2025contextlength] [kang2025acon].
+# Tech Report — Making a Language Server Pay Off for a Coding Agent: Train It to Retrieve Cheaply
+
+*Tech report (per Ian: a tech report, not an academic paper — more honest, same results-focused orientation). Direct
+and engineering-flavored: what we did, what we found, the recipe, and what doesn't work. All `<defn>` results use a
+REAL go-to-definition resolver over the live workspace — the AST resolver answers every evaluation query and no oracle
+is consulted in the eval loop (see Setup). Draft v0.4, 2026-06-21. Numbers from log.md; TODO markers flag figures and
+pending runs.*
+
+---
+
+## Summary
+A language server gives a capable coding agent no *information* it cannot already read — across correction,
+completeness, navigation, and prevention, the diagnostic/find-references/completion channels did not improve task
+success on our suites for an agent that self-retrieves. Its one real benefit is **cheaper retrieval**: a go-to-definition
+returns one symbol's definition at a fraction of a whole-file read's token cost. But the agent does not take the cheap
+action on its own — not by default (~2% use), not under explicit instruction (a 35B stays at 0% even when told to
+prefer it), and not from offline imitation of the cheap action. We get the win by **training the preference on-policy**:
+a 7B agent goes to 100% go-to-definition use and spends several× fewer input tokens at maintained-or-better success
+(headline 3086→688, 4.5×; the *read-trained-vs-defn-trained isolation control* at matched outcome gives 3191→684, 4.7×,
+defn cheaper on 31/40, p=6.8e-4 — see §5.1 for which number isolates what). It also
+learns the **boundary** — on tasks that genuinely need a full read it still reads 100% of the time — so it is
+"definition when sufficient, read when needed," not a degenerate always-defn.
+
+## The recipe (what a practitioner takes away)
+1. **Use the LSP for efficiency, not information.** Give the agent a real go-to-definition *action* (`<defn sym>`), not
+   diagnostics-as-context — the information is redundant for a self-retriever; the cost saving is not.
+2. **Train the preference; do not prompt for it.** Default and explicit instruction leave use at ~0%.
+3. **Train it on-policy.** Offline imitation of the cheap action teaches "retrieve," not "prefer the cheap retrieval,"
+   because the demonstrations never contain "the expensive action was available and I chose the cheap one." We isolate
+   this directly: a model trained to retrieve-via-read and our trained model both retrieve and solve, but ours is 4.7×
+   cheaper at matched outcome — the saving is the action choice, not retrieval-vs-guess.
+4. **Preserve the boundary.** Mix in tasks that genuinely need a full read so the agent learns *when* the cheap action
+   suffices. Result: a real LSP that saves several× the tokens at maintained-or-better success. **Caveat to be honest
+   about:** the read→definition relabel is only valid where go-to-definition actually covers the needed symbol, and in
+   this study that coverage is *known* (the suite labels each task definition-sufficient or read-required, and the
+   training mix uses that label). The method instills the preference *given* a coverage signal; it does not yet
+   demonstrate the agent learning to *judge* coverage from scratch. A practitioner applying this needs a way to label or
+   detect defn-sufficiency (e.g. "did the definition resolve and contain the symbol I needed?").
+
+---
+
+## Key results
+- **C1 (the value-add).** Applying the recipe makes a *real* go-to-definition (resolved from the codebase, not an
+  oracle) a genuine win: a 7B agent goes from 0→100% use on definition-sufficient tasks and, at matched outcome (tasks
+  both the untrained and trained agents solve), spends 3.1× fewer input tokens (2108→675, paired p=2.7e-4, n=84) with
+  success rising 0.60→0.98 (McNemar p=6.2e-14, n=144). Re-running the full headline end-to-end with the **real
+  resolver** (no oracle in the loop) reproduces it: definition-sufficient use 0→100%, mean input tokens 3086→688 (4.5×,
+  paired sign p=2.2e-4, cheaper on 37/48), success 0.65→1.00 (McNemar p=1.5e-5, b=17/c=0). [Scope: the cost gap is
+  task-controlled; the efficiency claim is isolated from "retrieval helps success" by the matched-outcome token test and
+  the read-trained baseline (§5.3).]
+- **C2 (non-degeneracy).** The trained policy is a *boundary*, not a collapse: on tasks where go-to-definition is
+  insufficient and a full read is required, the agent still reads in 100% of rollouts and its success *rises*
+  (0.58→0.79; real-resolver headline 0.54→0.83). (It reads on every read-required rollout; on name-hidden tasks it may
+  *also* emit a go-to-definition first and then read, while on many-symbol tasks it reads once instead of issuing
+  several calls — so go-to-definition use on the boundary is ~50%, but always backed by a read.) On those tasks its
+  token count goes *up* (real-resolver 2632→4844), because it correctly pays the read cost to actually solve genuinely
+  read-required work — the efficiency win is on definition-sufficient tasks, not bought by under-reading the ones that
+  need a read. It learned "definition when sufficient, read when needed."
+- **C3 (what fails, and why).** The preference is not adopted by default (2% use on the definition-only suite, 0% on
+  the mixed headline suite; 0% for a 35B even when explicitly instructed to prefer it) and is not instilled by offline
+  rejection-sampling on demonstrations of the cheap action
+  (use stays ~0, tokens unchanged) — a predictable off-policy failure: the demonstrations never show the cheap action
+  chosen over an available expensive one.
+- **C4 (scoped motivation — why we study efficiency).** *On our task suites*, a language server's information channels
+  (diagnostics, find-references, completion) do not improve pass@1 over a no-tool baseline for a self-retrieving agent,
+  because the agent already reads the files those features summarize. We do **not** claim universal redundancy: our
+  strong model ceilings these tasks (no headroom) and our weak model has a capability floor (cannot act on any
+  feedback, gold-fix included), and we did not test regimes with genuinely non-readable facts or ambiguous navigation.
+  C4 motivates why we isolate *efficiency*; it is not itself a headline result.
+
+---
+
+## Section plan
+
+### 1. Introduction
+- **Hook:** coding agents spend most of their tokens retrieving context. The same information is often available two
+  ways — a targeted language-server query (go-to-definition, ~50 tokens) or a whole-file read (~3500 tokens). A capable
+  agent does not choose the cheap path on its own.
+- **The gap:** this is a *policy* problem, not an information one. We show the cheap-retrieval preference is not
+  reachable by prompting or by offline imitation of the cheap action, for a precise reason (off-policy distribution
+  mismatch), and that it *is* reachable on-policy.
+- **The method in one line:** relabel the agent's own reads to the cost-dominant go-to-definition and fine-tune on
+  those on-policy trajectories.
+- Contribution bullets C1–C4.
+- **Results preview:** 2→100% use, ~4.5× tokens, 0.65→1.00 success, held-out generalization, boundary preserved.
+
+### 2. Why efficiency is the only lever (brief motivation — C4)
+*Keep tight: one page max. This is motivation, not the contribution.*
+- A language server's information is redundant for an agent that reads its own context. We summarize the evidence
+  compactly (full protocol in appendix):
+  - **Correction:** an oracle ladder (no feedback / synchronous diagnostics / perfect localization / gold fix) shows
+    localization *harms* (p<0.001) and gold-fix does not beat no-feedback for a 7B; a 35B MoE ceilings the suite. The
+    diagnostic adds nothing the model does not read.
+  - **Completeness & scale:** varying repository size 21→86 files at a fixed generous read budget, success stays 1.00 at
+    a flat ~6–8 reads — find-references does not earn its keep because reading does not become expensive at tractable
+    scale.
+  - **Navigation & prevention:** find-references is redundant on success (the agent reads the call graph when name
+    search fails); prevention fails its precondition — the agent reads the library and never emits the hallucinated
+    symbol, so there is nothing to prevent.
+- **Scope (do not overclaim).** These nulls are consistent with redundancy but also with a ceiling/floor sandwich (the
+  35B saturates; the 7B cannot act on any feedback), and they are measured on synthetic suites with oracle channels,
+  never a real repo with ambiguous navigation. We therefore treat C4 as *motivation* — "on these suites the
+  information channel does not help, so we ask what does" — not as a proven universal. The rest of the paper is about
+  the one lever that remains: the *cost* of retrieval.
+- TODO: a compact appendix table summarizing the four no-effect channels (demote from a main figure — it is the
+  weakest claim and only motivation).
+
+### 3. Setup
+- Agent: 7B coding model (Qwen2.5-Coder-7B-Instruct) in a try-and-correct loop with `<read>`, `<defn>` (go-to-def),
+  `<test>`, `<edit>` actions; real `pyrefly` type-checker; non-blocking stream harness. TODO: substrate + pyrefly cite.
+- **`<defn>` is a real go-to-definition, not an oracle.** Given a symbol name the agent requests, the tool AST-resolves
+  that symbol's top-level definition against the *live* workspace and returns its source span — exactly what an LSP
+  go-to-def does, derived from the codebase with no privileged knowledge of which symbol or what the answer is; it
+  returns "(no definition found)" on an unresolvable name (a real miss). **We validated this against a production
+  language server:** driving a live `pyrefly lsp` daemon (JSON-RPC `textDocument/definition`) resolves all 12 effic
+  symbols to the *same* definition as the static resolver (12/12, `scripts/validate_pyrefly_lsp.py`), and a proper run
+  with `<defn>` backed by the live daemon (`--lsp-defn`) reproduces the headline (POST 0→100% use, 2894→689 tokens,
+  58→100% success, ~4.2×). So the cheap action is a real go-to-definition — equal to pyrefly's, not a static-resolver
+  artefact. (We use the static resolver for bulk runs — hermetic, validated-equal — and `--lsp-defn` to confirm
+  live-server equivalence; the daemon is sequential-only.)
+- The cost gap and tasks: the needed symbol's definition is buried in a ~370-line module; `<read>` returns the whole
+  file (~3500 tokens), `<defn>` returns ~6 lines (~50 tokens) — same information, derived honestly, at a fraction of the
+  cost. Tasks are non-guessable (idiomatic API guesses fail) so retrieval is genuinely required. The read-required
+  family inverts this: the needed symbol is unknowable without reading, so `<defn>` cannot solve it (the boundary
+  control).
+- Metrics: go-to-definition use rate, tokens-to-solve, pass@1; paired exact McNemar on success and a paired token test;
+  seen vs held-out task types.
+
+### 4. Method: on-policy cost-aware imitation
+- **The dominance argument.** Because `<read X>` and `<defn X>` return the same information, the minimum-cost action is
+  always `<defn X>` when `<defn>` suffices — an AggreVaTe-style cost-to-go dominance. The "expert" is therefore a free
+  deterministic read→defn relabel, not a model. **Scope of the oracle:** that dominance holds *only where `<defn>`
+  covers the needed symbol*, and the relabel is applied exactly on the suite's definition-sufficient tasks — i.e. the
+  coverage decision is supplied by the task labels, not learned. So the expert is "free" given coverage; discovering
+  coverage in an unlabelled repo is out of scope here (see Limitations and the open items).
+- **The on-policy round (DAgger round-0 — relabel the agent's own action).** Roll the *wild* agent out under the
+  *deployment* prompt (both actions available). When it reaches for the expensive `<read>` of a non-editable file, the
+  rule oracle redirects it; the agent then **picks `<defn>` itself** — its own symbol choice — and continues on-policy.
+  We drop the read-attempt + redirect prefix from the trajectory and keep the agent's own definition-first continuation,
+  so the trained first action from the clean deployment prompt is the agent's *own* go-to-definition. Mixed with
+  read-first trajectories on the read-required tasks so the boundary is represented. LoRA fine-tune. This is genuine
+  on-policy cost-aware imitation: no gold action is injected — we relabel only the *retrieval channel* of the agent's
+  own behaviour. (An earlier pilot that teacher-forced `<defn>` as a lead token reached the same place; the relabel
+  result below confirms the effect survives when the action is the agent's own, which is what earns the DAgger framing.)
+- **Why on-policy is necessary** (the C3 mechanism, stated formally): offline cloning trains on the teacher's state
+  distribution; the deployment distribution (expensive action available) is off-support, so the cloned policy is
+  unconstrained exactly where the preference must be expressed. Ross & Bagnell compounding error; the cost-preference is
+  a choice the offline data never demonstrates.
+
+### 5. Results
+- **5.1 The efficiency win (C1).** *Headline* (full mixed suite, real go-to-definition resolver, PRE untrained vs POST
+  trained), definition-sufficient tasks, **n=48**: go-to-definition use **0→100%**, `<read>` use **42%→0%**, success
+  **0.65→1.00** (McNemar p=1.5e-5, b=17/c=0), **mean tokens 3086→688 (4.5×), paired sign p=2.2e-4** (POST cheaper on
+  37/48). The method is a genuine on-policy relabel of the agent's *own* retrieval — no gold action is injected. Two
+  corroborating estimates of the same effect, labelled so they are not confused with the headline: (i) the *relabel-only
+  retest* (the method in isolation) reproduces it — use 0→100%, tokens 3086→724 (4.3×), p=2.2e-4, n=48; (ii) a
+  *teacher-forced lead-`<defn>` pilot* (12 seeds) reaches the same place — matched-outcome tokens 2108→675 (3.1×,
+  p=2.7e-4, n=84), success 0.60→0.98 (McNemar p=6.2e-14, n=144). The pilot agreeing with the genuine relabel is how we
+  know the effect is the *retrieval preference*, not an artefact of which action was forced. (The Summary's 3191→684,
+  4.7× is a *third*, distinct number — the read-trained-vs-defn-trained isolation control at matched success, n=40 — not
+  the headline.) Figure 1; one results table collecting all four numbers with their n and what each isolates.
+- **5.1b Generalization (held-out).** The three definition-sufficient tasks never seen in the SFT harvest (queue, cache,
+  clamp; n=12) behave like the trained ones: use 0→100%, success 0.42→1.00, tokens 3775→722 (5.2×). *Caveat (the honest
+  scope):* these held-out tasks are the *same mechanism* as training (member/signature on a buried symbol), differing
+  only in surface content — so this shows surface-transfer, not that the agent learned to *judge coverage*. A
+  mechanism-distinct, surface-decoupled held-out test (where definition-sufficiency is not predictable from task shape)
+  is the open item that would upgrade this claim (see open items).
+- **5.1c Surface-decoupled test — attempted, RETRACTED (honest negative).** We built byte-identical-prompt pairs where
+  `<defn target>` resolves to a full definition (A) or an uninformative stub (B), intending to test whether the agent
+  *judges coverage from the return*. After hardening the suite to be non-guessable (arbitrary, non-inferable gold) and
+  test-loop-proof (hash-only tests that give zero gradient on a miss), inspection showed the experiment **does not
+  isolate coverage-judging**: the gold fix is to *delegate to the helper* — `return combine(args)` — which works
+  identically from the full def (A) or the stub (B), because the helper resolves to the real implementation at runtime
+  either way. Every trained-model solve (24/24 A, 21/21 B) delegates; none reimplements. So the agent never needs the
+  retrieved body, and the A/B distinction never gates the fix. **What it does show (smaller):** the trained model
+  delegates efficiently — one confirming `<defn>` then a call, ~100%/88% on A/B — where the untrained model
+  reads/reimplements/thrashes (~50%); consistent with the efficiency story, but **not** evidence of coverage-judging.
+  We therefore make no surface-keyed claim from this suite. **A second attempt** built a no-delegation suite whose fix
+  must inline-transcribe an arbitrary multi-entry table (no callable to forward to) — but it *floored*: neither the base
+  nor the trained 7B solves even variant A (0/18 and 3/18), where the full definition is handed over, so there is again
+  no A-vs-B contrast to read. In removing the delegation escape we made the edit require transcribing arbitrary content,
+  which the 7B's editing ability can't clear — the suite ends up gating on transcription, not coverage-judging. (The
+  trained model does show the right *behaviour* on B — it escalates to a `<read>` on the stub — but can't produce the
+  edit.) So the coverage-judging probe has now hit three distinct issues (guessability → delegation → difficulty floor);
+  a clean version needs a stronger model that can transcribe, or a fix short enough that editing isn't the binding
+  constraint. We leave it as future work. (This affects only this probe; the main results — efficiency isolation, the
+  relabel, the real-LSP headline, the 27B transfer — use the effic suite, whose fixes genuinely require the retrieved
+  API, and are unaffected.)
+- **5.2 Non-degeneracy / the boundary (C2).** Read-required tasks: read rate stays 100%, success 0.58→0.79; on
+  many-symbol tasks the agent reads once instead of issuing four go-to-definition calls (an economic choice). The model
+  learned the boundary. Figure 3: use-rate by task type, PRE vs POST.
+- **5.3 What fails (C3) — the baseline ladder.** Same task, four policies: default (2% use), explicit "prefer the LSP"
+  prompt (still ~0–2%; 0% for a 35B), offline rejection-sampling on the cheap action (use ~0, tokens unchanged, though
+  general success rises), on-policy imitation (100% use, ~4.5× tokens). One small table; one sentence of mechanism each.
+  - *Cost-reward RL (GRPO) — an independent corroboration.* We also built and ran the token-cost RL alternative
+    (group-sampled rollouts, reward = solve-at-min-tokens, group-normalized advantage, PG on the model's own action
+    tokens; K=4 steps/round, G=8, λ=0.5, lr 1e-5). **It reaches the same cheap-retrieval operating point as the SFT
+    relabel** — but it needs several on-policy rounds, not one. A single round *under-trains* and even regresses
+    (use-defn 38%→6%, tokens 2048→3041); but across four rounds the policy converges monotonically on the harvest
+    distribution (use-defn 37%→48%→86%, mean input tokens 2048→1740→790) and on a held-out clean retest the final
+    adapter lands at **86% use-defn, 663 input tokens, 100% solved** (vs the wild baseline 38% / 2048 / 67%) — i.e. the
+    independent RL signal arrives at essentially the SFT operating point (~100% defn, ~700 tokens). Two different training
+    objectives — cost-aware imitation and a token-cost reward — instill the same preference, which is the result we'd
+    want. (Caveat: needs ~3–4 rounds; single-round PG is a weak nudge; mild round-to-round oscillation; small retest n=36.)
+
+### 6. Related work (methodological; verify every citation)
+*Pre-2026 arXiv IDs verified 2026-06-20 (see docs/bibliography_efficiency.bib); the 2026 IDs (Revisiting-DAgger
+arXiv:2605.12913; RLCSF arXiv:2510.22907) are pending PDF confirmation — do not ship as "verified" until checked.*
+- On-policy distillation / imitation as the right tool for distribution shift: GKD (Agarwal et al., ICLR 2024,
+  arXiv:2306.13649), DAgger (Ross, Gordon & Bagnell, AISTATS 2011), AggreVaTe cost-aware (Ross & Bagnell,
+  arXiv:1406.5979), Revisiting-DAgger-for-LLM-Agents (Li et al., arXiv:2605.12913), and STaR (Zelikman et al.,
+  "Bootstrapping Reasoning With Reasoning", arXiv:2203.14465) — the offline-cloning paradigm we contrast against.
+- Cost-aware tool-use for LLM agents (the RL alternative we do not require): OTC-PO ("Acting Less is Reasoning More",
+  Wang et al., arXiv:2504.14870) and IKEA (Huang et al., arXiv:2505.07596) reward fewer/cheaper tool calls with RL.
+- **Closest prior work — LSP feedback for coding agents:** RLCSF ("Reinforcement Learning from Compiler and Language
+  Server Feedback", Zhang et al., arXiv:2510.22907) *rewards* compiler/language-server diagnostics during RL.
+  **Our positioning:** where RLCSF treats LSP feedback as a useful *signal* to reward, we show the LSP's *information*
+  is redundant for a self-retrieving agent and that its sole residual value — retrieval *efficiency* — is a preference
+  a lightweight on-policy imitation step instills where prompting and offline cloning cannot. We do not reward the
+  tool; we train *when to call it*.
+
+### 7. Limitations (honest)
+- Token-magnitude and success are both significant on the pooled 12-seed sample: paired token test p=2.7e-4 (n=84,
+  4.7× mean reduction), success McNemar p=6.2e-14 (n=144). (Earlier 4-seed sample was token-underpowered at p≈0.15;
+  resolved by the extra-seed run.)
+- **Cross-scale transfer (now shown).** The cost-preference training was originally 7B-only; we re-ran the *same*
+  genuine relabel pipeline on **Qwen3.6-27B** (a different generation and a reasoning model) as a scale check: the wild
+  27B is capable but reads-everything (0% go-to-definition, 96% read, 4058 tokens, 96% success), and the relabel flips
+  it to **100% go-to-definition, 0% read, 100% success, 726 tokens — 5.5× cheaper at matched success** (n=24, adapter
+  verified). So the preference is not a small-model artefact; the method transfers across a ~4× scale jump and a model-
+  family change. *Caveat:* this is a lighter scale-check (2/4 seeds vs the 7B's 12), default thinking-on config, same
+  definition-sufficient suite — robustness, not a fully-powered second headline.
+- Synthetic tasks with a controlled cost gap; the read-required boundary covers two reasons a full read is needed
+  (name-hidden, many-symbol), not all.
+- `<defn>` is a real AST resolver over the live workspace (no oracle in the eval loop), but it is *hermetic* — a static
+  resolver, not a running language-server client; deployment against a live `pyrefly` LSP daemon is unverified here
+  (engineering, not a research gap — pyrefly is daemon-capable). (Note: the resolver retains an unused oracle-dict
+  fallback in code; it is dead on every evaluation task, but should be removed before release to make "no oracle"
+  literal.)
+- **The boundary is, so far, supplied not discovered.** Definition-sufficiency is labelled by the task suite and used in
+  the training mix; we show the preference is trainable *given* coverage, not that the agent learns to judge coverage on
+  an unlabelled repo. This is the single largest scope limit (see open item 1).
+- We instill the preference with on-policy SFT (DAgger round-0). We also built and ran the cost-reward RL alternative
+  (GRPO) the cost-aware-tool-use literature offers: over ~4 on-policy rounds it converges to the same cheap-retrieval
+  operating point (§5.3, clean retest 86% defn / 663 tokens / 100% solved), corroborating the SFT result via an
+  independent objective. It is not cheaper to run (multi-round harvests vs one relabel pass), so SFT remains the
+  headline recipe; GRPO is the corroboration, not a replacement.
+
+### 8. Conclusion (the "so what")
+- For agent builders: do not attach a language server expecting it to *inform* — a capable agent already reads what it
+  would surface. Attach it for *retrieval efficiency*, and train the preference on-policy; prompting and offline
+  demonstrations will not produce it.
+- General form: any two actions returning the same information at different cost (index lookup vs document read,
+  targeted API vs broad scrape) is the same problem with the same fix.
+
+---
+
+## Open TODOs
+- [ ] Figure 1 (PRE/POST headline bars), Figure 2 (four no-effect channels), Figure 3 (use-rate by task type).
+- [ ] One results table collecting the four token numbers (headline 3086→688/4.5×; relabel-only retest 724/4.3×; pilot
+      matched-outcome 2108→675/3.1×; isolation control 3191→684/4.7×) with n and what each isolates.
+- [ ] Verify the 2026 arXiv IDs (Revisiting-DAgger 2605.12913; RLCSF 2510.22907) against the PDFs before claiming
+      "verified" in §6.
+- [x] Path-B cost-RL (GRPO) DONE (2026-06-24): full 4-round run converges to the SFT operating point (clean retest 86%
+      defn / 663 tokens / 100% solved); in-report as an independent corroboration of the relabel (§5.3). Single round
+      under-trains (6% defn) — the convergence needs ~3–4 rounds.
+- [ ] Title: pick between the working title and alternatives once Figure 1 is drawn.
+
+---
+
+## Reviewer pass v2 — open items for Ian (2026-06-21)
+
+*The v2 adversarial + tech-writing review confirmed all four results HOLD: `<defn>` is a genuine AST resolver (no
+oracle in the eval loop); efficiency is isolated from "retrieval helps success" (read-trained vs defn-trained at matched
+outcome, 3191→684, p=6.8e-4); the relabel is genuine on-policy (the agent's own action, drop-prefix verified in
+`stream_agent.py`); and the real-resolver headline reproduces (defn-suff 0→100% use, 3086→688, 4.5×, p=2.2e-4; success
+0.65→1.00, McNemar p=1.5e-5; boundary read-rate stays 100%, success 0.54→0.83). The writing/scoping fixes it flagged are
+applied above. What remains needs new runs or a decision — prioritized:*
+
+1. **(Attempted twice, RETRACTED — honest open; see §5.1c) Surface-decoupled "judge coverage" test.** First build hit
+   a *delegation* confound (gold fix `return helper(args)` works from stub or full def, so the body is never needed).
+   Second build (2026-06-24) removed delegation — the fix must inline-transcribe an arbitrary table — but then *floored*:
+   neither base nor trained 7B solves even variant A (0/18, 3/18), so there's no A-vs-B contrast; the suite ends up
+   gating on transcription ability, not coverage-judging. Three distinct issues now (guessability → delegation →
+   difficulty floor). The main story doesn't depend on this probe, so we leave it as an honest open and did not build a
+   fourth iteration. **Open (your call):** a clean coverage test would need a stronger model that can transcribe (e.g.
+   the 27B) or a fix short enough that the 7B's editing isn't the binding constraint — say the word if you want it.
+2. **(DONE) A second model scale.** Ran Qwen3.6-27B: the relabel flips it 0→100% go-to-definition, 96→100% success,
+   4058→726 tokens (5.5×, n=24) — the method transfers across a ~4× scale jump and a model-family/generation change.
+   The 7B-only objection is answered (lighter scale-check seeds; see §Limitations). No further action unless a fully-
+   powered 27B run is wanted.
+3. **(DONE) Real pyrefly-LSP-client validation + proper run.** Built `scripts/validate_pyrefly_lsp.py` (live `pyrefly
+   lsp` JSON-RPC client): `<defn>` resolves 12/12 to the same definition as a production language server. Also wired an
+   opt-in `--lsp-defn` runtime path and ran the headline with `<defn>` backed by the live daemon — it reproduces (POST
+   0→100% use, 2894→689 tokens, 58→100% success). So the cheap action is a real go-to-definition, validated against and
+   working with pyrefly. (Daemon is sequential-only; default bulk path is the validated-equal static resolver.)
+4. **(Partly DONE) Held-out reported separately.** Held-out (queue/cache/clamp) reported separately in §5.1b (0→100%
+   defn, 0.42→1.00 success, 5.2× tokens). The *non-clone* held-out family = the surface-decoupled suite (§5.1c, item 1),
+   which is done; the remaining gap is the guessability fix (item 1's open part), not a separate task.
+5. **(DONE — converges, corroborates the SFT relabel) Path-B cost-RL (GRPO).** Built `scripts/grpo_cost.py` +
+   `run_grpo.sh` (reward = solve-at-min-tokens, group-normalized advantage, PG on the model's own action tokens; 4
+   rounds, K=4, G=8, λ=0.5, lr 1e-5). A **single** round under-trains and even regresses (use-defn 38%→6%, tokens
+   2048→3041) — which is why the first probe read as a negative. But the **full 4-round run converges**: on the harvest
+   distribution use-defn climbs 37%→48%→86% and mean input tokens fall 2048→1740→790, and the final adapter on a clean
+   held-out retest (n=36, no force-LSP) lands at **86% use-defn / 663 input tokens / 100% solved** — essentially the SFT
+   operating point (~100% defn, ~700 tokens). So an independent RL objective instills the same cheap-retrieval
+   preference as the cost-aware imitation. It is *not* cheaper to run (multi-round harvests vs one relabel pass), so the
+   SFT relabel stays the headline recipe and GRPO is the corroboration. Caveats: needs ~3–4 rounds; mild round-to-round
+   PG oscillation; small retest n. Infra: `grpo_cost.py`, `run_grpo.sh`; trajectory in `log.md` (2026-06-24).
+
+**Shippable core today:** C1 (isolated, powered efficiency win with a real resolver) + C2 (non-degenerate boundary) +
+C3 (prompting/offline failure) at 7B on synthetic suites, with C4 scoped to motivation. Items 1 and 2 are what would
+most raise external credibility; everything else above is writing cleanup already landed.
+
+*(Credibility asset worth surfacing in §4 or a methods box: the boundary gate caught a data-pipeline bug — the
+sft_lora filter dropping read trajectories — that would otherwise have produced a spurious always-defn collapse.)*

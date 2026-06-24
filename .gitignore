@@ -50,3 +50,7 @@ runs/g6_*/
 runs/pyrefly_determinism/
 runs/agent/workdirs/
 runs/*/workdirs/
+
+# Trained LoRA adapters (regenerable via run_*.sh; weights too big, metadata useless alone)
+runs/sft/
+runs/agent/*.partial

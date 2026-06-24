@@ -39,6 +39,11 @@ EDIT_RE = re.compile(
 DONE_RE = re.compile(r'<done\s*/>')
 TEST_RE = re.compile(r'<test\s*/>')
 READ_RE = re.compile(r'<read\s+path="(?P<path>[^"]+)"\s*/>')   # gather repo context
+GREP_RE = re.compile(r'<grep\s+q="(?P<q>[^"]+)"\s*/>')          # search the workspace (the agent's nav tool; navigation experiment)
+# PULL LSP actions (efficiency-as-policy experiment): a CHEAP retrieval action the model can ELECT
+# instead of reading whole files. Oracle-backed (resolved refs / definition from the gold task).
+FINDREFS_RE = re.compile(r'<findrefs\s+sym="(?P<sym>[^"]+)"\s*/>')   # go-to-references: where is SYM used
+DEFN_RE     = re.compile(r'<defn\s+sym="(?P<sym>[^"]+)"\s*/>')       # go-to-definition / hover: SYM's def+signature
 # whole-file rewrite protocol — robust for single-function tasks (no SEARCH-match
 # brittleness, no irrecoverable corruption: a bad rewrite is just rewritten).
 REWRITE_RE = re.compile(r'<rewrite>\s*\n(?P<src>.*?)\n\s*</rewrite>', re.S)
@@ -96,6 +101,23 @@ view of the file (line numbers may have shifted — always use the latest view).
 edit -> <test/> -> fix -> <test/> until tests pass, then emit <done/>. Reason briefly between
 actions. A static analyzer may also surface diagnostics; use them to catch mistakes early."""
 
+SYS_LINE_MULTI = """You are a coding agent fixing a bug that SPANS MULTIPLE FILES in a Python
+repository. The EDITABLE files are: {files}. Each is shown below with line numbers (`NNN| code`).
+The same fix is likely needed in SEVERAL of them — you must fix EVERY affected site across all
+the files, or the tests will still fail. Work iteratively.
+
+To EDIT a file, emit EXACTLY:
+<edit path="pkg/file.py" lines="START-END">
+<the new code for those lines, WITHOUT line-number prefixes>
+</edit>
+Use the path of the file you are editing and ITS OWN 1-based line numbers from the numbered view.
+After each edit you receive a fresh numbered view of every editable file (line numbers shift —
+always use the latest view for the file you are editing). To READ a non-editable file for
+context: <read path="pkg/other.py"/>. After your edits, emit <test/> to RUN THE TESTS; you'll get
+the results. Keep iterating: edit the affected sites -> <test/> -> fix any remaining site ->
+<test/> until tests pass, then emit <done/>. A static analyzer may also surface diagnostics naming
+the files/lines still wrong — use them to find sites you missed. Reason briefly between actions."""
+
 SYS_REWRITE = """You are a coding agent fixing a bug in file `{file}`. Work iteratively.
 To EDIT, output the ENTIRE corrected file inside a rewrite block:
 
@@ -114,10 +136,12 @@ fences. Emit <done/> only once the tests pass. Reason briefly between actions.""
 class StreamAgent:
     def __init__(self, model, tok, env, condition="D", latency_tokens=8,
                  max_new_tokens=3000, max_tests=8, max_turns=12, max_bad=5,
-                 max_reads=6, edit_mode="search", temperature=0.0, seed=0,
+                 max_reads=6, max_greps=8, edit_mode="search", temperature=0.0, seed=0,
                  debounce=0, pause_align=False, announce_lsp=False, c_eager=False,
                  syntax_gate=False, rich_signal=False, clean_delivery=False,
-                 diag_filter=None, device=None):
+                 diag_filter=None, oracle_hint=None, steer_hint=None, lsp_oracle=None,
+                 force_lsp=False, lead_defn=None, lead_read=None, relabel=False, device=None,
+                 use_lsp_defn=False):
         assert condition in ("A", "C", "D")
         assert edit_mode in ("search", "rewrite", "line")
         self.temperature, self.seed = temperature, seed
@@ -131,14 +155,45 @@ class StreamAgent:
         self.rich_signal = rich_signal   # append go-to-def/hover-style context (signature/fields of the symbols the diagnostic names) to each delivered diagnostic
         self.clean_delivery = clean_delivery   # D: deliver the live diagnostic as a clean USER turn + file view (not a raw ‹diag› splice) — isolates delivery FORMAT from timing; avoids marker leakage
         self.diag_filter = diag_filter   # None | "type" | "syntax": deliver only cross-file TYPE errors, or only self-inflicted syntax/scope errors (mechanism decomposition)
+        self.steer_hint = steer_hint     # appended to the system prompt: extra instruction steering the model to USE the diagnostics / READ the named file (tests whether the channel's value is latent-but-unelicited, i.e. a prompting gap vs a real null)
+        self.oracle_hint = oracle_hint   # POSITIVE CONTROL: when set, the sync channel delivers this oracle string (perfect localization or the gold fix) IN PLACE OF the pyrefly diagnostic, but only while the file still has errors. Tests the ceiling of helpful feedback: if even this doesn't lift pass@1, the bottleneck is the model's ability to act, not feedback availability.
         self.model, self.tok, self.env = model, tok, env
         self.cond, self.latency = condition, latency_tokens
         self.max_new, self.max_tests, self.max_turns = max_new_tokens, max_tests, max_turns
         self.max_bad = max_bad   # bail after this many consecutive non-applying / no-op edits
         self.max_reads = max_reads
+        self.max_greps = max_greps   # nav experiment: cap workspace searches (the agent's realistic find-refs alternative)
+        self.lsp_oracle = lsp_oracle or {}   # efficiency-as-policy: {"refs": {sym:[paths]}, "defn": {sym:src}} backing the pull <findrefs>/<defn> actions
+        self.force_lsp = force_lsp   # OPSD harvest: DENY <read> of non-editable files (forces the model onto <defn>/<findrefs>) -> manufactures the LSP-using trajectories to distill
+        self.lead_defn = lead_defn   # DAgger round-0: inject <defn sym=lead_defn/> as the TRAINED first action (oracle's optimal action at the deployment-prompt state) -> clean defn-first trajectories with NO <read> to clone (the fix for the off-policy SFT that reinforced reading)
+        self.lead_read = lead_read   # DAgger round-0 for READ-REQUIRED tasks: inject <read path=lead_read/> as the TRAINED first action -> clean read-first trajectories (the boundary half of the mixed SFT set: read when defn is insufficient)
+        self.relabel = relabel   # GENUINE relabel (earns the DAgger framing, no teacher-forced action): roll out on-policy with force_lsp; when the model emits <read> of a non-editable file, MASK that turn's tokens in the SFT labels (the model's read-attempt) and redirect; the model then CHOOSES <defn sym=...> itself (picking the symbol) -> we train only on the model's own corrected behavior, not an injected gold action
+        self.use_lsp_defn = use_lsp_defn   # OPT-IN: back <defn> with a LIVE pyrefly LSP daemon (env.lsp_definition) instead of the AST resolver (env.goto_definition). Validated to agree 12/12 on effic. SEQUENTIAL only (daemon deadlock risk) and falls back to the AST resolver on any LSP error.
         self.test_p2p_cap = 5    # in-loop <test/> caps P2P for speed; final resolved runs full
         self.edit_mode = edit_mode
         self.dev = device or model.device
+
+    def _resolve_defn(self, sym):
+        """REAL go-to-definition, oracle fallback. With use_lsp_defn, ask a LIVE pyrefly LSP daemon first
+        (env.lsp_definition); otherwise (default) use the env's AST resolver over the live workspace (genuine
+        LSP behavior — no gold knowledge). Either way fall back to the AST resolver, then the lsp_oracle dict."""
+        if self.use_lsp_defn and hasattr(self.env, "lsp_definition"):
+            src, _ = self.env.lsp_definition(sym)
+            if src:
+                return src
+            # LSP miss/timeout: fall through to the AST resolver (never hang on the daemon)
+        if hasattr(self.env, "goto_definition"):
+            src, _ = self.env.goto_definition(sym)
+            if src:
+                return src
+        return (self.lsp_oracle.get("defn") or {}).get(sym)
+
+    def _resolve_refs(self, sym):
+        if hasattr(self.env, "find_references"):
+            refs = self.env.find_references(sym)
+            if refs:
+                return refs
+        return (self.lsp_oracle.get("refs") or {}).get(sym)
 
     def _run_tests(self, cap=None):
         """Env-agnostic: TaskEnv accepts max_p2p; MockEnv doesn't."""
@@ -259,9 +314,17 @@ class StreamAgent:
     def _diag_text(self, path):
         """Formatted (optionally filtered/enriched) current diagnostics for `path`."""
         d = self._filter_diag(self._fmt_diag(self.env.pyrefly_diagnostics(path)))
+        if self.oracle_hint is not None:
+            # oracle positive control: deliver the oracle hint while the file is still
+            # broken (pyrefly fires), silent once fixed — same gating as a real diagnostic.
+            return self.oracle_hint if d else ""
         if d and self.rich_signal:
             try:
-                d = self._enrich_diag(d, self.env.read_file(path))
+                # enrich across the WHOLE workspace: the def the diagnostic names usually
+                # lives in a REMOTE file, not `path` (the non-redundant-channel setting).
+                # Scanning only the target made --rich-signal a no-op on rich tasks.
+                src = "\n".join(self.env.read_file(f) for f in self.env.list_files())
+                d = self._enrich_diag(d, src)
             except Exception:
                 pass
         return d
@@ -277,19 +340,31 @@ class StreamAgent:
             o = self.model(input_ids=input_ids, past_key_values=cache, use_cache=True)
         return o.logits[:, -1, :], o.past_key_values
 
-    def run(self, task_prompt, target_file):
+    def run(self, task_prompt, target_file, editable=None):
         tok = self.tok
+        # editable = the set of files the model may edit (default: just the target). >1 file ->
+        # the multi-file / blast-radius setting (the bug spans files; completeness is the challenge).
+        editable = editable or [target_file]
         # build the chat prompt; assistant stream is what we generate + parse
-        sys_tmpl = {"rewrite": SYS_REWRITE, "line": SYS_LINE}.get(self.edit_mode, SYS)
-        sys_text = sys_tmpl.format(file=target_file)
+        if self.edit_mode == "line" and len(editable) > 1:
+            sys_text = SYS_LINE_MULTI.format(files=", ".join(f"`{f}`" for f in editable))
+        else:
+            sys_tmpl = {"rewrite": SYS_REWRITE, "line": SYS_LINE}.get(self.edit_mode, SYS)
+            sys_text = sys_tmpl.format(file=target_file)
         if self.announce_lsp and self.cond == "D":
             sys_text += ("\nA static type-checker runs continuously as you edit; its diagnostics "
                          "appear INLINE in your stream between ‹diag› and ‹/diag› markers a moment "
                          "after each edit. Treat them as live editor squigglies — when one appears, "
                          "fix the issue it names before moving on.")
+        if self.steer_hint:
+            sys_text += "\n" + self.steer_hint
         msgs = [{"role": "system", "content": sys_text},
                 {"role": "user", "content": task_prompt}]
-        prompt = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
+        # enable_thinking=False: Qwen3.x prefills an EMPTY <think></think> so the model answers
+        # directly instead of emitting reasoning that would shred our tag-parsing and eat the token
+        # budget. No-op for templates (e.g. Qwen2.5-Coder) that don't reference the variable.
+        prompt = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True,
+                                         enable_thinking=False)
         cache = None
         prompt_ids = self._ids(prompt, special=True)
         logits, cache = self._prefill(prompt_ids, cache)
@@ -298,13 +373,17 @@ class StreamAgent:
         emitted = ""          # decoded assistant stream so far
         out_ids = []
         out_labels = []       # parallel to out_ids: token id if MODEL-generated (train), -100 if spliced (observation)
+        turn_start_tok = [0]  # out_ids index where the CURRENT model turn began
+        relabel_keep_from = [None]  # --relabel: drop everything before this out_ids index from the SFT trace (the read-attempt + redirect prefix), so the model's own <defn> is trained as the first action from the clean prompt
         applied_upto = 0      # char index up to which edits are applied
         done_from = 0         # char index from which to look for <done/>
         test_from = 0         # char index from which to look for <test/>
         read_from = 0         # char index from which to look for <read/>
-        n_tests = n_edits = n_reads = turns = 0
+        grep_from = 0         # char index from which to look for <grep/>
+        lsp_from = 0          # char index from which to look for <findrefs/>/<defn/>
+        n_tests = n_edits = n_reads = n_greps = n_lsp = turns = 0
         fail_streak = 0       # consecutive non-applying / no-op edits (anti-degeneracy)
-        file_changed = False  # re-show the numbered file only when it changed (the prompt already has it)
+        changed_files = set()  # files edited since the last turn -> re-show their numbered view (per-file, multi-file safe)
         done_seen = resolved = bailed = False
         last_test = None
         pending = []          # D (immediate): in-flight diag spliced mid-stream (the live channel)
@@ -330,9 +409,10 @@ class StreamAgent:
                     nudge = ("\n[Your last edit did NOT apply. The SEARCH text must be copied "
                              "VERBATIM from the current file below — exact whitespace, no `END` "
                              "line inside SEARCH. Use one block: SEARCH / lines / REPLACE / lines / END.]")
-            nonlocal file_changed
-            fv = self._file_view(target_file) if file_changed else ""
-            file_changed = False
+            # re-show the numbered view of every file EDITED since the last turn (fresh line numbers
+            # for follow-up edits). changed_files is mutated in place -> no nonlocal needed.
+            fv = "\n\n".join(self._file_view(f) for f in sorted(changed_files)) if changed_files else ""
+            changed_files.clear()
             body = obs_text + nudge + ("\n\n" + fv if fv else "")
             splice("<|im_end|>\n<|im_start|>user\n" + body + "<|im_end|>\n<|im_start|>assistant\n")
 
@@ -343,7 +423,47 @@ class StreamAgent:
             logits, cache = self._prefill(ids, cache)
             out_ids.extend(ids[0].tolist())
             out_labels.extend([-100] * ids.shape[1])   # spliced = observation = masked for SFT
+            turn_start_tok[0] = len(out_ids)            # a new model turn begins after this observation
             emitted = tok.decode(out_ids)   # full faithful decode (per-token concat mangles markers)
+
+        # DAgger round-0 lead action: teacher-force the oracle's optimal first action <defn sym/> as a
+        # TRAINED token, deliver its (masked) result, then let the model continue on-policy. Produces clean
+        # "deployment-prompt -> defn -> solve" trajectories with NO <read> for SFT to clone.
+        if self.lead_defn:
+            sym = self.lead_defn
+            act = f'<defn sym="{sym}"/>'
+            ids = self._ids(act, special=False)
+            in_toks += int(ids.shape[1])
+            logits, cache = self._prefill(ids, cache)
+            out_ids.extend(ids[0].tolist()); out_labels.extend(ids[0].tolist())   # TRAINED (the model's "action")
+            emitted = tok.decode(out_ids)
+            n_lsp += 1
+            defn = self._resolve_defn(sym)
+            events.append({"tok": 0, "type": "defn", "n": n_lsp, "sym": sym, "found": bool(defn), "lead": True})
+            turns += 1
+            deliver_turn(f'<defn sym="{sym}">\n' + (defn or "(no definition found)") + "\n</defn>")
+            read_from = grep_from = lsp_from = test_from = done_from = applied_upto = len(emitted)
+
+        # DAgger round-0 for READ-REQUIRED tasks: lead with <read path/> as the TRAINED first action -> clean
+        # read-first trajectories (the boundary half: the model must read when <defn> is insufficient).
+        if self.lead_read:
+            rpath = self.lead_read
+            ids = self._ids(f'<read path="{rpath}"/>', special=False)
+            in_toks += int(ids.shape[1])
+            logits, cache = self._prefill(ids, cache)
+            out_ids.extend(ids[0].tolist()); out_labels.extend(ids[0].tolist())   # TRAINED
+            emitted = tok.decode(out_ids)
+            n_reads += 1
+            try:
+                content = self.env.read_file(rpath)
+                view = content if len(content) <= 16000 else content[:16000] + "\n... (truncated)"
+                obs = f'<file path="{rpath}">\n{view}\n</file>'
+            except Exception as e:
+                obs = f"Could not read {rpath}: {type(e).__name__}: {e}"
+            events.append({"tok": 0, "type": "read", "n": n_reads, "path": rpath, "lead": True})
+            turns += 1
+            deliver_turn(obs)
+            read_from = grep_from = lsp_from = test_from = done_from = applied_upto = len(emitted)
 
         if self.temperature and self.temperature > 0:
             torch.manual_seed(self.seed)
@@ -461,9 +581,10 @@ class StreamAgent:
                         ok, info = False, "line edits unsupported by env"
                     if ok: n_edits += 1; fail_streak = 0
                     else: fail_streak += 1
-                    file_changed = True
+                    if ok: changed_files.add(epath)
                     events.append({"tok": t, "type": "line_edit", "path": epath, "lines": f"{s}-{e}",
-                                   "ok": ok, "info": str(info)[:80], "fail_streak": fail_streak})
+                                   "ok": ok, "info": str(info)[:80], "fail_streak": fail_streak,
+                                   "replace": body[:300]})   # prevention metric: scan for hallucinated symbols
                     if fail_streak >= self.max_bad:
                         bailed = True; events.append({"tok": t, "type": "bail", "reason": "edit_fail_streak"}); break
                     if self.cond == "D" and self.debounce > 0 and ok:
@@ -495,9 +616,10 @@ class StreamAgent:
                     info = (res[1] if isinstance(res, tuple) else res.reason)
                 if ok: n_edits += 1; fail_streak = 0
                 else: fail_streak += 1
-                file_changed = True
+                if ok: changed_files.add(target_file)
                 events.append({"tok": t, "type": "edit", "path": target_file, "ok": ok,
-                               "info": str(info)[:80], "fail_streak": fail_streak})
+                               "info": str(info)[:80], "fail_streak": fail_streak,
+                               "replace": m["replace"][:300]})   # prevention metric: scan for hallucinated symbols
                 if fail_streak >= self.max_bad:
                     bailed = True
                     events.append({"tok": t, "type": "bail", "reason": "edit_fail_streak"})
@@ -536,17 +658,98 @@ class StreamAgent:
             # context). Blocking in all conditions (you can't continue without it).
             rdm = READ_RE.search(emitted, read_from)
             if rdm and n_reads < self.max_reads:
-                read_from = rdm.end(); n_reads += 1
                 rpath = rdm["path"]
+                # OPSD harvest: deny reads of non-editable files -> force the model onto <defn>/<findrefs>.
+                # Kept under the DEPLOYMENT prompt (read still advertised) so harvested trajectories match
+                # the distribution the distilled student is later evaluated in.
+                if self.force_lsp and rpath not in editable:
+                    read_from = rdm.end()
+                    avail = list((self.lsp_oracle.get("defn") or {}).keys())
+                    eg = avail[0] if avail else "Account"
+                    listing = (" Symbols you can query: " + ", ".join(avail) + ".") if avail else ""
+                    obs = (f"Reading `{rpath}` is disabled (large file — costly to load in full). To see a "
+                           f"symbol's definition/signature emit <defn sym=\"<the symbol name>\"/> "
+                           f"(for example <defn sym=\"{eg}\"/>), or <findrefs sym=\"<the symbol name>\"/> "
+                           f"to find where it is used.{listing}")
+                    turns += 1
+                    deliver_turn(obs)
+                    # The redirect obs CONTAINS literal self-closing <defn .../>/<findrefs .../> examples ("for example
+                    # <defn sym=\"Account\"/>"). Those match DEFN_RE/FINDREFS_RE, so we MUST advance the action-search
+                    # cursors past the spliced obs — otherwise the next search fires on the redirect's EXAMPLE tags
+                    # instead of the model's OWN action, and the model is never required to emit <defn> itself (it just
+                    # emits filler and the examples auto-resolve). That silently breaks the relabel harvest: the model's
+                    # <defn> would never be trained. Cursors are char offsets into `emitted`, refreshed inside splice().
+                    read_from = grep_from = lsp_from = len(emitted)
+                    # GENUINE relabel (proper DAgger): the model chose to <read> at this state; the rule oracle redirects
+                    # it to the cost-dominant <defn>, which the model now picks ITSELF (its own symbol choice). We DROP the
+                    # read-attempt + redirect PREFIX from the SFT trace entirely (not just mask its labels) so the model's
+                    # own <defn> action is trained as the FIRST action from the CLEAN prompt state — the fix for the
+                    # masked-prefix variant, which left the read+redirect in context and never trained <defn>-from-prompt.
+                    if self.relabel:
+                        relabel_keep_from[0] = len(out_ids)   # = turn_start_tok after the redirect (start of the model's defn turn)
+                    events.append({"tok": t, "type": "read_blocked", "path": rpath})
+                    continue
+                read_from = rdm.end(); n_reads += 1
                 try:
-                    content = self.env.read_file(rpath)
-                    view = content if len(content) <= 4000 else content[:4000] + "\n... (truncated)"
-                    obs = f"<file path=\"{rpath}\">\n{view}\n</file>"
+                    if len(editable) > 1:
+                        # multi-file: hand back a NUMBERED view so a DISCOVERED file is immediately
+                        # editable with <edit path=... lines=...> (partial-visibility / find-refs setting).
+                        obs = self._file_view(rpath)
+                    else:
+                        content = self.env.read_file(rpath)
+                        view = content if len(content) <= 16000 else content[:16000] + "\n... (truncated)"
+                        obs = f"<file path=\"{rpath}\">\n{view}\n</file>"
                 except Exception as e:
                     obs = f"Could not read {rpath}: {type(e).__name__}: {e}"
                 turns += 1
                 deliver_turn(obs)
                 events.append({"tok": t, "type": "read", "n": n_reads, "path": rpath})
+                continue
+
+            # detect <grep q="..."/> -> substring-search the workspace (the agent's realistic
+            # navigation tool; the nav experiment turns on whether re-export aliasing defeats it).
+            gm = GREP_RE.search(emitted, grep_from)
+            if gm and n_greps < self.max_greps:
+                grep_from = gm.end(); n_greps += 1
+                q = gm["q"]
+                hits = []
+                try:
+                    for fp in self.env.list_files():
+                        try: src = self.env.read_file(fp)
+                        except Exception: continue
+                        for i, ln in enumerate(src.splitlines(), 1):
+                            if q in ln:
+                                hits.append(f"{fp}:{i}: {ln.strip()[:120]}")
+                                if len(hits) >= 50: break
+                        if len(hits) >= 50: break
+                    obs = (f"<grep q=\"{q}\">\n" + ("\n".join(hits) if hits else "(no matches)") +
+                           ("\n... (truncated at 50)" if len(hits) >= 50 else "") + "\n</grep>")
+                except Exception as e:
+                    obs = f"grep failed: {type(e).__name__}: {e}"
+                turns += 1
+                deliver_turn(obs)
+                events.append({"tok": t, "type": "grep", "n": n_greps, "q": q, "hits": len(hits)})
+                continue
+
+            # PULL LSP actions: <findrefs sym=.../> (go-to-references) and <defn sym=.../> (go-to-def/hover).
+            # Oracle-backed, CHEAP (a few lines) vs reading whole files — the efficiency-as-policy lever.
+            frm = FINDREFS_RE.search(emitted, lsp_from)
+            dfm = DEFN_RE.search(emitted, lsp_from)
+            lm2 = min([x for x in (frm.start() if frm else None, dfm.start() if dfm else None) if x is not None], default=None)
+            if lm2 is not None:
+                if frm and frm.start() == lm2:
+                    lsp_from = frm.end(); n_lsp += 1; sym = frm["sym"]
+                    refs = self._resolve_refs(sym)
+                    obs = (f"<findrefs sym=\"{sym}\">\n" +
+                           ("\n".join(refs) if refs else "(no references found)") + "\n</findrefs>")
+                    events.append({"tok": t, "type": "findrefs", "n": n_lsp, "sym": sym, "hits": len(refs or [])})
+                else:
+                    lsp_from = dfm.end(); n_lsp += 1; sym = dfm["sym"]
+                    defn = self._resolve_defn(sym)
+                    obs = (f"<defn sym=\"{sym}\">\n" + (defn if defn else "(no definition found)") + "\n</defn>")
+                    events.append({"tok": t, "type": "defn", "n": n_lsp, "sym": sym, "found": bool(defn)})
+                turns += 1
+                deliver_turn(obs)
                 continue
 
             dm = DONE_RE.search(emitted, done_from)
@@ -574,12 +777,16 @@ class StreamAgent:
 
         result = self._run_tests(cap=None)   # authoritative: full F2P + full P2P
         prompt_list = prompt_ids[0].tolist()
-        sft_input_ids = prompt_list + out_ids
-        sft_labels = [-100] * len(prompt_list) + out_labels   # prompt masked; train only on model actions
+        # --relabel (proper DAgger): drop the read-attempt + redirect PREFIX so the model's own <defn> action is the
+        # first trained action conditioned on the CLEAN prompt (not on a read+redirect that never occurs at deployment).
+        keep = relabel_keep_from[0] if (self.relabel and relabel_keep_from[0] is not None) else 0
+        kept_ids, kept_labels = out_ids[keep:], out_labels[keep:]
+        sft_input_ids = prompt_list + kept_ids
+        sft_labels = [-100] * len(prompt_list) + kept_labels   # prompt masked; train only on model actions
         return {"condition": self.cond, "resolved": result.get("resolved"),
                 "bailed": bailed, "tests": result, "metrics": self.env.metrics(),
                 "events": events, "stream": emitted,
                 "out_tokens": t, "in_tokens": in_toks, "n_tokens": t,
-                "n_edits": n_edits, "n_tests": n_tests, "n_reads": n_reads, "turns": turns,
+                "n_edits": n_edits, "n_tests": n_tests, "n_reads": n_reads, "n_greps": n_greps, "n_lsp": n_lsp, "turns": turns,
                 "sft_input_ids": sft_input_ids, "sft_labels": sft_labels,
-                "n_train_tokens": sum(1 for x in out_labels if x != -100)}
+                "n_train_tokens": sum(1 for x in kept_labels if x != -100)}

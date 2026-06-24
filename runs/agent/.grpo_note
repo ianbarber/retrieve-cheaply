@@ -1,0 +1,3 @@
+GRPO code DONE (grpo_cost.py + run_grpo.sh), CPU-validated: reward+advantage math sane, PG-loss indexing matches reference, -100 mask works.
+PHASE-3 OOM RISK: pg_loss does F.log_softmax over the FULL Qwen vocab (~152k) at fp32 -> ~2.4GB extra (B,T-1,V) tensor on top of bf16 logits. If [grpo] OOMs at the PG step: replace the explicit log_softmax+gather with F.cross_entropy(shift_logits.view(-1,V), shift_labels.view(-1), reduction='none').view(B,T-1) then negate + mask (no full fp32 softmax). bs/accum already 1/8.
+Other: zero-advantage trajectories skipped; --init-adapter continues the LoRA across rounds; round0 = wild 7B; N=4 G=8 K=4 lambda=0.5 lr=1e-5 on 9 defn tasks.
