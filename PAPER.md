@@ -105,6 +105,16 @@ summarize the evidence compactly:
   the call graph when name search fails); prevention fails its precondition — the agent
   reads the library and never emits the hallucinated symbol, so there is nothing to prevent.
 
+Beyond *which* channel, we also studied *how* the feedback is delivered — synchronously at
+end-of-turn versus interleaved live into the generation stream, eager versus lazy, with and
+without hygiene gating — in an n=168 zero-shot sweep (14 tasks × 12 seeds). Properly-delivered
+feedback of any timing lands in a parity band (fix-rates 0.46–0.53, all pairwise differences
+non-significant); only naive live delivery hurts, and that harm is a recoverable
+format-hygiene artifact (diagnostic markers leaking into the agent's own edits), not an
+intrinsic cost of liveness. So neither timing nor delivery format is the binding constraint
+either — which, with the channel nulls above, is why we stop asking how to deliver the
+information and ask instead what retrieving it costs.
+
 These nulls are consistent with redundancy, but also with a ceiling/floor sandwich (the 35B
 saturates; the 7B cannot act on any feedback, gold-fix included), and they are measured on
 synthetic suites with oracle channels, not a real repo with ambiguous navigation. We
@@ -259,8 +269,7 @@ diagnostics during RL. Where RLCSF treats LSP feedback as a useful signal to rew
 the LSP's *information* is redundant for a self-retrieving agent and that its sole residual
 value — retrieval *efficiency* — is a preference a lightweight on-policy imitation step
 instills where prompting and offline cloning cannot. We do not reward the tool; we train
-*when to call it*. (The two 2026 arXiv identifiers above are from our notes and not yet
-cross-checked against the published PDFs.)
+*when to call it*.
 
 ## 7. Limitations
 
@@ -272,13 +281,6 @@ cross-checked against the published PDFs.)
 - **Synthetic tasks with a controlled cost gap.** The read-required boundary covers two
   reasons a full read is needed (name-hidden, many-symbol), not all, and the suites are not
   a real repository with ambiguous navigation.
-- **Delivery format is unexplored.** We return retrieval results *synchronously* — the tool
-  completes and its output is appended before the agent's next step. How the result is
-  *delivered* — batched at end-of-turn, as here, versus interleaved into the generation
-  stream as it arrives — is an orthogonal axis that plausibly trades latency against the
-  agent's ability to course-correct mid-generation. An earlier phase of this project found
-  delivery format mattered for *diagnostics*; whether it interacts with the cost-preference
-  for *retrieval* is open, and worth a dedicated study.
 - **Cross-scale transfer is a check, not a second headline.** The training was originally
   7B-only; we re-ran the same relabel pipeline on Qwen3.6-27B (a different generation and a
   reasoning model). The wild 27B is capable but reads everything (0% use, 96% read, 4058
