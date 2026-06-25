@@ -26,6 +26,7 @@ def load(path):
     return r["A"] if isinstance(r, dict) else r
 
 def variant(task):
+    if task.endswith("_sufx"):  return "sufx"   # control: SUFFICIENT but reference-form (cover3)
     if task.endswith("_suf"):   return "suf"
     if task.endswith("_f1ins"): return "f1ins"
     if task.endswith("_f2ins"): return "f2ins"
@@ -43,20 +44,27 @@ def esc_rate(rows):
                if (r.get("n_lsp") or 0) >= 1
                and ((r.get("n_lsp") or 0) >= 2 or (r.get("n_reads") or 0) >= 1)) / len(rows)
 
+_COV = {"suf": "sufficient", "sufx": "suff/ref-form", "f1ins": "insufficient", "f2ins": "insufficient"}
+
 def report(label, rows):
-    by = {"suf": [], "f1ins": [], "f2ins": []}
+    by = {"suf": [], "sufx": [], "f1ins": [], "f2ins": []}
     for r in rows:
         v = variant(r["task"])
         if v in by: by[v].append(r)
-    print(f"\n=== {label}  (suf n={len(by['suf'])}, f1ins n={len(by['f1ins'])}, f2ins n={len(by['f2ins'])}) ===")
-    print(f"  {'variant':20}{'read':>6}{'defn>=2':>8}{'escalate':>9}{'solved':>8}{'in_tok':>8}")
-    for v in ("suf", "f1ins", "f2ins"):
+    print(f"\n=== {label}  (" + ", ".join(f"{k} n={len(by[k])}" for k in by if by[k]) + ") ===")
+    print(f"  {'variant':22}{'read':>6}{'defn>=2':>8}{'escalate':>9}{'solved':>8}{'in_tok':>8}")
+    for v in ("suf", "sufx", "f1ins", "f2ins"):
         g = by[v]
         if not g: continue
         dchain = sum(1 for r in g if (r.get("n_lsp") or 0) >= 2)/len(g)
-        cov = "sufficient" if v == "suf" else "insufficient"
-        print(f"  {v+' ('+cov+')':20}{rate(g,'n_reads'):6.2f}{dchain:8.2f}{esc_rate(g):9.2f}"
+        print(f"  {v+' ('+_COV[v]+')':22}{rate(g,'n_reads'):6.2f}{dchain:8.2f}{esc_rate(g):9.2f}"
               f"{rate(g,'resolved'):8.2f}{st.mean(r.get('in_tokens',0) for r in g):8.0f}")
+    if by["sufx"]:  # form-keying control (cover3)
+        rsx, rsf = rate(by["sufx"], "n_reads"), rate(by["suf"], "n_reads")
+        rins = rate(by["f1ins"]+by["f2ins"], "n_reads")
+        verdict = "CONTENT-judging (sufx patterns with suf: value present -> no read)" if abs(rsx-rsf) < abs(rsx-rins) \
+                  else "FORM-keying (sufx patterns with insuff: reads on a name-reference even though the value is present)"
+        print(f"  FORM-KEYING CONTROL: read(sufx)={rsx:.2f} vs read(suf)={rsf:.2f} vs read(insuff)={rins:.2f}  -> {verdict}")
     es = esc_rate(by["suf"])
     j1 = esc_rate(by["f1ins"]) - es if by["f1ins"] else float("nan")
     j2 = esc_rate(by["f2ins"]) - es if by["f2ins"] else float("nan")

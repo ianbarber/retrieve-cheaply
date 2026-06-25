@@ -2152,6 +2152,15 @@ when the cheap defn fell short.
 VERDICT: coverage discovery is NOT a fundamental gap for a capable model — training the cost-preference instils the
 efficient read-only-when-needed policy on top of a coverage-perception the base already has but spends indiscriminately.
 PAPER.md §5.4 rewritten (positive), §7 boundary-limit + recipe caveat softened to "discovered per-instance." Caveats:
-one model, synthetic, modest n, suf-read 0.17 not 0, legible insufficiency signal; a dedicated shape-keyed baseline would
-make not-shape-keying airtight (next). Infra: synth_tasks_cover.py, synth_tasks_cover2.py, analysis/coverage_j.py,
-run_cover.sh; data cover{,2}_{base,sft}.json.
+one model, synthetic, modest n, suf-read 0.17 not 0, legible insufficiency signal. Infra: synth_tasks_cover.py,
+synth_tasks_cover2.py, analysis/coverage_j.py, run_cover.sh; data cover{,2}_{base,sft}.json.
+
+FORM-KEYING CONTROL (cover3, 2026-06-25): the not-shape-keying claim made airtight. cover3 = cover2 + a 4th variant
+_sufx: coverage-SUFFICIENT but REFERENCE-FORM — the value is present in the <defn> span yet accessed via a local name
+`_c = 53; ... >= _c ...`, i.e. the SAME surface form as the insufficient indirections. Discriminator read(_sufx):
+~read(_suf) => content-judging; ~read(insuff) => form-keying. RESULT (trained 27B, n=18/variant): read(sufx)=0.06,
+read(suf)=0.17, read(insuff)=1.00, all solved 1.00 -> CONTENT-judging: the model reads on whether the VALUE is present
+in what <defn> returned, NOT on the surface form of the return (it does NOT read on a name-reference when the value is
+there). So coverage-judging is content-driven, not a form/shape heuristic. Verified cover3 exhaustively myself (sufx
+value defn-reachable; f1ins/f2ins read-only; 4 variants surface-identical). PAPER.md §5.4 control folded in. Infra:
+synth_tasks_cover3.py, _cover3_run.sh; data cover3_sft.json.

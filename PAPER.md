@@ -269,9 +269,14 @@ already has but spends indiscriminately.)
 Caveats: one model (27B) on synthetic tasks with modest n (18 per variant); the read-decision
 is not perfectly clean (17% reads on sufficient); and "insufficient" here is a fairly legible
 signal (the returned definition visibly references an external name), where real-repository
-indirection is messier. The byte-identical surface and the cross-mechanism transfer already
-exclude the obvious shape-keying routes; a dedicated shape-keyed baseline (trained where
-surface predicts coverage, and shown to fail this suite) would make that airtight.
+indirection is messier. We rule out a *form*-heuristic ("read whenever the returned definition
+references a name") with an adversarial control: a sufficient-but-reference-form variant whose
+value is present in the returned span but accessed through a *local* name — the same surface
+form as the insufficient cases. The trained model does **not** read on it (read 0.06, like the
+plain sufficient case at 0.17, versus 1.00 when the value is genuinely absent), so the
+read-decision tracks whether the value is actually *present* in what `<defn>` returned, not the
+surface form of the return. With that, and the byte-identical surface and cross-mechanism
+transfer, the discrimination is content-driven, not shape- or form-keying.
 
 ## 6. Related work
 

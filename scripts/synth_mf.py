@@ -32,16 +32,22 @@ try:
     from scripts.synth_tasks_cover2 import TASKS_COVER2  # COVERAGE v2: insufficiency is NON-DEFN-CHAINABLE (read forced)
 except Exception:
     TASKS_COVER2 = []
+try:
+    from scripts.synth_tasks_cover3 import TASKS_COVER3  # COVERAGE v3: + _sufx control (sufficient but in reference form)
+except Exception:
+    TASKS_COVER3 = []
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--suite", default="effic",
-                choices=["effic", "efficread", "effmix", "effic_nodel", "cover", "cover2"],
+                choices=["effic", "efficread", "effmix", "effic_nodel", "cover", "cover2", "cover3"],
                 help="task suite: effic (efficiency-as-policy: prefer cheap <defn> over reading a big lib), "
                      "efficread (read-required boundary: <defn> insufficient, must <read>), "
                      "effmix (effic + efficread), "
                      "effic_nodel (no-delegation coverage probe; see log 2026-06-24), "
                      "cover (coverage-judging: read-on-insufficient-defn, suf/f1ins/f2ins variants), "
-                     "cover2 (coverage v2: insufficiency is NON-DEFN-CHAINABLE, a <read> is forced)")
+                     "cover2 (coverage v2: insufficiency is NON-DEFN-CHAINABLE, a <read> is forced), "
+                     "cover3 (coverage v3 control: cover2 + _sufx (sufficient but in reference form) to "
+                     "rule out form-keying)")
 ap.add_argument("--lsp-tools", action="store_true",
                 help="advertise PULL LSP actions <defn sym=.../> and <findrefs sym=.../> (oracle-backed, cheap) "
                      "alongside <read> — the efficiency-as-policy lever (does the model prefer the LSP over reading?)")
@@ -155,7 +161,7 @@ def build_oracle(buggy, gold, mode):
 
 TASKS_MF = {"effic": TASKS_EFFIC, "efficread": TASKS_EFFICREAD,
             "effmix": (TASKS_EFFIC + TASKS_EFFICREAD), "effic_nodel": TASKS_EFFIC_ND,
-            "cover": TASKS_COVER, "cover2": TASKS_COVER2}[A.suite]
+            "cover": TASKS_COVER, "cover2": TASKS_COVER2, "cover3": TASKS_COVER3}[A.suite]
 tasks = TASKS_MF if not A.names else [t for t in TASKS_MF if t["name"] in set(A.names.split(","))]
 conds = A.conds.split(",")
 n_seeds = 1 if A.temp == 0 else A.seeds
