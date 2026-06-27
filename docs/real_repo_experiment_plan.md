@@ -10,17 +10,19 @@ This plan describes a small, feasible real-repo arm that reuses the existing sca
 
 ## 1. Benchmark choice
 
-**Recommendation:** start with a **curated subset of SWE-bench Verified** (500 instances, 12 Python repos), filtered down to **15–20 tasks** that look like the synthetic efficiency setting, plus a small held-out boundary set.
+**Recommendation:** start with **RefactorBench**, a benchmark of multi-file refactoring tasks on 9 popular Python repositories. Tasks are verified by custom AST-based unit tests rather than hidden fail-to-pass tests, which makes the evaluation harness lighter than SWE-bench and the patch semantics clearer.
 
-**Why SWE-bench Verified?**
-- Real GitHub issues with executable environments and hidden fail-to-pass tests.
-- The pass@1 metric is already standardized, so the result is comparable to the literature.
-- Issue descriptions give the agent a natural-language goal, unlike hand-authored stubs.
-- It is much smaller and cheaper than full SWE-bench.
+**Why RefactorBench?**
+- Real repository code with real refactoring goals.
+- Tasks inherently require reading existing code before editing, so there is a natural retrieval phase to measure.
+- AST-based verification avoids the heavy Docker harness of SWE-bench.
+- It is smaller and more controlled than SWE-bench, which fits our goal of testing a *specific retrieval preference* rather than beating an issue-resolution leaderboard.
 
-**Why not run all 500?** Cost and signal. We are not trying to beat the SWE-bench leaderboard; we are testing whether a *specific retrieval preference* transfers. A focused subset keeps GPU time inside a few days and makes manual inspection tractable.
+**Why not run all of RefactorBench?** Cost and focus. We will filter down to **15–20 tasks** where the refactor depends on understanding one or a few external symbols defined in large files, giving a clean `<defn>` vs `<read>` cost gap.
 
-**Alternative / complement:** If environment setup for SWE-bench Verified proves too heavy, fall back to **SWE-Gym Lite** (~230 instances with pre-built environments) or a **hand-curated mini-benchmark of 10–20 issues from 2–3 small/medium Python repos** (e.g. `pallets/click`, `python-attrs/attrs`, `pydantic`). The curated route gives direct control over file size and symbol complexity.
+**Complement / follow-up:** after the RefactorBench arm, run a smaller **hand-curated typed-library issue** set (10–20 issues from `pydantic`, `fastapi`, `httpx`, `sqlalchemy` 2.0, `mypy`, `black`, `typer`, `structlog`, or `python-attrs/attrs`). These repos have high annotation density, so pyrefly resolves cleanly and the experiment isolates the *retrieval preference* from resolver robustness.
+
+**Fallbacks if RefactorBench proves unsuitable:** SWE-Gym Lite, FEA-Bench, or a curated mini-benchmark from small/medium repos such as `pallets/click` or `encode/starlette`.
 
 ---
 
@@ -40,8 +42,9 @@ A task is suitable for measuring `<defn>` vs `<read>` savings when:
    - The defining file is at least ~200 lines, preferably 500+.
    - `<defn sym>` returns ≤10% of the file's tokens.
 
-4. **The symbol is unambiguously resolvable by a Python LSP.**
+4. **The symbol is resolvable by pyrefly.**
    - Avoid tasks where the needed behavior is hidden behind dynamic dispatch, `getattr`, star imports, or C extensions.
+   - Run a resolver-coverage audit: for each candidate task, ask pyrefly for `textDocument/definition` on the symbol the patch touches. Keep only tasks where pyrefly returns the correct span (validated against the gold patch or `inspect.getsource`). Report the resolver hit rate as a metadata column.
 
 5. **Baseline solvability.**
    - The untrained 7B agent should solve at least some seeds with `<read>` available, so we can compare tokens at matched outcome.
@@ -81,8 +84,16 @@ The `file/line/col` attributes point to a use-site; the backend calls `textDocum
 
 ### Backend resolver
 
+Pyrefly is a type checker, but it performs aggressive inference even on unannotated code
+(unlike mypy, which often defaults to `Any`). That means it may resolve more symbols on
+SWE-bench-style code than a strict annotation-only checker would. We should still measure
+resolver coverage explicitly rather than assuming it works.
+
 - **Primary:** drive a live `pyrefly lsp` daemon per task, reusing `scripts/validate_pyrefly_lsp.py::LspClient`.
-- **Fallback:** static AST resolver over the checked-out repo.
+- **Fallback:** static AST/CST resolver over the checked-out repo.
+- **Coverage audit:** before running the full experiment, run `pyrefly coverage report` (or
+  the LSP definition call) on a sample of candidate symbols and record the hit rate. Only
+  include tasks where the needed symbol resolves correctly.
 - **Return format:** the full source span of the resolved definition (same shape as `goto_definition` today).
 - **Sequential execution:** because pyrefly daemons deadlock under concurrency, one daemon per rollout, killed before the next task.
 
@@ -229,21 +240,29 @@ Reuse the headline recipe:
    - Expand the LSP location to the enclosing top-level node's full span (as `lsp_definition` already does in `mock_env.py`).
 
 3. **`scripts/real_repo_loader.py`** – task loader and filter.
-   - Read SWE-bench Verified / SWE-Gym Lite JSON.
-   - Filter by patch size, file count, and referenced-file size.
+   - **Primary input:** RefactorBench JSON. Parse its task format into the internal schema.
+   - **Secondary input:** hand-curated typed-library issue JSON (same schema).
+   - Filter by patch size, file count, referenced-file size, and pyrefly resolver coverage.
    - Build task dicts matching the schema expected by `synth_mf.py` (name, files dict, target, test command, gold patch).
 
-4. **`scripts/real_mf.py`** – runner mirroring `scripts/synth_mf.py`.
+4. **`scripts/resolver_coverage_audit.py`** – coverage sanity check.
+   - For each candidate task, extract the symbol touched by the gold patch.
+   - Query pyrefly `textDocument/definition` (and the AST fallback) for that symbol.
+   - Compare the returned span to the gold source span or `inspect.getsource`.
+   - Emit a CSV of `task, symbol, resolver_hit, correct_file, correct_line_range`.
+   - Only tasks with `resolver_hit=True` enter the main experiment.
+
+5. **`scripts/real_mf.py`** – runner mirroring `scripts/synth_mf.py`.
    - Use `RealRepoEnv` instead of `MultiFileEnv`.
    - Keep `--force-lsp`, `--relabel`, `--save-sft`, `--steer`, `--adapter`, `--lsp-tools`, `--lsp-defn`.
    - Build prompts with the real issue description and editable-file list.
 
-5. **`scaffold/stream_agent.py`** – extend `<defn>` parsing.
+6. **`scaffold/stream_agent.py`** – extend `<defn>` parsing.
    - Update `DEFN_RE` to capture optional `file`, `line`, `col`.
    - Pass use-site to `_resolve_defn`.
    - Update system prompts to advertise qualified symbols and line-numbered views.
 
-6. **`scripts/run_real_repo.sh`** – shell driver.
+7. **`scripts/run_real_repo.sh`** – shell driver.
    - Stage 1: dry-run / resolver validation.
    - Stage 2: Mode A harvest.
    - Stage 3: Mode B harvest.
@@ -251,12 +270,12 @@ Reuse the headline recipe:
    - Stage 5: retest base / prompt / trained.
    - Stage 6: run analysis.
 
-7. **`scripts/analysis/real_repo_stats.py`** – metrics and tests.
+8. **`scripts/analysis/real_repo_stats.py`** – metrics and tests.
    - Compute pass@1, `<defn>` use, input tokens, matched-outcome token reduction.
    - Run McNemar and paired sign tests.
    - Subgroup breakdown by post-hoc definition-sufficiency.
 
-8. **(Optional) `scripts/real_coverage_classifier.py`** – lightweight boundary predictor.
+9. **(Optional) `scripts/real_coverage_classifier.py`** – lightweight boundary predictor.
    - Train on harvest trajectories to predict whether a task will need a full read.
    - Use only for stratification and diagnosis.
 
