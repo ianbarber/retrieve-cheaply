@@ -19,26 +19,16 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from scaffold.stream_agent import StreamAgent
 from scaffold.mock_env import MultiFileEnv
 from scripts.synth_tasks_effic import TASKS_EFFIC  # EFFICIENCY-as-policy: prefer cheap <defn> over reading a big lib
+from scripts.synth_tasks_effic_real import TASKS_EFFIC_REAL  # REAL-CODE effic: same shape, real vendored library source
+from scripts.synth_tasks_effic_real2 import TASKS_EFFIC_REAL2  # REAL-CODE effic, UN-MEMORIZED obscure-tail symbols
+from scripts.synth_tasks_gapd import TASKS_GAPD  # GAP D: inference-hard tasks — is type-checker INFERENCE non-redundant?
 from scripts.synth_tasks_efficread import TASKS_EFFICREAD  # READ-REQUIRED boundary: <defn> insufficient, must <read>
-from scripts.synth_tasks_effic_nodel import TASKS_EFFIC_ND  # NODEL no-delegation coverage probe
-try:
-    from scripts.synth_tasks_cover import TASKS_COVER
-except Exception:
-    TASKS_COVER = []
-try:
-    from scripts.synth_tasks_cover2 import TASKS_COVER2
-except Exception:
-    TASKS_COVER2 = []
-try:
-    from scripts.synth_tasks_cover3 import TASKS_COVER3
-except Exception:
-    TASKS_COVER3 = []
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--suite", default="effic",
-                choices=["effic", "efficread", "effmix", "effic_nodel", "cover", "cover2", "cover3"],
+                choices=["effic", "effic_real", "effic_real2", "gapd", "efficread", "effmix"],
                 help="task suite: effic (prefer cheap <defn>), efficread (read-required boundary), "
-                     "effmix (effic + efficread), effic_nodel, cover/cover2/cover3")
+                     "effmix (effic + efficread), gapd (type-inference info channel)")
 ap.add_argument("--lsp-tools", action="store_true",
                 help="advertise PULL LSP actions <defn sym=.../> and <findrefs sym=.../> alongside <read>")
 ap.add_argument("--dry-run", action="store_true",
@@ -51,6 +41,8 @@ ap.add_argument("--relabel", action="store_true",
                 help="genuine on-policy relabel: mask the read-attempt tokens and keep the model's own <defn>")
 ap.add_argument("--lsp-defn", action="store_true",
                 help="back <defn> with a LIVE pyrefly LSP daemon (env.lsp_definition) instead of the AST resolver")
+ap.add_argument("--no-defn", action="store_true",
+                help="TOOL-VALUE ABLATION: make <defn>/<findrefs> genuinely unavailable (read-only condition)")
 ap.add_argument("out", nargs="?", default="runs/agent/mf_run.json")
 ap.add_argument("--conds", default="A", choices=["A"],
                 help="condition(s) to run; the final recipe uses A only")
@@ -69,9 +61,9 @@ ap.add_argument("--max-turns", type=int, default=12,
                 help="cap on agent turns (reads/tests/edits)")
 A = ap.parse_args()
 
-TASKS_MF = {"effic": TASKS_EFFIC, "efficread": TASKS_EFFICREAD,
-            "effmix": (TASKS_EFFIC + TASKS_EFFICREAD), "effic_nodel": TASKS_EFFIC_ND,
-            "cover": TASKS_COVER, "cover2": TASKS_COVER2, "cover3": TASKS_COVER3}[A.suite]
+TASKS_MF = {"effic": TASKS_EFFIC, "effic_real": TASKS_EFFIC_REAL, "effic_real2": TASKS_EFFIC_REAL2,
+            "gapd": TASKS_GAPD, "efficread": TASKS_EFFICREAD,
+            "effmix": (TASKS_EFFIC + TASKS_EFFICREAD)}[A.suite]
 tasks = TASKS_MF if not A.names else [t for t in TASKS_MF if t["name"] in set(A.names.split(","))]
 conds = A.conds.split(",")
 n_seeds = 1 if A.temp == 0 else A.seeds
@@ -185,7 +177,7 @@ for task in tasks:
                                 temperature=A.temp, seed=seed,
                                 force_lsp=A.force_lsp, relabel=A.relabel,
                                 advertised_symbols=(advertised_symbols(task) if A.lsp_tools else []),
-                                use_lsp_defn=A.lsp_defn)
+                                use_lsp_defn=A.lsp_defn, lsp_disabled=A.no_defn)
             t0 = time.time()
             r = agent.run(build_prompt(task), target, editable=editable)
             dt = time.time() - t0

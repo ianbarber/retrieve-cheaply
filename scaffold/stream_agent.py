@@ -42,7 +42,12 @@ READ_RE = re.compile(r'<read\s+path="(?P<path>[^"]+)"\s*/>')   # gather repo con
 # PULL LSP actions (efficiency-as-policy experiment): a CHEAP retrieval action the model can ELECT
 # instead of reading whole files. Backed by the env's live resolver, with no gold fallback.
 FINDREFS_RE = re.compile(r'<findrefs\s+sym="(?P<sym>[^"]+)"\s*/>')   # go-to-references: where is SYM used
-DEFN_RE     = re.compile(r'<defn\s+sym="(?P<sym>[^"]+)"\s*/>')       # go-to-definition / hover: SYM's def+signature
+DEFN_RE     = re.compile(                                          # go-to-definition / hover: SYM's def+signature
+    r'<defn\s+sym="(?P<sym>[^"]+)"'
+    r'(?:\s+file="(?P<file>[^"]+)")?'                               # optional use-site file (qualified-symbol disambig)
+    r'(?:\s+line="(?P<line>\d+)")?'
+    r'(?:\s+col="(?P<col>\d+)")?'
+    r'\s*/>')   # bare <defn sym="NAME"/> still parses exactly as before; file/line/col are additive
 NUMPREFIX_RE = re.compile(r'(?m)^\s*\d+\|\s?')   # strip accidental "  3| " file-view prefixes
 # line-range edit: robust for weak models on big files (no string matching).
 LINE_EDIT_RE = re.compile(
@@ -77,6 +82,9 @@ def foo(x):
 END
 
 To READ another file for context, emit:  <read path="pkg/other.py"/>
+To look up just a symbol's definition (cheaper than reading a whole file), emit
+<defn sym="NAME"/> — NAME may be qualified like `module.Class.method` or `Class.method`, and
+you may add an optional use-site `<defn sym="m" file="pkg/x.py" line="N" col="N"/>` to disambiguate.
 After editing, emit <test/> to RUN THE TESTS; you will receive the results. If tests fail,
 read the failure, make another SEARCH/REPLACE/END edit, and <test/> again — keep iterating
 until they pass. Emit <done/> only once the tests pass. Reason briefly between actions."""
@@ -91,6 +99,9 @@ To EDIT, replace a range of lines by emitting EXACTLY:
 START-END are inclusive 1-based line numbers from the numbered view. Include proper
 indentation. You choose the range — one line or many. Do not wrap the code in ``` fences.
 To READ another file for context: <read path="pkg/other.py"/>
+To look up just a symbol's definition (cheaper than a whole file): <defn sym="NAME"/> — NAME may
+be qualified (`module.Class.method`, `Class.method`), with an optional use-site
+`<defn sym="m" file="pkg/x.py" line="N" col="N"/>` to disambiguate.
 After editing, emit <test/> to RUN THE TESTS; you'll get the results, then a fresh numbered
 view of the file (line numbers may have shifted — always use the latest view). Keep iterating:
 edit -> <test/> -> fix -> <test/> until tests pass, then emit <done/>. Reason briefly between actions."""
@@ -107,7 +118,9 @@ To EDIT a file, emit EXACTLY:
 Use the path of the file you are editing and ITS OWN 1-based line numbers from the numbered view.
 After each edit you receive a fresh numbered view of every editable file (line numbers shift —
 always use the latest view for the file you are editing). To READ a non-editable file for
-context: <read path="pkg/other.py"/>. After your edits, emit <test/> to RUN THE TESTS; you'll get
+context: <read path="pkg/other.py"/>. To look up just a symbol's definition (cheaper than a whole
+file): <defn sym="NAME"/> — NAME may be qualified (`module.Class.method`, `Class.method`), with an
+optional use-site `<defn sym="m" file="pkg/x.py" line="N" col="N"/>` to disambiguate. After your edits, emit <test/> to RUN THE TESTS; you'll get
 the results. Keep iterating: edit the affected sites -> <test/> -> fix any remaining site ->
 <test/> until tests pass, then emit <done/>. Reason briefly between actions."""
 
@@ -117,7 +130,7 @@ class StreamAgent:
                  max_new_tokens=3000, max_tests=8, max_turns=12, max_bad=5,
                  max_reads=6, edit_mode="search", temperature=0.0, seed=0,
                  force_lsp=False, relabel=False, device=None,
-                 use_lsp_defn=False, advertised_symbols=None):
+                 use_lsp_defn=False, advertised_symbols=None, lsp_disabled=False):
         assert edit_mode in ("search", "line")
         self.temperature, self.seed = temperature, seed
         self.model, self.tok, self.env = model, tok, env
@@ -128,16 +141,25 @@ class StreamAgent:
         self.relabel = relabel   # on-policy relabel: drop the read-attempt prefix so the model's own <defn> is trained first
         self.use_lsp_defn = use_lsp_defn   # back <defn> with a LIVE pyrefly LSP daemon (env.lsp_definition) instead of AST
         self.advertised_symbols = advertised_symbols or []   # symbols the model may query when reads are blocked
+        self.lsp_disabled = lsp_disabled   # tool-value ablation: <defn>/<findrefs> genuinely UNAVAILABLE (read-only)
         self.test_p2p_cap = 5    # in-loop <test/> caps P2P for speed; final resolved runs full
         self.edit_mode = edit_mode
         self.dev = device or model.device
 
-    def _resolve_defn(self, sym):
+    def _resolve_defn(self, sym, file=None, line=None, col=None):
         """REAL go-to-definition: ask the env's resolver over the LIVE workspace.
         With use_lsp_defn, try a LIVE pyrefly LSP daemon first; otherwise use the AST resolver.
+        An optional use-site (file/line/col) is threaded to env.lsp_definition when the env
+        accepts it (real-repo qualified-symbol disambiguation); else current behaviour.
         No gold/oracle fallback."""
         if self.use_lsp_defn and hasattr(self.env, "lsp_definition"):
-            src, _ = self.env.lsp_definition(sym)
+            if file or line or col:
+                try:
+                    src, _ = self.env.lsp_definition(sym, file=file, line=line, col=col)
+                except TypeError:
+                    src, _ = self.env.lsp_definition(sym)   # env w/o use-site support (MultiFileEnv)
+            else:
+                src, _ = self.env.lsp_definition(sym)
             if src:
                 return src
             # LSP miss/timeout: fall through to the AST resolver (never hang on the daemon)
@@ -224,6 +246,9 @@ class StreamAgent:
         else:
             sys_tmpl = {"line": SYS_LINE}.get(self.edit_mode, SYS)
             sys_text = sys_tmpl.format(file=target_file)
+        if self.lsp_disabled:
+            # tool-value ablation: also strip the <defn> advertisement so the model isn't pointed at a disabled tool
+            sys_text = re.sub(r"To look up just a symbol's definition.*?to disambiguate\.\s*\n?", "", sys_text, flags=re.S)
         msgs = [{"role": "system", "content": sys_text},
                 {"role": "user", "content": task_prompt}]
         prompt = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True,
@@ -416,6 +441,15 @@ class StreamAgent:
             frm = FINDREFS_RE.search(emitted, lsp_from)
             dfm = DEFN_RE.search(emitted, lsp_from)
             lm2 = min([x for x in (frm.start() if frm else None, dfm.start() if dfm else None) if x is not None], default=None)
+            if lm2 is not None and self.lsp_disabled:
+                # TOOL-VALUE ABLATION: the language-server lookups are genuinely unavailable. Even if the
+                # model emits one (from prior knowledge), it gets nothing useful and is told to read instead.
+                lsp_from = frm.end() if (frm and frm.start() == lm2) else dfm.end()
+                turns += 1
+                deliver_turn("Language-server lookups (<defn>/<findrefs>) are not available in this run. "
+                             "Read a file with <read path=\"...\"/> to see its contents instead.")
+                events.append({"tok": t, "type": "lsp_disabled"})
+                continue
             if lm2 is not None:
                 if frm and frm.start() == lm2:
                     lsp_from = frm.end(); n_lsp += 1; sym = frm["sym"]
@@ -425,7 +459,8 @@ class StreamAgent:
                     events.append({"tok": t, "type": "findrefs", "n": n_lsp, "sym": sym, "hits": len(refs or [])})
                 else:
                     lsp_from = dfm.end(); n_lsp += 1; sym = dfm["sym"]
-                    defn = self._resolve_defn(sym)
+                    defn = self._resolve_defn(sym, file=dfm.group("file"),
+                                              line=dfm.group("line"), col=dfm.group("col"))
                     obs = (f"<defn sym=\"{sym}\">\n" + (defn if defn else "(no definition found)") + "\n</defn>")
                     events.append({"tok": t, "type": "defn", "n": n_lsp, "sym": sym, "found": bool(defn)})
                 turns += 1

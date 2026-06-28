@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "streams"
 dynamic = ["version"]
-description = "Training coding agents to prefer cheap LSP go-to-definition retrieval"
+description = "When a language server pays off for a coding agent: redundant information, retrieval efficiency that must be elicited"
 requires-python = ">=3.10"
 dependencies = [
     "torch",
@@ -19,10 +19,14 @@ dependencies = [
 dev = [
     "pytest",
 ]
+# `pip install -e '.[api]'` to drive frontier models via OpenRouter (scripts/api_agent.py).
+api = [
+    "openai",
+]
 
 [project.urls]
-Homepage = "https://github.com/ianbarber/Streams"
-Repository = "https://github.com/ianbarber/Streams"
+Homepage = "https://github.com/ianbarber/retrieve-cheaply"
+Repository = "https://github.com/ianbarber/retrieve-cheaply"
 
 [tool.setuptools]
 packages = ["scaffold", "scripts", "scripts.analysis"]

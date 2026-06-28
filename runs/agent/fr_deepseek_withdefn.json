@@ -1,0 +1,1015 @@
+{
+  "model": "deepseek/deepseek-chat-v3.1",
+  "matched_pricing_id": "deepseek/deepseek-chat-v3.1",
+  "suite": "effic_real2",
+  "config": {
+    "out": "runs/agent/fr_deepseek_withdefn.json",
+    "model": "deepseek/deepseek-chat-v3.1",
+    "suite": "effic_real2",
+    "names": null,
+    "seeds": 2,
+    "seed_start": 0,
+    "no_defn": false,
+    "with_check": false,
+    "budget_usd": 1.0,
+    "max_turns": 14,
+    "max_reads": 6,
+    "temperature": 0.7
+  },
+  "total_cost_usd": 0.07868,
+  "budget_hit": false,
+  "rows": [
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_reduceby",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5072,
+      "completion_tokens": 381,
+      "est_cost_usd": 0.001366,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "reduceby",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 32.7
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_reduceby",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5279,
+      "completion_tokens": 370,
+      "est_cost_usd": 0.001401,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "reduceby",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 28.2
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_interleave",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 2,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 5,
+      "prompt_tokens": 7646,
+      "completion_tokens": 508,
+      "est_cost_usd": 0.002007,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "interleave",
+          "found": true
+        },
+        {
+          "t": "test",
+          "resolved": false
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 26.9
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_interleave",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 6565,
+      "completion_tokens": 597,
+      "est_cost_usd": 0.00185,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "interleave",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 21.8
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_merge_with",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "api_error: BadRequestError: Error code: 400 - {'error': {'message': \"This endpoint's maximum context length is 163840 tokens. However, you requested about 271943 tokens (271541 of text input, 402 of tool input). Please reduce th",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 0,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 4020,
+      "completion_tokens": 32989,
+      "est_cost_usd": 0.026906,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "merge_with",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "api_error",
+          "err": "Error code: 400 - {'error': {'message': \"This endpoint's maximum context length is 163840 tokens. However, you requested about 271943 tokens (271541 of text input, 402 of tool input). Please reduce th"
+        }
+      ],
+      "final_failure": "",
+      "sec": 2064.6
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_merge_with",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 6448,
+      "completion_tokens": 452,
+      "est_cost_usd": 0.001711,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "merge_with",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 19.3
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_itemmap",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 13083,
+      "completion_tokens": 474,
+      "est_cost_usd": 0.003122,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 21.2
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_itemmap",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 3,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 2,
+      "n_edit": 3,
+      "n_check": 0,
+      "turns": 9,
+      "prompt_tokens": 38627,
+      "completion_tokens": 1445,
+      "est_cost_usd": 0.009253,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "itemmap",
+          "found": true
+        },
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "test",
+          "resolved": false
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 59.9
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_valfilter",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 6204,
+      "completion_tokens": 425,
+      "est_cost_usd": 0.001639,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "valfilter",
+          "found": true
+        },
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 20.8
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_valfilter",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 5934,
+      "completion_tokens": 377,
+      "est_cost_usd": 0.001544,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "valfilter",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 17.4
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_update_in",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 6939,
+      "completion_tokens": 504,
+      "est_cost_usd": 0.001855,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "update_in",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 21.7
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_update_in",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 7002,
+      "completion_tokens": 543,
+      "est_cost_usd": 0.001899,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "update_in",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 23.0
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_thread_first",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 6341,
+      "completion_tokens": 537,
+      "est_cost_usd": 0.001756,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "thread_first",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "1-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 22.3
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_thread_first",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 3,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 6,
+      "prompt_tokens": 21044,
+      "completion_tokens": 888,
+      "est_cost_usd": 0.005121,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "thread_first",
+          "found": true
+        },
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/functoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 37.4
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_iter_except",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 5,
+      "prompt_tokens": 8843,
+      "completion_tokens": 688,
+      "est_cost_usd": 0.002401,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "iter_except",
+          "found": true
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/__init__.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 28.9
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_iter_except",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 6530,
+      "completion_tokens": 617,
+      "est_cost_usd": 0.001859,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "iter_except",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 24.5
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_roundrobin",
+      "group": "control",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 6278,
+      "completion_tokens": 520,
+      "est_cost_usd": 0.001729,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "roundrobin",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 21.7
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_roundrobin",
+      "group": "control",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 6127,
+      "completion_tokens": 412,
+      "est_cost_usd": 0.001612,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "roundrobin",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 18.3
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_grouper",
+      "group": "control",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 6771,
+      "completion_tokens": 514,
+      "est_cost_usd": 0.001828,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "grouper",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 21.9
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_grouper",
+      "group": "control",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 2,
+      "n_edit": 2,
+      "n_check": 0,
+      "turns": 6,
+      "prompt_tokens": 11988,
+      "completion_tokens": 735,
+      "est_cost_usd": 0.003098,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "grouper",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "5-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": false
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 30.8
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_merge_sorted",
+      "group": "control",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 2,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 5,
+      "prompt_tokens": 10141,
+      "completion_tokens": 563,
+      "est_cost_usd": 0.002574,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "defn",
+          "sym": "merge_sorted",
+          "found": true
+        },
+        {
+          "t": "defn",
+          "sym": "_merge_sorted_binary",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 24.4
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "effic_real2_merge_sorted",
+      "group": "control",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 2,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 5,
+      "prompt_tokens": 8276,
+      "completion_tokens": 520,
+      "est_cost_usd": 0.002149,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "defn",
+          "sym": "merge_sorted",
+          "found": true
+        },
+        {
+          "t": "test",
+          "resolved": false
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 23.2
+    }
+  ]
+}

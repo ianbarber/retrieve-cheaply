@@ -1,0 +1,881 @@
+{
+  "model": "anthropic/claude-sonnet-4.5",
+  "matched_pricing_id": "anthropic/claude-sonnet-4.5",
+  "suite": "effic_real2",
+  "config": {
+    "out": "runs/agent/fr_sonnet45_withdefn.json",
+    "model": "anthropic/claude-sonnet-4.5",
+    "suite": "effic_real2",
+    "names": null,
+    "seeds": 2,
+    "seed_start": 0,
+    "no_defn": false,
+    "with_check": false,
+    "budget_usd": 3.0,
+    "max_turns": 14,
+    "max_reads": 6,
+    "temperature": 0.7
+  },
+  "total_cost_usd": 0.545757,
+  "budget_hit": false,
+  "rows": [
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_reduceby",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 6935,
+      "completion_tokens": 448,
+      "est_cost_usd": 0.027525,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "reduceby",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "1-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.8
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_reduceby",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 7146,
+      "completion_tokens": 548,
+      "est_cost_usd": 0.029658,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "reduceby",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "1-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 9.5
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_interleave",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5826,
+      "completion_tokens": 469,
+      "est_cost_usd": 0.024513,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "interleave",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.4
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_interleave",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5780,
+      "completion_tokens": 436,
+      "est_cost_usd": 0.02388,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "interleave",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 7.8
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_merge_with",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5957,
+      "completion_tokens": 413,
+      "est_cost_usd": 0.024066,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "merge_with",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.0
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_merge_with",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 6011,
+      "completion_tokens": 469,
+      "est_cost_usd": 0.025068,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "merge_with",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.8
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_itemmap",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5495,
+      "completion_tokens": 420,
+      "est_cost_usd": 0.022785,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "itemmap",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.1
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_itemmap",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5378,
+      "completion_tokens": 371,
+      "est_cost_usd": 0.021699,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "itemmap",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.2
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_valfilter",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5592,
+      "completion_tokens": 396,
+      "est_cost_usd": 0.022716,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "valfilter",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 7.4
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_valfilter",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5580,
+      "completion_tokens": 390,
+      "est_cost_usd": 0.02259,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "valfilter",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 7.3
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_update_in",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 6662,
+      "completion_tokens": 539,
+      "est_cost_usd": 0.028071,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "update_in",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 9.9
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_update_in",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 6486,
+      "completion_tokens": 438,
+      "est_cost_usd": 0.026028,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "update_in",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 9.1
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_thread_first",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5752,
+      "completion_tokens": 441,
+      "est_cost_usd": 0.023871,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "thread_first",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 9.2
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_thread_first",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5998,
+      "completion_tokens": 540,
+      "est_cost_usd": 0.026094,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "thread_first",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 9.4
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_iter_except",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5943,
+      "completion_tokens": 471,
+      "est_cost_usd": 0.024894,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "iter_except",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 9.7
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_iter_except",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5997,
+      "completion_tokens": 503,
+      "est_cost_usd": 0.025536,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "iter_except",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 9.4
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_roundrobin",
+      "group": "control",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5704,
+      "completion_tokens": 450,
+      "est_cost_usd": 0.023862,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "roundrobin",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.4
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_roundrobin",
+      "group": "control",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5954,
+      "completion_tokens": 542,
+      "est_cost_usd": 0.025992,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "roundrobin",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 9.4
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_grouper",
+      "group": "control",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 6214,
+      "completion_tokens": 433,
+      "est_cost_usd": 0.025137,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "grouper",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.0
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_grouper",
+      "group": "control",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 6231,
+      "completion_tokens": 445,
+      "est_cost_usd": 0.025368,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "grouper",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.2
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_merge_sorted",
+      "group": "control",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5846,
+      "completion_tokens": 383,
+      "est_cost_usd": 0.023283,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "merge_sorted",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.0
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_merge_sorted",
+      "group": "control",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5832,
+      "completion_tokens": 375,
+      "est_cost_usd": 0.023121,
+      "trace": [
+        {
+          "t": "defn",
+          "sym": "merge_sorted",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 7.7
+    }
+  ]
+}

@@ -12,27 +12,31 @@ headline / relabel-only / real-LSP / 27B-all and GRPO use a PLAIN per-arm mean o
 rows; the pilot and the isolation control use a MATCHED-OUTCOME mean (input tokens
 averaged only over (task,seed) pairs both arms resolve).
 
-What it prints (PAPER number  <-  repo file [paper name = repo name]):
-  §5.1 HEADLINE (defn-sufficient, real resolver, n=48)
+This reproduces the weak-model (7B) on-policy training numbers; the tool-value ablation
+and frontier validation are reproduced by run_toolablation.sh / run_frontier.sh and
+scripts/analysis/effic_real_stats.py.
+
+What it prints (PAPER section  <-  repo file):
+  §5 training headline (defn-sufficient, real resolver, n=48)
         3086 -> 688 (4.5x), 0->100% defn, succ 0.65->1.00 (McNemar b=17/c=0)
         PRE  = reallsp_base.json  group=='rich'   (== powered_retest_base.json rich)
         POST = reallsp_sft.json   group=='rich'   (== powered_retest_sft.json  rich)
-  §5.1 relabel-only retest (the method in isolation, n=48): 3086 -> 724 (4.3x), 0->100%
+  §5 relabel-only retest (the method in isolation, n=48): 3086 -> 724 (4.3x), 0->100%
         PRE  = effic_retest_base.json     POST = relabel2_retest.json
-  §5.1 pilot, MATCHED-OUTCOME (teacher-forced lead-<defn>, 12 seeds, n=84): 2108 -> 675 (3.1x)
+  §5 teacher-forced pilot, MATCHED-OUTCOME (lead-<defn>, 12 seeds, n=84): 2108 -> 675 (3.1x)
         PRE  = powered_retest_base.json rich (seeds 0-3) + powered_retest_base_x.json (4-11)
         POST = powered_retest_sft.json  rich (seeds 0-3) + powered_retest_sft_x.json  (4-11)
         success McNemar over all 144 pairs: b=57/c=3
-  §5.3 isolation control, MATCHED-OUTCOME (read-trained vs defn-trained, n=40): 3191 -> 684 (4.7x)
+  §4 isolation control, MATCHED-OUTCOME (read-trained vs defn-trained, n=40): 3191 -> 684 (4.7x)
         read-trained = effic_readtrained_retest.json (== effic_retest_sft.json)
         defn-trained = powered_retest_sft.json group=='rich'
-  §5/item-3 real-LSP headline (live pyrefly daemon, n=24): 2894 -> 689, 0->100%, 0.58->1.00
+  §2 real-LSP validation (live pyrefly daemon, n=24): 2894 -> 689, 0->100%, 0.58->1.00
         PRE  = lsp_base.json      POST = lsp_sft.json
-  §5.2 boundary / non-degeneracy (read-required subset, n=24): read stays ~100%, succ 0.54->0.83
+  §5 boundary / non-degeneracy (read-required subset, n=24): read stays ~100%, succ 0.54->0.83
         PRE  = reallsp_base.json group=='readreq'   POST = reallsp_sft.json group=='readreq'
-  §5.3 GRPO cost-RL corroboration: clean retest 86% defn / 663 tok / 100% solved (n=36)
+  Appendix A GRPO cost-RL corroboration: clean retest 86% defn / 663 tok / 100% solved (n=36)
         grpo_retest.json ; harvest trajectory grpo_harvest_0..4.json ; under-trained grpo_retest_round1.json
-  §Limitations 27B transfer (n=24): 4058 -> 726 (5.5x at matched success), 0->100%, 0.96->1.00
+  Appendix B 27B transfer (n=24): 4058 -> 726 (5.5x at matched success), 0->100%, 0.96->1.00
         PRE  = 27b_base.json      POST = 27b_retest.json
 
 Run:  python scripts/analysis/stats.py   (from the repo root)
@@ -148,7 +152,7 @@ print("STREAMS — EFFICIENCY RECIPE reproducer  (numbers should match PAPER.md)
 print("=" * 78)
 
 # --- §5.1 HEADLINE: defn-sufficient, real AST resolver, plain per-arm token mean ---
-print("\n== PAPER §5.1 HEADLINE — defn-sufficient, real resolver (n=48) ==")
+print("\n== PAPER §5 — training headline: defn-sufficient, real resolver (n=48) ==")
 print("   token-mean method: PLAIN per-arm mean over all rows")
 h_pre = group(load(A("reallsp_base.json")), "rich")
 h_post = group(load(A("reallsp_sft.json")), "rich")
@@ -166,7 +170,7 @@ check("tokens 3086->688", round(mt_pre), 3086); check("tokens 3086->688", round(
 check("McNemar b=17/c=0", b, 17, tol=0)
 
 # --- §5.1 relabel-only retest: the method in isolation ---
-print("\n== PAPER §5.1 — relabel-only retest (method in isolation, n=48) ==")
+print("\n== PAPER §5 — relabel-only retest (method in isolation, n=48) ==")
 print("   token-mean method: PLAIN per-arm mean over all rows")
 r_pre = load(A("effic_retest_base.json"))
 r_post = load(A("relabel2_retest.json"))
@@ -181,7 +185,7 @@ print(f"  paired token sign test (all {pt['n']} pairs): POST cheaper {pt['cheape
 check("tokens 3086->724", round(rp), 3086); check("tokens 3086->724", round(rq), 724)
 
 # --- §5.1 pilot, MATCHED-OUTCOME (teacher-forced lead-<defn>, 12 seeds) ---
-print("\n== PAPER §5.1 — pilot (lead-<defn>, 12 seeds), MATCHED-OUTCOME (n=84) ==")
+print("\n== PAPER §5 — teacher-forced pilot (lead-<defn>, 12 seeds), MATCHED-OUTCOME (n=84) ==")
 print("   token-mean method: MATCHED-OUTCOME (mean input tokens over (task,seed) BOTH arms solve)")
 p_pre = group(load(A("powered_retest_base.json")), "rich") + load(A("powered_retest_base_x.json"))
 p_post = group(load(A("powered_retest_sft.json")), "rich") + load(A("powered_retest_sft_x.json"))
@@ -198,7 +202,7 @@ check("matched 2108->675", round(mo['pre']), 2108); check("matched 2108->675", r
 check("McNemar POST-only=57/PRE-only=3", b, 57, tol=0)
 
 # --- §5.3 isolation control, MATCHED-OUTCOME (read-trained vs defn-trained) ---
-print("\n== PAPER §5.3 — isolation control: read-trained vs defn-trained, MATCHED-OUTCOME (n=40) ==")
+print("\n== PAPER §4 — isolation control: read-trained vs defn-trained, MATCHED-OUTCOME (n=40) ==")
 print("   token-mean method: MATCHED-OUTCOME (over tasks BOTH trained models solve)")
 read_trained = load(A("effic_readtrained_retest.json"))
 defn_trained = group(load(A("powered_retest_sft.json")), "rich")
@@ -212,7 +216,7 @@ check("3191->684", round(mo['pre']), 3191); check("3191->684", round(mo['post'])
 check("sign p~6.8e-4", round(mo['sign_p'], 5), 0.00068, tol=0.0002)
 
 # --- §5 / item-3 real-LSP headline: live pyrefly daemon ---
-print("\n== PAPER §5 / item-3 — real-LSP headline (live pyrefly daemon, n=24) ==")
+print("\n== PAPER §2 — real-LSP validation (live pyrefly daemon, n=24) ==")
 print("   token-mean method: PLAIN per-arm mean over all rows")
 l_pre = load(A("lsp_base.json"))
 l_post = load(A("lsp_sft.json"))
@@ -227,7 +231,7 @@ print(f"  success: {lpres}/{len(l_pre)} -> {lposts}/{len(l_post)}  "
 check("tokens 2894->689", round(lp), 2894); check("tokens 2894->689", round(lq), 689)
 
 # --- §5.2 boundary / non-degeneracy: read-required subset ---
-print("\n== PAPER §5.2 — boundary / non-degeneracy (read-required subset, n=24) ==")
+print("\n== PAPER §5 — boundary / non-degeneracy (read-required subset, n=24) ==")
 print("   read rate STAYS ~100%; success RISES; tokens go UP (correctly pays the read cost)")
 b_pre = group(load(A("reallsp_base.json")), "readreq")
 b_post = group(load(A("reallsp_sft.json")), "readreq")
@@ -241,7 +245,7 @@ check("succ 0.54->0.83", round(bps/len(b_pre), 2), 0.54, tol=0.02)
 check("succ 0.54->0.83", round(bqs/len(b_post), 2), 0.83, tol=0.02)
 
 # --- §5.3 GRPO cost-RL corroboration ---
-print("\n== PAPER §5.3 — GRPO cost-RL corroboration ==")
+print("\n== PAPER Appendix A — GRPO cost-RL corroboration ==")
 print("   independent objective (token-cost reward) reaches the SFT operating point")
 g = load(A("grpo_retest.json"))
 ng, resg, dg, rdg, mtg = arm(g)
@@ -264,7 +268,7 @@ print(f"  under-trained 1-round retest (n={n1}): use-defn {d1}/{n1}={d1/n1:.0%} 
       f"resolved {r1res}/{n1}, mean_in_tok {mt1:.0f}")
 
 # --- §Limitations 27B transfer ---
-print("\n== PAPER §Limitations — 27B transfer (Qwen3.6-27B, n=24) ==")
+print("\n== PAPER Appendix B — 27B transfer (Qwen3.6-27B, n=24) ==")
 print("   token-mean method: ALL-rows for PRE; MATCHED-SUCCESS for the 5.5x ratio")
 q_pre = load(A("27b_base.json"))
 q_post = load(A("27b_retest.json"))

@@ -151,20 +151,22 @@ class MultiFileEnv:
     - rework accounting identical to MockEnv (target-file edits)
     """
 
-    def __init__(self, files: dict, target: str, test_src: str, force_diag=None):
+    def __init__(self, files: dict, target: str, test_src: str, force_diag=None, skip_pyrefly=False):
         import sys
         self.ws = tempfile.mkdtemp(prefix="mfenv_")
         self.files = dict(files)
         self.target = target
         self.test_src = test_src
         self.force_diag = force_diag
+        self.skip_pyrefly = skip_pyrefly   # when no diagnostics are needed, skip `pyrefly init` (faster + no daemon-socket contention)
         for rel, content in files.items():
             p = os.path.join(self.ws, rel)
             os.makedirs(os.path.dirname(p), exist_ok=True) if os.path.dirname(rel) else None
             with open(p, "w") as f: f.write(content)
-        with open(os.path.join(self.ws, "pyrefly.toml"), "w") as f:
-            f.write("[tool.pyrefly]\nproject-includes = [\"*.py\"]\n")
-        subprocess.run([PYREFLY, "init"], cwd=self.ws, capture_output=True, text=True)
+        if not skip_pyrefly:
+            with open(os.path.join(self.ws, "pyrefly.toml"), "w") as f:
+                f.write("[tool.pyrefly]\nproject-includes = [\"*.py\"]\n")
+            subprocess.run([PYREFLY, "init"], cwd=self.ws, capture_output=True, text=True)
         self._py = sys.executable
         self.chars_written = 0
         self.chars_deleted_after_first = 0
