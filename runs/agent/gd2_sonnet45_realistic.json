@@ -1,0 +1,843 @@
+{
+  "model": "anthropic/claude-sonnet-4.5",
+  "matched_pricing_id": "anthropic/claude-sonnet-4.5",
+  "suite": "gapd2",
+  "config": {
+    "out": "runs/agent/gd2_sonnet45_realistic.json",
+    "model": "anthropic/claude-sonnet-4.5",
+    "suite": "gapd2",
+    "no_hint": true,
+    "names": null,
+    "seeds": 3,
+    "seed_start": 0,
+    "no_defn": false,
+    "with_check": false,
+    "budget_usd": 10.0,
+    "max_turns": 10,
+    "max_reads": 6,
+    "temperature": 0.7
+  },
+  "total_cost_usd": 0.468045,
+  "budget_hit": false,
+  "rows": [
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_optional_sum",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5300,
+      "completion_tokens": 433,
+      "est_cost_usd": 0.022395,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.7
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_optional_sum",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5282,
+      "completion_tokens": 420,
+      "est_cost_usd": 0.022146,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.8
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_optional_sum",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5303,
+      "completion_tokens": 431,
+      "est_cost_usd": 0.022374,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.0
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_typeddict_key",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5243,
+      "completion_tokens": 452,
+      "est_cost_usd": 0.022509,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.1
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_typeddict_key",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5250,
+      "completion_tokens": 469,
+      "est_cost_usd": 0.022785,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.5
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_typeddict_key",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5240,
+      "completion_tokens": 452,
+      "est_cost_usd": 0.0225,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.4
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_overload_default",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5338,
+      "completion_tokens": 446,
+      "est_cost_usd": 0.022704,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 9.2
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_overload_default",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5328,
+      "completion_tokens": 443,
+      "est_cost_usd": 0.022629,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.9
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_overload_default",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5400,
+      "completion_tokens": 502,
+      "est_cost_usd": 0.02373,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 10.5
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_union_attr",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5422,
+      "completion_tokens": 494,
+      "est_cost_usd": 0.023676,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 9.6
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_union_attr",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5390,
+      "completion_tokens": 462,
+      "est_cost_usd": 0.0231,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.8
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_union_attr",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5428,
+      "completion_tokens": 489,
+      "est_cost_usd": 0.023619,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 10.7
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_union_operand",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5057,
+      "completion_tokens": 395,
+      "est_cost_usd": 0.021096,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.0
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_union_operand",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5053,
+      "completion_tokens": 392,
+      "est_cost_usd": 0.021039,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.2
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_union_operand",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5060,
+      "completion_tokens": 398,
+      "est_cost_usd": 0.02115,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 7.9
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_optional_attr",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5137,
+      "completion_tokens": 396,
+      "est_cost_usd": 0.021351,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 7.0
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_optional_attr",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5131,
+      "completion_tokens": 397,
+      "est_cost_usd": 0.021348,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 7.7
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_optional_attr",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5150,
+      "completion_tokens": 409,
+      "est_cost_usd": 0.021585,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 7.4
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_control_bulk",
+      "group": "control",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5251,
+      "completion_tokens": 476,
+      "est_cost_usd": 0.022893,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.7
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_control_bulk",
+      "group": "control",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5136,
+      "completion_tokens": 428,
+      "est_cost_usd": 0.021828,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.5
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "gapd2_control_bulk",
+      "group": "control",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "visible_pass": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 5116,
+      "completion_tokens": 416,
+      "est_cost_usd": 0.021588,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.5
+    }
+  ]
+}

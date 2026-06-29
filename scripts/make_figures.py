@@ -5,7 +5,7 @@ nothing is hardcoded. Run: .venv-streams.system/bin/python scripts/make_figures.
 
 Figures -> docs/figures/fig{1,2,3,4}.pdf:
   fig1  C2  tool-value ablation: input tokens with <defn> vs read-only, per model
-  fig2  C1  information redundant: type-inference channel (check_types) does not lift success
+  fig2  C1  information redundant: held-out-scored inference test (check_types does not reduce latent bugs)
   fig3  C3  election is capability-gated: <defn> use by model on the obscure real-code suite
   fig4  C3  the 7B on-policy training win (use / cost / success), with held-out types
 """
@@ -81,26 +81,26 @@ for i in x:
     ax.text(i, ro[i] * 1.15, f"{ro[i]/max(withd[i],1):.1f}×", ha="center", fontsize=10, fontweight="bold")
 save(fig, "fig1")
 
-# ---------- Figure 2 (C1): information redundant — type-inference channel ----------
-# Gap D: success with vs without a check_types() tool, two frontier models. No lift.
-gd = [("sonnet-4.5", "gd_sonnet45_nocheck.json", "gd_sonnet45_withcheck.json"),
-      ("deepseek-v3.1", "gd_deepseek_nocheck.json", "gd_deepseek_withcheck.json")]
-glabels, gno, gwith, gcalls = [], [], [], []
-for name, nc, wc in gd:
-    rnc, rwc = rows(nc), rows(wc)
-    glabels.append(name)
-    gno.append(100 * mean(rnc, lambda x: x["resolved"]))
-    gwith.append(100 * mean(rwc, lambda x: x["resolved"]))
-    gcalls.append(sum(x.get("n_check", 0) > 0 for x in rwc))
-fig, ax = plt.subplots(figsize=(5.8, 3.6))
-x = range(len(glabels)); w = 0.36
-ax.bar([i - w/2 for i in x], gno, w, color=C["grey"], label="no type-checker")
-ax.bar([i + w/2 for i in x], gwith, w, color=C["blue"], label="+ check_types() tool")
-ax.set_xticks(list(x)); ax.set_xticklabels(glabels); ax.set_ylabel("pass@1 (%)"); ax.set_ylim(0, 112)
-ax.set_title("A type-checker tool does not lift success on inference-hard tasks")
-ax.legend(frameon=False, fontsize=9, loc="lower center")
-for i in x:
-    ax.text(i, 104, "100%", ha="center", fontsize=9)
+# ---------- Figure 2 (C1): information redundant — held-out-scored inference test ----------
+# gapd2: the wrong fix passes the visible test but fails a hidden held-out test and is pyrefly-flagged.
+# Held-out pass@1 (rich tasks) across 3 conditions: realistic (no hint), fair-no-check, fair-+check.
+def rich(p): return [r for r in rows(p) if r.get("group") == "rich"]
+conds = [("realistic", "realistic", C["grey"]),
+         ("no check_types", "nocheck", C["sky"]),
+         ("+ check_types", "withcheck", C["blue"])]
+models = [("sonnet-4.5", "sonnet45"), ("deepseek-v3.1", "deepseek")]
+fig, ax = plt.subplots(figsize=(6.4, 3.6))
+nb = len(conds); group_w = 0.8; bw = group_w / nb
+for ci, (clabel, ckey, col) in enumerate(conds):
+    vals = [100 * mean(rich(f"gd2_{mk}_{ckey}.json"), lambda x: x["resolved"]) for _, mk in models]
+    xs = [i - group_w/2 + bw*(ci + 0.5) for i in range(len(models))]
+    ax.bar(xs, vals, bw, color=col, label=clabel)
+ax.set_xticks(range(len(models))); ax.set_xticklabels([m for m, _ in models])
+ax.set_ylabel("held-out pass@1 (%)"); ax.set_ylim(0, 116)
+ax.set_title("A type checker does not reduce latent bugs (held-out scored)")
+ax.legend(frameon=False, fontsize=9, ncol=3, loc="upper center")
+ax.text(0.5, 0.04, "0 latent bugs in every condition", transform=ax.transAxes, ha="center",
+        fontsize=9, style="italic", color="#444444")
 save(fig, "fig2")
 
 # ---------- Figure 3 (C3): election is capability-gated — <defn> use by model ----------

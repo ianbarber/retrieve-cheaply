@@ -64,14 +64,15 @@ def load_suite(suite):
     if suite == "effic_real2":
         from scripts.synth_tasks_effic_real2 import TASKS_EFFIC_REAL2
         return TASKS_EFFIC_REAL2
-    if suite == "gapd":
-        # Loaded lazily/optionally so this harness imports even if the suite
-        # file does not exist yet.
+    if suite in ("gapd", "gapd2"):
+        # Loaded lazily so this harness imports even if the suite file does not exist yet.
+        mod = "synth_tasks_gapd" if suite == "gapd" else "synth_tasks_gapd2"
+        var = "TASKS_GAPD" if suite == "gapd" else "TASKS_GAPD2"
         try:
-            from scripts.synth_tasks_gapd import TASKS_GAPD
-            return TASKS_GAPD
+            m = __import__(f"scripts.{mod}", fromlist=[var])
+            return getattr(m, var)
         except Exception as e:
-            print(f"[fatal] --suite gapd requested but scripts/synth_tasks_gapd.py "
+            print(f"[fatal] --suite {suite} requested but scripts/{mod}.py "
                   f"is unavailable ({e})", file=sys.stderr)
             sys.exit(2)
     raise ValueError(suite)
@@ -181,7 +182,7 @@ def system_prompt(no_defn, with_check):
     return "\n".join(lines)
 
 
-def user_prompt(task):
+def user_prompt(task, no_hint=False):
     """Mirror build_prompt: show ONLY the target (numbered) + names of the other
     workspace files + the test (the spec)."""
     target = task["target"]
@@ -195,9 +196,14 @@ def user_prompt(task):
     else:
         whereabouts = ""
     tail = f"Make line-range edits to `{target}` with edit_lines, then run run_tests."
+    note = ""
+    if task.get("held_out") and not no_hint:
+        note = ("\n\nImportant: the shown test is a partial spec — it does NOT exercise every input "
+                "(missing keys, empty or None values, other branches). Make your fix correct for ALL "
+                "inputs, not only the shown cases, before calling done().")
     return (head + whereabouts +
             "The test that must pass (do NOT edit it; it is the spec):\n"
-            f"```python\n{task['test']}\n```\n" + tail)
+            f"```python\n{task['test']}\n```\n" + tail + note)
 
 
 # ---------------------------------------------------------------------------
@@ -339,13 +345,14 @@ class Rollout:
 def run_rollout(client, model, task, seed, args, price, spent_so_far):
     """Drive the tool-calling loop for one (task, seed). Returns (row, est_cost)."""
     target = task["target"]
-    env = MultiFileEnv(task["files"], target, task["test"], skip_pyrefly=not args.with_check)
+    env = MultiFileEnv(task["files"], target, task["test"], skip_pyrefly=not args.with_check,
+                       held_out_src=task.get("held_out"))
     try:
         ro = Rollout(env, target, args.max_reads)
         tools = build_tools(args.no_defn, args.with_check)
         messages = [
             {"role": "system", "content": system_prompt(args.no_defn, args.with_check)},
-            {"role": "user", "content": user_prompt(task)},
+            {"role": "user", "content": user_prompt(task, args.no_hint)},
         ]
         pp, cp = price
         est_cost = 0.0
@@ -408,18 +415,25 @@ def run_rollout(client, model, task, seed, args, price, spent_so_far):
             if ro.done:
                 stop_reason = "done"
                 break
-            if ro.last_test and ro.last_test.get("resolved"):
+            # Auto-stop when the visible test passes — EXCEPT for held-out tasks, where the visible
+            # test is only a partial spec; there the agent must call done() itself (so it has the
+            # chance to verify, e.g. with check_types, before shipping a latent bug).
+            if ro.last_test and ro.last_test.get("resolved") and (not task.get("held_out") or args.no_hint):
                 stop_reason = "tests_pass"
                 break
 
-        # final ground-truth resolution
-        final = env.run_tests()
+        # final ground-truth resolution. `resolved` is the HELD-OUT score (the real correctness);
+        # `visible_pass` is the test the agent could run. They differ when the agent ships a latent
+        # bug the visible test misses but a checker could have caught (the Gap D fair-test design).
+        visible = env.run_tests()
+        final = env.score()
         resolved = bool(final.get("resolved"))
+        visible_pass = bool(visible.get("resolved"))
 
         row = {
             "model": model, "task": task["name"], "group": task.get("group"),
             "seed": seed, "no_defn": args.no_defn, "with_check": args.with_check,
-            "resolved": resolved, "stop_reason": stop_reason,
+            "resolved": resolved, "visible_pass": visible_pass, "stop_reason": stop_reason,
             "n_read": ro.counts["read"], "n_defn": ro.counts["defn"],
             "n_findrefs": ro.counts["findrefs"], "n_test": ro.counts["test"],
             "n_edit": ro.counts["edit"], "n_check": ro.counts["check"],
@@ -439,7 +453,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("out")
     ap.add_argument("--model", required=True)
-    ap.add_argument("--suite", required=True, choices=["effic_real2", "gapd"])
+    ap.add_argument("--suite", required=True, choices=["effic_real2", "gapd", "gapd2"])
+    ap.add_argument("--no-hint", action="store_true",
+                    help="REALISTIC deployment: omit the 'visible test is partial' note and stop when "
+                         "the visible test passes (measures the natural latent-bug rate on held-out tasks)")
     ap.add_argument("--names", default=None, help="comma-separated task names subset")
     ap.add_argument("--seeds", type=int, default=1)
     ap.add_argument("--seed-start", type=int, default=0)

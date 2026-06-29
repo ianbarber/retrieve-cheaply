@@ -112,27 +112,31 @@ re-exported symbol, the agent reads the call graph and succeeds without find-ref
 reads a library before calling its API and does not emit the hallucinated member, so completion has
 nothing to prevent.
 
-**Inference.** The last channel is type inference. We built eight tasks whose fix depends on a type
-the type-checker reports (overload resolution, generics, union narrowing, `Protocol`, `TypedDict`),
-and gave two frontier models a `check_types()` tool that surfaces its diagnostics. It changes
-nothing: `deepseek-chat-v3.1` and `claude-sonnet-4.5` each solve 32/32 with and without it, and
-`claude-sonnet-4.5` never calls it. The reason is narrow, and we state it precisely: in these tasks
-the needed type is a readable annotation in a small module the agent reads (mean 0.9 and 1.3 reads),
-so the model recovers it without the checker. This shows the checker is redundant *when the type is
-recoverable by reading in budget*. It does not test the regimes where a type checker is the unique
-detector: a wrong usage on a path the visible test does not exercise, a cross-file error too far to
-read in budget, or an inference a strong model reliably gets wrong. Those remain open (§7).
+**Inference.** The last channel is type inference, and it is the one where a type checker is usually
+the *unique* detector: a wrong usage that the test does not exercise. We test it directly with
+**held-out scoring**. Each of six tasks (overload resolution, optional `None`, union narrowing,
+`TypedDict`) has a plausible wrong fix that *passes a visible test the agent runs but fails a hidden
+held-out test*, and that pyrefly flags statically (`sum(int | None)`, an unknown `TypedDict` key,
+`NoneType has no attribute`). We give two frontier models a `check_types()` tool that surfaces those
+diagnostics, told the visible test is partial, and also run a realistic condition with no such hint.
+The checker changes nothing. In every condition both models solve **18/18 with zero latent bugs**,
+with and without the checker, and even when they elect it (`deepseek-chat-v3.1` calls it on every
+rollout, `claude-sonnet-4.5` on more than half). The models write the correct fix by careful reading
+and do not ship the inference bug for the checker to catch.
 
 A language server computes from the same source the agent can read. Across correction, completeness,
-navigation, prevention, and scale, a capable agent self-retrieves, so the information is redundant
-and the residual value of a language server is the cost of retrieval, not its content. Type inference
-is the one channel where redundancy is only partly tested (above), and we flag it as open.
+navigation, prevention, scale, and type inference, a capable agent self-retrieves, so the information
+is redundant and the residual value of a language server is the cost of retrieval, not its content.
+The one regime we could not trigger is an inference a frontier model *reliably gets wrong* while the
+visible test misses it; these tasks were an adversarial reviewer's plausible-error designs and the
+models still did not err (§7).
 
-![The type-inference channel does not lift success in the readable case](docs/figures/fig2.png)
+![A type checker does not reduce latent bugs, even with held-out scoring](docs/figures/fig2.png)
 
-*Figure 2. A `check_types()` tool does not raise pass@1 on these tasks; both frontier models solve 32
-of 32 with and without it, and recover the type by reading a small module. This covers the case where
-the type is readable in budget, not the regimes where a checker is the unique detector (§3, §7).*
+*Figure 2. The held-out-scored inference test. A `check_types()` tool does not raise pass@1: both
+frontier models solve 18/18 with zero latent bugs, with the checker, without it, and in a realistic
+no-hint condition. The plausible wrong fix passes the visible test the agent runs but fails the hidden
+test and is flagged by pyrefly; the models write the correct fix anyway.*
 
 ## 4. Retrieval efficiency is real, under three conditions (C2)
 
@@ -262,12 +266,13 @@ for a self-retrieving agent and locate the residual value in retrieval cost.
   server's information is redundant for a self-retrieving agent. We do not claim it is redundant for every
   task: a fact the agent cannot recover by reading (a non-readable runtime value, an inference beyond the
   model's reach) could make it non-redundant.
-- **The inference channel is only partly tested.** Our type-inference tasks put the needed type in a small
-  readable module, so they test the readable-in-budget case, not the three regimes where a type checker is
-  typically the unique in-budget detector: a wrong usage on a path the visible test never exercises, a
-  cross-file error too far to read under the read budget, or an inference a strong model reliably gets
-  wrong. Testing those requires scoring on a held-out test the agent cannot run; it is the most likely
-  place a language server's *information* would prove non-redundant, and we leave it open.
+- **The inference null is bounded by task difficulty.** Our held-out-scored inference test (§3) covers the
+  regime where a type checker is usually the unique detector (a wrong usage the visible test misses), and
+  frontier models still solve 18/18 with zero latent bugs. We did not find an inference a frontier model
+  *reliably gets wrong* while the visible test misses it; the tasks were an adversarial reviewer's
+  plausible-error designs and the models did not err, so we cannot rule out that harder inference exists
+  where a checker would prove non-redundant. We also did not test the cross-file regime where the relevant
+  definitions are too many to read under the budget.
 - **Tool-calling token accounting.** The API harness re-sends context each turn, so its absolute token
   counts are not comparable to the local harness; we report within-harness ratios at equal success.
 

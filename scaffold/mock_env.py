@@ -151,12 +151,14 @@ class MultiFileEnv:
     - rework accounting identical to MockEnv (target-file edits)
     """
 
-    def __init__(self, files: dict, target: str, test_src: str, force_diag=None, skip_pyrefly=False):
+    def __init__(self, files: dict, target: str, test_src: str, force_diag=None, skip_pyrefly=False,
+                 held_out_src=None):
         import sys
         self.ws = tempfile.mkdtemp(prefix="mfenv_")
         self.files = dict(files)
         self.target = target
-        self.test_src = test_src
+        self.test_src = test_src           # VISIBLE test: the agent's <test> runs this
+        self.held_out_src = held_out_src   # HELD-OUT test: scores correctness; the agent never runs it
         self.force_diag = force_diag
         self.skip_pyrefly = skip_pyrefly   # when no diagnostics are needed, skip `pyrefly init` (faster + no daemon-socket contention)
         for rel, content in files.items():
@@ -321,11 +323,14 @@ class MultiFileEnv:
                 self.edit_regions[line] = self.edit_regions.get(line, 0) + 1
         return "\n".join(out)
 
-    def run_tests(self):
+    def run_tests(self, test_src=None):
+        """Run a behavioural test in a fresh subprocess. Defaults to the VISIBLE test (self.test_src),
+        what the agent's <test> sees; pass a different source to score on a HELD-OUT test (see score())."""
+        src = test_src if test_src is not None else self.test_src
         runner = os.path.join(self.ws, "_run_tests.py")
         with open(runner, "w") as f:
             f.write("import sys, os\nsys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))\n"
-                    + self.test_src + "\nprint('PASS')\n")
+                    + src + "\nprint('PASS')\n")
         try:
             r = subprocess.run([self._py, runner], cwd=self.ws, capture_output=True,
                                text=True, timeout=20)
@@ -335,6 +340,11 @@ class MultiFileEnv:
             ok, fail = False, "timeout"
         return {"resolved": ok, "f2p_pass": int(ok), "f2p_total": 1,
                 "p2p_pass": 0, "p2p_total": 0, "failure": fail[:300]}
+
+    def score(self):
+        """Authoritative correctness: the HELD-OUT test if the task has one (self.held_out_src),
+        else the visible test. Lets a held-out path catch a latent bug the visible test misses."""
+        return self.run_tests(self.held_out_src) if self.held_out_src else self.run_tests()
 
     def metrics(self):
         rr = self.chars_deleted_after_first / max(self.chars_written, 1)
