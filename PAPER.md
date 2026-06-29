@@ -8,7 +8,7 @@ real-repository tasks, a 7B and a 27B open model, and frontier models in a tool-
 toggling each language-server capability at fixed model capability. The information (diagnostics,
 references, completion, type inference) does not raise success, because a model that can read
 files derives the same facts itself. A go-to-definition action does help, cutting input tokens
-3.7 to 5.3 times at equal success, but only when retrieval is required, the alternative is a
+3.5 to 4.7 times at equal success, but only when retrieval is required, the alternative is a
 whole-file read, and the agent chooses the cheap action. A capable model chooses it from prompt
 framing alone (a frontier model on 100% of rollouts); a 7B has to be trained to (0% to 100% use,
 4.5 times fewer tokens).
@@ -19,11 +19,11 @@ framing alone (a frontier model on 100% of rollouts); a 7B has to be trained to 
   and type inference, handing a self-retrieving agent the language server's information does not
   raise pass@1. The agent reads the source and derives the fact itself.
 - **Efficiency is real, under three conditions.** A go-to-definition action reduces input tokens
-  3.7 to 5.3 times at equal success, and only when retrieval is required, the counterfactual is a
+  3.5 to 4.7 times at equal success, and only when retrieval is required, the counterfactual is a
   whole-file read, and the agent chooses the cheap action. We show this on synthetic and real
   vendored-library tasks, for a 7B, a 27B, and three frontier models.
 - **Election is capability-gated.** A capable model chooses the cheap action when the system
-  prompt frames it as cheaper (a 27B at 88 to 95%, a frontier model at 100%); a 7B needs on-policy
+  prompt frames it as cheaper (a 27B at 88 to 93%, a frontier model at 100%); a 7B needs on-policy
   training (0% to 100%). We give the training recipe and show that prompting and offline imitation
   fail for the weak model.
 
@@ -52,13 +52,13 @@ a 27B open model, and three frontier models driven through a tool-calling API.
 The result is a deployable account of when a language server pays off in an agentic loop, and how
 to get the agent to use it. On the synthetic efficiency suite a 7B moves from 0% to 100%
 go-to-definition use and from 3086 to 688 input tokens after one on-policy training round; an
-untrained 27B reaches 88 to 95% use from prompt framing; a frontier model in a tool-calling loop
-reaches 100% use and a 4.0 times token reduction at equal success (Figure 1).
+untrained 27B reaches 88 to 93% use from prompt framing; a frontier model in a tool-calling loop
+reaches 100% use and a 3.7 times token reduction at equal success (Figure 1).
 
 ![Tool-value ablation across models](docs/figures/fig1.png)
 
 *Figure 1. The tool-value ablation. Removing the go-to-definition action, so the same model can
-only read whole files, costs 3.7 to 5.3 times more input tokens at the same (ceiling) success, for
+only read whole files, costs 3.5 to 4.7 times more input tokens at the same (ceiling) success, for
 a 27B and two frontier models on the obscure real-code suite. Tokens on a log scale.*
 
 ## 2. Setup
@@ -118,8 +118,8 @@ fix depends on a non-trivially inferred type, and verified that the type-checker
 the runtime test failure does not (for example `Returned type int | None is not assignable to int`,
 or `Object of class Plain has no attribute escape`). We then gave two frontier models a
 `check_types()` tool that surfaces those diagnostics. It changes nothing: `deepseek-chat-v3.1` and
-`claude-sonnet-4.5` each solve 16/16 with and without it, and `claude-sonnet-4.5` never calls it
-(0/16 rollouts, `deepseek` 1/16). The models read the library (mean 0.9 and 1.7 reads) and infer the
+`claude-sonnet-4.5` each solve 32/32 with and without it, and `claude-sonnet-4.5` never calls it
+(0/32 rollouts, `deepseek` 1/32). The models read the library (mean 0.9 and 1.3 reads) and infer the
 types themselves.
 
 A language server computes from the same source the agent can read. Across the channels we tested, a
@@ -130,7 +130,7 @@ of a language server is the cost of retrieval, not its content.
 
 *Figure 2. The information channel is redundant. A `check_types()` tool that surfaces the
 type-checker's inferred types does not raise pass@1 on inference-hard tasks; both frontier models
-solve 16 of 16 with and without it, and read the source to infer the type themselves.*
+solve 32 of 32 with and without it, and read the source to infer the type themselves.*
 
 ## 4. Retrieval efficiency is real, under three conditions (C2)
 
@@ -141,13 +141,13 @@ the model fixed and toggle the action, rather than compare a trained model to an
 | setting | model | tokens with `<defn>` | tokens read-only | factor | success |
 |---|---|---|---|---|---|
 | synthetic, trained vs untrained | 7B | 688 | 3086 | 4.5× | 1.00 vs 0.65 |
-| real obscure (`effic_real2`) | 27B | 1260 | 4644 | 3.7× | 1.00 = 1.00 |
-| real, tool-calling | claude-sonnet-4.5 | 6014 | 23811 | 4.0× | 1.00 = 1.00 |
-| real, tool-calling | deepseek-chat-v3.1 | 9325 | 49142 | 5.3× | 1.00 = 1.00 |
+| real obscure (`effic_real2`) | 27B | 1302 | 4563 | 3.5× | 1.00 = 1.00 |
+| real, tool-calling | claude-sonnet-4.5 | 6018 | 21985 | 3.7× | 1.00 = 1.00 |
+| real, tool-calling | deepseek-chat-v3.1 | 7705 | 36192 | 4.7× | 1.00 = 1.00 |
 
 *Mean input tokens to solve. For the 7B the comparison is untrained-reading vs trained-`<defn>`
 (election by training); for the 27B and frontier models it is the same model with the action removed
-vs present (election by framing). The 27B ablation is paired (sign test p=0.017, cheaper on 17/22
+vs present (election by framing). The 27B ablation is paired (sign test p=0.0013, cheaper on 33/44
 cells); the frontier numbers are larger because a tool-calling turn re-sends the growing context, so
 a read-only agent re-pays for the file it loaded.*
 
@@ -184,14 +184,14 @@ the agent chooses the cheap action, is the practitioner's lever, and it depends 
 |---|---|---|---|
 | 7B (Qwen2.5-Coder) | 2% | 2% | 100% (after one on-policy round) |
 | 27B (Qwen3.6) | 0% | 88% | not needed |
-| deepseek-chat-v3.1 | n/a | 95% | not needed |
+| deepseek-chat-v3.1 | n/a | 93% | not needed |
 | claude-sonnet-4.5 | n/a | 100% | not needed |
 
 ![Go-to-definition use by model](docs/figures/fig3.png)
 
 *Figure 3. Election is capability-gated, on the obscure real-code suite. A 7B uses go-to-definition
 2% of the time by default and 100% after one on-policy training round; a 27B and two frontier models
-reach 95 to 100% from prompt framing alone.*
+reach 93 to 100% from prompt framing alone.*
 
 **A weak model needs training.** The 7B uses `<defn>` 2% of the time by default, and a prompt
 instructing it to prefer `<defn>` leaves use near 0%. Offline imitation of cheap `<defn>` trajectories
@@ -218,7 +218,7 @@ repository and not a trained preference. A prompt-versus-structure control confi
 synthetic 2-file suite, an older prompt that advertised `<defn>` only in the task message gave 0% use and
 4058 tokens, while the current prompt, which presents `<defn>` beside the read instruction as the cheaper
 option, gives 88% use and 1237 tokens. Frontier models go further: `claude-sonnet-4.5` chooses `<defn>` on
-100% of rollouts and `deepseek-chat-v3.1` on 95%, with no training. For a weak model the cheap-retrieval
+100% of rollouts and `deepseek-chat-v3.1` on 93%, with no training. For a weak model the cheap-retrieval
 preference is learned on-policy; for a capable model it follows from framing the tool as the cheaper
 option.
 
@@ -267,7 +267,7 @@ for a self-retrieving agent and locate the residual value in retrieval cost.
 
 A language server does not raise a coding agent's success by supplying information, because across the
 channels we tested the agent reads the source and derives the same facts itself. Its value is a cheaper
-retrieval action, which cuts input tokens 3.7 to 5.3 times at equal success, under three conditions:
+retrieval action, which cuts input tokens 3.5 to 4.7 times at equal success, under three conditions:
 retrieval is required, the alternative is a whole-file read, and the agent chooses the cheap action.
 Election is the practitioner's lever. A capable model chooses the cheap action when the prompt frames it as
 cheaper; a weak model learns to through one round of on-policy imitation, where prompting and offline

@@ -13,23 +13,23 @@ free for capable models and trainable for weak ones.
 
 1. **Information is redundant.** Across correction, completeness, navigation, prevention, scale,
    and type inference, handing a self-retrieving agent the language server's information does not
-   raise pass@1. At the frontier a `check_types()` tool is solved 16/16 with and without it, and
+   raise pass@1. At the frontier a `check_types()` tool is solved 32/32 with and without it, and
    `claude-sonnet-4.5` never calls it.
 
-2. **Efficiency is real, under three conditions.** A `<defn>` action cuts input tokens 3.7 to 5.3
+2. **Efficiency is real, under three conditions.** A `<defn>` action cuts input tokens 3.5 to 4.7
    times at equal success, when retrieval is required, the counterfactual is a whole-file read, and
    the agent chooses the cheap action. The tool-value ablation toggles the action on the same model:
 
    | model | tokens with `<defn>` | tokens read-only | factor |
    |---|---|---|---|
-   | 27B (real obscure suite) | 1260 | 4644 | 3.7× |
-   | claude-sonnet-4.5 (tool-calling) | 6014 | 23811 | 4.0× |
-   | deepseek-chat-v3.1 (tool-calling) | 9325 | 49142 | 5.3× |
+   | 27B (real obscure suite) | 1302 | 4563 | 3.5× |
+   | claude-sonnet-4.5 (tool-calling) | 6018 | 21985 | 3.7× |
+   | deepseek-chat-v3.1 (tool-calling) | 7705 | 36192 | 4.7× |
 
 3. **Election is capability-gated.** A 7B uses `<defn>` 2% by default and ignores a prompt telling
    it to prefer the action; one on-policy training round takes it to 100% use and 4.5 times fewer
    tokens. A capable model needs no training: framing `<defn>` in the system prompt as cheaper than
-   a read moves an untrained 27B to 88 to 95% use and a frontier model to 100%.
+   a read moves an untrained 27B to 88 to 93% use and a frontier model to 100%.
 
 ## The recipe
 

@@ -75,7 +75,7 @@ ax.bar([i + w/2 for i in x], ro, w, color=C["grey"], label="read-only")
 ax.set_yscale("log")
 ax.set_xticks(list(x)); ax.set_xticklabels(labels)
 ax.set_ylabel("mean input tokens to solve (log)")
-ax.set_title("Removing go-to-definition costs 3.7 to 5.3x more tokens, same success")
+ax.set_title("Removing go-to-definition costs 3.5 to 4.7x more tokens, same success")
 ax.legend(frameon=False, fontsize=9, loc="upper left")
 for i in x:
     ax.text(i, ro[i] * 1.15, f"{ro[i]/max(withd[i],1):.1f}×", ha="center", fontsize=10, fontweight="bold")
