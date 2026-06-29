@@ -1,6 +1,6 @@
 # LSPs for LLMs
 
-Code, result data, and reproduction scripts for the tech report [PAPER.md](./PAPER.md),
+Code, result data, and reproduction scripts for the tech report [REPORT.md](./REPORT.md),
 *Making a Language Server Pay Off for a Coding Agent: Redundant Information, Cheaper Retrieval*.
 
 We ask two questions about giving a coding agent a language server: does it help by supplying
@@ -49,15 +49,15 @@ python scripts/analysis/stats.py       # recompute the 7B training numbers from 
 ```
 
 `stats.py` recomputes every weak-model training number from the committed `runs/agent/*.json` and
-checks each against `PAPER.md` (`[MATCH]` lines). `effic_real_stats.py` does the paired stats for the
+checks each against `REPORT.md` (`[MATCH]` lines). `effic_real_stats.py` does the paired stats for the
 real-code and tool-ablation runs. The `scripts/run_*.sh` drivers regenerate the JSONs:
 
 | Driver | Reproduces |
 |---|---|
-| `run_relabel2.sh` | 7B on-policy training (harvest, SFT, retest), PAPER §5 |
-| `run_toolablation.sh` | tool-value ablation, with `<defn>` vs read-only, PAPER §4 |
-| `run_frontier.sh` | frontier election and efficiency via OpenRouter, PAPER §4 to §5 |
-| `run_gapd_frontier.sh` | the type-inference information channel, PAPER §3 |
+| `run_relabel2.sh` | 7B on-policy training (harvest, SFT, retest), report §5 |
+| `run_toolablation.sh` | tool-value ablation, with `<defn>` vs read-only, report §4 |
+| `run_frontier.sh` | frontier election and efficiency via OpenRouter, report §4 to §5 |
+| `run_gapd_frontier.sh` | the type-inference information channel, report §3 |
 | `run_relabel2_27b.sh` | 27B cross-scale transfer, Appendix B |
 | `run_grpo.sh` | cost-reward RL corroboration, Appendix A |
 

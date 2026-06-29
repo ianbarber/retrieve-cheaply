@@ -1,12 +1,12 @@
 # runs/ — committed result data
 
-The efficiency-recipe result JSONs that back `PAPER.md`. Finalized JSONs have shape
+The efficiency-recipe result JSONs that back `REPORT.md`. Finalized JSONs have shape
 `{"rows": {"A": [row, ...]}}`; each row carries `task`, `seed`, `resolved`,
 `in_tokens`, `n_lsp` (>0 = used `<defn>`), `n_reads` (>0 = used `<read>`), and the
 event trace. **Reproduce every headline number:** `python scripts/analysis/stats.py`
-from the repo root (it reads exactly the files below and checks each against `PAPER.md`).
+from the repo root (it reads exactly the files below and checks each against `REPORT.md`).
 
-| file(s) | PAPER section | what it shows |
+| file(s) | report section | what it shows |
 |---|---|---|
 | `agent/reallsp_base.json` / `reallsp_sft.json` | §5.1 headline | defn-sufficient PRE→POST: 0→100% `<defn>`, 3086→688 tokens (4.5×), success 0.65→1.00 |
 | `agent/effic_retest_base.json` / `relabel2_retest.json` | §5.1 relabel-only | the relabel method in isolation: 0→100%, 3086→724 (4.3×) |

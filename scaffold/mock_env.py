@@ -143,7 +143,7 @@ class MultiFileEnv:
     """Multi-file workspace environment: the bug lives in a TARGET file whose type
     definitions live in OTHER files the model has not been shown. This is the
     setting where the checker's knowledge is NON-REDUNDANT with the model's context
-    (the single-file suite's information-redundancy confound, PAPER §9).
+    (the single-file suite's information-redundancy confound).
 
     - real pyrefly over the whole workspace (cross-file diagnostics)
     - read_file/apply_line_edit dispatch on any workspace file

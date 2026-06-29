@@ -112,8 +112,8 @@ re-exported symbol, the agent reads the call graph and succeeds without find-ref
 reads a library before calling its API and does not emit the hallucinated member, so completion has
 nothing to prevent.
 
-**Inference.** The remaining channel is the one localization and enumeration never tested: facts
-the type-checker infers that a model might not derive by reading. We built eight tasks whose correct
+**Inference.** The last channel is type inference: facts the type-checker infers that a model might
+not derive by reading. We built eight tasks whose correct
 fix depends on a non-trivially inferred type, and verified that the type-checker names the type that
 the runtime test failure does not (for example `Returned type int | None is not assignable to int`,
 or `Object of class Plain has no attribute escape`). We then gave two frontier models a

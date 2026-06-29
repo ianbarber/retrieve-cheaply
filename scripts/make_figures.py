@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the paper figures from the committed run JSONs. Okabe-Ito colorblind-safe palette,
+"""Generate the report figures from the committed run JSONs. Okabe-Ito colorblind-safe palette,
 grayscale-legible, vector PDF output (+ PNG previews). Every number is read from runs/agent/*.json;
 nothing is hardcoded. Run: .venv-streams.system/bin/python scripts/make_figures.py
 
