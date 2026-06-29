@@ -112,25 +112,27 @@ re-exported symbol, the agent reads the call graph and succeeds without find-ref
 reads a library before calling its API and does not emit the hallucinated member, so completion has
 nothing to prevent.
 
-**Inference.** The last channel is type inference: facts the type-checker infers that a model might
-not derive by reading. We built eight tasks whose correct
-fix depends on a non-trivially inferred type, and verified that the type-checker names the type that
-the runtime test failure does not (for example `Returned type int | None is not assignable to int`,
-or `Object of class Plain has no attribute escape`). We then gave two frontier models a
-`check_types()` tool that surfaces those diagnostics. It changes nothing: `deepseek-chat-v3.1` and
-`claude-sonnet-4.5` each solve 32/32 with and without it, and `claude-sonnet-4.5` never calls it
-(0/32 rollouts, `deepseek` 1/32). The models read the library (mean 0.9 and 1.3 reads) and infer the
-types themselves.
+**Inference.** The last channel is type inference. We built eight tasks whose fix depends on a type
+the type-checker reports (overload resolution, generics, union narrowing, `Protocol`, `TypedDict`),
+and gave two frontier models a `check_types()` tool that surfaces its diagnostics. It changes
+nothing: `deepseek-chat-v3.1` and `claude-sonnet-4.5` each solve 32/32 with and without it, and
+`claude-sonnet-4.5` never calls it. The reason is narrow, and we state it precisely: in these tasks
+the needed type is a readable annotation in a small module the agent reads (mean 0.9 and 1.3 reads),
+so the model recovers it without the checker. This shows the checker is redundant *when the type is
+recoverable by reading in budget*. It does not test the regimes where a type checker is the unique
+detector: a wrong usage on a path the visible test does not exercise, a cross-file error too far to
+read in budget, or an inference a strong model reliably gets wrong. Those remain open (§7).
 
-A language server computes from the same source the agent can read. Across the channels we tested, a
-capable agent self-retrieves and self-infers, so the information is redundant and the residual value
-of a language server is the cost of retrieval, not its content.
+A language server computes from the same source the agent can read. Across correction, completeness,
+navigation, prevention, and scale, a capable agent self-retrieves, so the information is redundant
+and the residual value of a language server is the cost of retrieval, not its content. Type inference
+is the one channel where redundancy is only partly tested (above), and we flag it as open.
 
-![The type-inference channel does not lift success](docs/figures/fig2.png)
+![The type-inference channel does not lift success in the readable case](docs/figures/fig2.png)
 
-*Figure 2. The information channel is redundant. A `check_types()` tool that surfaces the
-type-checker's inferred types does not raise pass@1 on inference-hard tasks; both frontier models
-solve 32 of 32 with and without it, and read the source to infer the type themselves.*
+*Figure 2. A `check_types()` tool does not raise pass@1 on these tasks; both frontier models solve 32
+of 32 with and without it, and recover the type by reading a small module. This covers the case where
+the type is readable in budget, not the regimes where a checker is the unique detector (§3, §7).*
 
 ## 4. Retrieval efficiency is real, under three conditions (C2)
 
@@ -259,7 +261,13 @@ for a self-retrieving agent and locate the residual value in retrieval cost.
 - **Redundancy is a majority result, not an absolute.** Across the six channels we tested, the language
   server's information is redundant for a self-retrieving agent. We do not claim it is redundant for every
   task: a fact the agent cannot recover by reading (a non-readable runtime value, an inference beyond the
-  model's reach) could make it non-redundant. We did not encounter such cases often enough to measure them.
+  model's reach) could make it non-redundant.
+- **The inference channel is only partly tested.** Our type-inference tasks put the needed type in a small
+  readable module, so they test the readable-in-budget case, not the three regimes where a type checker is
+  typically the unique in-budget detector: a wrong usage on a path the visible test never exercises, a
+  cross-file error too far to read under the read budget, or an inference a strong model reliably gets
+  wrong. Testing those requires scoring on a held-out test the agent cannot run; it is the most likely
+  place a language server's *information* would prove non-redundant, and we leave it open.
 - **Tool-calling token accounting.** The API harness re-sends context each turn, so its absolute token
   counts are not comparable to the local harness; we report within-harness ratios at equal success.
 
