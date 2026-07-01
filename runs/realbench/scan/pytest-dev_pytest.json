@@ -1,0 +1,348 @@
+{
+  "dataset": "princeton-nlp/SWE-bench_Verified",
+  "min_defn_lines": 300,
+  "scanned": 19,
+  "rows": [
+    {
+      "instance_id": "pytest-dev__pytest-10051",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "aa55975c7d3f6c9f6d7f68accc41bb7cadf0eb9a",
+      "edited_files": [
+        "src/_pytest/logging.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 15,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-10081",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "da9a2b584eb7a6c7e924b2621ed0ddaeca0a7bea",
+      "edited_files": [
+        "src/_pytest/unittest.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 63,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-10356",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "3c1534944cbd34e8a41bc9e76818018fadefc9a1",
+      "edited_files": [
+        "src/_pytest/mark/structures.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 79,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-5262",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "58e6a09db49f34886ff13f3b7520dd0bcd7063cd",
+      "edited_files": [
+        "src/_pytest/capture.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 108,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-5631",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "cb828ebe70b4fa35cd5f9a7ee024272237eab351",
+      "edited_files": [
+        "src/_pytest/compat.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 15,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-5787",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "955e54221008aba577ecbaefa15679f6777d3bf8",
+      "edited_files": [
+        "src/_pytest/reports.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 123,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "ExceptionChainRepr",
+          "hint_kind": "import",
+          "edited_file": "src/_pytest/reports.py",
+          "edited_lines": 426,
+          "def_file": "src/_pytest/_code/code.py",
+          "def_lines": 1086
+        }
+      ]
+    },
+    {
+      "instance_id": "pytest-dev__pytest-5809",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "8aba863a634f40560e25055d179220f0eefabe9a",
+      "edited_files": [
+        "src/_pytest/pastebin.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 3,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-5840",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "73c5b7f4b11a81e971f7d1bb18072e06a87060f4",
+      "edited_files": [
+        "src/_pytest/config/__init__.py",
+        "src/_pytest/pathlib.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 51,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 8,
+      "xdeps": [
+        {
+          "symbol": "parts",
+          "hint_kind": "method",
+          "edited_file": "src/_pytest/config/__init__.py",
+          "edited_lines": 1134,
+          "def_file": "src/_pytest/pathlib.py",
+          "def_lines": 346
+        },
+        {
+          "symbol": "resolve",
+          "hint_kind": "method",
+          "edited_file": "src/_pytest/config/__init__.py",
+          "edited_lines": 1134,
+          "def_file": "src/_pytest/monkeypatch.py",
+          "def_lines": 321
+        }
+      ]
+    },
+    {
+      "instance_id": "pytest-dev__pytest-6197",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "e856638ba086fcf5bebf1bebea32d5cf78de87b4",
+      "edited_files": [
+        "src/_pytest/python.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 145,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-6202",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "3a668ea6ff24b0c8f00498c3144c63bac561d925",
+      "edited_files": [
+        "src/_pytest/python.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 72,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-7205",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "5e7f1ab4bf58e473e5d7f878eb2b499d7deabd29",
+      "edited_files": [
+        "src/_pytest/setuponly.py"
+      ],
+      "n_f2p": 10,
+      "n_p2p": 16,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 2,
+      "xdeps": [
+        {
+          "symbol": "saferepr",
+          "hint_kind": "import",
+          "edited_file": "src/_pytest/setuponly.py",
+          "edited_lines": 80,
+          "def_file": "src/_pytest/_io/saferepr.py",
+          "def_lines": 103
+        }
+      ]
+    },
+    {
+      "instance_id": "pytest-dev__pytest-7236",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "c98bc4cd3d687fe9b392d8eecd905627191d4f06",
+      "edited_files": [
+        "src/_pytest/unittest.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 51,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-7324",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "19ad5889353c7f5f2b65cc2acd346b7a9e95dfcd",
+      "edited_files": [
+        "src/_pytest/mark/expression.py"
+      ],
+      "n_f2p": 3,
+      "n_p2p": 58,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-7432",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "e6e300e729dd33956e5448d8be9a0b1540b4e53a",
+      "edited_files": [
+        "src/_pytest/skipping.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 77,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-7490",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "7f7a36478abe7dd1fa993b115d22606aa0e35e88",
+      "edited_files": [
+        "src/_pytest/skipping.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 78,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-7521",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "41d211c24a6781843b174379d6d6538f5c17adb9",
+      "edited_files": [
+        "src/_pytest/capture.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 125,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-7571",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "422685d0bdc110547535036c1ff398b5e1c44145",
+      "edited_files": [
+        "src/_pytest/logging.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 14,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-7982",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "a7e38c5c61928033a2dc1915cbee8caa8544a4d0",
+      "edited_files": [
+        "src/_pytest/pathlib.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 78,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pytest-dev__pytest-8399",
+      "repo": "pytest-dev/pytest",
+      "base_commit": "6e7dc8bac831cd8cf7a53b08efa366bd84f0c0fe",
+      "edited_files": [
+        "src/_pytest/python.py",
+        "src/_pytest/unittest.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 59,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    }
+  ]
+}

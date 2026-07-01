@@ -1,0 +1,425 @@
+{
+  "dataset": "princeton-nlp/SWE-bench_Verified",
+  "min_defn_lines": 300,
+  "scanned": 22,
+  "rows": [
+    {
+      "instance_id": "django__django-10097",
+      "repo": "django/django",
+      "base_commit": "b9cf764be62e77b4777b3a75ec256f6209a57671",
+      "edited_files": [
+        "django/core/validators.py"
+      ],
+      "n_f2p": 438,
+      "n_p2p": 1432,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-10554",
+      "repo": "django/django",
+      "base_commit": "14d026cccb144c6877294ba4cd4e03ebf0842498",
+      "edited_files": [
+        "django/db/models/sql/compiler.py",
+        "django/db/models/sql/query.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 23,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-10880",
+      "repo": "django/django",
+      "base_commit": "838e432e3e5519c5383d12018e6c78f8ec7833c1",
+      "edited_files": [
+        "django/db/models/aggregates.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 55,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-10914",
+      "repo": "django/django",
+      "base_commit": "e7fd69d051eaa67cb17f172a39b57253e9cb831a",
+      "edited_files": [
+        "django/conf/global_settings.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 98,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-10973",
+      "repo": "django/django",
+      "base_commit": "ddb293685235fd09e932805771ae97f72e817181",
+      "edited_files": [
+        "django/db/backends/postgresql/client.py"
+      ],
+      "n_f2p": 5,
+      "n_p2p": 0,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 2,
+      "xdeps": [
+        {
+          "symbol": "run",
+          "hint_kind": "method",
+          "edited_file": "django/db/backends/postgresql/client.py",
+          "edited_lines": 71,
+          "def_file": "django/core/servers/basehttp.py",
+          "def_lines": 213
+        }
+      ]
+    },
+    {
+      "instance_id": "django__django-10999",
+      "repo": "django/django",
+      "base_commit": "36300ef336e3f130a0dadc1143163ff3d23dc843",
+      "edited_files": [
+        "django/utils/dateparse.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 10,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-11066",
+      "repo": "django/django",
+      "base_commit": "4b45b6c8e4d7c9701a332e80d3b1c84209dc36e2",
+      "edited_files": [
+        "django/contrib/contenttypes/management/__init__.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 3,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-11087",
+      "repo": "django/django",
+      "base_commit": "8180ffba21bf10f4be905cb0d4890dc2bcff2788",
+      "edited_files": [
+        "django/db/models/deletion.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 41,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-11095",
+      "repo": "django/django",
+      "base_commit": "7d49ad76562e8c0597a0eb66046ab423b12888d8",
+      "edited_files": [
+        "django/contrib/admin/options.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 19,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-11099",
+      "repo": "django/django",
+      "base_commit": "d26b2424437dabeeca94d7900b37d2df4410da0c",
+      "edited_files": [
+        "django/contrib/auth/validators.py"
+      ],
+      "n_f2p": 3,
+      "n_p2p": 19,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-11119",
+      "repo": "django/django",
+      "base_commit": "d4df5e1b0b1c643fe0fc521add0236764ec8e92a",
+      "edited_files": [
+        "django/template/engine.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 7,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 2,
+      "xdeps": [
+        {
+          "symbol": "render",
+          "hint_kind": "method",
+          "edited_file": "django/template/engine.py",
+          "edited_lines": 180,
+          "def_file": "django/shortcuts.py",
+          "def_lines": 141
+        }
+      ]
+    },
+    {
+      "instance_id": "django__django-11133",
+      "repo": "django/django",
+      "base_commit": "879cc3da6249e920b8d54518a0ae06de835d7373",
+      "edited_files": [
+        "django/http/response.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 64,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-11138",
+      "repo": "django/django",
+      "base_commit": "c84b91b7603e488f7171fdff8f08368ef3d6b856",
+      "edited_files": [
+        "django/db/backends/mysql/operations.py",
+        "django/db/backends/oracle/operations.py",
+        "django/db/backends/sqlite3/base.py",
+        "django/db/backends/sqlite3/operations.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 73,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 8,
+      "xdeps": [
+        {
+          "symbol": "lower",
+          "hint_kind": "method",
+          "edited_file": "django/db/backends/sqlite3/operations.py",
+          "edited_lines": 333,
+          "def_file": "django/template/defaultfilters.py",
+          "def_lines": 907
+        },
+        {
+          "symbol": "USE_TZ",
+          "hint_kind": "type",
+          "edited_file": "django/db/backends/mysql/operations.py",
+          "edited_lines": 306,
+          "def_file": "django/conf/global_settings.py",
+          "def_lines": 634
+        }
+      ]
+    },
+    {
+      "instance_id": "django__django-11141",
+      "repo": "django/django",
+      "base_commit": "5d9cf79baf07fc4aed7ad1b06990532a65378155",
+      "edited_files": [
+        "django/db/migrations/loader.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 24,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "add",
+          "hint_kind": "method",
+          "edited_file": "django/db/migrations/loader.py",
+          "edited_lines": 324,
+          "def_file": "django/template/defaultfilters.py",
+          "def_lines": 905
+        }
+      ]
+    },
+    {
+      "instance_id": "django__django-11149",
+      "repo": "django/django",
+      "base_commit": "e245046bb6e8b32360aa48b8a41fb7050f0fc730",
+      "edited_files": [
+        "django/contrib/admin/options.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 46,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "ManyToManyField",
+          "hint_kind": "type",
+          "edited_file": "django/contrib/admin/options.py",
+          "edited_lines": 2162,
+          "def_file": "django/db/models/fields/related.py",
+          "def_lines": 1647
+        }
+      ]
+    },
+    {
+      "instance_id": "django__django-11163",
+      "repo": "django/django",
+      "base_commit": "e6588aa4e793b7f56f4cadbfa155b581e0efc59a",
+      "edited_files": [
+        "django/forms/models.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 141,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-11179",
+      "repo": "django/django",
+      "base_commit": "19fc6376ce67d01ca37a91ef2f55ef769f50513a",
+      "edited_files": [
+        "django/db/models/deletion.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 40,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-11206",
+      "repo": "django/django",
+      "base_commit": "571ab44e8a8936014c22e7eebe4948d9611fd7ce",
+      "edited_files": [
+        "django/utils/numberformat.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 4,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "rjust",
+          "hint_kind": "method",
+          "edited_file": "django/utils/numberformat.py",
+          "edited_lines": 79,
+          "def_file": "django/template/defaultfilters.py",
+          "def_lines": 907
+        }
+      ]
+    },
+    {
+      "instance_id": "django__django-11211",
+      "repo": "django/django",
+      "base_commit": "ba726067604ce5a8ca3919edf653496722b433ab",
+      "edited_files": [
+        "django/db/models/fields/__init__.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 76,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-11239",
+      "repo": "django/django",
+      "base_commit": "d87bd29c4f8dfcdf3f4a4eb8340e6770a2416fe3",
+      "edited_files": [
+        "django/db/backends/postgresql/client.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 5,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-11265",
+      "repo": "django/django",
+      "base_commit": "21aa2a5e785eef1f47beb1c3760fdd7d8915ae09",
+      "edited_files": [
+        "django/db/models/sql/query.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 30,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "django__django-11276",
+      "repo": "django/django",
+      "base_commit": "28d5262fa3315690395f04e3619ed554dbaf725b",
+      "edited_files": [
+        "django/utils/html.py"
+      ],
+      "n_f2p": 26,
+      "n_p2p": 548,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    }
+  ]
+}

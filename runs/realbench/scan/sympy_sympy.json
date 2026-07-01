@@ -1,0 +1,641 @@
+{
+  "dataset": "princeton-nlp/SWE-bench_Verified",
+  "min_defn_lines": 300,
+  "scanned": 22,
+  "rows": [
+    {
+      "instance_id": "sympy__sympy-11618",
+      "repo": "sympy/sympy",
+      "base_commit": "360290c4c401e386db60723ddb0109ed499c9f6e",
+      "edited_files": [
+        "sympy/geometry/point.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 4,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sympy__sympy-12096",
+      "repo": "sympy/sympy",
+      "base_commit": "d7c3045115693e887bcd03599b7ca4650ac5f2cb",
+      "edited_files": [
+        "sympy/core/function.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 43,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "evalf",
+          "hint_kind": "method",
+          "edited_file": "sympy/core/function.py",
+          "edited_lines": 2650,
+          "def_file": "sympy/core/evalf.py",
+          "def_lines": 1481
+        }
+      ]
+    },
+    {
+      "instance_id": "sympy__sympy-12419",
+      "repo": "sympy/sympy",
+      "base_commit": "479939f8c65c8c2908bbedc959549a257a7c0b0b",
+      "edited_files": [
+        "sympy/matrices/expressions/matexpr.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 25,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 8,
+      "xdeps": [
+        {
+          "symbol": "Eq",
+          "hint_kind": "import",
+          "edited_file": "sympy/matrices/expressions/matexpr.py",
+          "edited_lines": 548,
+          "def_file": "sympy/core/relational.py",
+          "def_lines": 798
+        },
+        {
+          "symbol": "KroneckerDelta",
+          "hint_kind": "import",
+          "edited_file": "sympy/matrices/expressions/matexpr.py",
+          "edited_lines": 548,
+          "def_file": "sympy/functions/special/tensor_functions.py",
+          "def_lines": 450
+        }
+      ]
+    },
+    {
+      "instance_id": "sympy__sympy-12481",
+      "repo": "sympy/sympy",
+      "base_commit": "c807dfe7569692cad24f02a08477b70c1679a4dd",
+      "edited_files": [
+        "sympy/combinatorics/permutations.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 7,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sympy__sympy-12489",
+      "repo": "sympy/sympy",
+      "base_commit": "aa9780761ad8c3c0f68beeef3a0ce5caac9e100b",
+      "edited_files": [
+        "sympy/combinatorics/permutations.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 8,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 2,
+      "xdeps": [
+        {
+          "symbol": "_af_new",
+          "hint_kind": "method",
+          "edited_file": "sympy/combinatorics/permutations.py",
+          "edited_lines": 2831,
+          "def_file": "sympy/combinatorics/group_constructs.py",
+          "def_lines": 60
+        }
+      ]
+    },
+    {
+      "instance_id": "sympy__sympy-13031",
+      "repo": "sympy/sympy",
+      "base_commit": "2dfa7457f20ee187fbb09b5b6a1631da4458388c",
+      "edited_files": [
+        "sympy/matrices/sparse.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 9,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sympy__sympy-13091",
+      "repo": "sympy/sympy",
+      "base_commit": "d1320814eda6549996190618a21eaf212cfd4d1e",
+      "edited_files": [
+        "sympy/core/basic.py",
+        "sympy/core/exprtools.py",
+        "sympy/core/numbers.py",
+        "sympy/geometry/entity.py",
+        "sympy/physics/optics/medium.py",
+        "sympy/physics/vector/dyadic.py",
+        "sympy/physics/vector/frame.py",
+        "sympy/physics/vector/vector.py",
+        "sympy/polys/agca/modules.py",
+        "sympy/polys/domains/domain.py",
+        "sympy/polys/domains/expressiondomain.py",
+        "sympy/polys/domains/pythonrational.py",
+        "sympy/polys/domains/quotientring.py",
+        "sympy/polys/fields.py",
+        "sympy/polys/monomials.py",
+        "sympy/polys/polyclasses.py",
+        "sympy/polys/polytools.py",
+        "sympy/polys/rings.py",
+        "sympy/polys/rootoftools.py",
+        "sympy/tensor/array/ndim_array.py",
+        "sympy/utilities/enumerative.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 89,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sympy__sympy-13372",
+      "repo": "sympy/sympy",
+      "base_commit": "30379ea6e225e37833a764ac2da7b7fadf5fe374",
+      "edited_files": [
+        "sympy/core/evalf.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 44,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sympy__sympy-13480",
+      "repo": "sympy/sympy",
+      "base_commit": "f57fe3f4b3f2cab225749e1b3b38ae1bf80b62f0",
+      "edited_files": [
+        "sympy/functions/elementary/hyperbolic.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 43,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "ComplexInfinity",
+          "hint_kind": "type",
+          "edited_file": "sympy/functions/elementary/hyperbolic.py",
+          "edited_lines": 1403,
+          "def_file": "sympy/core/numbers.py",
+          "def_lines": 3871
+        }
+      ]
+    },
+    {
+      "instance_id": "sympy__sympy-13551",
+      "repo": "sympy/sympy",
+      "base_commit": "9476425b9e34363c2d9ac38e9f04aa75ae54a775",
+      "edited_files": [
+        "sympy/concrete/products.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 17,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "Sum",
+          "hint_kind": "import",
+          "edited_file": "sympy/concrete/products.py",
+          "edited_lines": 517,
+          "def_file": "sympy/concrete/summations.py",
+          "def_lines": 1102
+        }
+      ]
+    },
+    {
+      "instance_id": "sympy__sympy-13615",
+      "repo": "sympy/sympy",
+      "base_commit": "50d8a102f0735da8e165a0369bbb994c7d0592a6",
+      "edited_files": [
+        "sympy/sets/sets.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 70,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sympy__sympy-13647",
+      "repo": "sympy/sympy",
+      "base_commit": "67e3c956083d0128a621f65ee86a7dacd4f9f19f",
+      "edited_files": [
+        "sympy/matrices/common.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 76,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sympy__sympy-13757",
+      "repo": "sympy/sympy",
+      "base_commit": "a5e6a101869e027e7930e694f8b1cfb082603453",
+      "edited_files": [
+        "sympy/polys/polytools.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 166,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sympy__sympy-13798",
+      "repo": "sympy/sympy",
+      "base_commit": "7121bdf1facdd90d05b6994b4c2e5b2865a4638a",
+      "edited_files": [
+        "sympy/printing/latex.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 102,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "strip",
+          "hint_kind": "method",
+          "edited_file": "sympy/printing/latex.py",
+          "edited_lines": 2208,
+          "def_file": "sympy/integrals/intpoly.py",
+          "def_lines": 1212
+        }
+      ]
+    },
+    {
+      "instance_id": "sympy__sympy-13852",
+      "repo": "sympy/sympy",
+      "base_commit": "c935e1d106743efd5bf0705fbeedbd18fadff4dc",
+      "edited_files": [
+        "sympy/functions/special/zeta_functions.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 4,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 20,
+      "xdeps": [
+        {
+          "symbol": "I",
+          "hint_kind": "import",
+          "edited_file": "sympy/functions/special/zeta_functions.py",
+          "edited_lines": 578,
+          "def_file": "sympy/core/numbers.py",
+          "def_lines": 3843
+        },
+        {
+          "symbol": "Zero",
+          "hint_kind": "type",
+          "edited_file": "sympy/functions/special/zeta_functions.py",
+          "edited_lines": 578,
+          "def_file": "sympy/core/numbers.py",
+          "def_lines": 3843
+        },
+        {
+          "symbol": "Half",
+          "hint_kind": "type",
+          "edited_file": "sympy/functions/special/zeta_functions.py",
+          "edited_lines": 578,
+          "def_file": "sympy/core/numbers.py",
+          "def_lines": 3843
+        },
+        {
+          "symbol": "For",
+          "hint_kind": "type",
+          "edited_file": "sympy/functions/special/zeta_functions.py",
+          "edited_lines": 578,
+          "def_file": "sympy/codegen/ast.py",
+          "def_lines": 1019
+        },
+        {
+          "symbol": "sqrt",
+          "hint_kind": "import",
+          "edited_file": "sympy/functions/special/zeta_functions.py",
+          "edited_lines": 578,
+          "def_file": "sympy/functions/elementary/miscellaneous.py",
+          "def_lines": 820
+        }
+      ]
+    },
+    {
+      "instance_id": "sympy__sympy-13877",
+      "repo": "sympy/sympy",
+      "base_commit": "1659712001810f5fc563a443949f8e3bb38af4bd",
+      "edited_files": [
+        "sympy/matrices/matrices.py",
+        "sympy/utilities/randtest.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 110,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 8,
+      "xdeps": [
+        {
+          "symbol": "With",
+          "hint_kind": "type",
+          "edited_file": "sympy/matrices/matrices.py",
+          "edited_lines": 4248,
+          "def_file": "sympy/integrals/rubi/utility_function.py",
+          "def_lines": 6699
+        },
+        {
+          "symbol": "expand_mul",
+          "hint_kind": "import",
+          "edited_file": "sympy/matrices/matrices.py",
+          "edited_lines": 4248,
+          "def_file": "sympy/core/function.py",
+          "def_lines": 2809
+        }
+      ]
+    },
+    {
+      "instance_id": "sympy__sympy-13878",
+      "repo": "sympy/sympy",
+      "base_commit": "7b127bdf71a36d85216315f80c1b54d22b060818",
+      "edited_files": [
+        "sympy/stats/crv_types.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 19,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 25,
+      "xdeps": [
+        {
+          "symbol": "Zero",
+          "hint_kind": "type",
+          "edited_file": "sympy/stats/crv_types.py",
+          "edited_lines": 2822,
+          "def_file": "sympy/core/numbers.py",
+          "def_lines": 3843
+        },
+        {
+          "symbol": "One",
+          "hint_kind": "type",
+          "edited_file": "sympy/stats/crv_types.py",
+          "edited_lines": 2822,
+          "def_file": "sympy/core/numbers.py",
+          "def_lines": 3843
+        },
+        {
+          "symbol": "Half",
+          "hint_kind": "type",
+          "edited_file": "sympy/stats/crv_types.py",
+          "edited_lines": 2822,
+          "def_file": "sympy/core/numbers.py",
+          "def_lines": 3843
+        },
+        {
+          "symbol": "asin",
+          "hint_kind": "import",
+          "edited_file": "sympy/stats/crv_types.py",
+          "edited_lines": 2822,
+          "def_file": "sympy/functions/elementary/trigonometric.py",
+          "def_lines": 2824
+        },
+        {
+          "symbol": "cdf",
+          "hint_kind": "call",
+          "edited_file": "sympy/stats/crv_types.py",
+          "edited_lines": 2822,
+          "def_file": "sympy/stats/rv.py",
+          "def_lines": 1142
+        },
+        {
+          "symbol": "hyper",
+          "hint_kind": "call",
+          "edited_file": "sympy/stats/crv_types.py",
+          "edited_lines": 2822,
+          "def_file": "sympy/functions/special/hyper.py",
+          "def_lines": 1045
+        },
+        {
+          "symbol": "uppergamma",
+          "hint_kind": "call",
+          "edited_file": "sympy/stats/crv_types.py",
+          "edited_lines": 2822,
+          "def_file": "sympy/functions/special/gamma_functions.py",
+          "def_lines": 1004
+        }
+      ]
+    },
+    {
+      "instance_id": "sympy__sympy-13974",
+      "repo": "sympy/sympy",
+      "base_commit": "84c125972ad535b2dfb245f8d311d347b45e5b8a",
+      "edited_files": [
+        "sympy/physics/quantum/tensorproduct.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 4,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sympy__sympy-14248",
+      "repo": "sympy/sympy",
+      "base_commit": "9986b38181cdd556a3f3411e553864f11912244e",
+      "edited_files": [
+        "sympy/printing/latex.py",
+        "sympy/printing/pretty/pretty.py",
+        "sympy/printing/str.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 433,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 14,
+      "xdeps": [
+        {
+          "symbol": "First",
+          "hint_kind": "type",
+          "edited_file": "sympy/printing/pretty/pretty.py",
+          "edited_lines": 2343,
+          "def_file": "sympy/integrals/rubi/utility_function.py",
+          "def_lines": 6754
+        },
+        {
+          "symbol": "Mul",
+          "hint_kind": "import",
+          "edited_file": "sympy/printing/latex.py",
+          "edited_lines": 2281,
+          "def_file": "sympy/core/mul.py",
+          "def_lines": 1821
+        },
+        {
+          "symbol": "MatMul",
+          "hint_kind": "import",
+          "edited_file": "sympy/printing/latex.py",
+          "edited_lines": 2281,
+          "def_file": "sympy/matrices/expressions/matmul.py",
+          "def_lines": 295
+        },
+        {
+          "symbol": "MatAdd",
+          "hint_kind": "import",
+          "edited_file": "sympy/printing/latex.py",
+          "edited_lines": 2281,
+          "def_file": "sympy/matrices/expressions/matadd.py",
+          "def_lines": 116
+        },
+        {
+          "symbol": "HadamardProduct",
+          "hint_kind": "import",
+          "edited_file": "sympy/printing/latex.py",
+          "edited_lines": 2281,
+          "def_file": "sympy/matrices/expressions/hadamard.py",
+          "def_lines": 83
+        }
+      ]
+    },
+    {
+      "instance_id": "sympy__sympy-14531",
+      "repo": "sympy/sympy",
+      "base_commit": "205da797006360fc629110937e39a19c9561313e",
+      "edited_files": [
+        "sympy/printing/str.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 84,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 18,
+      "xdeps": [
+        {
+          "symbol": "Normal",
+          "hint_kind": "type",
+          "edited_file": "sympy/printing/str.py",
+          "edited_lines": 848,
+          "def_file": "sympy/stats/crv_types.py",
+          "def_lines": 2987
+        },
+        {
+          "symbol": "Uniform",
+          "hint_kind": "type",
+          "edited_file": "sympy/printing/str.py",
+          "edited_lines": 848,
+          "def_file": "sympy/stats/crv_types.py",
+          "def_lines": 2987
+        },
+        {
+          "symbol": "Permutation",
+          "hint_kind": "type",
+          "edited_file": "sympy/printing/str.py",
+          "edited_lines": 848,
+          "def_file": "sympy/combinatorics/permutations.py",
+          "def_lines": 2858
+        },
+        {
+          "symbol": "Lambda",
+          "hint_kind": "type",
+          "edited_file": "sympy/printing/str.py",
+          "edited_lines": 848,
+          "def_file": "sympy/core/function.py",
+          "def_lines": 2788
+        },
+        {
+          "symbol": "Limit",
+          "hint_kind": "type",
+          "edited_file": "sympy/printing/str.py",
+          "edited_lines": 848,
+          "def_file": "sympy/series/limits.py",
+          "def_lines": 230
+        }
+      ]
+    },
+    {
+      "instance_id": "sympy__sympy-14711",
+      "repo": "sympy/sympy",
+      "base_commit": "c6753448b5c34f95e250105d76709fe4d349ca1f",
+      "edited_files": [
+        "sympy/physics/vector/vector.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 2,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sympy__sympy-14976",
+      "repo": "sympy/sympy",
+      "base_commit": "9cbea134220b0b951587e11b63e2c832c7246cbc",
+      "edited_files": [
+        "sympy/printing/pycode.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 13,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    }
+  ]
+}

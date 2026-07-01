@@ -57,3 +57,6 @@ runs/agent/*.partial
 
 # OpenRouter API key (never commit)
 .orkey
+
+# real-repo experiment: cloned repos (large, never commit)
+runs/realbench/repos/

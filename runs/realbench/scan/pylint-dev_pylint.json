@@ -1,0 +1,177 @@
+{
+  "dataset": "princeton-nlp/SWE-bench_Verified",
+  "min_defn_lines": 300,
+  "scanned": 10,
+  "rows": [
+    {
+      "instance_id": "pylint-dev__pylint-4551",
+      "repo": "pylint-dev/pylint",
+      "base_commit": "99589b08de8c5a2c6cc61e13a37420a868c80599",
+      "edited_files": [
+        "pylint/pyreverse/diagrams.py",
+        "pylint/pyreverse/inspector.py",
+        "pylint/pyreverse/utils.py",
+        "pylint/pyreverse/writer.py"
+      ],
+      "n_f2p": 10,
+      "n_p2p": 0,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pylint-dev__pylint-4604",
+      "repo": "pylint-dev/pylint",
+      "base_commit": "1e55ae64624d28c5fe8b63ad7979880ee2e6ef3f",
+      "edited_files": [
+        "pylint/checkers/variables.py",
+        "pylint/constants.py"
+      ],
+      "n_f2p": 21,
+      "n_p2p": 0,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pylint-dev__pylint-4661",
+      "repo": "pylint-dev/pylint",
+      "base_commit": "1d1619ef913b99b06647d2030bddff4800abdf63",
+      "edited_files": [
+        "pylint/config/__init__.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 0,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pylint-dev__pylint-4970",
+      "repo": "pylint-dev/pylint",
+      "base_commit": "40cc2ffd7887959157aaf469e09585ec2be7f528",
+      "edited_files": [
+        "pylint/checkers/similar.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 17,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pylint-dev__pylint-6386",
+      "repo": "pylint-dev/pylint",
+      "base_commit": "754b487f4d892e3d4872b6fc7468a71db4e31c13",
+      "edited_files": [
+        "pylint/config/argument.py",
+        "pylint/config/arguments_manager.py",
+        "pylint/config/utils.py",
+        "pylint/lint/base_options.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 7,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pylint-dev__pylint-6528",
+      "repo": "pylint-dev/pylint",
+      "base_commit": "273a8b25620467c1e5686aa8d2a1dbb8c02c78d0",
+      "edited_files": [
+        "pylint/lint/expand_modules.py",
+        "pylint/lint/pylinter.py"
+      ],
+      "n_f2p": 4,
+      "n_p2p": 171,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pylint-dev__pylint-6903",
+      "repo": "pylint-dev/pylint",
+      "base_commit": "ca80f03a43bc39e4cc2c67dc99817b3c9f13b8a6",
+      "edited_files": [
+        "pylint/lint/run.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 8,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pylint-dev__pylint-7080",
+      "repo": "pylint-dev/pylint",
+      "base_commit": "3c5eca2ded3dd2b59ebaf23eb289453b5d2930f0",
+      "edited_files": [
+        "pylint/lint/expand_modules.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 120,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pylint-dev__pylint-7277",
+      "repo": "pylint-dev/pylint",
+      "base_commit": "684a1d6aa0a6791e20078bc524f97c8906332390",
+      "edited_files": [
+        "pylint/__init__.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 122,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pylint-dev__pylint-8898",
+      "repo": "pylint-dev/pylint",
+      "base_commit": "1f8c4d9eb185c16a2c1d881c054f015e1c2eb334",
+      "edited_files": [
+        "pylint/config/argument.py",
+        "pylint/utils/__init__.py",
+        "pylint/utils/utils.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 18,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    }
+  ]
+}

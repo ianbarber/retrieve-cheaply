@@ -1,0 +1,452 @@
+{
+  "dataset": "princeton-nlp/SWE-bench_Verified",
+  "min_defn_lines": 300,
+  "scanned": 22,
+  "rows": [
+    {
+      "instance_id": "sphinx-doc__sphinx-10323",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "31eba1a76dd485dc633cae48227b46879eda5df4",
+      "edited_files": [
+        "sphinx/directives/code.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 40,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10435",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "f1061c012e214f16fd8790dec3c283d787e3daa8",
+      "edited_files": [
+        "sphinx/writers/latex.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 74,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10449",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "36367765fe780f962bba861bf368a765380bbc68",
+      "edited_files": [
+        "sphinx/ext/autodoc/typehints.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 30,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10466",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "cab2d93076d0cca7c53fac885f927dde3e2a5fec",
+      "edited_files": [
+        "sphinx/builders/gettext.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 6,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10614",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "ac2b7599d212af7d04649959ce6926c63c3133fa",
+      "edited_files": [
+        "sphinx/ext/inheritance_diagram.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 5,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 2,
+      "xdeps": [
+        {
+          "symbol": "get",
+          "hint_kind": "method",
+          "edited_file": "sphinx/ext/inheritance_diagram.py",
+          "edited_lines": 480,
+          "def_file": "sphinx/util/requests.py",
+          "def_lines": 73
+        }
+      ]
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10673",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "f35d2a6cc726f97d0e859ca7a0e1729f7da8a6c8",
+      "edited_files": [
+        "sphinx/directives/other.py",
+        "sphinx/environment/adapters/toctree.py",
+        "sphinx/environment/collectors/toctree.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 9,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "compact_paragraph",
+          "hint_kind": "method",
+          "edited_file": "sphinx/environment/adapters/toctree.py",
+          "edited_lines": 331,
+          "def_file": "sphinx/addnodes.py",
+          "def_lines": 579
+        }
+      ]
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-11445",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "71db08c05197545944949d5aa76cd340e7143627",
+      "edited_files": [
+        "sphinx/util/rst.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 8,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-11510",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "6cb783c0024a873722952a67ebb9f41771c8eb6d",
+      "edited_files": [
+        "sphinx/directives/other.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 7,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 8,
+      "xdeps": [
+        {
+          "symbol": "Sphinx",
+          "hint_kind": "type",
+          "edited_file": "sphinx/directives/other.py",
+          "edited_lines": 405,
+          "def_file": "sphinx/application.py",
+          "def_lines": 1362
+        },
+        {
+          "symbol": "os_path",
+          "hint_kind": "import",
+          "edited_file": "sphinx/directives/other.py",
+          "edited_lines": 405,
+          "def_file": "sphinx/util/osutil.py",
+          "def_lines": 217
+        },
+        {
+          "symbol": "get",
+          "hint_kind": "method",
+          "edited_file": "sphinx/directives/other.py",
+          "edited_lines": 405,
+          "def_file": "sphinx/util/requests.py",
+          "def_lines": 73
+        }
+      ]
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7440",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "9bb204dcabe6ba0fc422bf4a45ad0c79c680d90b",
+      "edited_files": [
+        "sphinx/domains/std.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 12,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7454",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "aca3f825f2e4a8817190f3c885a242a285aa0dba",
+      "edited_files": [
+        "sphinx/domains/python.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 27,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7462",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "b3e26a6c851133b82b50f4b68b53692076574d13",
+      "edited_files": [
+        "sphinx/domains/python.py",
+        "sphinx/pycode/ast.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 49,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 5,
+      "xdeps": [
+        {
+          "symbol": "desc_sig_punctuation",
+          "hint_kind": "method",
+          "edited_file": "sphinx/domains/python.py",
+          "edited_lines": 1356,
+          "def_file": "sphinx/addnodes.py",
+          "def_lines": 390
+        },
+        {
+          "symbol": "unparse",
+          "hint_kind": "call",
+          "edited_file": "sphinx/domains/python.py",
+          "edited_lines": 1356,
+          "def_file": "sphinx/pycode/ast.py",
+          "def_lines": 180
+        }
+      ]
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7590",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "2e506c5ab457cba743bb47eb5b8c8eb9dd51d23d",
+      "edited_files": [
+        "sphinx/domains/c.py",
+        "sphinx/domains/cpp.py",
+        "sphinx/util/cfamily.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 24,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7748",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "9988d5ce267bf0df4791770b469431b1fb00dcdd",
+      "edited_files": [
+        "sphinx/ext/autodoc/__init__.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 12,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7757",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "212fd67b9f0b4fae6a7c3501fdf1a9a5b2801329",
+      "edited_files": [
+        "sphinx/util/inspect.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 33,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7889",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "ec9af606c6cfa515f946d74da9b51574f2f9b16f",
+      "edited_files": [
+        "sphinx/ext/autodoc/mock.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 5,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7910",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "27ac10de04697e2372d31db5548e56a7c6d9265d",
+      "edited_files": [
+        "sphinx/ext/napoleon/__init__.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 16,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "unwrap",
+          "hint_kind": "method",
+          "edited_file": "sphinx/ext/napoleon/__init__.py",
+          "edited_lines": 463,
+          "def_file": "sphinx/util/inspect.py",
+          "def_lines": 781
+        }
+      ]
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7985",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "f30284ef926ebaf04b176f21b421e2dffc679792",
+      "edited_files": [
+        "sphinx/builders/linkcheck.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 3,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8035",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "5e6da19f0e44a0ae83944fb6ce18f18f781e1a6e",
+      "edited_files": [
+        "sphinx/ext/autodoc/__init__.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 2,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 2,
+      "xdeps": [
+        {
+          "symbol": "get",
+          "hint_kind": "method",
+          "edited_file": "sphinx/ext/autodoc/__init__.py",
+          "edited_lines": 2147,
+          "def_file": "sphinx/util/requests.py",
+          "def_lines": 127
+        }
+      ]
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8056",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "e188d56ed1248dead58f3f8018c0e9a3f99193f7",
+      "edited_files": [
+        "sphinx/ext/napoleon/docstring.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 40,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8120",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "795747bdb6b8fb7d717d5bbfc2c3316869e66a73",
+      "edited_files": [
+        "sphinx/application.py",
+        "sphinx/locale/__init__.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 44,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8265",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "b428cd2404675475a5c3dc2a2b0790ba57676202",
+      "edited_files": [
+        "sphinx/pycode/ast.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 22,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "Index",
+          "hint_kind": "type",
+          "edited_file": "sphinx/pycode/ast.py",
+          "edited_lines": 205,
+          "def_file": "sphinx/domains/__init__.py",
+          "def_lines": 402
+        }
+      ]
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8269",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "1e2ccd8f0eca0870cf6f8fce6934e2da8eba9b72",
+      "edited_files": [
+        "sphinx/builders/linkcheck.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 5,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    }
+  ]
+}

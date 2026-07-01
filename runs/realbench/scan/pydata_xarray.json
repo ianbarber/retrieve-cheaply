@@ -1,0 +1,494 @@
+{
+  "dataset": "princeton-nlp/SWE-bench_Verified",
+  "min_defn_lines": 300,
+  "scanned": 22,
+  "rows": [
+    {
+      "instance_id": "pydata__xarray-2905",
+      "repo": "pydata/xarray",
+      "base_commit": "7c4e2ac83f7b4306296ff9b7b51aaf016e5ad614",
+      "edited_files": [
+        "xarray/core/variable.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 364,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pydata__xarray-3095",
+      "repo": "pydata/xarray",
+      "base_commit": "1757dffac2fa493d7b9a074b84cf8c830a706688",
+      "edited_files": [
+        "xarray/core/indexing.py",
+        "xarray/core/variable.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 253,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 7,
+      "xdeps": [
+        {
+          "symbol": "transpose",
+          "hint_kind": "call",
+          "edited_file": "xarray/core/indexing.py",
+          "edited_lines": 1307,
+          "def_file": "xarray/core/duck_array_ops.py",
+          "def_lines": 427
+        },
+        {
+          "symbol": "DTypeLike",
+          "hint_kind": "import",
+          "edited_file": "xarray/core/indexing.py",
+          "edited_lines": 1307,
+          "def_file": "xarray/core/npcompat.py",
+          "def_lines": 359
+        }
+      ]
+    },
+    {
+      "instance_id": "pydata__xarray-3151",
+      "repo": "pydata/xarray",
+      "base_commit": "118f4d996e7711c9aced916e6049af9f28d5ec66",
+      "edited_files": [
+        "xarray/core/combine.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 66,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pydata__xarray-3305",
+      "repo": "pydata/xarray",
+      "base_commit": "69c7e01e5167a3137c285cb50d1978252bb8bcbf",
+      "edited_files": [
+        "xarray/core/dataset.py",
+        "xarray/core/variable.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 653,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pydata__xarray-3677",
+      "repo": "pydata/xarray",
+      "base_commit": "ef6e6a7b86f8479b9a1fecf15ad5b88a2326b31e",
+      "edited_files": [
+        "xarray/core/dataset.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 21,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "DataArray",
+          "hint_kind": "type",
+          "edited_file": "xarray/core/dataset.py",
+          "edited_lines": 5700,
+          "def_file": "xarray/core/dataarray.py",
+          "def_lines": 3253
+        }
+      ]
+    },
+    {
+      "instance_id": "pydata__xarray-3993",
+      "repo": "pydata/xarray",
+      "base_commit": "8cc34cb412ba89ebca12fc84f76a9e452628f1bc",
+      "edited_files": [
+        "xarray/core/dataarray.py",
+        "xarray/core/dataset.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 2398,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "Coordinate",
+          "hint_kind": "type",
+          "edited_file": "xarray/core/dataarray.py",
+          "edited_lines": 4294,
+          "def_file": "xarray/core/variable.py",
+          "def_lines": 2841
+        }
+      ]
+    },
+    {
+      "instance_id": "pydata__xarray-4075",
+      "repo": "pydata/xarray",
+      "base_commit": "19b088636eb7d3f65ab7a1046ac672e0689371d8",
+      "edited_files": [
+        "xarray/core/weighted.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 958,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pydata__xarray-4094",
+      "repo": "pydata/xarray",
+      "base_commit": "a64cf2d5476e7bbda099b34c40b7be1880dbd39a",
+      "edited_files": [
+        "xarray/core/dataarray.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 862,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pydata__xarray-4356",
+      "repo": "pydata/xarray",
+      "base_commit": "e05fddea852d08fc0845f954b79deb9e9f9ff883",
+      "edited_files": [
+        "xarray/core/nanops.py"
+      ],
+      "n_f2p": 8,
+      "n_p2p": 604,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 8,
+      "xdeps": [
+        {
+          "symbol": "take",
+          "hint_kind": "method",
+          "edited_file": "xarray/core/nanops.py",
+          "edited_lines": 199,
+          "def_file": "xarray/core/duck_array_ops.py",
+          "def_lines": 635
+        },
+        {
+          "symbol": "prod",
+          "hint_kind": "method",
+          "edited_file": "xarray/core/nanops.py",
+          "edited_lines": 199,
+          "def_file": "xarray/core/duck_array_ops.py",
+          "def_lines": 635
+        }
+      ]
+    },
+    {
+      "instance_id": "pydata__xarray-4629",
+      "repo": "pydata/xarray",
+      "base_commit": "a41edc7bf5302f2ea327943c0c48c532b12009bc",
+      "edited_files": [
+        "xarray/core/merge.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 32,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pydata__xarray-4687",
+      "repo": "pydata/xarray",
+      "base_commit": "d3b6aa6d8b997df115a53c001d00222a0f92f63a",
+      "edited_files": [
+        "xarray/core/computation.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 1717,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 8,
+      "xdeps": [
+        {
+          "symbol": "Dataset",
+          "hint_kind": "type",
+          "edited_file": "xarray/core/computation.py",
+          "edited_lines": 1973,
+          "def_file": "xarray/core/dataset.py",
+          "def_lines": 7904
+        },
+        {
+          "symbol": "DataArray",
+          "hint_kind": "type",
+          "edited_file": "xarray/core/computation.py",
+          "edited_lines": 1973,
+          "def_file": "xarray/core/dataarray.py",
+          "def_lines": 4824
+        }
+      ]
+    },
+    {
+      "instance_id": "pydata__xarray-4695",
+      "repo": "pydata/xarray",
+      "base_commit": "51ef2a66c4e0896eab7d2b03e3dfb3963e338e3c",
+      "edited_files": [
+        "xarray/core/dataarray.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 875,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pydata__xarray-4966",
+      "repo": "pydata/xarray",
+      "base_commit": "37522e991a32ee3c0ad1a5ff8afe8e3eb1885550",
+      "edited_files": [
+        "xarray/coding/variables.py"
+      ],
+      "n_f2p": 4,
+      "n_p2p": 21,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pydata__xarray-6461",
+      "repo": "pydata/xarray",
+      "base_commit": "851dadeb0338403e5021c3fbe80cbc9127ee672d",
+      "edited_files": [
+        "xarray/core/computation.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 247,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pydata__xarray-6599",
+      "repo": "pydata/xarray",
+      "base_commit": "6bb2b855498b5c68d7cca8cceb710365d58e6048",
+      "edited_files": [
+        "xarray/core/computation.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 264,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "astype",
+          "hint_kind": "method",
+          "edited_file": "xarray/core/computation.py",
+          "edited_lines": 2070,
+          "def_file": "xarray/core/duck_array_ops.py",
+          "def_lines": 635
+        }
+      ]
+    },
+    {
+      "instance_id": "pydata__xarray-6721",
+      "repo": "pydata/xarray",
+      "base_commit": "cc183652bf6e1273e985e1c4b3cba79c896c1193",
+      "edited_files": [
+        "xarray/core/common.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 1405,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pydata__xarray-6744",
+      "repo": "pydata/xarray",
+      "base_commit": "7cc6cc991e586a6158bb656b8001234ccda25407",
+      "edited_files": [
+        "xarray/core/rolling.py"
+      ],
+      "n_f2p": 3,
+      "n_p2p": 1815,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 8,
+      "xdeps": [
+        {
+          "symbol": "DataArray",
+          "hint_kind": "type",
+          "edited_file": "xarray/core/rolling.py",
+          "edited_lines": 1144,
+          "def_file": "xarray/core/dataarray.py",
+          "def_lines": 5760
+        },
+        {
+          "symbol": "count",
+          "hint_kind": "method",
+          "edited_file": "xarray/core/rolling.py",
+          "edited_lines": 1144,
+          "def_file": "xarray/core/duck_array_ops.py",
+          "def_lines": 653
+        }
+      ]
+    },
+    {
+      "instance_id": "pydata__xarray-6938",
+      "repo": "pydata/xarray",
+      "base_commit": "c4e40d991c28be51de9ac560ce895ac7f9b14924",
+      "edited_files": [
+        "xarray/core/dataset.py",
+        "xarray/core/variable.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 430,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "Index",
+          "hint_kind": "type",
+          "edited_file": "xarray/core/variable.py",
+          "edited_lines": 3083,
+          "def_file": "xarray/core/indexes.py",
+          "def_lines": 1408
+        }
+      ]
+    },
+    {
+      "instance_id": "pydata__xarray-6992",
+      "repo": "pydata/xarray",
+      "base_commit": "45c0a114e2b7b27b83c9618bc05b36afac82183c",
+      "edited_files": [
+        "xarray/core/dataset.py",
+        "xarray/core/indexes.py"
+      ],
+      "n_f2p": 12,
+      "n_p2p": 945,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pydata__xarray-7229",
+      "repo": "pydata/xarray",
+      "base_commit": "3aa75c8d00a4a2d4acf10d80f76b937cadb666b7",
+      "edited_files": [
+        "xarray/core/computation.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 280,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 8,
+      "xdeps": [
+        {
+          "symbol": "Dataset",
+          "hint_kind": "import",
+          "edited_file": "xarray/core/computation.py",
+          "edited_lines": 2151,
+          "def_file": "xarray/core/dataset.py",
+          "def_lines": 9214
+        },
+        {
+          "symbol": "DataArray",
+          "hint_kind": "type",
+          "edited_file": "xarray/core/computation.py",
+          "edited_lines": 2151,
+          "def_file": "xarray/core/dataarray.py",
+          "def_lines": 6668
+        }
+      ]
+    },
+    {
+      "instance_id": "pydata__xarray-7233",
+      "repo": "pydata/xarray",
+      "base_commit": "51d37d1be95547059251076b3fadaa317750aab3",
+      "edited_files": [
+        "xarray/core/rolling.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 189,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "pydata__xarray-7393",
+      "repo": "pydata/xarray",
+      "base_commit": "41fef6f1352be994cd90056d47440fe9aa4c068f",
+      "edited_files": [
+        "xarray/core/indexing.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 71,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "asarray",
+          "hint_kind": "method",
+          "edited_file": "xarray/core/indexing.py",
+          "edited_lines": 1590,
+          "def_file": "xarray/core/duck_array_ops.py",
+          "def_lines": 671
+        }
+      ]
+    }
+  ]
+}

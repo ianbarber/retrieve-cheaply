@@ -1,0 +1,433 @@
+{
+  "dataset": "princeton-nlp/SWE-bench_Verified",
+  "min_defn_lines": 300,
+  "scanned": 22,
+  "rows": [
+    {
+      "instance_id": "matplotlib__matplotlib-13989",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "a3e2897bfaf9eaac1d6649da535c4e721c89fa69",
+      "edited_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 411,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-14623",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "d65c9ca20ddf81ef91199e6d819f9d3506ef477c",
+      "edited_files": [
+        "lib/matplotlib/axes/_base.py",
+        "lib/matplotlib/ticker.py",
+        "lib/mpl_toolkits/mplot3d/axes3d.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 400,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "nonsingular",
+          "hint_kind": "method",
+          "edited_file": "lib/matplotlib/ticker.py",
+          "edited_lines": 2792,
+          "def_file": "lib/matplotlib/transforms.py",
+          "def_lines": 2943
+        }
+      ]
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-20488",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "b7ce415c15eb39b026a097a2865da73fbcf15c9c",
+      "edited_files": [
+        "lib/matplotlib/image.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 111,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "LogNorm",
+          "hint_kind": "type",
+          "edited_file": "lib/matplotlib/image.py",
+          "edited_lines": 1786,
+          "def_file": "lib/matplotlib/colors.py",
+          "def_lines": 2393
+        }
+      ]
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-20676",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "6786f437df54ca7780a047203cbcfaa1db8dc542",
+      "edited_files": [
+        "lib/matplotlib/widgets.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 32,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-20826",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "a0d2e399729d36499a1924e5ca5bc067c8396810",
+      "edited_files": [
+        "lib/matplotlib/axis.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 673,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-20859",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "64619e53e9d0ed417daba287ac0d3a06943a54d5",
+      "edited_files": [
+        "lib/matplotlib/legend.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 88,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 8,
+      "xdeps": [
+        {
+          "symbol": "Axes",
+          "hint_kind": "type",
+          "edited_file": "lib/matplotlib/legend.py",
+          "edited_lines": 1247,
+          "def_file": "lib/matplotlib/axes/_axes.py",
+          "def_lines": 8151
+        },
+        {
+          "symbol": "FigureBase",
+          "hint_kind": "import",
+          "edited_file": "lib/matplotlib/legend.py",
+          "edited_lines": 1247,
+          "def_file": "lib/matplotlib/figure.py",
+          "def_lines": 3227
+        }
+      ]
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-21568",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "f0632c0fc7339f68e992ed63ae4cfac76cd41aad",
+      "edited_files": [
+        "lib/matplotlib/dates.py"
+      ],
+      "n_f2p": 4,
+      "n_p2p": 73,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-22719",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "a2a1b0a11b993fe5f8fab64b6161e99243a6393c",
+      "edited_files": [
+        "lib/matplotlib/category.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 68,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-22865",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "c6c7ec1978c22ae2c704555a873d0ec6e1e2eaa8",
+      "edited_files": [
+        "lib/matplotlib/colorbar.py"
+      ],
+      "n_f2p": 3,
+      "n_p2p": 57,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-22871",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "a7b7260bf06c20d408215d95ce20a1a01c12e5b1",
+      "edited_files": [
+        "lib/matplotlib/dates.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 88,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-23299",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "3eadeacc06c9f2ddcdac6ae39819faa9fbee9e39",
+      "edited_files": [
+        "lib/matplotlib/__init__.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 192,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 2,
+      "xdeps": [
+        {
+          "symbol": "copy",
+          "hint_kind": "method",
+          "edited_file": "lib/matplotlib/__init__.py",
+          "edited_lines": 1459,
+          "def_file": "lib/matplotlib/_docstring.py",
+          "def_lines": 97
+        }
+      ]
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-23314",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "97fc1154992f64cfb2f86321155a7404efeb2d8a",
+      "edited_files": [
+        "lib/mpl_toolkits/mplot3d/axes3d.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 862,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-23412",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "f06c2c3abdaf4b90285ce5ca7fedbb8ace715911",
+      "edited_files": [
+        "lib/matplotlib/patches.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 46,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "_setattr_cm",
+          "hint_kind": "method",
+          "edited_file": "lib/matplotlib/patches.py",
+          "edited_lines": 4683,
+          "def_file": "lib/matplotlib/cbook/__init__.py",
+          "def_lines": 2294
+        }
+      ]
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-23476",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "33a0599711d26dc2b79f851c6daed4947df7c167",
+      "edited_files": [
+        "lib/matplotlib/figure.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 104,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "get",
+          "hint_kind": "method",
+          "edited_file": "lib/matplotlib/figure.py",
+          "edited_lines": 3443,
+          "def_file": "lib/matplotlib/artist.py",
+          "def_lines": 1815
+        }
+      ]
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-24026",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "14c96b510ebeba40f573e512299b1976f35b620e",
+      "edited_files": [
+        "lib/matplotlib/stackplot.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 764,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-24149",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "af39f1edffcd828f05cfdd04f2e59506bb4a27bc",
+      "edited_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 767,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "admissible": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "safe_first_element",
+          "hint_kind": "method",
+          "edited_file": "lib/matplotlib/axes/_axes.py",
+          "edited_lines": 8237,
+          "def_file": "lib/matplotlib/cbook/__init__.py",
+          "def_lines": 2365
+        }
+      ]
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-24177",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "493d608e39d32a67173c23a7bbc47d6bfedcef61",
+      "edited_files": [
+        "lib/matplotlib/axes/_base.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 768,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-24570",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "8f0003ae902952372824c9917975fb372c026a42",
+      "edited_files": [
+        "lib/matplotlib/offsetbox.py"
+      ],
+      "n_f2p": 2,
+      "n_p2p": 267,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-24627",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "9d22ab09d52d279b125d8770967569de070913b2",
+      "edited_files": [
+        "lib/matplotlib/axes/_base.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 776,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-24637",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "a9ba9d5d3fe9d5ac15fbdb06127f97d381148dd0",
+      "edited_files": [
+        "lib/matplotlib/offsetbox.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 29,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-24870",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "6091437be9776139d3672cde28a19cbe6c09dcd5",
+      "edited_files": [
+        "lib/matplotlib/contour.py",
+        "lib/matplotlib/tri/_tricontour.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 65,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    },
+    {
+      "instance_id": "matplotlib__matplotlib-24970",
+      "repo": "matplotlib/matplotlib",
+      "base_commit": "a3011dfd1aaa2487cce8aa7369475533133ef777",
+      "edited_files": [
+        "lib/matplotlib/colors.py"
+      ],
+      "n_f2p": 1,
+      "n_p2p": 253,
+      "S1_cross_file": false,
+      "S2_nontrivial": false,
+      "S3_expensive_read": false,
+      "admissible": false,
+      "score": 0,
+      "xdeps": []
+    }
+  ]
+}
