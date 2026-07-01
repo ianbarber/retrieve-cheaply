@@ -10,12 +10,17 @@
       "edited_files": [
         "xarray/core/variable.py"
       ],
+      "primary_file": "xarray/core/variable.py",
+      "primary_file_lines": 2838,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 364,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -27,12 +32,17 @@
         "xarray/core/indexing.py",
         "xarray/core/variable.py"
       ],
+      "primary_file": "xarray/core/indexing.py",
+      "primary_file_lines": 1307,
+      "gold_added_lines": 32,
       "n_f2p": 1,
       "n_p2p": 253,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 7,
       "xdeps": [
         {
@@ -60,12 +70,17 @@
       "edited_files": [
         "xarray/core/combine.py"
       ],
+      "primary_file": "xarray/core/combine.py",
+      "primary_file_lines": 716,
+      "gold_added_lines": 7,
       "n_f2p": 1,
       "n_p2p": 66,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -77,12 +92,17 @@
         "xarray/core/dataset.py",
         "xarray/core/variable.py"
       ],
+      "primary_file": "xarray/core/dataset.py",
+      "primary_file_lines": 5085,
+      "gold_added_lines": 17,
       "n_f2p": 1,
       "n_p2p": 653,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -93,12 +113,17 @@
       "edited_files": [
         "xarray/core/dataset.py"
       ],
+      "primary_file": "xarray/core/dataset.py",
+      "primary_file_lines": 5700,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 21,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -119,12 +144,17 @@
         "xarray/core/dataarray.py",
         "xarray/core/dataset.py"
       ],
+      "primary_file": "xarray/core/dataarray.py",
+      "primary_file_lines": 4294,
+      "gold_added_lines": 36,
       "n_f2p": 2,
       "n_p2p": 2398,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -144,12 +174,17 @@
       "edited_files": [
         "xarray/core/weighted.py"
       ],
+      "primary_file": "xarray/core/weighted.py",
+      "primary_file_lines": 255,
+      "gold_added_lines": 8,
       "n_f2p": 2,
       "n_p2p": 958,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -160,12 +195,17 @@
       "edited_files": [
         "xarray/core/dataarray.py"
       ],
+      "primary_file": "xarray/core/dataarray.py",
+      "primary_file_lines": 3828,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 862,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -176,12 +216,17 @@
       "edited_files": [
         "xarray/core/nanops.py"
       ],
+      "primary_file": "xarray/core/nanops.py",
+      "primary_file_lines": 199,
+      "gold_added_lines": 1,
       "n_f2p": 8,
       "n_p2p": 604,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": true,
       "admissible": true,
+      "audit_ready": true,
       "score": 8,
       "xdeps": [
         {
@@ -209,12 +254,17 @@
       "edited_files": [
         "xarray/core/merge.py"
       ],
+      "primary_file": "xarray/core/merge.py",
+      "primary_file_lines": 938,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 32,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -225,12 +275,17 @@
       "edited_files": [
         "xarray/core/computation.py"
       ],
+      "primary_file": "xarray/core/computation.py",
+      "primary_file_lines": 1973,
+      "gold_added_lines": 12,
       "n_f2p": 1,
       "n_p2p": 1717,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 8,
       "xdeps": [
         {
@@ -258,12 +313,17 @@
       "edited_files": [
         "xarray/core/dataarray.py"
       ],
+      "primary_file": "xarray/core/dataarray.py",
+      "primary_file_lines": 4246,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 875,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -274,12 +334,17 @@
       "edited_files": [
         "xarray/coding/variables.py"
       ],
+      "primary_file": "xarray/coding/variables.py",
+      "primary_file_lines": 327,
+      "gold_added_lines": 8,
       "n_f2p": 4,
       "n_p2p": 21,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -290,12 +355,17 @@
       "edited_files": [
         "xarray/core/computation.py"
       ],
+      "primary_file": "xarray/core/computation.py",
+      "primary_file_lines": 1997,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 247,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -306,12 +376,17 @@
       "edited_files": [
         "xarray/core/computation.py"
       ],
+      "primary_file": "xarray/core/computation.py",
+      "primary_file_lines": 2070,
+      "gold_added_lines": 5,
       "n_f2p": 1,
       "n_p2p": 264,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -331,12 +406,17 @@
       "edited_files": [
         "xarray/core/common.py"
       ],
+      "primary_file": "xarray/core/common.py",
+      "primary_file_lines": 2075,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 1405,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -347,12 +427,17 @@
       "edited_files": [
         "xarray/core/rolling.py"
       ],
+      "primary_file": "xarray/core/rolling.py",
+      "primary_file_lines": 1144,
+      "gold_added_lines": 11,
       "n_f2p": 3,
       "n_p2p": 1815,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 8,
       "xdeps": [
         {
@@ -381,12 +466,17 @@
         "xarray/core/dataset.py",
         "xarray/core/variable.py"
       ],
+      "primary_file": "xarray/core/dataset.py",
+      "primary_file_lines": 8882,
+      "gold_added_lines": 13,
       "n_f2p": 1,
       "n_p2p": 430,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -407,12 +497,17 @@
         "xarray/core/dataset.py",
         "xarray/core/indexes.py"
       ],
+      "primary_file": "xarray/core/dataset.py",
+      "primary_file_lines": 8935,
+      "gold_added_lines": 85,
       "n_f2p": 12,
       "n_p2p": 945,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -423,12 +518,17 @@
       "edited_files": [
         "xarray/core/computation.py"
       ],
+      "primary_file": "xarray/core/computation.py",
+      "primary_file_lines": 2151,
+      "gold_added_lines": 24,
       "n_f2p": 1,
       "n_p2p": 280,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 8,
       "xdeps": [
         {
@@ -456,12 +556,17 @@
       "edited_files": [
         "xarray/core/rolling.py"
       ],
+      "primary_file": "xarray/core/rolling.py",
+      "primary_file_lines": 1151,
+      "gold_added_lines": 4,
       "n_f2p": 1,
       "n_p2p": 189,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -472,12 +577,17 @@
       "edited_files": [
         "xarray/core/indexing.py"
       ],
+      "primary_file": "xarray/core/indexing.py",
+      "primary_file_lines": 1590,
+      "gold_added_lines": 5,
       "n_f2p": 2,
       "n_p2p": 71,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {

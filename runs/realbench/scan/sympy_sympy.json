@@ -10,12 +10,17 @@
       "edited_files": [
         "sympy/geometry/point.py"
       ],
+      "primary_file": "sympy/geometry/point.py",
+      "primary_file_lines": 1128,
+      "gold_added_lines": 14,
       "n_f2p": 1,
       "n_p2p": 4,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -26,12 +31,17 @@
       "edited_files": [
         "sympy/core/function.py"
       ],
+      "primary_file": "sympy/core/function.py",
+      "primary_file_lines": 2650,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 43,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -51,12 +61,17 @@
       "edited_files": [
         "sympy/matrices/expressions/matexpr.py"
       ],
+      "primary_file": "sympy/matrices/expressions/matexpr.py",
+      "primary_file_lines": 548,
+      "gold_added_lines": 6,
       "n_f2p": 1,
       "n_p2p": 25,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": true,
       "admissible": true,
+      "audit_ready": true,
       "score": 8,
       "xdeps": [
         {
@@ -84,12 +99,17 @@
       "edited_files": [
         "sympy/combinatorics/permutations.py"
       ],
+      "primary_file": "sympy/combinatorics/permutations.py",
+      "primary_file_lines": 2835,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 7,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -100,12 +120,17 @@
       "edited_files": [
         "sympy/combinatorics/permutations.py"
       ],
+      "primary_file": "sympy/combinatorics/permutations.py",
+      "primary_file_lines": 2831,
+      "gold_added_lines": 42,
       "n_f2p": 1,
       "n_p2p": 8,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 2,
       "xdeps": [
         {
@@ -125,12 +150,17 @@
       "edited_files": [
         "sympy/matrices/sparse.py"
       ],
+      "primary_file": "sympy/matrices/sparse.py",
+      "primary_file_lines": 1299,
+      "gold_added_lines": 8,
       "n_f2p": 1,
       "n_p2p": 9,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -161,12 +191,17 @@
         "sympy/tensor/array/ndim_array.py",
         "sympy/utilities/enumerative.py"
       ],
+      "primary_file": "sympy/core/basic.py",
+      "primary_file_lines": 1906,
+      "gold_added_lines": 56,
       "n_f2p": 2,
       "n_p2p": 89,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -177,12 +212,17 @@
       "edited_files": [
         "sympy/core/evalf.py"
       ],
+      "primary_file": "sympy/core/evalf.py",
+      "primary_file_lines": 1491,
+      "gold_added_lines": 4,
       "n_f2p": 1,
       "n_p2p": 44,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -193,12 +233,17 @@
       "edited_files": [
         "sympy/functions/elementary/hyperbolic.py"
       ],
+      "primary_file": "sympy/functions/elementary/hyperbolic.py",
+      "primary_file_lines": 1403,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 43,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -218,12 +263,17 @@
       "edited_files": [
         "sympy/concrete/products.py"
       ],
+      "primary_file": "sympy/concrete/products.py",
+      "primary_file_lines": 517,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 17,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": true,
       "admissible": true,
+      "audit_ready": true,
       "score": 4,
       "xdeps": [
         {
@@ -243,12 +293,17 @@
       "edited_files": [
         "sympy/sets/sets.py"
       ],
+      "primary_file": "sympy/sets/sets.py",
+      "primary_file_lines": 2218,
+      "gold_added_lines": 11,
       "n_f2p": 1,
       "n_p2p": 70,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -259,12 +314,17 @@
       "edited_files": [
         "sympy/matrices/common.py"
       ],
+      "primary_file": "sympy/matrices/common.py",
+      "primary_file_lines": 2319,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 76,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -275,12 +335,17 @@
       "edited_files": [
         "sympy/polys/polytools.py"
       ],
+      "primary_file": "sympy/polys/polytools.py",
+      "primary_file_lines": 7079,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 166,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -291,12 +356,17 @@
       "edited_files": [
         "sympy/printing/latex.py"
       ],
+      "primary_file": "sympy/printing/latex.py",
+      "primary_file_lines": 2208,
+      "gold_added_lines": 17,
       "n_f2p": 1,
       "n_p2p": 102,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -316,12 +386,17 @@
       "edited_files": [
         "sympy/functions/special/zeta_functions.py"
       ],
+      "primary_file": "sympy/functions/special/zeta_functions.py",
+      "primary_file_lines": 578,
+      "gold_added_lines": 25,
       "n_f2p": 1,
       "n_p2p": 4,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": true,
       "admissible": true,
+      "audit_ready": true,
       "score": 20,
       "xdeps": [
         {
@@ -374,12 +449,17 @@
         "sympy/matrices/matrices.py",
         "sympy/utilities/randtest.py"
       ],
+      "primary_file": "sympy/matrices/matrices.py",
+      "primary_file_lines": 4248,
+      "gold_added_lines": 20,
       "n_f2p": 1,
       "n_p2p": 110,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 8,
       "xdeps": [
         {
@@ -407,12 +487,17 @@
       "edited_files": [
         "sympy/stats/crv_types.py"
       ],
+      "primary_file": "sympy/stats/crv_types.py",
+      "primary_file_lines": 2822,
+      "gold_added_lines": 142,
       "n_f2p": 1,
       "n_p2p": 19,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 25,
       "xdeps": [
         {
@@ -480,12 +565,17 @@
       "edited_files": [
         "sympy/physics/quantum/tensorproduct.py"
       ],
+      "primary_file": "sympy/physics/quantum/tensorproduct.py",
+      "primary_file_lines": 393,
+      "gold_added_lines": 37,
       "n_f2p": 1,
       "n_p2p": 4,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -498,12 +588,17 @@
         "sympy/printing/pretty/pretty.py",
         "sympy/printing/str.py"
       ],
+      "primary_file": "sympy/printing/latex.py",
+      "primary_file_lines": 2281,
+      "gold_added_lines": 56,
       "n_f2p": 2,
       "n_p2p": 433,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 14,
       "xdeps": [
         {
@@ -555,12 +650,17 @@
       "edited_files": [
         "sympy/printing/str.py"
       ],
+      "primary_file": "sympy/printing/str.py",
+      "primary_file_lines": 848,
+      "gold_added_lines": 21,
       "n_f2p": 2,
       "n_p2p": 84,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": true,
       "admissible": true,
+      "audit_ready": true,
       "score": 18,
       "xdeps": [
         {
@@ -612,12 +712,17 @@
       "edited_files": [
         "sympy/physics/vector/vector.py"
       ],
+      "primary_file": "sympy/physics/vector/vector.py",
+      "primary_file_lines": 726,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 2,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -628,12 +733,17 @@
       "edited_files": [
         "sympy/printing/pycode.py"
       ],
+      "primary_file": "sympy/printing/pycode.py",
+      "primary_file_lines": 556,
+      "gold_added_lines": 7,
       "n_f2p": 1,
       "n_p2p": 13,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     }

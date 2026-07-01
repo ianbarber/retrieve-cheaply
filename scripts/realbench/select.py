@@ -155,11 +155,19 @@ def scan_task(t):
         score += 2 if x["hint_kind"] in strong_kinds else 1
         if (x["def_lines"] or 0) >= MIN_DEFN_LINES:
             score += 2
+    # S6 tractability: a small edit site (primary file) and a small gold patch, so the agent can
+    # localize and fix in one/few shots and the measured token gap is retrieval, not wading through
+    # a 1600-line file. (S3's large file is the cross-file DEFINITION B, not the edit site A.)
+    primary = edited[0] if edited else None
+    primary_lines = nlines(primary) if primary else None
+    patch_added = sum(len(added.get(a, [])) for a in edited)
+    tractable = (primary_lines is not None and primary_lines <= 900 and patch_added <= 40)
     f2p = json.loads(t["FAIL_TO_PASS"]); p2p = json.loads(t["PASS_TO_PASS"])
     return {"instance_id": iid, "repo": repo, "base_commit": base,
-            "edited_files": edited, "n_f2p": len(f2p), "n_p2p": len(p2p),
-            "S1_cross_file": s1, "S2_nontrivial": s2, "S3_expensive_read": s3,
-            "admissible": s1 and s2 and s3, "score": score,
+            "edited_files": edited, "primary_file": primary, "primary_file_lines": primary_lines,
+            "gold_added_lines": patch_added, "n_f2p": len(f2p), "n_p2p": len(p2p),
+            "S1_cross_file": s1, "S2_nontrivial": s2, "S3_expensive_read": s3, "S6_tractable": tractable,
+            "admissible": s1 and s2 and s3, "audit_ready": s1 and s2 and s3 and tractable, "score": score,
             "xdeps": sorted(uniq, key=lambda x: -(x["def_lines"] or 0))[:8]}
 
 

@@ -10,12 +10,17 @@
       "edited_files": [
         "sphinx/directives/code.py"
       ],
+      "primary_file": "sphinx/directives/code.py",
+      "primary_file_lines": 461,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 40,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -26,12 +31,17 @@
       "edited_files": [
         "sphinx/writers/latex.py"
       ],
+      "primary_file": "sphinx/writers/latex.py",
+      "primary_file_lines": 2061,
+      "gold_added_lines": 3,
       "n_f2p": 1,
       "n_p2p": 74,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -42,12 +52,17 @@
       "edited_files": [
         "sphinx/ext/autodoc/typehints.py"
       ],
+      "primary_file": "sphinx/ext/autodoc/typehints.py",
+      "primary_file_lines": 190,
+      "gold_added_lines": 10,
       "n_f2p": 1,
       "n_p2p": 30,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -58,12 +73,17 @@
       "edited_files": [
         "sphinx/builders/gettext.py"
       ],
+      "primary_file": "sphinx/builders/gettext.py",
+      "primary_file_lines": 296,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 6,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -74,12 +94,17 @@
       "edited_files": [
         "sphinx/ext/inheritance_diagram.py"
       ],
+      "primary_file": "sphinx/ext/inheritance_diagram.py",
+      "primary_file_lines": 480,
+      "gold_added_lines": 7,
       "n_f2p": 1,
       "n_p2p": 5,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 2,
       "xdeps": [
         {
@@ -101,12 +126,17 @@
         "sphinx/environment/adapters/toctree.py",
         "sphinx/environment/collectors/toctree.py"
       ],
+      "primary_file": "sphinx/directives/other.py",
+      "primary_file_lines": 387,
+      "gold_added_lines": 23,
       "n_f2p": 1,
       "n_p2p": 9,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": true,
       "admissible": true,
+      "audit_ready": true,
       "score": 4,
       "xdeps": [
         {
@@ -126,12 +156,17 @@
       "edited_files": [
         "sphinx/util/rst.py"
       ],
+      "primary_file": "sphinx/util/rst.py",
+      "primary_file_lines": 110,
+      "gold_added_lines": 5,
       "n_f2p": 2,
       "n_p2p": 8,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -142,12 +177,17 @@
       "edited_files": [
         "sphinx/directives/other.py"
       ],
+      "primary_file": "sphinx/directives/other.py",
+      "primary_file_lines": 405,
+      "gold_added_lines": 36,
       "n_f2p": 2,
       "n_p2p": 7,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": true,
       "admissible": true,
+      "audit_ready": true,
       "score": 8,
       "xdeps": [
         {
@@ -183,12 +223,17 @@
       "edited_files": [
         "sphinx/domains/std.py"
       ],
+      "primary_file": "sphinx/domains/std.py",
+      "primary_file_lines": 1080,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 12,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -199,12 +244,17 @@
       "edited_files": [
         "sphinx/domains/python.py"
       ],
+      "primary_file": "sphinx/domains/python.py",
+      "primary_file_lines": 1340,
+      "gold_added_lines": 6,
       "n_f2p": 1,
       "n_p2p": 27,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -216,12 +266,17 @@
         "sphinx/domains/python.py",
         "sphinx/pycode/ast.py"
       ],
+      "primary_file": "sphinx/domains/python.py",
+      "primary_file_lines": 1356,
+      "gold_added_lines": 14,
       "n_f2p": 2,
       "n_p2p": 49,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 5,
       "xdeps": [
         {
@@ -251,12 +306,17 @@
         "sphinx/domains/cpp.py",
         "sphinx/util/cfamily.py"
       ],
+      "primary_file": "sphinx/domains/c.py",
+      "primary_file_lines": 3539,
+      "gold_added_lines": 89,
       "n_f2p": 1,
       "n_p2p": 24,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -267,12 +327,17 @@
       "edited_files": [
         "sphinx/ext/autodoc/__init__.py"
       ],
+      "primary_file": "sphinx/ext/autodoc/__init__.py",
+      "primary_file_lines": 1933,
+      "gold_added_lines": 63,
       "n_f2p": 2,
       "n_p2p": 12,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -283,12 +348,17 @@
       "edited_files": [
         "sphinx/util/inspect.py"
       ],
+      "primary_file": "sphinx/util/inspect.py",
+      "primary_file_lines": 734,
+      "gold_added_lines": 20,
       "n_f2p": 1,
       "n_p2p": 33,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -299,12 +369,17 @@
       "edited_files": [
         "sphinx/ext/autodoc/mock.py"
       ],
+      "primary_file": "sphinx/ext/autodoc/mock.py",
+      "primary_file_lines": 149,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 5,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -315,12 +390,17 @@
       "edited_files": [
         "sphinx/ext/napoleon/__init__.py"
       ],
+      "primary_file": "sphinx/ext/napoleon/__init__.py",
+      "primary_file_lines": 463,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 16,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": true,
       "admissible": true,
+      "audit_ready": true,
       "score": 4,
       "xdeps": [
         {
@@ -340,12 +420,17 @@
       "edited_files": [
         "sphinx/builders/linkcheck.py"
       ],
+      "primary_file": "sphinx/builders/linkcheck.py",
+      "primary_file_lines": 373,
+      "gold_added_lines": 15,
       "n_f2p": 2,
       "n_p2p": 3,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -356,12 +441,17 @@
       "edited_files": [
         "sphinx/ext/autodoc/__init__.py"
       ],
+      "primary_file": "sphinx/ext/autodoc/__init__.py",
+      "primary_file_lines": 2147,
+      "gold_added_lines": 37,
       "n_f2p": 1,
       "n_p2p": 2,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 2,
       "xdeps": [
         {
@@ -381,12 +471,17 @@
       "edited_files": [
         "sphinx/ext/napoleon/docstring.py"
       ],
+      "primary_file": "sphinx/ext/napoleon/docstring.py",
+      "primary_file_lines": 1255,
+      "gold_added_lines": 9,
       "n_f2p": 1,
       "n_p2p": 40,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -398,12 +493,17 @@
         "sphinx/application.py",
         "sphinx/locale/__init__.py"
       ],
+      "primary_file": "sphinx/application.py",
+      "primary_file_lines": 1206,
+      "gold_added_lines": 6,
       "n_f2p": 1,
       "n_p2p": 44,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -414,12 +514,17 @@
       "edited_files": [
         "sphinx/pycode/ast.py"
       ],
+      "primary_file": "sphinx/pycode/ast.py",
+      "primary_file_lines": 205,
+      "gold_added_lines": 16,
       "n_f2p": 1,
       "n_p2p": 22,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": true,
       "admissible": true,
+      "audit_ready": true,
       "score": 4,
       "xdeps": [
         {
@@ -439,12 +544,17 @@
       "edited_files": [
         "sphinx/builders/linkcheck.py"
       ],
+      "primary_file": "sphinx/builders/linkcheck.py",
+      "primary_file_lines": 386,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 5,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     }

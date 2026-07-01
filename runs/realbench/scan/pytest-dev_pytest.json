@@ -10,12 +10,17 @@
       "edited_files": [
         "src/_pytest/logging.py"
       ],
+      "primary_file": "src/_pytest/logging.py",
+      "primary_file_lines": 826,
+      "gold_added_lines": 5,
       "n_f2p": 1,
       "n_p2p": 15,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -26,12 +31,17 @@
       "edited_files": [
         "src/_pytest/unittest.py"
       ],
+      "primary_file": "src/_pytest/unittest.py",
+      "primary_file_lines": 414,
+      "gold_added_lines": 4,
       "n_f2p": 1,
       "n_p2p": 63,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -42,12 +52,17 @@
       "edited_files": [
         "src/_pytest/mark/structures.py"
       ],
+      "primary_file": "src/_pytest/mark/structures.py",
+      "primary_file_lines": 590,
+      "gold_added_lines": 30,
       "n_f2p": 1,
       "n_p2p": 79,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -58,12 +73,17 @@
       "edited_files": [
         "src/_pytest/capture.py"
       ],
+      "primary_file": "src/_pytest/capture.py",
+      "primary_file_lines": 844,
+      "gold_added_lines": 4,
       "n_f2p": 1,
       "n_p2p": 108,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -74,12 +94,17 @@
       "edited_files": [
         "src/_pytest/compat.py"
       ],
+      "primary_file": "src/_pytest/compat.py",
+      "primary_file_lines": 332,
+      "gold_added_lines": 12,
       "n_f2p": 1,
       "n_p2p": 15,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -90,12 +115,17 @@
       "edited_files": [
         "src/_pytest/reports.py"
       ],
+      "primary_file": "src/_pytest/reports.py",
+      "primary_file_lines": 426,
+      "gold_added_lines": 143,
       "n_f2p": 2,
       "n_p2p": 123,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -115,12 +145,17 @@
       "edited_files": [
         "src/_pytest/pastebin.py"
       ],
+      "primary_file": "src/_pytest/pastebin.py",
+      "primary_file_lines": 114,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 3,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -132,12 +167,17 @@
         "src/_pytest/config/__init__.py",
         "src/_pytest/pathlib.py"
       ],
+      "primary_file": "src/_pytest/config/__init__.py",
+      "primary_file_lines": 1134,
+      "gold_added_lines": 8,
       "n_f2p": 2,
       "n_p2p": 51,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 8,
       "xdeps": [
         {
@@ -165,12 +205,17 @@
       "edited_files": [
         "src/_pytest/python.py"
       ],
+      "primary_file": "src/_pytest/python.py",
+      "primary_file_lines": 1457,
+      "gold_added_lines": 6,
       "n_f2p": 2,
       "n_p2p": 145,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -181,12 +226,17 @@
       "edited_files": [
         "src/_pytest/python.py"
       ],
+      "primary_file": "src/_pytest/python.py",
+      "primary_file_lines": 1445,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 72,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -197,12 +247,17 @@
       "edited_files": [
         "src/_pytest/setuponly.py"
       ],
+      "primary_file": "src/_pytest/setuponly.py",
+      "primary_file_lines": 80,
+      "gold_added_lines": 2,
       "n_f2p": 10,
       "n_p2p": 16,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 2,
       "xdeps": [
         {
@@ -222,12 +277,17 @@
       "edited_files": [
         "src/_pytest/unittest.py"
       ],
+      "primary_file": "src/_pytest/unittest.py",
+      "primary_file_lines": 303,
+      "gold_added_lines": 8,
       "n_f2p": 1,
       "n_p2p": 51,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -238,12 +298,17 @@
       "edited_files": [
         "src/_pytest/mark/expression.py"
       ],
+      "primary_file": "src/_pytest/mark/expression.py",
+      "primary_file_lines": 218,
+      "gold_added_lines": 8,
       "n_f2p": 3,
       "n_p2p": 58,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -254,12 +319,17 @@
       "edited_files": [
         "src/_pytest/skipping.py"
       ],
+      "primary_file": "src/_pytest/skipping.py",
+      "primary_file_lines": 314,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 77,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -270,12 +340,17 @@
       "edited_files": [
         "src/_pytest/skipping.py"
       ],
+      "primary_file": "src/_pytest/skipping.py",
+      "primary_file_lines": 315,
+      "gold_added_lines": 11,
       "n_f2p": 2,
       "n_p2p": 78,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -286,12 +361,17 @@
       "edited_files": [
         "src/_pytest/capture.py"
       ],
+      "primary_file": "src/_pytest/capture.py",
+      "primary_file_lines": 888,
+      "gold_added_lines": 1,
       "n_f2p": 2,
       "n_p2p": 125,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -302,12 +382,17 @@
       "edited_files": [
         "src/_pytest/logging.py"
       ],
+      "primary_file": "src/_pytest/logging.py",
+      "primary_file_lines": 816,
+      "gold_added_lines": 4,
       "n_f2p": 1,
       "n_p2p": 14,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -318,12 +403,17 @@
       "edited_files": [
         "src/_pytest/pathlib.py"
       ],
+      "primary_file": "src/_pytest/pathlib.py",
+      "primary_file_lines": 610,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 78,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -335,12 +425,17 @@
         "src/_pytest/python.py",
         "src/_pytest/unittest.py"
       ],
+      "primary_file": "src/_pytest/python.py",
+      "primary_file_lines": 1701,
+      "gold_added_lines": 5,
       "n_f2p": 1,
       "n_p2p": 59,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     }

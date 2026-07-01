@@ -10,12 +10,17 @@
       "edited_files": [
         "sklearn/linear_model/ridge.py"
       ],
+      "primary_file": "sklearn/linear_model/ridge.py",
+      "primary_file_lines": 1381,
+      "gold_added_lines": 20,
       "n_f2p": 1,
       "n_p2p": 28,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -26,12 +31,17 @@
       "edited_files": [
         "sklearn/metrics/cluster/supervised.py"
       ],
+      "primary_file": "sklearn/metrics/cluster/supervised.py",
+      "primary_file_lines": 872,
+      "gold_added_lines": 3,
       "n_f2p": 1,
       "n_p2p": 16,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -42,12 +52,17 @@
       "edited_files": [
         "sklearn/feature_extraction/text.py"
       ],
+      "primary_file": "sklearn/feature_extraction/text.py",
+      "primary_file_lines": 1450,
+      "gold_added_lines": 3,
       "n_f2p": 1,
       "n_p2p": 47,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -58,12 +73,17 @@
       "edited_files": [
         "sklearn/model_selection/_search.py"
       ],
+      "primary_file": "sklearn/model_selection/_search.py",
+      "primary_file_lines": 1431,
+      "gold_added_lines": 14,
       "n_f2p": 1,
       "n_p2p": 50,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -74,12 +94,17 @@
       "edited_files": [
         "sklearn/linear_model/logistic.py"
       ],
+      "primary_file": "sklearn/linear_model/logistic.py",
+      "primary_file_lines": 1834,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 93,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -90,12 +115,17 @@
       "edited_files": [
         "sklearn/base.py"
       ],
+      "primary_file": "sklearn/base.py",
+      "primary_file_lines": 565,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 22,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -107,12 +137,17 @@
         "examples/decomposition/plot_sparse_coding.py",
         "sklearn/decomposition/dict_learning.py"
       ],
+      "primary_file": "examples/decomposition/plot_sparse_coding.py",
+      "primary_file_lines": 105,
+      "gold_added_lines": 66,
       "n_f2p": 1,
       "n_p2p": 66,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -123,12 +158,17 @@
       "edited_files": [
         "sklearn/linear_model/least_angle.py"
       ],
+      "primary_file": "sklearn/linear_model/least_angle.py",
+      "primary_file_lines": 1546,
+      "gold_added_lines": 7,
       "n_f2p": 1,
       "n_p2p": 32,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -139,12 +179,17 @@
       "edited_files": [
         "sklearn/model_selection/_split.py"
       ],
+      "primary_file": "sklearn/model_selection/_split.py",
+      "primary_file_lines": 2253,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 60,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -155,12 +200,17 @@
       "edited_files": [
         "sklearn/preprocessing/_discretization.py"
       ],
+      "primary_file": "sklearn/preprocessing/_discretization.py",
+      "primary_file_lines": 295,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 33,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -171,12 +221,17 @@
       "edited_files": [
         "sklearn/mixture/base.py"
       ],
+      "primary_file": "sklearn/mixture/base.py",
+      "primary_file_lines": 536,
+      "gold_added_lines": 5,
       "n_f2p": 2,
       "n_p2p": 54,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -187,12 +242,17 @@
       "edited_files": [
         "sklearn/linear_model/huber.py"
       ],
+      "primary_file": "sklearn/linear_model/huber.py",
+      "primary_file_lines": 306,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 9,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -203,12 +263,17 @@
       "edited_files": [
         "sklearn/pipeline.py"
       ],
+      "primary_file": "sklearn/pipeline.py",
+      "primary_file_lines": 931,
+      "gold_added_lines": 6,
       "n_f2p": 1,
       "n_p2p": 40,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -219,12 +284,17 @@
       "edited_files": [
         "sklearn/ensemble/iforest.py"
       ],
+      "primary_file": "sklearn/ensemble/iforest.py",
+      "primary_file_lines": 510,
+      "gold_added_lines": 9,
       "n_f2p": 1,
       "n_p2p": 19,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -235,12 +305,17 @@
       "edited_files": [
         "sklearn/ensemble/voting.py"
       ],
+      "primary_file": "sklearn/ensemble/voting.py",
+      "primary_file_lines": 488,
+      "gold_added_lines": 2,
       "n_f2p": 2,
       "n_p2p": 18,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -251,12 +326,17 @@
       "edited_files": [
         "sklearn/tree/export.py"
       ],
+      "primary_file": "sklearn/tree/export.py",
+      "primary_file_lines": 957,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 5,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -267,12 +347,17 @@
       "edited_files": [
         "sklearn/linear_model/logistic.py"
       ],
+      "primary_file": "sklearn/linear_model/logistic.py",
+      "primary_file_lines": 2246,
+      "gold_added_lines": 6,
       "n_f2p": 3,
       "n_p2p": 172,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -283,12 +368,17 @@
       "edited_files": [
         "sklearn/utils/_show_versions.py"
       ],
+      "primary_file": "sklearn/utils/_show_versions.py",
+      "primary_file_lines": 117,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 2,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -299,12 +389,17 @@
       "edited_files": [
         "sklearn/cluster/optics_.py"
       ],
+      "primary_file": "sklearn/cluster/optics_.py",
+      "primary_file_lines": 919,
+      "gold_added_lines": 9,
       "n_f2p": 1,
       "n_p2p": 39,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -315,12 +410,17 @@
       "edited_files": [
         "sklearn/multioutput.py"
       ],
+      "primary_file": "sklearn/multioutput.py",
+      "primary_file_lines": 739,
+      "gold_added_lines": 23,
       "n_f2p": 1,
       "n_p2p": 26,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -331,12 +431,17 @@
       "edited_files": [
         "sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py"
       ],
+      "primary_file": "sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py",
+      "primary_file_lines": 1044,
+      "gold_added_lines": 4,
       "n_f2p": 1,
       "n_p2p": 63,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -347,12 +452,17 @@
       "edited_files": [
         "sklearn/svm/base.py"
       ],
+      "primary_file": "sklearn/svm/base.py",
+      "primary_file_lines": 952,
+      "gold_added_lines": 8,
       "n_f2p": 1,
       "n_p2p": 85,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     }

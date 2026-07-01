@@ -42,6 +42,43 @@ The full ranked pool with per-criterion evidence (which symbols, which files, si
 `pytest` tasks correctly scored zero: those fixes are single-file with only stdlib/local symbols, so
 there is genuinely no cost gap to measure — the scanner is discriminating, not just permissive.
 
+## Update: env set up + full pipeline built and validated (2026-07-01)
+
+**Environment is unblocked.** The host is ARM64 (DGX Spark GB10); SWE-bench's prebuilt images are
+x86_64, so they fail natively. Registering qemu emulation once
+(`docker run --privileged --rm tonistiigi/binfmt --install amd64`) plus
+`DOCKER_DEFAULT_PLATFORM=linux/amd64` makes them run. **The gold patch for `django__django-11149`
+resolves through the full oracle** (`scripts/realbench/score.py`, ~90s emulated), so test execution and
+scoring work end to end.
+
+**Pipeline complete.** Added `scripts/realbench/run_matrix.py` (the agent runs on a host checkout under
+the three tool conditions R/D/I; the final `git diff` is the prediction) and `scripts/realbench/score.py`
+(scores predictions via the swebench Docker oracle). Every stage is now built and validated.
+
+**Refined candidate pool.** Added an S6 tractability filter (small edit-site file + small gold patch) so
+the pool favours localizable tasks. Of 42 admissible, **14 are audit-ready**: a small file A edited using
+a symbol defined in a large file B. Best examples (ideal cost-gap): `astropy-14182` edits a 66-line file
+using `QTable` (4247L); `django-11206` edits a 79-line file using a symbol in a 907-line file;
+`xarray-4356`, `sphinx-8265`. These are in `runs/realbench/candidates.json` under `audit_ready`.
+
+**Honest design finding from a smoke run.** A score-only rollout (no test feedback) on the *hard*
+`django-11149` (1600-line admin file) flailed: the agent read large files, blew context to ~380k tokens,
+and produced no edit. Two things this tells us, and a fork for you:
+
+- **Task tractability matters** — the S6 filter above is the response; the audit-ready pool avoids
+  huge edit-site files.
+- **Test feedback is probably needed** — real fixes want iteration. Options: native host venvs for the
+  pure-Python repos (django/sympy/sphinx/pytest run natively on ARM64, fast) so `run_tests` is cheap in
+  the loop; emulated Docker `run_tests` is correct but ~90s/run, too slow to iterate.
+- **The design fork (your call):** (a) **retrieval-isolated** — give the agent the fix location (I wired
+  a localization hint from the gold hunks) and measure only the cost of retrieving the cross-file symbol
+  (clean, directly tests our claim, mildly semi-constructed); or (b) **full-agentic** — the agent
+  localizes + retrieves + fixes (realistic but noisy, and needs test feedback to succeed). I lean (a) for
+  a clean efficiency measurement; (b) is a bigger, separate result.
+
+I did **not** run the matrix for real (it needs the fork decided + the audited task set); ~$0.29 of API
+spend on smokes, no more.
+
 ## Honest next steps (for discussion / next session)
 
 1. **Hand-audit the top ~15** from `candidates.json`. The scanner is a ranked shortlist, not the final

@@ -60,3 +60,8 @@ runs/agent/*.partial
 
 # real-repo experiment: cloned repos (large, never commit)
 runs/realbench/repos/
+
+# swebench harness artifacts
+logs/
+*.goldval*.json
+runs/realbench/eval/

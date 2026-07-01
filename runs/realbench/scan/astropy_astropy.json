@@ -10,12 +10,17 @@
       "edited_files": [
         "astropy/modeling/separable.py"
       ],
+      "primary_file": "astropy/modeling/separable.py",
+      "primary_file_lines": 317,
+      "gold_added_lines": 1,
       "n_f2p": 2,
       "n_p2p": 13,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -26,12 +31,17 @@
       "edited_files": [
         "astropy/timeseries/core.py"
       ],
+      "primary_file": "astropy/timeseries/core.py",
+      "primary_file_lines": 92,
+      "gold_added_lines": 11,
       "n_f2p": 1,
       "n_p2p": 20,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -42,12 +52,17 @@
       "edited_files": [
         "astropy/table/table.py"
       ],
+      "primary_file": "astropy/table/table.py",
+      "primary_file_lines": 3972,
+      "gold_added_lines": 0,
       "n_f2p": 2,
       "n_p2p": 644,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -61,12 +76,17 @@
         "astropy/coordinates/builtin_frames/itrs.py",
         "astropy/coordinates/builtin_frames/itrs_observed_transforms.py"
       ],
+      "primary_file": "astropy/coordinates/builtin_frames/__init__.py",
+      "primary_file_lines": 151,
+      "gold_added_lines": 202,
       "n_f2p": 4,
       "n_p2p": 68,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 46,
       "xdeps": [
         {
@@ -142,12 +162,17 @@
       "edited_files": [
         "astropy/io/ascii/html.py"
       ],
+      "primary_file": "astropy/io/ascii/html.py",
+      "primary_file_lines": 477,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 9,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -158,12 +183,17 @@
       "edited_files": [
         "astropy/wcs/wcsapi/wrappers/sliced_wcs.py"
       ],
+      "primary_file": "astropy/wcs/wcsapi/wrappers/sliced_wcs.py",
+      "primary_file_lines": 308,
+      "gold_added_lines": 3,
       "n_f2p": 1,
       "n_p2p": 40,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": true,
       "admissible": true,
+      "audit_ready": true,
       "score": 4,
       "xdeps": [
         {
@@ -183,12 +213,17 @@
       "edited_files": [
         "astropy/units/quantity.py"
       ],
+      "primary_file": "astropy/units/quantity.py",
+      "primary_file_lines": 2229,
+      "gold_added_lines": 56,
       "n_f2p": 20,
       "n_p2p": 322,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -208,12 +243,17 @@
       "edited_files": [
         "astropy/coordinates/sky_coordinate.py"
       ],
+      "primary_file": "astropy/coordinates/sky_coordinate.py",
+      "primary_file_lines": 2223,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 426,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -224,12 +264,17 @@
       "edited_files": [
         "astropy/io/ascii/rst.py"
       ],
+      "primary_file": "astropy/io/ascii/rst.py",
+      "primary_file_lines": 66,
+      "gold_added_lines": 31,
       "n_f2p": 1,
       "n_p2p": 9,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": true,
       "admissible": true,
+      "audit_ready": true,
       "score": 12,
       "xdeps": [
         {
@@ -265,12 +310,17 @@
       "edited_files": [
         "astropy/io/fits/connect.py"
       ],
+      "primary_file": "astropy/io/fits/connect.py",
+      "primary_file_lines": 454,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 141,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -281,12 +331,17 @@
       "edited_files": [
         "astropy/io/ascii/qdp.py"
       ],
+      "primary_file": "astropy/io/ascii/qdp.py",
+      "primary_file_lines": 642,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 8,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -298,12 +353,17 @@
         "astropy/units/format/cds.py",
         "astropy/units/format/cds_parsetab.py"
       ],
+      "primary_file": "astropy/units/format/cds.py",
+      "primary_file_lines": 358,
+      "gold_added_lines": 32,
       "n_f2p": 3,
       "n_p2p": 732,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -314,12 +374,17 @@
       "edited_files": [
         "astropy/io/fits/card.py"
       ],
+      "primary_file": "astropy/io/fits/card.py",
+      "primary_file_lines": 1346,
+      "gold_added_lines": 5,
       "n_f2p": 1,
       "n_p2p": 174,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -330,12 +395,17 @@
       "edited_files": [
         "astropy/io/fits/diff.py"
       ],
+      "primary_file": "astropy/io/fits/diff.py",
+      "primary_file_lines": 1577,
+      "gold_added_lines": 1,
       "n_f2p": 2,
       "n_p2p": 46,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -346,12 +416,17 @@
       "edited_files": [
         "astropy/io/fits/card.py"
       ],
+      "primary_file": "astropy/io/fits/card.py",
+      "primary_file_lines": 1332,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 175,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -362,12 +437,17 @@
       "edited_files": [
         "astropy/nddata/mixins/ndarithmetic.py"
       ],
+      "primary_file": "astropy/nddata/mixins/ndarithmetic.py",
+      "primary_file_lines": 750,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 179,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -378,12 +458,17 @@
       "edited_files": [
         "astropy/utils/misc.py"
       ],
+      "primary_file": "astropy/utils/misc.py",
+      "primary_file_lines": 1129,
+      "gold_added_lines": 3,
       "n_f2p": 1,
       "n_p2p": 6,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -394,12 +479,17 @@
       "edited_files": [
         "astropy/units/decorators.py"
       ],
+      "primary_file": "astropy/units/decorators.py",
+      "primary_file_lines": 231,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 339,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -410,12 +500,17 @@
       "edited_files": [
         "astropy/units/core.py"
       ],
+      "primary_file": "astropy/units/core.py",
+      "primary_file_lines": 2316,
+      "gold_added_lines": 7,
       "n_f2p": 1,
       "n_p2p": 241,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -426,12 +521,17 @@
       "edited_files": [
         "astropy/utils/introspection.py"
       ],
+      "primary_file": "astropy/utils/introspection.py",
+      "primary_file_lines": 385,
+      "gold_added_lines": 9,
       "n_f2p": 1,
       "n_p2p": 3,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -443,12 +543,17 @@
         "astropy/io/fits/card.py",
         "astropy/io/fits/header.py"
       ],
+      "primary_file": "astropy/io/fits/card.py",
+      "primary_file_lines": 1285,
+      "gold_added_lines": 66,
       "n_f2p": 1,
       "n_p2p": 11,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 10,
       "xdeps": [
         {
@@ -484,12 +589,17 @@
       "edited_files": [
         "astropy/units/quantity.py"
       ],
+      "primary_file": "astropy/units/quantity.py",
+      "primary_file_lines": 1702,
+      "gold_added_lines": 4,
       "n_f2p": 1,
       "n_p2p": 80,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     }

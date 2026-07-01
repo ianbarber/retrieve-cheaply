@@ -1,17 +1,561 @@
 {
   "scanned": 183,
   "n_admissible": 42,
+  "n_audit_ready": 14,
   "n_errors": 0,
-  "admissible_per_repo": {
-    "astropy/astropy": 5,
-    "sympy/sympy": 10,
-    "django/django": 4,
-    "matplotlib/matplotlib": 6,
-    "pydata/xarray": 10,
-    "pytest-dev/pytest": 2,
-    "sphinx-doc/sphinx": 5
+  "audit_ready_per_repo": {
+    "sympy/sympy": 4,
+    "astropy/astropy": 2,
+    "django/django": 3,
+    "pydata/xarray": 1,
+    "sphinx-doc/sphinx": 4
   },
   "candidates": [
+    {
+      "instance_id": "sympy__sympy-13852",
+      "repo": "sympy/sympy",
+      "base_commit": "c935e1d106743efd5bf0705fbeedbd18fadff4dc",
+      "edited_files": [
+        "sympy/functions/special/zeta_functions.py"
+      ],
+      "primary_file": "sympy/functions/special/zeta_functions.py",
+      "primary_file_lines": 578,
+      "gold_added_lines": 25,
+      "n_f2p": 1,
+      "n_p2p": 4,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "S6_tractable": true,
+      "admissible": true,
+      "audit_ready": true,
+      "score": 20,
+      "xdeps": [
+        {
+          "symbol": "I",
+          "hint_kind": "import",
+          "edited_file": "sympy/functions/special/zeta_functions.py",
+          "edited_lines": 578,
+          "def_file": "sympy/core/numbers.py",
+          "def_lines": 3843
+        },
+        {
+          "symbol": "Zero",
+          "hint_kind": "type",
+          "edited_file": "sympy/functions/special/zeta_functions.py",
+          "edited_lines": 578,
+          "def_file": "sympy/core/numbers.py",
+          "def_lines": 3843
+        },
+        {
+          "symbol": "Half",
+          "hint_kind": "type",
+          "edited_file": "sympy/functions/special/zeta_functions.py",
+          "edited_lines": 578,
+          "def_file": "sympy/core/numbers.py",
+          "def_lines": 3843
+        },
+        {
+          "symbol": "For",
+          "hint_kind": "type",
+          "edited_file": "sympy/functions/special/zeta_functions.py",
+          "edited_lines": 578,
+          "def_file": "sympy/codegen/ast.py",
+          "def_lines": 1019
+        },
+        {
+          "symbol": "sqrt",
+          "hint_kind": "import",
+          "edited_file": "sympy/functions/special/zeta_functions.py",
+          "edited_lines": 578,
+          "def_file": "sympy/functions/elementary/miscellaneous.py",
+          "def_lines": 820
+        }
+      ]
+    },
+    {
+      "instance_id": "sympy__sympy-14531",
+      "repo": "sympy/sympy",
+      "base_commit": "205da797006360fc629110937e39a19c9561313e",
+      "edited_files": [
+        "sympy/printing/str.py"
+      ],
+      "primary_file": "sympy/printing/str.py",
+      "primary_file_lines": 848,
+      "gold_added_lines": 21,
+      "n_f2p": 2,
+      "n_p2p": 84,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "S6_tractable": true,
+      "admissible": true,
+      "audit_ready": true,
+      "score": 18,
+      "xdeps": [
+        {
+          "symbol": "Normal",
+          "hint_kind": "type",
+          "edited_file": "sympy/printing/str.py",
+          "edited_lines": 848,
+          "def_file": "sympy/stats/crv_types.py",
+          "def_lines": 2987
+        },
+        {
+          "symbol": "Uniform",
+          "hint_kind": "type",
+          "edited_file": "sympy/printing/str.py",
+          "edited_lines": 848,
+          "def_file": "sympy/stats/crv_types.py",
+          "def_lines": 2987
+        },
+        {
+          "symbol": "Permutation",
+          "hint_kind": "type",
+          "edited_file": "sympy/printing/str.py",
+          "edited_lines": 848,
+          "def_file": "sympy/combinatorics/permutations.py",
+          "def_lines": 2858
+        },
+        {
+          "symbol": "Lambda",
+          "hint_kind": "type",
+          "edited_file": "sympy/printing/str.py",
+          "edited_lines": 848,
+          "def_file": "sympy/core/function.py",
+          "def_lines": 2788
+        },
+        {
+          "symbol": "Limit",
+          "hint_kind": "type",
+          "edited_file": "sympy/printing/str.py",
+          "edited_lines": 848,
+          "def_file": "sympy/series/limits.py",
+          "def_lines": 230
+        }
+      ]
+    },
+    {
+      "instance_id": "astropy__astropy-14182",
+      "repo": "astropy/astropy",
+      "base_commit": "a5917978be39d13cd90b517e1de4e7a539ffaa48",
+      "edited_files": [
+        "astropy/io/ascii/rst.py"
+      ],
+      "primary_file": "astropy/io/ascii/rst.py",
+      "primary_file_lines": 66,
+      "gold_added_lines": 31,
+      "n_f2p": 1,
+      "n_p2p": 9,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "S6_tractable": true,
+      "admissible": true,
+      "audit_ready": true,
+      "score": 12,
+      "xdeps": [
+        {
+          "symbol": "QTable",
+          "hint_kind": "type",
+          "edited_file": "astropy/io/ascii/rst.py",
+          "edited_lines": 66,
+          "def_file": "astropy/table/table.py",
+          "def_lines": 4247
+        },
+        {
+          "symbol": "write",
+          "hint_kind": "method",
+          "edited_file": "astropy/io/ascii/rst.py",
+          "edited_lines": 66,
+          "def_file": "astropy/io/ascii/ui.py",
+          "def_lines": 1016
+        },
+        {
+          "symbol": "read",
+          "hint_kind": "method",
+          "edited_file": "astropy/io/ascii/rst.py",
+          "edited_lines": 66,
+          "def_file": "astropy/io/ascii/ui.py",
+          "def_lines": 1016
+        }
+      ]
+    },
+    {
+      "instance_id": "django__django-11138",
+      "repo": "django/django",
+      "base_commit": "c84b91b7603e488f7171fdff8f08368ef3d6b856",
+      "edited_files": [
+        "django/db/backends/mysql/operations.py",
+        "django/db/backends/oracle/operations.py",
+        "django/db/backends/sqlite3/base.py",
+        "django/db/backends/sqlite3/operations.py"
+      ],
+      "primary_file": "django/db/backends/mysql/operations.py",
+      "primary_file_lines": 306,
+      "gold_added_lines": 40,
+      "n_f2p": 1,
+      "n_p2p": 73,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "S6_tractable": true,
+      "admissible": true,
+      "audit_ready": true,
+      "score": 8,
+      "xdeps": [
+        {
+          "symbol": "lower",
+          "hint_kind": "method",
+          "edited_file": "django/db/backends/sqlite3/operations.py",
+          "edited_lines": 333,
+          "def_file": "django/template/defaultfilters.py",
+          "def_lines": 907
+        },
+        {
+          "symbol": "USE_TZ",
+          "hint_kind": "type",
+          "edited_file": "django/db/backends/mysql/operations.py",
+          "edited_lines": 306,
+          "def_file": "django/conf/global_settings.py",
+          "def_lines": 634
+        }
+      ]
+    },
+    {
+      "instance_id": "pydata__xarray-4356",
+      "repo": "pydata/xarray",
+      "base_commit": "e05fddea852d08fc0845f954b79deb9e9f9ff883",
+      "edited_files": [
+        "xarray/core/nanops.py"
+      ],
+      "primary_file": "xarray/core/nanops.py",
+      "primary_file_lines": 199,
+      "gold_added_lines": 1,
+      "n_f2p": 8,
+      "n_p2p": 604,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "S6_tractable": true,
+      "admissible": true,
+      "audit_ready": true,
+      "score": 8,
+      "xdeps": [
+        {
+          "symbol": "take",
+          "hint_kind": "method",
+          "edited_file": "xarray/core/nanops.py",
+          "edited_lines": 199,
+          "def_file": "xarray/core/duck_array_ops.py",
+          "def_lines": 635
+        },
+        {
+          "symbol": "prod",
+          "hint_kind": "method",
+          "edited_file": "xarray/core/nanops.py",
+          "edited_lines": 199,
+          "def_file": "xarray/core/duck_array_ops.py",
+          "def_lines": 635
+        }
+      ]
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-11510",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "6cb783c0024a873722952a67ebb9f41771c8eb6d",
+      "edited_files": [
+        "sphinx/directives/other.py"
+      ],
+      "primary_file": "sphinx/directives/other.py",
+      "primary_file_lines": 405,
+      "gold_added_lines": 36,
+      "n_f2p": 2,
+      "n_p2p": 7,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "S6_tractable": true,
+      "admissible": true,
+      "audit_ready": true,
+      "score": 8,
+      "xdeps": [
+        {
+          "symbol": "Sphinx",
+          "hint_kind": "type",
+          "edited_file": "sphinx/directives/other.py",
+          "edited_lines": 405,
+          "def_file": "sphinx/application.py",
+          "def_lines": 1362
+        },
+        {
+          "symbol": "os_path",
+          "hint_kind": "import",
+          "edited_file": "sphinx/directives/other.py",
+          "edited_lines": 405,
+          "def_file": "sphinx/util/osutil.py",
+          "def_lines": 217
+        },
+        {
+          "symbol": "get",
+          "hint_kind": "method",
+          "edited_file": "sphinx/directives/other.py",
+          "edited_lines": 405,
+          "def_file": "sphinx/util/requests.py",
+          "def_lines": 73
+        }
+      ]
+    },
+    {
+      "instance_id": "sympy__sympy-12419",
+      "repo": "sympy/sympy",
+      "base_commit": "479939f8c65c8c2908bbedc959549a257a7c0b0b",
+      "edited_files": [
+        "sympy/matrices/expressions/matexpr.py"
+      ],
+      "primary_file": "sympy/matrices/expressions/matexpr.py",
+      "primary_file_lines": 548,
+      "gold_added_lines": 6,
+      "n_f2p": 1,
+      "n_p2p": 25,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "S6_tractable": true,
+      "admissible": true,
+      "audit_ready": true,
+      "score": 8,
+      "xdeps": [
+        {
+          "symbol": "Eq",
+          "hint_kind": "import",
+          "edited_file": "sympy/matrices/expressions/matexpr.py",
+          "edited_lines": 548,
+          "def_file": "sympy/core/relational.py",
+          "def_lines": 798
+        },
+        {
+          "symbol": "KroneckerDelta",
+          "hint_kind": "import",
+          "edited_file": "sympy/matrices/expressions/matexpr.py",
+          "edited_lines": 548,
+          "def_file": "sympy/functions/special/tensor_functions.py",
+          "def_lines": 450
+        }
+      ]
+    },
+    {
+      "instance_id": "astropy__astropy-13579",
+      "repo": "astropy/astropy",
+      "base_commit": "0df94ff7097961e92fd7812036a24b145bc13ca8",
+      "edited_files": [
+        "astropy/wcs/wcsapi/wrappers/sliced_wcs.py"
+      ],
+      "primary_file": "astropy/wcs/wcsapi/wrappers/sliced_wcs.py",
+      "primary_file_lines": 308,
+      "gold_added_lines": 3,
+      "n_f2p": 1,
+      "n_p2p": 40,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "S6_tractable": true,
+      "admissible": true,
+      "audit_ready": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "append",
+          "hint_kind": "method",
+          "edited_file": "astropy/wcs/wcsapi/wrappers/sliced_wcs.py",
+          "edited_lines": 308,
+          "def_file": "astropy/io/fits/convenience.py",
+          "def_lines": 1130
+        }
+      ]
+    },
+    {
+      "instance_id": "django__django-11141",
+      "repo": "django/django",
+      "base_commit": "5d9cf79baf07fc4aed7ad1b06990532a65378155",
+      "edited_files": [
+        "django/db/migrations/loader.py"
+      ],
+      "primary_file": "django/db/migrations/loader.py",
+      "primary_file_lines": 324,
+      "gold_added_lines": 4,
+      "n_f2p": 1,
+      "n_p2p": 24,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "S6_tractable": true,
+      "admissible": true,
+      "audit_ready": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "add",
+          "hint_kind": "method",
+          "edited_file": "django/db/migrations/loader.py",
+          "edited_lines": 324,
+          "def_file": "django/template/defaultfilters.py",
+          "def_lines": 905
+        }
+      ]
+    },
+    {
+      "instance_id": "django__django-11206",
+      "repo": "django/django",
+      "base_commit": "571ab44e8a8936014c22e7eebe4948d9611fd7ce",
+      "edited_files": [
+        "django/utils/numberformat.py"
+      ],
+      "primary_file": "django/utils/numberformat.py",
+      "primary_file_lines": 79,
+      "gold_added_lines": 8,
+      "n_f2p": 2,
+      "n_p2p": 4,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "S6_tractable": true,
+      "admissible": true,
+      "audit_ready": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "rjust",
+          "hint_kind": "method",
+          "edited_file": "django/utils/numberformat.py",
+          "edited_lines": 79,
+          "def_file": "django/template/defaultfilters.py",
+          "def_lines": 907
+        }
+      ]
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-10673",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "f35d2a6cc726f97d0e859ca7a0e1729f7da8a6c8",
+      "edited_files": [
+        "sphinx/directives/other.py",
+        "sphinx/environment/adapters/toctree.py",
+        "sphinx/environment/collectors/toctree.py"
+      ],
+      "primary_file": "sphinx/directives/other.py",
+      "primary_file_lines": 387,
+      "gold_added_lines": 23,
+      "n_f2p": 1,
+      "n_p2p": 9,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "S6_tractable": true,
+      "admissible": true,
+      "audit_ready": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "compact_paragraph",
+          "hint_kind": "method",
+          "edited_file": "sphinx/environment/adapters/toctree.py",
+          "edited_lines": 331,
+          "def_file": "sphinx/addnodes.py",
+          "def_lines": 579
+        }
+      ]
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-7910",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "27ac10de04697e2372d31db5548e56a7c6d9265d",
+      "edited_files": [
+        "sphinx/ext/napoleon/__init__.py"
+      ],
+      "primary_file": "sphinx/ext/napoleon/__init__.py",
+      "primary_file_lines": 463,
+      "gold_added_lines": 2,
+      "n_f2p": 1,
+      "n_p2p": 16,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "S6_tractable": true,
+      "admissible": true,
+      "audit_ready": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "unwrap",
+          "hint_kind": "method",
+          "edited_file": "sphinx/ext/napoleon/__init__.py",
+          "edited_lines": 463,
+          "def_file": "sphinx/util/inspect.py",
+          "def_lines": 781
+        }
+      ]
+    },
+    {
+      "instance_id": "sphinx-doc__sphinx-8265",
+      "repo": "sphinx-doc/sphinx",
+      "base_commit": "b428cd2404675475a5c3dc2a2b0790ba57676202",
+      "edited_files": [
+        "sphinx/pycode/ast.py"
+      ],
+      "primary_file": "sphinx/pycode/ast.py",
+      "primary_file_lines": 205,
+      "gold_added_lines": 16,
+      "n_f2p": 1,
+      "n_p2p": 22,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "S6_tractable": true,
+      "admissible": true,
+      "audit_ready": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "Index",
+          "hint_kind": "type",
+          "edited_file": "sphinx/pycode/ast.py",
+          "edited_lines": 205,
+          "def_file": "sphinx/domains/__init__.py",
+          "def_lines": 402
+        }
+      ]
+    },
+    {
+      "instance_id": "sympy__sympy-13551",
+      "repo": "sympy/sympy",
+      "base_commit": "9476425b9e34363c2d9ac38e9f04aa75ae54a775",
+      "edited_files": [
+        "sympy/concrete/products.py"
+      ],
+      "primary_file": "sympy/concrete/products.py",
+      "primary_file_lines": 517,
+      "gold_added_lines": 2,
+      "n_f2p": 1,
+      "n_p2p": 17,
+      "S1_cross_file": true,
+      "S2_nontrivial": true,
+      "S3_expensive_read": true,
+      "S6_tractable": true,
+      "admissible": true,
+      "audit_ready": true,
+      "score": 4,
+      "xdeps": [
+        {
+          "symbol": "Sum",
+          "hint_kind": "import",
+          "edited_file": "sympy/concrete/products.py",
+          "edited_lines": 517,
+          "def_file": "sympy/concrete/summations.py",
+          "def_lines": 1102
+        }
+      ]
+    },
     {
       "instance_id": "astropy__astropy-13398",
       "repo": "astropy/astropy",
@@ -22,12 +566,17 @@
         "astropy/coordinates/builtin_frames/itrs.py",
         "astropy/coordinates/builtin_frames/itrs_observed_transforms.py"
       ],
+      "primary_file": "astropy/coordinates/builtin_frames/__init__.py",
+      "primary_file_lines": 151,
+      "gold_added_lines": 202,
       "n_f2p": 4,
       "n_p2p": 68,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 46,
       "xdeps": [
         {
@@ -103,12 +652,17 @@
       "edited_files": [
         "sympy/stats/crv_types.py"
       ],
+      "primary_file": "sympy/stats/crv_types.py",
+      "primary_file_lines": 2822,
+      "gold_added_lines": 142,
       "n_f2p": 1,
       "n_p2p": 19,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 25,
       "xdeps": [
         {
@@ -170,120 +724,6 @@
       ]
     },
     {
-      "instance_id": "sympy__sympy-13852",
-      "repo": "sympy/sympy",
-      "base_commit": "c935e1d106743efd5bf0705fbeedbd18fadff4dc",
-      "edited_files": [
-        "sympy/functions/special/zeta_functions.py"
-      ],
-      "n_f2p": 1,
-      "n_p2p": 4,
-      "S1_cross_file": true,
-      "S2_nontrivial": true,
-      "S3_expensive_read": true,
-      "admissible": true,
-      "score": 20,
-      "xdeps": [
-        {
-          "symbol": "I",
-          "hint_kind": "import",
-          "edited_file": "sympy/functions/special/zeta_functions.py",
-          "edited_lines": 578,
-          "def_file": "sympy/core/numbers.py",
-          "def_lines": 3843
-        },
-        {
-          "symbol": "Zero",
-          "hint_kind": "type",
-          "edited_file": "sympy/functions/special/zeta_functions.py",
-          "edited_lines": 578,
-          "def_file": "sympy/core/numbers.py",
-          "def_lines": 3843
-        },
-        {
-          "symbol": "Half",
-          "hint_kind": "type",
-          "edited_file": "sympy/functions/special/zeta_functions.py",
-          "edited_lines": 578,
-          "def_file": "sympy/core/numbers.py",
-          "def_lines": 3843
-        },
-        {
-          "symbol": "For",
-          "hint_kind": "type",
-          "edited_file": "sympy/functions/special/zeta_functions.py",
-          "edited_lines": 578,
-          "def_file": "sympy/codegen/ast.py",
-          "def_lines": 1019
-        },
-        {
-          "symbol": "sqrt",
-          "hint_kind": "import",
-          "edited_file": "sympy/functions/special/zeta_functions.py",
-          "edited_lines": 578,
-          "def_file": "sympy/functions/elementary/miscellaneous.py",
-          "def_lines": 820
-        }
-      ]
-    },
-    {
-      "instance_id": "sympy__sympy-14531",
-      "repo": "sympy/sympy",
-      "base_commit": "205da797006360fc629110937e39a19c9561313e",
-      "edited_files": [
-        "sympy/printing/str.py"
-      ],
-      "n_f2p": 2,
-      "n_p2p": 84,
-      "S1_cross_file": true,
-      "S2_nontrivial": true,
-      "S3_expensive_read": true,
-      "admissible": true,
-      "score": 18,
-      "xdeps": [
-        {
-          "symbol": "Normal",
-          "hint_kind": "type",
-          "edited_file": "sympy/printing/str.py",
-          "edited_lines": 848,
-          "def_file": "sympy/stats/crv_types.py",
-          "def_lines": 2987
-        },
-        {
-          "symbol": "Uniform",
-          "hint_kind": "type",
-          "edited_file": "sympy/printing/str.py",
-          "edited_lines": 848,
-          "def_file": "sympy/stats/crv_types.py",
-          "def_lines": 2987
-        },
-        {
-          "symbol": "Permutation",
-          "hint_kind": "type",
-          "edited_file": "sympy/printing/str.py",
-          "edited_lines": 848,
-          "def_file": "sympy/combinatorics/permutations.py",
-          "def_lines": 2858
-        },
-        {
-          "symbol": "Lambda",
-          "hint_kind": "type",
-          "edited_file": "sympy/printing/str.py",
-          "edited_lines": 848,
-          "def_file": "sympy/core/function.py",
-          "def_lines": 2788
-        },
-        {
-          "symbol": "Limit",
-          "hint_kind": "type",
-          "edited_file": "sympy/printing/str.py",
-          "edited_lines": 848,
-          "def_file": "sympy/series/limits.py",
-          "def_lines": 230
-        }
-      ]
-    },
-    {
       "instance_id": "sympy__sympy-14248",
       "repo": "sympy/sympy",
       "base_commit": "9986b38181cdd556a3f3411e553864f11912244e",
@@ -292,12 +732,17 @@
         "sympy/printing/pretty/pretty.py",
         "sympy/printing/str.py"
       ],
+      "primary_file": "sympy/printing/latex.py",
+      "primary_file_lines": 2281,
+      "gold_added_lines": 56,
       "n_f2p": 2,
       "n_p2p": 433,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 14,
       "xdeps": [
         {
@@ -343,47 +788,6 @@
       ]
     },
     {
-      "instance_id": "astropy__astropy-14182",
-      "repo": "astropy/astropy",
-      "base_commit": "a5917978be39d13cd90b517e1de4e7a539ffaa48",
-      "edited_files": [
-        "astropy/io/ascii/rst.py"
-      ],
-      "n_f2p": 1,
-      "n_p2p": 9,
-      "S1_cross_file": true,
-      "S2_nontrivial": true,
-      "S3_expensive_read": true,
-      "admissible": true,
-      "score": 12,
-      "xdeps": [
-        {
-          "symbol": "QTable",
-          "hint_kind": "type",
-          "edited_file": "astropy/io/ascii/rst.py",
-          "edited_lines": 66,
-          "def_file": "astropy/table/table.py",
-          "def_lines": 4247
-        },
-        {
-          "symbol": "write",
-          "hint_kind": "method",
-          "edited_file": "astropy/io/ascii/rst.py",
-          "edited_lines": 66,
-          "def_file": "astropy/io/ascii/ui.py",
-          "def_lines": 1016
-        },
-        {
-          "symbol": "read",
-          "hint_kind": "method",
-          "edited_file": "astropy/io/ascii/rst.py",
-          "edited_lines": 66,
-          "def_file": "astropy/io/ascii/ui.py",
-          "def_lines": 1016
-        }
-      ]
-    },
-    {
       "instance_id": "astropy__astropy-8707",
       "repo": "astropy/astropy",
       "base_commit": "a85a0747c54bac75e9c3b2fe436b105ea029d6cf",
@@ -391,12 +795,17 @@
         "astropy/io/fits/card.py",
         "astropy/io/fits/header.py"
       ],
+      "primary_file": "astropy/io/fits/card.py",
+      "primary_file_lines": 1285,
+      "gold_added_lines": 66,
       "n_f2p": 1,
       "n_p2p": 11,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 10,
       "xdeps": [
         {
@@ -426,54 +835,23 @@
       ]
     },
     {
-      "instance_id": "django__django-11138",
-      "repo": "django/django",
-      "base_commit": "c84b91b7603e488f7171fdff8f08368ef3d6b856",
-      "edited_files": [
-        "django/db/backends/mysql/operations.py",
-        "django/db/backends/oracle/operations.py",
-        "django/db/backends/sqlite3/base.py",
-        "django/db/backends/sqlite3/operations.py"
-      ],
-      "n_f2p": 1,
-      "n_p2p": 73,
-      "S1_cross_file": true,
-      "S2_nontrivial": true,
-      "S3_expensive_read": true,
-      "admissible": true,
-      "score": 8,
-      "xdeps": [
-        {
-          "symbol": "lower",
-          "hint_kind": "method",
-          "edited_file": "django/db/backends/sqlite3/operations.py",
-          "edited_lines": 333,
-          "def_file": "django/template/defaultfilters.py",
-          "def_lines": 907
-        },
-        {
-          "symbol": "USE_TZ",
-          "hint_kind": "type",
-          "edited_file": "django/db/backends/mysql/operations.py",
-          "edited_lines": 306,
-          "def_file": "django/conf/global_settings.py",
-          "def_lines": 634
-        }
-      ]
-    },
-    {
       "instance_id": "matplotlib__matplotlib-20859",
       "repo": "matplotlib/matplotlib",
       "base_commit": "64619e53e9d0ed417daba287ac0d3a06943a54d5",
       "edited_files": [
         "lib/matplotlib/legend.py"
       ],
+      "primary_file": "lib/matplotlib/legend.py",
+      "primary_file_lines": 1247,
+      "gold_added_lines": 5,
       "n_f2p": 1,
       "n_p2p": 88,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 8,
       "xdeps": [
         {
@@ -495,51 +873,23 @@
       ]
     },
     {
-      "instance_id": "pydata__xarray-4356",
-      "repo": "pydata/xarray",
-      "base_commit": "e05fddea852d08fc0845f954b79deb9e9f9ff883",
-      "edited_files": [
-        "xarray/core/nanops.py"
-      ],
-      "n_f2p": 8,
-      "n_p2p": 604,
-      "S1_cross_file": true,
-      "S2_nontrivial": true,
-      "S3_expensive_read": true,
-      "admissible": true,
-      "score": 8,
-      "xdeps": [
-        {
-          "symbol": "take",
-          "hint_kind": "method",
-          "edited_file": "xarray/core/nanops.py",
-          "edited_lines": 199,
-          "def_file": "xarray/core/duck_array_ops.py",
-          "def_lines": 635
-        },
-        {
-          "symbol": "prod",
-          "hint_kind": "method",
-          "edited_file": "xarray/core/nanops.py",
-          "edited_lines": 199,
-          "def_file": "xarray/core/duck_array_ops.py",
-          "def_lines": 635
-        }
-      ]
-    },
-    {
       "instance_id": "pydata__xarray-4687",
       "repo": "pydata/xarray",
       "base_commit": "d3b6aa6d8b997df115a53c001d00222a0f92f63a",
       "edited_files": [
         "xarray/core/computation.py"
       ],
+      "primary_file": "xarray/core/computation.py",
+      "primary_file_lines": 1973,
+      "gold_added_lines": 12,
       "n_f2p": 1,
       "n_p2p": 1717,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 8,
       "xdeps": [
         {
@@ -567,12 +917,17 @@
       "edited_files": [
         "xarray/core/rolling.py"
       ],
+      "primary_file": "xarray/core/rolling.py",
+      "primary_file_lines": 1144,
+      "gold_added_lines": 11,
       "n_f2p": 3,
       "n_p2p": 1815,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 8,
       "xdeps": [
         {
@@ -600,12 +955,17 @@
       "edited_files": [
         "xarray/core/computation.py"
       ],
+      "primary_file": "xarray/core/computation.py",
+      "primary_file_lines": 2151,
+      "gold_added_lines": 24,
       "n_f2p": 1,
       "n_p2p": 280,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 8,
       "xdeps": [
         {
@@ -634,12 +994,17 @@
         "src/_pytest/config/__init__.py",
         "src/_pytest/pathlib.py"
       ],
+      "primary_file": "src/_pytest/config/__init__.py",
+      "primary_file_lines": 1134,
+      "gold_added_lines": 8,
       "n_f2p": 2,
       "n_p2p": 51,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 8,
       "xdeps": [
         {
@@ -661,80 +1026,6 @@
       ]
     },
     {
-      "instance_id": "sphinx-doc__sphinx-11510",
-      "repo": "sphinx-doc/sphinx",
-      "base_commit": "6cb783c0024a873722952a67ebb9f41771c8eb6d",
-      "edited_files": [
-        "sphinx/directives/other.py"
-      ],
-      "n_f2p": 2,
-      "n_p2p": 7,
-      "S1_cross_file": true,
-      "S2_nontrivial": true,
-      "S3_expensive_read": true,
-      "admissible": true,
-      "score": 8,
-      "xdeps": [
-        {
-          "symbol": "Sphinx",
-          "hint_kind": "type",
-          "edited_file": "sphinx/directives/other.py",
-          "edited_lines": 405,
-          "def_file": "sphinx/application.py",
-          "def_lines": 1362
-        },
-        {
-          "symbol": "os_path",
-          "hint_kind": "import",
-          "edited_file": "sphinx/directives/other.py",
-          "edited_lines": 405,
-          "def_file": "sphinx/util/osutil.py",
-          "def_lines": 217
-        },
-        {
-          "symbol": "get",
-          "hint_kind": "method",
-          "edited_file": "sphinx/directives/other.py",
-          "edited_lines": 405,
-          "def_file": "sphinx/util/requests.py",
-          "def_lines": 73
-        }
-      ]
-    },
-    {
-      "instance_id": "sympy__sympy-12419",
-      "repo": "sympy/sympy",
-      "base_commit": "479939f8c65c8c2908bbedc959549a257a7c0b0b",
-      "edited_files": [
-        "sympy/matrices/expressions/matexpr.py"
-      ],
-      "n_f2p": 1,
-      "n_p2p": 25,
-      "S1_cross_file": true,
-      "S2_nontrivial": true,
-      "S3_expensive_read": true,
-      "admissible": true,
-      "score": 8,
-      "xdeps": [
-        {
-          "symbol": "Eq",
-          "hint_kind": "import",
-          "edited_file": "sympy/matrices/expressions/matexpr.py",
-          "edited_lines": 548,
-          "def_file": "sympy/core/relational.py",
-          "def_lines": 798
-        },
-        {
-          "symbol": "KroneckerDelta",
-          "hint_kind": "import",
-          "edited_file": "sympy/matrices/expressions/matexpr.py",
-          "edited_lines": 548,
-          "def_file": "sympy/functions/special/tensor_functions.py",
-          "def_lines": 450
-        }
-      ]
-    },
-    {
       "instance_id": "sympy__sympy-13877",
       "repo": "sympy/sympy",
       "base_commit": "1659712001810f5fc563a443949f8e3bb38af4bd",
@@ -742,12 +1033,17 @@
         "sympy/matrices/matrices.py",
         "sympy/utilities/randtest.py"
       ],
+      "primary_file": "sympy/matrices/matrices.py",
+      "primary_file_lines": 4248,
+      "gold_added_lines": 20,
       "n_f2p": 1,
       "n_p2p": 110,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 8,
       "xdeps": [
         {
@@ -776,12 +1072,17 @@
         "xarray/core/indexing.py",
         "xarray/core/variable.py"
       ],
+      "primary_file": "xarray/core/indexing.py",
+      "primary_file_lines": 1307,
+      "gold_added_lines": 32,
       "n_f2p": 1,
       "n_p2p": 253,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 7,
       "xdeps": [
         {
@@ -810,12 +1111,17 @@
         "sphinx/domains/python.py",
         "sphinx/pycode/ast.py"
       ],
+      "primary_file": "sphinx/domains/python.py",
+      "primary_file_lines": 1356,
+      "gold_added_lines": 14,
       "n_f2p": 2,
       "n_p2p": 49,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 5,
       "xdeps": [
         {
@@ -837,43 +1143,23 @@
       ]
     },
     {
-      "instance_id": "astropy__astropy-13579",
-      "repo": "astropy/astropy",
-      "base_commit": "0df94ff7097961e92fd7812036a24b145bc13ca8",
-      "edited_files": [
-        "astropy/wcs/wcsapi/wrappers/sliced_wcs.py"
-      ],
-      "n_f2p": 1,
-      "n_p2p": 40,
-      "S1_cross_file": true,
-      "S2_nontrivial": true,
-      "S3_expensive_read": true,
-      "admissible": true,
-      "score": 4,
-      "xdeps": [
-        {
-          "symbol": "append",
-          "hint_kind": "method",
-          "edited_file": "astropy/wcs/wcsapi/wrappers/sliced_wcs.py",
-          "edited_lines": 308,
-          "def_file": "astropy/io/fits/convenience.py",
-          "def_lines": 1130
-        }
-      ]
-    },
-    {
       "instance_id": "astropy__astropy-13977",
       "repo": "astropy/astropy",
       "base_commit": "5250b2442501e6c671c6b380536f1edb352602d1",
       "edited_files": [
         "astropy/units/quantity.py"
       ],
+      "primary_file": "astropy/units/quantity.py",
+      "primary_file_lines": 2229,
+      "gold_added_lines": 56,
       "n_f2p": 20,
       "n_p2p": 322,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -887,43 +1173,23 @@
       ]
     },
     {
-      "instance_id": "django__django-11141",
-      "repo": "django/django",
-      "base_commit": "5d9cf79baf07fc4aed7ad1b06990532a65378155",
-      "edited_files": [
-        "django/db/migrations/loader.py"
-      ],
-      "n_f2p": 1,
-      "n_p2p": 24,
-      "S1_cross_file": true,
-      "S2_nontrivial": true,
-      "S3_expensive_read": true,
-      "admissible": true,
-      "score": 4,
-      "xdeps": [
-        {
-          "symbol": "add",
-          "hint_kind": "method",
-          "edited_file": "django/db/migrations/loader.py",
-          "edited_lines": 324,
-          "def_file": "django/template/defaultfilters.py",
-          "def_lines": 905
-        }
-      ]
-    },
-    {
       "instance_id": "django__django-11149",
       "repo": "django/django",
       "base_commit": "e245046bb6e8b32360aa48b8a41fb7050f0fc730",
       "edited_files": [
         "django/contrib/admin/options.py"
       ],
+      "primary_file": "django/contrib/admin/options.py",
+      "primary_file_lines": 2162,
+      "gold_added_lines": 30,
       "n_f2p": 2,
       "n_p2p": 46,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -937,31 +1203,6 @@
       ]
     },
     {
-      "instance_id": "django__django-11206",
-      "repo": "django/django",
-      "base_commit": "571ab44e8a8936014c22e7eebe4948d9611fd7ce",
-      "edited_files": [
-        "django/utils/numberformat.py"
-      ],
-      "n_f2p": 2,
-      "n_p2p": 4,
-      "S1_cross_file": true,
-      "S2_nontrivial": true,
-      "S3_expensive_read": true,
-      "admissible": true,
-      "score": 4,
-      "xdeps": [
-        {
-          "symbol": "rjust",
-          "hint_kind": "method",
-          "edited_file": "django/utils/numberformat.py",
-          "edited_lines": 79,
-          "def_file": "django/template/defaultfilters.py",
-          "def_lines": 907
-        }
-      ]
-    },
-    {
       "instance_id": "matplotlib__matplotlib-14623",
       "repo": "matplotlib/matplotlib",
       "base_commit": "d65c9ca20ddf81ef91199e6d819f9d3506ef477c",
@@ -970,12 +1211,17 @@
         "lib/matplotlib/ticker.py",
         "lib/mpl_toolkits/mplot3d/axes3d.py"
       ],
+      "primary_file": "lib/matplotlib/axes/_base.py",
+      "primary_file_lines": 4479,
+      "gold_added_lines": 17,
       "n_f2p": 1,
       "n_p2p": 400,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -995,12 +1241,17 @@
       "edited_files": [
         "lib/matplotlib/image.py"
       ],
+      "primary_file": "lib/matplotlib/image.py",
+      "primary_file_lines": 1786,
+      "gold_added_lines": 3,
       "n_f2p": 1,
       "n_p2p": 111,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -1020,12 +1271,17 @@
       "edited_files": [
         "lib/matplotlib/patches.py"
       ],
+      "primary_file": "lib/matplotlib/patches.py",
+      "primary_file_lines": 4683,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 46,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -1045,12 +1301,17 @@
       "edited_files": [
         "lib/matplotlib/figure.py"
       ],
+      "primary_file": "lib/matplotlib/figure.py",
+      "primary_file_lines": 3443,
+      "gold_added_lines": 3,
       "n_f2p": 1,
       "n_p2p": 104,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -1070,12 +1331,17 @@
       "edited_files": [
         "lib/matplotlib/axes/_axes.py"
       ],
+      "primary_file": "lib/matplotlib/axes/_axes.py",
+      "primary_file_lines": 8237,
+      "gold_added_lines": 8,
       "n_f2p": 1,
       "n_p2p": 767,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -1095,12 +1361,17 @@
       "edited_files": [
         "xarray/core/dataset.py"
       ],
+      "primary_file": "xarray/core/dataset.py",
+      "primary_file_lines": 5700,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 21,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -1121,12 +1392,17 @@
         "xarray/core/dataarray.py",
         "xarray/core/dataset.py"
       ],
+      "primary_file": "xarray/core/dataarray.py",
+      "primary_file_lines": 4294,
+      "gold_added_lines": 36,
       "n_f2p": 2,
       "n_p2p": 2398,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -1146,12 +1422,17 @@
       "edited_files": [
         "xarray/core/computation.py"
       ],
+      "primary_file": "xarray/core/computation.py",
+      "primary_file_lines": 2070,
+      "gold_added_lines": 5,
       "n_f2p": 1,
       "n_p2p": 264,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -1172,12 +1453,17 @@
         "xarray/core/dataset.py",
         "xarray/core/variable.py"
       ],
+      "primary_file": "xarray/core/dataset.py",
+      "primary_file_lines": 8882,
+      "gold_added_lines": 13,
       "n_f2p": 1,
       "n_p2p": 430,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -1197,12 +1483,17 @@
       "edited_files": [
         "xarray/core/indexing.py"
       ],
+      "primary_file": "xarray/core/indexing.py",
+      "primary_file_lines": 1590,
+      "gold_added_lines": 5,
       "n_f2p": 2,
       "n_p2p": 71,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -1222,12 +1513,17 @@
       "edited_files": [
         "src/_pytest/reports.py"
       ],
+      "primary_file": "src/_pytest/reports.py",
+      "primary_file_lines": 426,
+      "gold_added_lines": 143,
       "n_f2p": 2,
       "n_p2p": 123,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -1241,95 +1537,23 @@
       ]
     },
     {
-      "instance_id": "sphinx-doc__sphinx-10673",
-      "repo": "sphinx-doc/sphinx",
-      "base_commit": "f35d2a6cc726f97d0e859ca7a0e1729f7da8a6c8",
-      "edited_files": [
-        "sphinx/directives/other.py",
-        "sphinx/environment/adapters/toctree.py",
-        "sphinx/environment/collectors/toctree.py"
-      ],
-      "n_f2p": 1,
-      "n_p2p": 9,
-      "S1_cross_file": true,
-      "S2_nontrivial": true,
-      "S3_expensive_read": true,
-      "admissible": true,
-      "score": 4,
-      "xdeps": [
-        {
-          "symbol": "compact_paragraph",
-          "hint_kind": "method",
-          "edited_file": "sphinx/environment/adapters/toctree.py",
-          "edited_lines": 331,
-          "def_file": "sphinx/addnodes.py",
-          "def_lines": 579
-        }
-      ]
-    },
-    {
-      "instance_id": "sphinx-doc__sphinx-7910",
-      "repo": "sphinx-doc/sphinx",
-      "base_commit": "27ac10de04697e2372d31db5548e56a7c6d9265d",
-      "edited_files": [
-        "sphinx/ext/napoleon/__init__.py"
-      ],
-      "n_f2p": 1,
-      "n_p2p": 16,
-      "S1_cross_file": true,
-      "S2_nontrivial": true,
-      "S3_expensive_read": true,
-      "admissible": true,
-      "score": 4,
-      "xdeps": [
-        {
-          "symbol": "unwrap",
-          "hint_kind": "method",
-          "edited_file": "sphinx/ext/napoleon/__init__.py",
-          "edited_lines": 463,
-          "def_file": "sphinx/util/inspect.py",
-          "def_lines": 781
-        }
-      ]
-    },
-    {
-      "instance_id": "sphinx-doc__sphinx-8265",
-      "repo": "sphinx-doc/sphinx",
-      "base_commit": "b428cd2404675475a5c3dc2a2b0790ba57676202",
-      "edited_files": [
-        "sphinx/pycode/ast.py"
-      ],
-      "n_f2p": 1,
-      "n_p2p": 22,
-      "S1_cross_file": true,
-      "S2_nontrivial": true,
-      "S3_expensive_read": true,
-      "admissible": true,
-      "score": 4,
-      "xdeps": [
-        {
-          "symbol": "Index",
-          "hint_kind": "type",
-          "edited_file": "sphinx/pycode/ast.py",
-          "edited_lines": 205,
-          "def_file": "sphinx/domains/__init__.py",
-          "def_lines": 402
-        }
-      ]
-    },
-    {
       "instance_id": "sympy__sympy-12096",
       "repo": "sympy/sympy",
       "base_commit": "d7c3045115693e887bcd03599b7ca4650ac5f2cb",
       "edited_files": [
         "sympy/core/function.py"
       ],
+      "primary_file": "sympy/core/function.py",
+      "primary_file_lines": 2650,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 43,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -1349,12 +1573,17 @@
       "edited_files": [
         "sympy/functions/elementary/hyperbolic.py"
       ],
+      "primary_file": "sympy/functions/elementary/hyperbolic.py",
+      "primary_file_lines": 1403,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 43,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -1368,43 +1597,23 @@
       ]
     },
     {
-      "instance_id": "sympy__sympy-13551",
-      "repo": "sympy/sympy",
-      "base_commit": "9476425b9e34363c2d9ac38e9f04aa75ae54a775",
-      "edited_files": [
-        "sympy/concrete/products.py"
-      ],
-      "n_f2p": 1,
-      "n_p2p": 17,
-      "S1_cross_file": true,
-      "S2_nontrivial": true,
-      "S3_expensive_read": true,
-      "admissible": true,
-      "score": 4,
-      "xdeps": [
-        {
-          "symbol": "Sum",
-          "hint_kind": "import",
-          "edited_file": "sympy/concrete/products.py",
-          "edited_lines": 517,
-          "def_file": "sympy/concrete/summations.py",
-          "def_lines": 1102
-        }
-      ]
-    },
-    {
       "instance_id": "sympy__sympy-13798",
       "repo": "sympy/sympy",
       "base_commit": "7121bdf1facdd90d05b6994b4c2e5b2865a4638a",
       "edited_files": [
         "sympy/printing/latex.py"
       ],
+      "primary_file": "sympy/printing/latex.py",
+      "primary_file_lines": 2208,
+      "gold_added_lines": 17,
       "n_f2p": 1,
       "n_p2p": 102,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {

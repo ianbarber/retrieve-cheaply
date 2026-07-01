@@ -10,12 +10,17 @@
       "edited_files": [
         "lib/matplotlib/axes/_axes.py"
       ],
+      "primary_file": "lib/matplotlib/axes/_axes.py",
+      "primary_file_lines": 8164,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 411,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -28,12 +33,17 @@
         "lib/matplotlib/ticker.py",
         "lib/mpl_toolkits/mplot3d/axes3d.py"
       ],
+      "primary_file": "lib/matplotlib/axes/_base.py",
+      "primary_file_lines": 4479,
+      "gold_added_lines": 17,
       "n_f2p": 1,
       "n_p2p": 400,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -53,12 +63,17 @@
       "edited_files": [
         "lib/matplotlib/image.py"
       ],
+      "primary_file": "lib/matplotlib/image.py",
+      "primary_file_lines": 1786,
+      "gold_added_lines": 3,
       "n_f2p": 1,
       "n_p2p": 111,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -78,12 +93,17 @@
       "edited_files": [
         "lib/matplotlib/widgets.py"
       ],
+      "primary_file": "lib/matplotlib/widgets.py",
+      "primary_file_lines": 3409,
+      "gold_added_lines": 6,
       "n_f2p": 2,
       "n_p2p": 32,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -94,12 +114,17 @@
       "edited_files": [
         "lib/matplotlib/axis.py"
       ],
+      "primary_file": "lib/matplotlib/axis.py",
+      "primary_file_lines": 2526,
+      "gold_added_lines": 7,
       "n_f2p": 1,
       "n_p2p": 673,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -110,12 +135,17 @@
       "edited_files": [
         "lib/matplotlib/legend.py"
       ],
+      "primary_file": "lib/matplotlib/legend.py",
+      "primary_file_lines": 1247,
+      "gold_added_lines": 5,
       "n_f2p": 1,
       "n_p2p": 88,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 8,
       "xdeps": [
         {
@@ -143,12 +173,17 @@
       "edited_files": [
         "lib/matplotlib/dates.py"
       ],
+      "primary_file": "lib/matplotlib/dates.py",
+      "primary_file_lines": 1921,
+      "gold_added_lines": 5,
       "n_f2p": 4,
       "n_p2p": 73,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -159,12 +194,17 @@
       "edited_files": [
         "lib/matplotlib/category.py"
       ],
+      "primary_file": "lib/matplotlib/category.py",
+      "primary_file_lines": 244,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 68,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -175,12 +215,17 @@
       "edited_files": [
         "lib/matplotlib/colorbar.py"
       ],
+      "primary_file": "lib/matplotlib/colorbar.py",
+      "primary_file_lines": 1637,
+      "gold_added_lines": 6,
       "n_f2p": 3,
       "n_p2p": 57,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -191,12 +236,17 @@
       "edited_files": [
         "lib/matplotlib/dates.py"
       ],
+      "primary_file": "lib/matplotlib/dates.py",
+      "primary_file_lines": 1929,
+      "gold_added_lines": 4,
       "n_f2p": 1,
       "n_p2p": 88,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -207,12 +257,17 @@
       "edited_files": [
         "lib/matplotlib/__init__.py"
       ],
+      "primary_file": "lib/matplotlib/__init__.py",
+      "primary_file_lines": 1459,
+      "gold_added_lines": 4,
       "n_f2p": 1,
       "n_p2p": 192,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 2,
       "xdeps": [
         {
@@ -232,12 +287,17 @@
       "edited_files": [
         "lib/mpl_toolkits/mplot3d/axes3d.py"
       ],
+      "primary_file": "lib/mpl_toolkits/mplot3d/axes3d.py",
+      "primary_file_lines": 3248,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 862,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -248,12 +308,17 @@
       "edited_files": [
         "lib/matplotlib/patches.py"
       ],
+      "primary_file": "lib/matplotlib/patches.py",
+      "primary_file_lines": 4683,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 46,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -273,12 +338,17 @@
       "edited_files": [
         "lib/matplotlib/figure.py"
       ],
+      "primary_file": "lib/matplotlib/figure.py",
+      "primary_file_lines": 3443,
+      "gold_added_lines": 3,
       "n_f2p": 1,
       "n_p2p": 104,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -298,12 +368,17 @@
       "edited_files": [
         "lib/matplotlib/stackplot.py"
       ],
+      "primary_file": "lib/matplotlib/stackplot.py",
+      "primary_file_lines": 124,
+      "gold_added_lines": 8,
       "n_f2p": 2,
       "n_p2p": 764,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -314,12 +389,17 @@
       "edited_files": [
         "lib/matplotlib/axes/_axes.py"
       ],
+      "primary_file": "lib/matplotlib/axes/_axes.py",
+      "primary_file_lines": 8237,
+      "gold_added_lines": 8,
       "n_f2p": 1,
       "n_p2p": 767,
       "S1_cross_file": true,
       "S2_nontrivial": true,
       "S3_expensive_read": true,
+      "S6_tractable": false,
       "admissible": true,
+      "audit_ready": false,
       "score": 4,
       "xdeps": [
         {
@@ -339,12 +419,17 @@
       "edited_files": [
         "lib/matplotlib/axes/_base.py"
       ],
+      "primary_file": "lib/matplotlib/axes/_base.py",
+      "primary_file_lines": 4538,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 768,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -355,12 +440,17 @@
       "edited_files": [
         "lib/matplotlib/offsetbox.py"
       ],
+      "primary_file": "lib/matplotlib/offsetbox.py",
+      "primary_file_lines": 1607,
+      "gold_added_lines": 2,
       "n_f2p": 2,
       "n_p2p": 267,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -371,12 +461,17 @@
       "edited_files": [
         "lib/matplotlib/axes/_base.py"
       ],
+      "primary_file": "lib/matplotlib/axes/_base.py",
+      "primary_file_lines": 4644,
+      "gold_added_lines": 3,
       "n_f2p": 1,
       "n_p2p": 776,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -387,12 +482,17 @@
       "edited_files": [
         "lib/matplotlib/offsetbox.py"
       ],
+      "primary_file": "lib/matplotlib/offsetbox.py",
+      "primary_file_lines": 1613,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 29,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -404,12 +504,17 @@
         "lib/matplotlib/contour.py",
         "lib/matplotlib/tri/_tricontour.py"
       ],
+      "primary_file": "lib/matplotlib/contour.py",
+      "primary_file_lines": 1789,
+      "gold_added_lines": 19,
       "n_f2p": 1,
       "n_p2p": 65,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -420,12 +525,17 @@
       "edited_files": [
         "lib/matplotlib/colors.py"
       ],
+      "primary_file": "lib/matplotlib/colors.py",
+      "primary_file_lines": 2664,
+      "gold_added_lines": 11,
       "n_f2p": 1,
       "n_p2p": 253,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     }

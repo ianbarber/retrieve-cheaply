@@ -13,12 +13,17 @@
         "pylint/pyreverse/utils.py",
         "pylint/pyreverse/writer.py"
       ],
+      "primary_file": "pylint/pyreverse/diagrams.py",
+      "primary_file_lines": 255,
+      "gold_added_lines": 99,
       "n_f2p": 10,
       "n_p2p": 0,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -30,12 +35,17 @@
         "pylint/checkers/variables.py",
         "pylint/constants.py"
       ],
+      "primary_file": "pylint/checkers/variables.py",
+      "primary_file_lines": 2152,
+      "gold_added_lines": 6,
       "n_f2p": 21,
       "n_p2p": 0,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -46,12 +56,17 @@
       "edited_files": [
         "pylint/config/__init__.py"
       ],
+      "primary_file": "pylint/config/__init__.py",
+      "primary_file_lines": 120,
+      "gold_added_lines": 11,
       "n_f2p": 1,
       "n_p2p": 0,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -62,12 +77,17 @@
       "edited_files": [
         "pylint/checkers/similar.py"
       ],
+      "primary_file": "pylint/checkers/similar.py",
+      "primary_file_lines": 933,
+      "gold_added_lines": 2,
       "n_f2p": 1,
       "n_p2p": 17,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": false,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -81,12 +101,17 @@
         "pylint/config/utils.py",
         "pylint/lint/base_options.py"
       ],
+      "primary_file": "pylint/config/argument.py",
+      "primary_file_lines": 469,
+      "gold_added_lines": 14,
       "n_f2p": 1,
       "n_p2p": 7,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -98,12 +123,17 @@
         "pylint/lint/expand_modules.py",
         "pylint/lint/pylinter.py"
       ],
+      "primary_file": "pylint/lint/expand_modules.py",
+      "primary_file_lines": 149,
+      "gold_added_lines": 28,
       "n_f2p": 4,
       "n_p2p": 171,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -114,12 +144,17 @@
       "edited_files": [
         "pylint/lint/run.py"
       ],
+      "primary_file": "pylint/lint/run.py",
+      "primary_file_lines": 232,
+      "gold_added_lines": 7,
       "n_f2p": 1,
       "n_p2p": 8,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -130,12 +165,17 @@
       "edited_files": [
         "pylint/lint/expand_modules.py"
       ],
+      "primary_file": "pylint/lint/expand_modules.py",
+      "primary_file_lines": 161,
+      "gold_added_lines": 1,
       "n_f2p": 1,
       "n_p2p": 120,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -146,12 +186,17 @@
       "edited_files": [
         "pylint/__init__.py"
       ],
+      "primary_file": "pylint/__init__.py",
+      "primary_file_lines": 108,
+      "gold_added_lines": 3,
       "n_f2p": 1,
       "n_p2p": 122,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     },
@@ -164,12 +209,17 @@
         "pylint/utils/__init__.py",
         "pylint/utils/utils.py"
       ],
+      "primary_file": "pylint/config/argument.py",
+      "primary_file_lines": 502,
+      "gold_added_lines": 30,
       "n_f2p": 1,
       "n_p2p": 18,
       "S1_cross_file": false,
       "S2_nontrivial": false,
       "S3_expensive_read": false,
+      "S6_tractable": true,
       "admissible": false,
+      "audit_ready": false,
       "score": 0,
       "xdeps": []
     }
