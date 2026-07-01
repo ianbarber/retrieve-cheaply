@@ -1,0 +1,1855 @@
+{
+  "model": "anthropic/claude-sonnet-4.5",
+  "matched_pricing_id": "anthropic/claude-sonnet-4.5",
+  "suite": "effic_real2",
+  "config": {
+    "out": "runs/agent/fr_sonnet45_readonly.json",
+    "model": "anthropic/claude-sonnet-4.5",
+    "suite": "effic_real2",
+    "names": null,
+    "seeds": 2,
+    "seed_start": 0,
+    "no_defn": true,
+    "with_check": false,
+    "budget_usd": 12.0,
+    "max_turns": 14,
+    "max_reads": 6,
+    "temperature": 0.7
+  },
+  "total_cost_usd": 1.769898,
+  "budget_hit": false,
+  "rows": [
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_reduceby",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 36810,
+      "completion_tokens": 727,
+      "est_cost_usd": 0.121335,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/itertoolz.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/itertoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "1-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 15.6
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_reduceby",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 36700,
+      "completion_tokens": 736,
+      "est_cost_usd": 0.12114,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/itertoolz.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/itertoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 15.9
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_interleave",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 17019,
+      "completion_tokens": 559,
+      "est_cost_usd": 0.059442,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/itertoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 10.9
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_interleave",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 17039,
+      "completion_tokens": 573,
+      "est_cost_usd": 0.059712,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/itertoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 11.8
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_merge_with",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 16177,
+      "completion_tokens": 628,
+      "est_cost_usd": 0.057951,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 12.9
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_merge_with",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 13133,
+      "completion_tokens": 495,
+      "est_cost_usd": 0.046824,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 10.9
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_itemmap",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 14723,
+      "completion_tokens": 517,
+      "est_cost_usd": 0.051924,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 11.3
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_itemmap",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 3,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 5,
+      "prompt_tokens": 17635,
+      "completion_tokens": 574,
+      "est_cost_usd": 0.061515,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 13.6
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_valfilter",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 3,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 5,
+      "prompt_tokens": 17811,
+      "completion_tokens": 621,
+      "est_cost_usd": 0.062748,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 13.4
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_valfilter",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 12958,
+      "completion_tokens": 457,
+      "est_cost_usd": 0.045729,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 9.7
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_update_in",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 14880,
+      "completion_tokens": 558,
+      "est_cost_usd": 0.05301,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 11.8
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_update_in",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 14843,
+      "completion_tokens": 552,
+      "est_cost_usd": 0.052809,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 13.6
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_thread_first",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 18128,
+      "completion_tokens": 610,
+      "est_cost_usd": 0.063534,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/functoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 12.3
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_thread_first",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 18240,
+      "completion_tokens": 703,
+      "est_cost_usd": 0.065265,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/functoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 13.9
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_iter_except",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 6,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 8,
+      "prompt_tokens": 101149,
+      "completion_tokens": 875,
+      "est_cost_usd": 0.316572,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/more.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.pyi"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 23.4
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_iter_except",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 4,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 6,
+      "prompt_tokens": 50681,
+      "completion_tokens": 682,
+      "est_cost_usd": 0.162273,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/__init__.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 18.9
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_roundrobin",
+      "group": "control",
+      "seed": 0,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 16513,
+      "completion_tokens": 599,
+      "est_cost_usd": 0.058524,
+      "trace": [
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 13.7
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_roundrobin",
+      "group": "control",
+      "seed": 1,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 18330,
+      "completion_tokens": 615,
+      "est_cost_usd": 0.064215,
+      "trace": [
+        {
+          "t": "read",
+          "path": "more_itertools/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 14.1
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_grouper",
+      "group": "control",
+      "seed": 0,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 18181,
+      "completion_tokens": 541,
+      "est_cost_usd": 0.062658,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 12.1
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_grouper",
+      "group": "control",
+      "seed": 1,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 16368,
+      "completion_tokens": 507,
+      "est_cost_usd": 0.056709,
+      "trace": [
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 10.3
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_merge_sorted",
+      "group": "control",
+      "seed": 0,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 16798,
+      "completion_tokens": 487,
+      "est_cost_usd": 0.057699,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/itertoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 10.6
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_merge_sorted",
+      "group": "control",
+      "seed": 1,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 19725,
+      "completion_tokens": 609,
+      "est_cost_usd": 0.06831,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/itertoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 13.5
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_reduceby",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 36578,
+      "completion_tokens": 622,
+      "est_cost_usd": 0.119064,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/itertoolz.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/itertoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 15.3
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_reduceby",
+      "group": "rich",
+      "seed": 3,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 2,
+      "prompt_tokens": 3166,
+      "completion_tokens": 380,
+      "est_cost_usd": 0.015198,
+      "trace": [
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 6.8
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_interleave",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 17036,
+      "completion_tokens": 572,
+      "est_cost_usd": 0.059688,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/itertoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 10.6
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_interleave",
+      "group": "rich",
+      "seed": 3,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 17013,
+      "completion_tokens": 555,
+      "est_cost_usd": 0.059364,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/itertoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 10.7
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_merge_with",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 13416,
+      "completion_tokens": 642,
+      "est_cost_usd": 0.049878,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 12.0
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_merge_with",
+      "group": "rich",
+      "seed": 3,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 15954,
+      "completion_tokens": 550,
+      "est_cost_usd": 0.056112,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 12.5
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_itemmap",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 3,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 5,
+      "prompt_tokens": 17692,
+      "completion_tokens": 585,
+      "est_cost_usd": 0.061851,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 13.4
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_itemmap",
+      "group": "rich",
+      "seed": 3,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 15911,
+      "completion_tokens": 586,
+      "est_cost_usd": 0.056523,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 12.9
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_valfilter",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 12929,
+      "completion_tokens": 434,
+      "est_cost_usd": 0.045297,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 10.0
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_valfilter",
+      "group": "rich",
+      "seed": 3,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 14804,
+      "completion_tokens": 536,
+      "est_cost_usd": 0.052452,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 14.0
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_update_in",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 14916,
+      "completion_tokens": 593,
+      "est_cost_usd": 0.053643,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 13.4
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_update_in",
+      "group": "rich",
+      "seed": 3,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 13111,
+      "completion_tokens": 545,
+      "est_cost_usd": 0.047508,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/dicttoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 11.2
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_thread_first",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 18221,
+      "completion_tokens": 712,
+      "est_cost_usd": 0.065343,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/functoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 14.5
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_thread_first",
+      "group": "rich",
+      "seed": 3,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 17827,
+      "completion_tokens": 600,
+      "est_cost_usd": 0.062481,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/functoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 12.5
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_iter_except",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 4,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 6,
+      "prompt_tokens": 57554,
+      "completion_tokens": 787,
+      "est_cost_usd": 0.184467,
+      "trace": [
+        {
+          "t": "read",
+          "path": "more_itertools/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.pyi"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 18.9
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_iter_except",
+      "group": "rich",
+      "seed": 3,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 4,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 6,
+      "prompt_tokens": 50618,
+      "completion_tokens": 670,
+      "est_cost_usd": 0.161904,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/__init__.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 18.0
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_roundrobin",
+      "group": "control",
+      "seed": 2,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 16466,
+      "completion_tokens": 573,
+      "est_cost_usd": 0.057993,
+      "trace": [
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 10.8
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_roundrobin",
+      "group": "control",
+      "seed": 3,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 18442,
+      "completion_tokens": 612,
+      "est_cost_usd": 0.064506,
+      "trace": [
+        {
+          "t": "read",
+          "path": "more_itertools/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 13.1
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_grouper",
+      "group": "control",
+      "seed": 2,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 16360,
+      "completion_tokens": 515,
+      "est_cost_usd": 0.056805,
+      "trace": [
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 11.3
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_grouper",
+      "group": "control",
+      "seed": 3,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 16235,
+      "completion_tokens": 444,
+      "est_cost_usd": 0.055365,
+      "trace": [
+        {
+          "t": "read",
+          "path": "more_itertools/recipes.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 9.9
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_merge_sorted",
+      "group": "control",
+      "seed": 2,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 19553,
+      "completion_tokens": 519,
+      "est_cost_usd": 0.066444,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/itertoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 12.1
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.5",
+      "task": "effic_real2_merge_sorted",
+      "group": "control",
+      "seed": 3,
+      "no_defn": true,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 19711,
+      "completion_tokens": 595,
+      "est_cost_usd": 0.068058,
+      "trace": [
+        {
+          "t": "read",
+          "path": "toolz/__init__.py"
+        },
+        {
+          "t": "read",
+          "path": "toolz/itertoolz.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 13.2
+    }
+  ]
+}

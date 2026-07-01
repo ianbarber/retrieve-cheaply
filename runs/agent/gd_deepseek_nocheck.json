@@ -1,0 +1,1316 @@
+{
+  "model": "deepseek/deepseek-chat-v3.1",
+  "matched_pricing_id": "deepseek/deepseek-chat-v3.1",
+  "suite": "gapd",
+  "config": {
+    "out": "runs/agent/gd_deepseek_nocheck.json",
+    "model": "deepseek/deepseek-chat-v3.1",
+    "suite": "gapd",
+    "names": null,
+    "seeds": 2,
+    "seed_start": 0,
+    "no_defn": false,
+    "with_check": false,
+    "budget_usd": 2.0,
+    "max_turns": 14,
+    "max_reads": 6,
+    "temperature": 0.7
+  },
+  "total_cost_usd": 0.025629,
+  "budget_hit": false,
+  "rows": [
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_overload_query",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 5862,
+      "completion_tokens": 490,
+      "est_cost_usd": 0.001618,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 20.1
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_overload_query",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 4109,
+      "completion_tokens": 397,
+      "est_cost_usd": 0.001177,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 16.9
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_overload_get",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 5868,
+      "completion_tokens": 508,
+      "est_cost_usd": 0.001634,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 21.4
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_overload_get",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 2,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 5,
+      "prompt_tokens": 7183,
+      "completion_tokens": 511,
+      "est_cost_usd": 0.001912,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "test",
+          "resolved": false
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 22.3
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_union_method",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 5949,
+      "completion_tokens": 426,
+      "est_cost_usd": 0.001586,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 19.7
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_union_method",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 1,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 5,
+      "prompt_tokens": 7635,
+      "completion_tokens": 528,
+      "est_cost_usd": 0.00202,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "findrefs",
+          "sym": "message",
+          "n": 1
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 23.8
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_protocol_reader",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 5869,
+      "completion_tokens": 591,
+      "est_cost_usd": 0.001699,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 24.4
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_protocol_reader",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 5867,
+      "completion_tokens": 544,
+      "est_cost_usd": 0.001662,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 23.0
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_generic_grid",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 5653,
+      "completion_tokens": 498,
+      "est_cost_usd": 0.001581,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 21.0
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_generic_grid",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 2,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 5666,
+      "completion_tokens": 546,
+      "est_cost_usd": 0.001621,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "test",
+          "resolved": false
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 23.3
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_typeddict_vec",
+      "group": "rich",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 5632,
+      "completion_tokens": 461,
+      "est_cost_usd": 0.001547,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 20.0
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_typeddict_vec",
+      "group": "rich",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 4068,
+      "completion_tokens": 398,
+      "est_cost_usd": 0.001169,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 18.2
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_control_gross",
+      "group": "control",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 5487,
+      "completion_tokens": 430,
+      "est_cost_usd": 0.001492,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 19.8
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_control_gross",
+      "group": "control",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 3955,
+      "completion_tokens": 391,
+      "est_cost_usd": 0.001139,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 16.5
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_union_payment",
+      "group": "control",
+      "seed": 0,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 2,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 6,
+      "prompt_tokens": 9707,
+      "completion_tokens": 659,
+      "est_cost_usd": 0.002559,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "findrefs",
+          "sym": "settle",
+          "n": 0
+        },
+        {
+          "t": "findrefs",
+          "sym": "make_payment",
+          "n": 1
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 30.1
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_union_payment",
+      "group": "control",
+      "seed": 1,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 4280,
+      "completion_tokens": 398,
+      "est_cost_usd": 0.001213,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 16.3
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_overload_query",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 3361,
+      "completion_tokens": 263,
+      "est_cost_usd": 0.000914,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 13.2
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_overload_query",
+      "group": "rich",
+      "seed": 3,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 3355,
+      "completion_tokens": 269,
+      "est_cost_usd": 0.000917,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 19.0
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_overload_get",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 2,
+      "prompt_tokens": 2009,
+      "completion_tokens": 112,
+      "est_cost_usd": 0.00051,
+      "trace": [
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "5-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 11.0
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_overload_get",
+      "group": "rich",
+      "seed": 3,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 1,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 4872,
+      "completion_tokens": 347,
+      "est_cost_usd": 0.001297,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "findrefs",
+          "sym": "lookup",
+          "n": 0
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 28.4
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_union_method",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 3451,
+      "completion_tokens": 219,
+      "est_cost_usd": 0.000898,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 17.4
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_union_method",
+      "group": "rich",
+      "seed": 3,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 3451,
+      "completion_tokens": 219,
+      "est_cost_usd": 0.000898,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 14.3
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_protocol_reader",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 4700,
+      "completion_tokens": 327,
+      "est_cost_usd": 0.001245,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 21.3
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_protocol_reader",
+      "group": "rich",
+      "seed": 3,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 2,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 4735,
+      "completion_tokens": 359,
+      "est_cost_usd": 0.001278,
+      "trace": [
+        {
+          "t": "read",
+          "path": "target.py"
+        },
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 24.5
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_generic_grid",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 3209,
+      "completion_tokens": 201,
+      "est_cost_usd": 0.000833,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "6-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 17.4
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_generic_grid",
+      "group": "rich",
+      "seed": 3,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 0,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 2,
+      "prompt_tokens": 2009,
+      "completion_tokens": 104,
+      "est_cost_usd": 0.000504,
+      "trace": [
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "6-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 8.1
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_typeddict_vec",
+      "group": "rich",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 3307,
+      "completion_tokens": 244,
+      "est_cost_usd": 0.000887,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 17.9
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_typeddict_vec",
+      "group": "rich",
+      "seed": 3,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 3301,
+      "completion_tokens": 249,
+      "est_cost_usd": 0.00089,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 21.3
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_control_gross",
+      "group": "control",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 3256,
+      "completion_tokens": 312,
+      "est_cost_usd": 0.00093,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 23.9
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_control_gross",
+      "group": "control",
+      "seed": 3,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 3173,
+      "completion_tokens": 233,
+      "est_cost_usd": 0.00085,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-5",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 19.9
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_union_payment",
+      "group": "control",
+      "seed": 2,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 1,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 4,
+      "prompt_tokens": 4947,
+      "completion_tokens": 338,
+      "est_cost_usd": 0.001306,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "defn",
+          "sym": "make_payment",
+          "found": true
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 18.5
+    },
+    {
+      "model": "deepseek/deepseek-chat-v3.1",
+      "task": "gapd_union_payment",
+      "group": "control",
+      "seed": 3,
+      "no_defn": false,
+      "with_check": false,
+      "resolved": true,
+      "stop_reason": "tests_pass",
+      "n_read": 1,
+      "n_defn": 0,
+      "n_findrefs": 0,
+      "n_test": 1,
+      "n_edit": 1,
+      "n_check": 0,
+      "turns": 3,
+      "prompt_tokens": 3547,
+      "completion_tokens": 268,
+      "est_cost_usd": 0.000957,
+      "trace": [
+        {
+          "t": "read",
+          "path": "lib.py"
+        },
+        {
+          "t": "edit",
+          "path": "target.py",
+          "lines": "3-6",
+          "ok": true
+        },
+        {
+          "t": "test",
+          "resolved": true
+        }
+      ],
+      "final_failure": "",
+      "sec": 16.1
+    }
+  ]
+}

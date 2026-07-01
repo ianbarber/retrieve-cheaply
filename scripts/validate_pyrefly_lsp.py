@@ -261,10 +261,22 @@ def ast_def_line(env, symbol):
 
 
 def main():
+    import argparse
     from scaffold.mock_env import MultiFileEnv
-    from scripts.synth_tasks_effic import TASKS_EFFIC
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--suite", default="effic",
+                    choices=["effic", "effic_real", "effic_real2", "gapd"])
+    Aopt = ap.parse_args()
+    if Aopt.suite == "effic":
+        from scripts.synth_tasks_effic import TASKS_EFFIC as TASKS
+    elif Aopt.suite == "effic_real":
+        from scripts.synth_tasks_effic_real import TASKS_EFFIC_REAL as TASKS
+    elif Aopt.suite == "effic_real2":
+        from scripts.synth_tasks_effic_real2 import TASKS_EFFIC_REAL2 as TASKS
+    else:
+        from scripts.synth_tasks_gapd import TASKS_GAPD as TASKS
 
-    print(f"# pyrefly LSP <defn> validation — {len(TASKS_EFFIC)} effic tasks")
+    print(f"# pyrefly LSP <defn> validation — {len(TASKS)} {Aopt.suite} tasks")
     print(f"# pyrefly: {PYREFLY}")
     ver = subprocess.run([PYREFLY, "--version"], capture_output=True, text=True)
     print(f"# {ver.stdout.strip() or ver.stderr.strip()}")
@@ -272,7 +284,7 @@ def main():
 
     agree = disagree = lsperr = 0
     rows = []
-    for i, task in enumerate(TASKS_EFFIC):
+    for i, task in enumerate(TASKS):
         sym = task["symbol"]
         files = task["files"]
         name = task["name"]
@@ -324,14 +336,14 @@ def main():
             subprocess.run(["pkill", "-9", "-f", f"pyrefly lsp"],
                            capture_output=True)
 
-        line = f"[{i+1:2d}/12] {name:24s} sym={sym:14s} {status}"
+        line = f"[{i+1:2d}/{len(TASKS):2d}] {name:24s} sym={sym:14s} {status}"
         if detail:
             line += f"  {detail}"
         print(line, flush=True)
         rows.append((name, sym, status, detail))
 
     print()
-    print(f"SUMMARY: {agree}/{len(TASKS_EFFIC)} agree, "
+    print(f"SUMMARY: {agree}/{len(TASKS)} agree, "
           f"{disagree} disagree, {lsperr} lsp-error")
     return 0 if lsperr == 0 and disagree == 0 else (1 if agree == 0 else 0)
 

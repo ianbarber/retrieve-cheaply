@@ -10,7 +10,7 @@ Cheaply*. The canonical BibTeX source is `docs/bibliography_efficiency.bib`.
 ### Su, Yang, Li & Geiping, *Multi-Stream LLMs* (2026)
 Architectural substrate for the stream harness. Releases `stream-qwen3-8b` and
 `stream-qwen3.5-27b` checkpoints. The harness in `scaffold/stream_agent.py` builds on this,
-but the paper's contribution is retrieval efficiency, not the stream architecture.
+but the report's contribution is retrieval efficiency, not the stream architecture.
 
 ```bibtex
 @article{su2026multistream,

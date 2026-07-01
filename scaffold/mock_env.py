@@ -143,7 +143,7 @@ class MultiFileEnv:
     """Multi-file workspace environment: the bug lives in a TARGET file whose type
     definitions live in OTHER files the model has not been shown. This is the
     setting where the checker's knowledge is NON-REDUNDANT with the model's context
-    (the single-file suite's information-redundancy confound, PAPER §9).
+    (the single-file suite's information-redundancy confound).
 
     - real pyrefly over the whole workspace (cross-file diagnostics)
     - read_file/apply_line_edit dispatch on any workspace file
@@ -151,20 +151,26 @@ class MultiFileEnv:
     - rework accounting identical to MockEnv (target-file edits)
     """
 
-    def __init__(self, files: dict, target: str, test_src: str, force_diag=None):
+    def __init__(self, files: dict, target: str, test_src: str, force_diag=None, skip_pyrefly=False,
+                 held_out_src=None):
         import sys
         self.ws = tempfile.mkdtemp(prefix="mfenv_")
         self.files = dict(files)
         self.target = target
-        self.test_src = test_src
+        self.test_src = test_src           # VISIBLE test: the agent's <test> runs this
+        self.held_out_src = held_out_src   # HELD-OUT test: scores correctness; the agent never runs it
+        self._lsp = None                   # persistent per-task `pyrefly lsp` daemon (lazy; reused; killed at close)
+        self._lspmod = None
         self.force_diag = force_diag
+        self.skip_pyrefly = skip_pyrefly   # when no diagnostics are needed, skip `pyrefly init` (faster + no daemon-socket contention)
         for rel, content in files.items():
             p = os.path.join(self.ws, rel)
             os.makedirs(os.path.dirname(p), exist_ok=True) if os.path.dirname(rel) else None
             with open(p, "w") as f: f.write(content)
-        with open(os.path.join(self.ws, "pyrefly.toml"), "w") as f:
-            f.write("[tool.pyrefly]\nproject-includes = [\"*.py\"]\n")
-        subprocess.run([PYREFLY, "init"], cwd=self.ws, capture_output=True, text=True)
+        if not skip_pyrefly:
+            with open(os.path.join(self.ws, "pyrefly.toml"), "w") as f:
+                f.write("[tool.pyrefly]\nproject-includes = [\"*.py\"]\n")
+            subprocess.run([PYREFLY, "init"], cwd=self.ws, capture_output=True, text=True)
         self._py = sys.executable
         self.chars_written = 0
         self.chars_deleted_after_first = 0
@@ -211,41 +217,85 @@ class MultiFileEnv:
                     return span, path
         return None, None
 
-    def lsp_definition(self, symbol):
-        """OPT-IN live LSP go-to-definition: drive a real `pyrefly lsp` daemon over THIS workspace and return the
-        symbol's definition as (span_text, path) — the SAME shape as goto_definition — so the cheap <defn> action is
-        backed by a production language server instead of our AST resolver. Validated to agree with goto_definition
-        12/12 on the effic suite (scripts/validate_pyrefly_lsp.py).
+    def _load_lspmod(self):
+        import importlib.util, sys as _sys
+        mod = _sys.modules.get("validate_pyrefly_lsp")
+        if mod is None:
+            _here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            _path = os.path.join(_here, "scripts", "validate_pyrefly_lsp.py")
+            spec = importlib.util.spec_from_file_location("validate_pyrefly_lsp", _path)
+            mod = importlib.util.module_from_spec(spec)
+            _sys.modules["validate_pyrefly_lsp"] = mod
+            spec.loader.exec_module(mod)
+        return mod
 
-        DEADLOCK GOTCHA: pyrefly daemons deadlock under concurrency — this spawns ONE daemon, queries, and kills it,
-        and must be called SEQUENTIALLY (the eval loop already is). On any error (no daemon, null result, timeout) it
-        returns (None, None) — callers should fall back to the AST resolver, never hang. Reuses the validated client
-        in scripts/validate_pyrefly_lsp.py."""
+    def _ensure_lsp(self):
+        """Start ONE persistent `pyrefly lsp` daemon for THIS workspace (lazy), initialize it, and didOpen every
+        file once. Reused across every lsp_definition call in this env and killed at close() — this is the per-task
+        daemon (not the old spawn-per-call), so a real-LSP run does not pay the daemon-spawn cost on each <defn>.
+        Returns (client, mod) or (None, None). On any failure the daemon is marked dead and callers fall back to AST."""
+        if self._lsp == "dead":
+            return None, None
+        if self._lsp is not None:
+            return self._lsp, self._lspmod
         try:
-            import importlib.util, sys as _sys
-            mod = _sys.modules.get("validate_pyrefly_lsp")
-            if mod is None:
-                _here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                _path = os.path.join(_here, "scripts", "validate_pyrefly_lsp.py")
-                spec = importlib.util.spec_from_file_location("validate_pyrefly_lsp", _path)
-                mod = importlib.util.module_from_spec(spec)
-                _sys.modules["validate_pyrefly_lsp"] = mod
-                spec.loader.exec_module(mod)
-            # ground-truth defining file (to prefer a cross-file use-site); harmless if it misses
-            _, defpath = self.goto_definition(symbol)
-            files = {p: self.read_file(p) for p in self.list_files()}
-            rel, _ls0, _ls1, span = mod.lsp_definition_for_task(files, symbol, defpath, self.ws)
-            if rel is None:
+            import time as _t
+            mod = self._load_lspmod()
+            client = mod.LspClient(self.ws)
+            client.request("initialize", {
+                "processId": os.getpid(), "rootUri": mod.path_to_uri(self.ws),
+                "capabilities": {"textDocument": {"definition": {"linkSupport": True},
+                                                  "synchronization": {"didOpen": True}}},
+                "workspaceFolders": [{"uri": mod.path_to_uri(self.ws), "name": "ws"}]})
+            client.notify("initialized", {})
+            for rel in self.list_files():
+                client.notify("textDocument/didOpen", {"textDocument": {
+                    "uri": mod.path_to_uri(os.path.join(self.ws, rel)), "languageId": "python",
+                    "version": 1, "text": self.read_file(rel)}})
+            _t.sleep(1.0)   # let the daemon index the opened docs
+            self._lsp, self._lspmod = client, mod
+            return client, mod
+        except Exception:
+            self._lsp = "dead"
+            return None, None
+
+    def lsp_definition(self, symbol):
+        """OPT-IN live LSP go-to-definition: query the PERSISTENT per-task `pyrefly lsp` daemon (see _ensure_lsp)
+        and return the symbol's definition as (span_text, path) — the SAME shape as goto_definition — so the cheap
+        <defn> action is backed by a production language server instead of our AST resolver. Validated to agree with
+        goto_definition 12/12 on the synthetic effic suite (scripts/validate_pyrefly_lsp.py).
+
+        DEADLOCK GOTCHA: pyrefly daemons deadlock under concurrency — one daemon per env, queried SEQUENTIALLY (the
+        eval loop already is). On any error (no daemon, null result, timeout) it returns (None, None) so callers fall
+        back to the AST resolver and never hang."""
+        try:
+            client, mod = self._ensure_lsp()
+            if client is None:
                 return None, None
-            # The LSP's textDocument/definition returns the definition LOCATION (a line/range), not the
-            # full body — the raw span is just `class Account:` / `def f(...):`. A go-to-definition *tool*
-            # returns the definition itself: expand the LSP-resolved location to the enclosing top-level
-            # node's full source span (the same body goto_definition returns, the form the model consumes).
-            # The LSP drives the RESOLUTION; we fetch the body at the location it found.
+            _, defpath = self.goto_definition(symbol)   # ground truth, to prefer a cross-file use-site
+            files = {p: self.read_file(p) for p in self.list_files()}
+            use = mod.find_use_site(files, symbol, defpath)
+            if use is None:
+                return None, None
+            use_path, use_line, use_char = use
+            result = client.request("textDocument/definition", {
+                "textDocument": {"uri": mod.path_to_uri(os.path.join(self.ws, use_path))},
+                "position": {"line": use_line, "character": use_char}})
+            if not result:
+                return None, None
+            loc = result[0] if isinstance(result, list) else result
+            if "targetUri" in loc:
+                uri = loc["targetUri"]; rng = loc.get("targetSelectionRange") or loc["targetRange"]
+            else:
+                uri = loc["uri"]; rng = loc["range"]
+            rel = os.path.relpath(mod.uri_to_path(uri), self.ws)
+            ls0, ls1 = rng["start"]["line"], rng["end"]["line"]
+            # The LSP returns the definition LOCATION (a line/range), not the full body. A go-to-definition *tool*
+            # returns the definition itself: expand the LSP-resolved location to the enclosing top-level node's span.
             import ast as _ast
             try:
                 src = files.get(rel) or self.read_file(rel)
-                line1 = int(_ls0 or 0) + 1   # 0-based LSP line -> 1-based
+                line1 = int(ls0) + 1   # 0-based LSP line -> 1-based
                 tree = _ast.parse(src); lines = src.splitlines()
                 for node in tree.body:
                     if isinstance(node, (_ast.ClassDef, _ast.FunctionDef, _ast.AsyncFunctionDef, _ast.Assign)):
@@ -254,8 +304,14 @@ class MultiFileEnv:
                             return "\n".join(lines[node.lineno - 1:end]), rel
             except Exception:
                 pass
-            return (span or None), rel
+            try:
+                with open(mod.uri_to_path(uri)) as f:
+                    srcl = f.read().splitlines()
+                return "\n".join(srcl[ls0:ls1 + 1]), rel
+            except Exception:
+                return None, rel
         except Exception:
+            self._lsp = "dead"   # daemon wedged: stop using it for this env, fall back to AST
             return None, None
 
     def find_references(self, symbol):
@@ -319,11 +375,14 @@ class MultiFileEnv:
                 self.edit_regions[line] = self.edit_regions.get(line, 0) + 1
         return "\n".join(out)
 
-    def run_tests(self):
+    def run_tests(self, test_src=None):
+        """Run a behavioural test in a fresh subprocess. Defaults to the VISIBLE test (self.test_src),
+        what the agent's <test> sees; pass a different source to score on a HELD-OUT test (see score())."""
+        src = test_src if test_src is not None else self.test_src
         runner = os.path.join(self.ws, "_run_tests.py")
         with open(runner, "w") as f:
             f.write("import sys, os\nsys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))\n"
-                    + self.test_src + "\nprint('PASS')\n")
+                    + src + "\nprint('PASS')\n")
         try:
             r = subprocess.run([self._py, runner], cwd=self.ws, capture_output=True,
                                text=True, timeout=20)
@@ -333,6 +392,11 @@ class MultiFileEnv:
             ok, fail = False, "timeout"
         return {"resolved": ok, "f2p_pass": int(ok), "f2p_total": 1,
                 "p2p_pass": 0, "p2p_total": 0, "failure": fail[:300]}
+
+    def score(self):
+        """Authoritative correctness: the HELD-OUT test if the task has one (self.held_out_src),
+        else the visible test. Lets a held-out path catch a latent bug the visible test misses."""
+        return self.run_tests(self.held_out_src) if self.held_out_src else self.run_tests()
 
     def metrics(self):
         rr = self.chars_deleted_after_first / max(self.chars_written, 1)
@@ -345,4 +409,9 @@ class MultiFileEnv:
         return self.read_file(self.target)
 
     def close(self):
+        try:
+            if self._lsp not in (None, "dead"):
+                self._lsp.close()
+        except Exception:
+            pass
         import shutil; shutil.rmtree(self.ws, ignore_errors=True)

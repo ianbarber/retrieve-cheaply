@@ -1,35 +1,41 @@
 # scripts/
 
-The recipe + everything that produces a number in `PAPER.md`. (Superseded
-era-1 scripts — the multi-file suites, isolation probes, old SFT pipeline,
-real-repo pilot — were removed in the 2026-06-24 cleanup; see `log.md` / git
-history if you need them.)
+The recipe and everything that produces a number in `REPORT.md`. Journey-only scripts
+(coverage-judging probes, no-delegation suite, old single-file suite, superseded drivers)
+were removed in the cleanup; see `log.md` / git history if you need them.
 
 ## Task suites
-- `synth_tasks_effic.py` — the definition-sufficient efficiency suite (prefer a
-  cheap `<defn>` over reading a big lib). The headline suite.
-- `synth_tasks_efficread.py` — the read-required boundary tasks (`<defn>`
-  insufficient → must `<read>`); `effmix` = effic + efficread.
-- `synth_tasks_effic_nodel.py` — the no-delegation coverage probe (honest-open;
-  floors the 7B, see `log.md` 2026-06-24).
-- `synth_tasks.py` — the original single-file 14-task suite; still imported by
-  `analysis/stats.py` for the §6.2 SFT held-out numbers.
+- `synth_tasks_effic.py` — synthetic definition-sufficient efficiency suite (prefer a cheap
+  `<defn>` over reading a big lib). The training suite.
+- `synth_tasks_efficread.py` — read-required boundary tasks (`<defn>` insufficient → must
+  `<read>`); `effmix` = effic + efficread.
+- `synth_tasks_effic_real{,2}.py` — real vendored-library suites (`effic_real_vendor/`):
+  `effic_real` (familiar symbols), `effic_real2` (obscure, un-memorized symbols).
+- `synth_tasks_gapd.py` — type-inference tasks for the information channel (overload,
+  generic, union, Protocol, TypedDict); pyrefly names the inferred type the test does not.
 
 ## Core recipe
-- `synth_mf.py` — the condition runner (rollouts / harvest / retest).
-  `--suite {effic,efficread,effmix,effic_nodel}`.
-- `sft_lora.py` — the on-policy LoRA-SFT trainer (the relabel — the headline step).
-- `grpo_cost.py` — the cost-reward GRPO trainer (the independent corroboration).
+- `synth_mf.py` — local condition runner (rollouts / harvest / retest).
+  `--suite {effic,effic_real,effic_real2,gapd,efficread,effmix}`, `--no-defn` (tool ablation),
+  `--adapter` (trained policy).
+- `api_agent.py` — OpenRouter tool-calling harness: test any frontier model in the deployment
+  modality (`--no-defn`, `--with-check`, hard `--budget-usd` cap).
+- `real_mf.py` + `real_repo_loader.py` + `resolver_coverage_audit.py` — RealRepoEnv runner and
+  the RefactorBench loader/audit (report §6).
+- `sft_lora.py` — the on-policy LoRA-SFT trainer (the relabel — the headline training step).
+- `grpo_cost.py` — cost-reward GRPO trainer (independent corroboration, Appendix A).
 - `validate_pyrefly_lsp.py` — validates `<defn>` against a live `pyrefly lsp` daemon.
-- `analysis/stats.py` — **reproduce every recipe headline number**: `python scripts/analysis/stats.py`.
-  Recomputes the full table (headline 3086→688, relabel-only, matched-outcome controls,
-  real-LSP, boundary, GRPO, 27B) from the committed `runs/agent/*.json` and checks each
-  against `PAPER.md`.
+- `analysis/stats.py` — **reproduce the 7B training numbers**: recomputes the table from the
+  committed `runs/agent/*.json` and checks each against `REPORT.md`.
+- `analysis/effic_real_stats.py` — paired stats for the real-code and tool-ablation runs.
 - `make_figures.py` — figures from the result JSONs.
 
-## Headline runs (shell drivers)
-- `run_relabel2.sh` — the on-policy relabel headline (harvest → SFT → retest, `--suite effic`).
-- `run_real_lsp_headline.sh` — headline with the real go-to-definition resolver (`--suite effmix`).
-- `run_lsp_headline.sh` — validation against the live pyrefly LSP daemon.
-- `run_relabel2_27b.sh` — the Qwen3.6-27B scale-transfer run.
-- `run_grpo.sh` — the multi-round cost-RL GRPO corroboration.
+## Shell drivers
+- `run_relabel2.sh` — on-policy relabel training headline (harvest → SFT → retest), report §5.
+- `run_toolablation.sh` — tool-value ablation (with-`defn` vs read-only), report §4.
+- `run_effic_real.sh` — real-code transfer / un-memorized suites, report §6.
+- `run_frontier.sh` — frontier election + efficiency via OpenRouter, report §4–5.
+- `run_gapd_frontier.sh` — type-inference information channel, report §3.
+- `run_relabel2_27b.sh` — Qwen3.6-27B scale-transfer, Appendix B.
+- `run_real_lsp_headline.sh` / `run_lsp_headline.sh` — live `pyrefly lsp` daemon validation, §2.
+- `run_grpo.sh` — multi-round cost-RL GRPO corroboration, Appendix A.
