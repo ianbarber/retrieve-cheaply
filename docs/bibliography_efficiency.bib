@@ -1,6 +1,8 @@
-% Verified bibliography for the efficiency paper (docs/PAPER_draft.md).
-% Every entry below was confirmed by fetching the arXiv abstract page on 2026-06-20 (title/authors verbatim).
-% DAgger (2011) and the LUPI line are conference/journal, not arXiv — verify those DOIs before camera-ready.
+% Verified bibliography for REPORT.md (Making a Language Server Pay Off for a Coding Agent).
+% Method entries confirmed by fetching the arXiv abstract page on 2026-06-20 (title/authors verbatim);
+% the related-work entries (RefactorBench, Self-Debugging, RLTF, type-constrained decoding, self-repair,
+% To Call or Not to Call) were confirmed the same way on 2026-06-30.
+% DAgger (2011) is conference/journal, not arXiv — verify its page/venue before camera-ready.
 
 @inproceedings{agarwal2024gkd,
   title     = {On-Policy Distillation of Language Models: Learning from Self-Generated Mistakes},
@@ -62,6 +64,56 @@
   journal = {arXiv preprint arXiv:2510.22907},
   year    = {2025},
   note    = {RLCSF / Lanser-CLI. The closest prior work: rewards LSP/compiler feedback via RL. VERIFY full author list before camera-ready.}
+}
+
+@inproceedings{gautam2025refactorbench,
+  title     = {RefactorBench: Evaluating Stateful Reasoning in Language Agents Through Code},
+  author    = {Gautam, Dhruv and Garg, Spandan and Jang, Jinu and Sundaresan, Neel and Zilouchian Moghaddam, Roshanak},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2025},
+  note      = {arXiv:2503.07832}
+}
+
+@inproceedings{chen2024selfdebug,
+  title     = {Teaching Large Language Models to Self-Debug},
+  author    = {Chen, Xinyun and Lin, Maxwell and Sch{\"a}rli, Nathanael and Zhou, Denny},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2024},
+  note      = {arXiv:2304.05128}
+}
+
+@article{liu2023rltf,
+  title   = {RLTF: Reinforcement Learning from Unit Test Feedback},
+  author  = {Liu, Jiate and Zhu, Yiqin and Xiao, Kaiwen and Fu, Qiang and Han, Xiao and Yang, Wei and Ye, Deheng},
+  journal = {Transactions on Machine Learning Research (TMLR)},
+  year    = {2023},
+  note    = {arXiv:2307.04349}
+}
+
+@inproceedings{mundler2025typeconstrained,
+  title     = {Type-Constrained Code Generation with Language Models},
+  author    = {M{\"u}ndler, Niels and He, Jingxuan and Wang, Hao and Sen, Koushik and Song, Dawn and Vechev, Martin},
+  booktitle = {Proceedings of the ACM on Programming Languages (PLDI 2025)},
+  volume    = {9},
+  pages     = {601--626},
+  year      = {2025},
+  note      = {arXiv:2504.09246, doi:10.1145/3729274}
+}
+
+@inproceedings{olausson2024selfrepair,
+  title     = {Is Self-Repair a Silver Bullet for Code Generation?},
+  author    = {Olausson, Theo X. and Inala, Jeevana Priya and Wang, Chenglong and Gao, Jianfeng and Solar-Lezama, Armando},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2024},
+  note      = {arXiv:2306.09896}
+}
+
+@article{wu2026tocall,
+  title   = {To Call or Not to Call: A Framework to Assess and Optimize LLM Tool Calling},
+  author  = {Wu, Qinyuan and Das, Soumi and Amani, Mahsa and Nag, Arijit and Lee, Seungeon and Gummadi, Krishna P. and Ravichander, Abhilasha and Zafar, Muhammad Bilal},
+  journal = {arXiv preprint arXiv:2605.00737},
+  year    = {2026},
+  note    = {Preprint (under review); very recent, re-verify before camera-ready.}
 }
 
 % --- Cited in the lit-review plan but NOT load-bearing in the current draft; verify if promoted into the paper ---

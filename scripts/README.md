@@ -1,8 +1,9 @@
 # scripts/
 
 The recipe and everything that produces a number in `REPORT.md`. Journey-only scripts
-(coverage-judging probes, no-delegation suite, old single-file suite, superseded drivers)
-were removed in the cleanup; see `log.md` / git history if you need them.
+(coverage-judging probes, no-delegation suite, old single-file suite, superseded drivers,
+and the RefactorBench / real-repo runner that the report did not use) were removed in the
+cleanup; see `log.md` / git history if you need them.
 
 ## Task suites
 - `synth_tasks_effic.py` — synthetic definition-sufficient efficiency suite (prefer a cheap
@@ -11,31 +12,34 @@ were removed in the cleanup; see `log.md` / git history if you need them.
   `<read>`); `effmix` = effic + efficread.
 - `synth_tasks_effic_real{,2}.py` — real vendored-library suites (`effic_real_vendor/`):
   `effic_real` (familiar symbols), `effic_real2` (obscure, un-memorized symbols).
-- `synth_tasks_gapd.py` — type-inference tasks for the information channel (overload,
-  generic, union, Protocol, TypedDict); pyrefly names the inferred type the test does not.
+- `synth_tasks_gapd.py`, `synth_tasks_gapd2.py` — type-inference tasks for the information
+  channel; `gapd2` adds held-out scoring so a `check_types()` tool can be the unique detector.
+- `synth_tasks_runtime.py` — the execution-feedback boundary suite (structural, easy, and
+  Python-semantic-trap tiers; held-out scored, well-typed so the only detector is execution).
 
 ## Core recipe
 - `synth_mf.py` — local condition runner (rollouts / harvest / retest).
   `--suite {effic,effic_real,effic_real2,gapd,efficread,effmix}`, `--no-defn` (tool ablation),
   `--adapter` (trained policy).
 - `api_agent.py` — OpenRouter tool-calling harness: test any frontier model in the deployment
-  modality (`--no-defn`, `--with-check`, hard `--budget-usd` cap).
-- `real_mf.py` + `real_repo_loader.py` + `resolver_coverage_audit.py` — RealRepoEnv runner and
-  the RefactorBench loader/audit (report §6).
-- `sft_lora.py` — the on-policy LoRA-SFT trainer (the relabel — the headline training step).
+  modality (`--no-defn`, `--with-check`, `--no-test` / `--auto-feedback`, hard `--budget-usd` cap).
+- `sft_lora.py` — the on-policy LoRA-SFT trainer (the relabel, the headline training step).
 - `grpo_cost.py` — cost-reward GRPO trainer (independent corroboration, Appendix A).
 - `validate_pyrefly_lsp.py` — validates `<defn>` against a live `pyrefly lsp` daemon.
 - `analysis/stats.py` — **reproduce the 7B training numbers**: recomputes the table from the
   committed `runs/agent/*.json` and checks each against `REPORT.md`.
 - `analysis/effic_real_stats.py` — paired stats for the real-code and tool-ablation runs.
-- `make_figures.py` — figures from the result JSONs.
+- `analyze_runtime.py` — the execution-feedback matrix analysis (held-out pass@1 by arm).
+- `make_figures.py` — all six figures from the result JSONs.
 
 ## Shell drivers
 - `run_relabel2.sh` — on-policy relabel training headline (harvest → SFT → retest), report §5.
-- `run_toolablation.sh` — tool-value ablation (with-`defn` vs read-only), report §4.
-- `run_effic_real.sh` — real-code transfer / un-memorized suites, report §6.
-- `run_frontier.sh` — frontier election + efficiency via OpenRouter, report §4–5.
-- `run_gapd_frontier.sh` — type-inference information channel, report §3.
 - `run_relabel2_27b.sh` — Qwen3.6-27B scale-transfer, Appendix B.
+- `run_toolablation.sh` — tool-value ablation (with-`defn` vs read-only), report §4.
+- `run_effic_real.sh` — real-code transfer / un-memorized suites, report §4.
+- `run_frontier.sh` — frontier election + efficiency via OpenRouter, report §4–5.
+- `run_seeds_ext.sh` — seed extension for the 27B + frontier efficiency runs.
+- `run_gapd_frontier.sh`, `run_gapd2_frontier.sh` — type-inference channel (gapd2 = fair held-out test), §3.
+- `run_runtime_frontier.sh` — the execution-feedback boundary test (no-run / run / handed-over), §3.
 - `run_real_lsp_headline.sh` / `run_lsp_headline.sh` — live `pyrefly lsp` daemon validation, §2.
 - `run_grpo.sh` — multi-round cost-RL GRPO corroboration, Appendix A.

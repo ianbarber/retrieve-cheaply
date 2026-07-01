@@ -8,29 +8,30 @@ models in a tool-calling loop, by toggling each language-server capability at fi
 The payoff is retrieval efficiency: a go-to-definition action cuts input tokens 3.5 to 4.7 times at
 equal success, but only when retrieval is required, the alternative is a whole-file read, and the
 agent chooses the cheap action. A capable model chooses it from prompt framing alone (a frontier model
-on 100% of rollouts); a 7B has to be trained to (0% to 100% use, 4.5 times fewer tokens). The
+on 100% of rollouts); a 7B has to be trained to (near-zero to 100% use, 4.5 times fewer tokens). The
 information itself (diagnostics, references, completion, type inference, and even the program's runtime
-behavior) does not raise success when the agent can derive the same fact by reading the source, which
-held on every channel and task we tested. This covers a lot of real code, but not all of it: a very
-large or highly complex codebase, where the needed fact is not readable in the steps available, may
-carry information we did not test.
+behavior) does not raise success when the agent can derive the same fact by reading the source in
+budget, which held on every channel and task we tested. This covers a lot of real code, but not all of
+it: a very large or highly complex codebase, where the needed fact is not readable within the agent's
+read budget, may carry information we did not test.
 
 ## Contributions
 
 - **Efficiency is the win, under three conditions.** A go-to-definition action reduces input tokens
   3.5 to 4.7 times at equal success, and only when retrieval is required, the counterfactual is a
   whole-file read, and the agent chooses the cheap action. We show this on synthetic and real
-  vendored-library tasks, for a 7B, a 27B, and three frontier models.
+  vendored-library tasks, for a 7B, a 27B, and two frontier models.
 - **Election is capability-gated.** A capable model chooses the cheap action when the system
   prompt frames it as cheaper (a 27B at 88 to 93%, a frontier model at 100%); a 7B needs on-policy
-  training (0% to 100%). We give the training recipe and show that prompting and offline imitation
-  fail for the weak model.
-- **Information is redundant when it is readable.** When the fact a language server would supply is
-  derivable from the source by reading, handing it to a self-retrieving agent does not raise pass@1.
-  This held on every channel we tested (correction, completeness, navigation, prevention, scale, type
-  inference) and even on the program's runtime behavior. It covers a lot of real code. We did not test
-  very large or highly complex codebases, or facts that appear only at run time, where the fact may not
-  be readable in the steps available and a language server may then carry information that helps.
+  training (near-zero to 100%). We give the training recipe and show that prompting and offline
+  imitation fail for the weak model.
+- **Information is redundant when it is readable in budget.** When the fact a language server would
+  supply is derivable from the source by reading within the agent's read budget, handing it to a
+  self-retrieving agent does not raise pass@1. This held on every channel we tested (correction,
+  completeness, navigation, prevention, scale, type inference) and, as a boundary check, on the
+  program's runtime behavior. It covers a lot of real code. We did not test very large or highly complex
+  codebases, or facts that appear only at run time, where the fact may not be readable in budget and a
+  language server may then carry information that helps.
 
 ---
 
@@ -52,10 +53,10 @@ An agent will not use a cheaper action because it exists. We separate the inform
 the efficiency value by toggling each capability at fixed model capability: we run the same model
 with and without a given language-server action, rather than compare a trained model to an
 untrained one. We do this across two synthetic task families, real vendored library code, a 7B and
-a 27B open model, and three frontier models driven through a tool-calling API.
+a 27B open model, and two frontier models driven through a tool-calling API.
 
 The result is a deployable account of when a language server pays off in an agentic loop, and how
-to get the agent to use it. On the synthetic efficiency suite a 7B moves from 0% to 100%
+to get the agent to use it. On the synthetic efficiency suite a 7B moves from near-zero to 100%
 go-to-definition use and from 3086 to 688 input tokens after one on-policy training round; an
 untrained 27B reaches 88 to 93% use from prompt framing; a frontier model in a tool-calling loop
 reaches 100% use and a 3.7 times token reduction at equal success (Figure 1).
@@ -103,6 +104,12 @@ uses obscure ones a model is unlikely to have memorized. An inference suite (`ga
 type the type-checker infers (overload resolution, generics, union narrowing, `Protocol`,
 `TypedDict`).
 
+These are real source with constructed tasks: a small `target.py` stub calls into the vendored library,
+and the target symbols are chosen for non-obvious signatures, argument order, or behavior. That isolates
+retrieval cost cleanly, but it is not yet evidence about messy production codebases (multi-hop edits,
+class hierarchies, imports and re-exports, generated code, project-wide symbol reasoning); §7 revisits
+this.
+
 **Metrics.** We report go-to-definition use rate, whole-file read rate, input tokens to solve, and
 pass@1, with exact McNemar on success and an exact sign test on tokens over paired (task, seed)
 units.
@@ -110,9 +117,10 @@ units.
 ## 3. Language-server information is redundant (C1)
 
 We tested whether the information a language server provides, as opposed to a cheaper way to
-retrieve it, raises success for a self-retrieving agent. It does not, on any channel we tested. The
-agent reads the source and derives the same fact, so the information is redundant wherever it is
-readable.
+retrieve it, raises success for a self-retrieving agent. In the self-retrieval regimes we test it does
+not, on any channel, when the same fact is readable within the agent's read budget: the agent reads the
+source and derives the fact itself, so the information is redundant there. This is bounded evidence, not
+a claim that diagnostics or types never help; §7 states where it need not hold.
 
 **Correction.** An oracle ladder replaces the diagnostic with progressively stronger feedback: no
 feedback, synchronous diagnostics, perfect error localization, and the gold fix. For a 7B, perfect
@@ -135,18 +143,27 @@ held-out test*, and that pyrefly flags statically (`sum(int | None)`, an unknown
 `NoneType has no attribute`). We give two frontier models a `check_types()` tool that surfaces those
 diagnostics, told the visible test is partial, and also run a realistic condition with no such hint.
 The checker changes nothing. In every condition both models solve **18/18 with zero latent bugs**,
-with and without the checker, and even when they elect it (`deepseek-chat-v3.1` calls it on every
-rollout, `claude-sonnet-4.5` on more than half). The models write the correct fix by careful reading
-and do not ship the inference bug for the checker to catch.
+with and without the checker, and even when they elect it. The models write the correct fix by careful
+reading and do not ship the inference bug for the checker to catch.
+
+| condition | deepseek-v3.1 | claude-sonnet-4.5 |
+|---|---|---|
+| realistic (no hint, no checker) | 18/18 | 18/18 |
+| hinted, no checker | 18/18 | 18/18 |
+| hinted, `check_types()` available | 18/18 | 18/18 |
+
+*Held-out pass@1 on the six rich tasks (3 seeds, n=18): every cell is 18/18, zero latent bugs. When the
+checker is available both models call it (deepseek on all 18 rollouts, sonnet on 10 of 18), and the
+outcome is unchanged.*
 
 A language server computes from source the agent can also read. Across correction, completeness,
 navigation, prevention, scale, and type inference, a capable agent reads that source and derives the
 same fact, so the information is redundant and the value of a language server is the cost of retrieval,
-not its content. This holds wherever the fact is readable, which covers most everyday code. It need not
-hold where the fact is not readable in the steps available: a codebase too large or too tangled to read
-under budget, or an inference a frontier model reliably gets wrong while the visible test misses it. We
-did not find such a case, the inference tasks were an adversarial reviewer's plausible-error designs and
-the models still did not err, but we did not rule one out (§7).
+not its content. This holds wherever the fact is readable in budget, which covers most everyday code. It
+need not hold where the fact is not readable in budget: a codebase too large or too tangled to read under
+budget, or an inference a frontier model reliably gets wrong while the visible test misses it. We did not
+find such a case, the inference tasks were an adversarial reviewer's plausible-error designs and the
+models still did not err, but we did not rule one out (§7).
 
 ![A type checker does not reduce latent bugs, even with held-out scoring](docs/figures/fig2.png)
 
@@ -187,16 +204,19 @@ the model fixed and toggle the action, rather than compare a trained model to an
 
 | setting | model | tokens with `<defn>` | tokens read-only | factor | success |
 |---|---|---|---|---|---|
-| synthetic, trained vs untrained | 7B | 688 | 3086 | 4.5× | 1.00 vs 0.65 |
+| synthetic, matched success | 7B (trained-`<defn>` vs trained-`<read>`) | 684 | 3191 | 4.7× | 1.00 = 1.00 |
 | real obscure (`effic_real2`) | 27B | 1302 | 4563 | 3.5× | 1.00 = 1.00 |
 | real, tool-calling | claude-sonnet-4.5 | 6018 | 21985 | 3.7× | 1.00 = 1.00 |
 | real, tool-calling | deepseek-chat-v3.1 | 7705 | 36192 | 4.7× | 1.00 = 1.00 |
 
-*Mean input tokens to solve. For the 7B the comparison is untrained-reading vs trained-`<defn>`
-(election by training); for the 27B and frontier models it is the same model with the action removed
-vs present (election by framing). The 27B ablation is paired (sign test p=0.0013, cheaper on 33/44
-cells); the frontier numbers are larger because a tool-calling turn re-sends the growing context, so
-a read-only agent re-pays for the file it loaded.*
+*Mean input tokens to solve, at matched success in every row: the action is toggled with capability
+held fixed. The 7B row is a matched-success control, both policies trained to retrieve but one via
+`<read>` and one via `<defn>`, so the 4.7× gap is the action choice alone and not a success gain (sign
+test p=6.8e-4 on tasks both solve, n=40). The 27B row is the same model with the action removed vs
+present (paired sign test p=0.0013, cheaper on 33/44 cells); the frontier numbers are larger because a
+tool-calling turn re-sends the growing context, so a read-only agent re-pays for the file it loaded.
+The election-by-training comparison for the 7B (untrained reading, 3086 tokens at 0.65 success, vs
+trained `<defn>`, 688 at 1.00) is in §5.*
 
 The reduction holds only under three conditions, each isolated by a control.
 
@@ -209,11 +229,6 @@ The reduction holds only under three conditions, each isolated by a control.
    thrashes on 18 of 20 failures without reading), so the per-call saving is absent for it; a 27B and a
    frontier model read, so the saving is present.
 3. **The agent chooses the cheap action.** Availability is not use (§5).
-
-A separate control rules out that the saving merely reflects retrieval helping success: a model
-trained to retrieve via `<read>` spends 3191 input tokens against a model trained to retrieve via
-`<defn>` at 684, on tasks both solve (4.7× cheaper, sign test p=6.8e-4, n=40). Both retrieve and
-solve, so the saving is the action choice itself.
 
 The cost-gap question needs a task where the agent must read one file to edit another, so a cheaper
 read can pay off; the symbol is consulted, not edited. The vendored-library suites are built for this.
@@ -302,7 +317,7 @@ value we measure is retrieval cost.
 
 Redundant retrieval for capable models. Outside code, the same pattern is documented: a tool or retrieval
 call can be redundant or net-negative when the model already holds the answer. "To Call or Not to Call"
-(arXiv:2605.00737) reports tool calls with negative utility in roughly a third of cases when the model
+(Wu et al., 2026) reports tool calls with negative utility in roughly a third of cases when the model
 succeeds without them, and IKEA (Huang et al., 2025) reports search agents over-retrieving rather than
 using what they already know. Our finding is the language-server instance of the same effect, measured
 against code-agent pass@1.
@@ -323,9 +338,9 @@ ours.
   and the non-guessability of tasks. We validate that the effect survives on real vendored library code
   and at the frontier in the tool-calling modality (§4), but the read-required boundary covers two reasons
   a read is needed (name-hidden, many-symbol), not all.
-- **Redundancy holds where the fact is readable.** Across the channels we tested, the language server's
-  information is redundant for a self-retrieving agent, because the agent reads the source and derives the
-  fact. A fact the agent cannot recover by reading, a runtime value it would have to execute for, an
+- **Redundancy holds where the fact is readable in budget.** Across the channels we tested, the language
+  server's information is redundant for a self-retrieving agent, because the agent reads the source and
+  derives the fact within its read budget. A fact the agent cannot recover by reading, a runtime value it would have to execute for, an
   inference beyond the model's reach, or a codebase too large to read under budget, could make it
   non-redundant. We did not find such a case but did not rule one out.
 - **The inference null is bounded by task difficulty.** Our held-out-scored inference test (§3) covers the
@@ -354,7 +369,7 @@ model chooses the cheap action when the prompt frames it as cheaper; a weak mode
 round of on-policy imitation, where prompting and offline cloning fail. The information a language server
 supplies does not raise success when the agent can read the source and derive the same fact, which held on
 every channel and task we tested. A very large or highly tangled codebase, where the needed facts are not
-readable in the steps available, is where its information might still pay off; we did not test that regime.
+readable in budget, is where its information might still pay off; we did not test that regime.
 
 **The recipe.** Expose go-to-definition as an action, not diagnostics as context. Frame it in the system
 prompt as cheaper than a whole-file read; a capable model then uses it without training. If the model is
@@ -392,6 +407,48 @@ result.
 
 The token reduction at matched success is 5.5× (n=24). The recipe is not a small-model artifact and
 transfers across a roughly 4× scale jump and a model-family change.
+
+## Appendix C: models, versions, and cost accounting
+
+Closed-model results date quickly, so we record the exact configuration. Frontier models were driven
+through the OpenRouter API by `scripts/api_agent.py`; open models were run locally with logit access on a
+single NVIDIA DGX Spark (GB10, 128 GB unified memory).
+
+| role | model id | provider | runs |
+|---|---|---|---|
+| 7B | `Qwen/Qwen2.5-Coder-7B-Instruct` | local (HF) | training, ablation |
+| 27B | `Qwen/Qwen3.6-27B` | local (HF) | ablation, transfer |
+| frontier | `anthropic/claude-sonnet-4.5` | OpenRouter | efficiency, election, inference, execution |
+| frontier | `deepseek/deepseek-chat-v3.1` | OpenRouter | efficiency, election, inference, execution |
+
+Frontier runs were executed 2026-06-28 to 2026-06-30. Temperature is 0.0 for the tool-value ablation and
+election runs (deterministic), and 0.7 for the held-out inference (`gapd2`) and execution-feedback
+(`runtime`) suites, where we sample variation across seeds. Cost is estimated per rollout from the
+per-token prices fetched once from the OpenRouter `/models` endpoint times the recorded `prompt_tokens`
+and `completion_tokens`; `api_agent.py` writes `est_cost_usd` per rollout and stops before any call that
+would exceed a hard `--budget-usd` cap. No prompt caching is assumed: a tool-calling turn re-sends the
+growing context, which is why absolute frontier token counts are larger and are compared only within the
+same harness (§7).
+
+## References
+
+Generated from `docs/bibliography_efficiency.bib`. Method entries were verified against the arXiv
+abstract page on 2026-06-20 and the related-work entries on 2026-06-30.
+
+- Agarwal, R., Vieillard, N., Zhou, Y., et al. (2024). On-Policy Distillation of Language Models: Learning from Self-Generated Mistakes (GKD). ICLR. arXiv:2306.13649.
+- Chen, X., Lin, M., Schärli, N., Zhou, D. (2024). Teaching Large Language Models to Self-Debug. ICLR. arXiv:2304.05128.
+- Gautam, D., Garg, S., Jang, J., Sundaresan, N., Zilouchian Moghaddam, R. (2025). RefactorBench: Evaluating Stateful Reasoning in Language Agents Through Code. ICLR. arXiv:2503.07832.
+- Huang, Z., Yuan, X., Ju, Y., Zhao, J., Liu, K. (2025). Reinforced Internal-External Knowledge Synergistic Reasoning for Efficient Adaptive Search Agent (IKEA). arXiv:2505.07596.
+- Li, C., Qiang, R., Huang, J., et al. (2026). Revisiting DAgger in the Era of LLM-Agents. arXiv:2605.12913.
+- Liu, J., Zhu, Y., Xiao, K., et al. (2023). RLTF: Reinforcement Learning from Unit Test Feedback. TMLR. arXiv:2307.04349.
+- Mündler, N., He, J., Wang, H., Sen, K., Song, D., Vechev, M. (2025). Type-Constrained Code Generation with Language Models. PLDI (Proc. ACM Program. Lang. 9). arXiv:2504.09246.
+- Olausson, T. X., Inala, J. P., Wang, C., Gao, J., Solar-Lezama, A. (2024). Is Self-Repair a Silver Bullet for Code Generation? ICLR. arXiv:2306.09896.
+- Ross, S., Gordon, G. J., Bagnell, J. A. (2011). A Reduction of Imitation Learning and Structured Prediction to No-Regret Online Learning (DAgger). AISTATS, PMLR 15.
+- Ross, S., Bagnell, J. A. (2014). Reinforcement and Imitation Learning via Interactive No-Regret Learning (AggreVaTe). arXiv:1406.5979.
+- Wang, H., Qian, C., Zhong, W., et al. (2025). Acting Less is Reasoning More! Teaching Model to Act Efficiently (OTC-PO). arXiv:2504.14870.
+- Wu, Q., Das, S., Amani, M., et al. (2026). To Call or Not to Call: A Framework to Assess and Optimize LLM Tool Calling. arXiv:2605.00737.
+- Zelikman, E., Wu, Y., Mu, J., Goodman, N. D. (2022). STaR: Bootstrapping Reasoning With Reasoning. NeurIPS. arXiv:2203.14465.
+- Zhang, Y., et al. (2025). Reinforcement Learning from Compiler and Language Server Feedback (RLCSF / Lanser-CLI). arXiv:2510.22907.
 
 ---
 

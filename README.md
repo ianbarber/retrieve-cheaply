@@ -100,14 +100,13 @@ The local harness (`scripts/synth_mf.py`) does the same for open-weight models, 
 |---|---|
 | `scaffold/stream_agent.py` | local token-stream coding agent (`<read>`/`<defn>`/`<findrefs>`/`<test>`/`<edit>`, `--no-defn` ablation) |
 | `scaffold/mock_env.py` | in-memory workspace with real Pyrefly and the `<defn>` resolver |
-| `scaffold/real_env.py` | `RealRepoEnv` over a checked-out git repo, with qualified `module.Class.method` resolution |
 | `scripts/api_agent.py` | OpenRouter tool-calling harness (test any frontier model) |
 | `scripts/synth_tasks_effic.py` | synthetic definition-sufficient efficiency suite |
 | `scripts/synth_tasks_efficread.py` | read-required boundary suite |
 | `scripts/synth_tasks_effic_real{,2}.py` | real vendored-library suites (`effic_real_vendor/`) |
 | `scripts/synth_tasks_gapd.py`, `scripts/synth_tasks_gapd2.py` | type-inference suite (gapd2 adds held-out scoring) |
 | `scripts/synth_tasks_runtime.py` | execution-feedback boundary suite (structural, easy, and semantic-trap tiers) |
-| `scripts/synth_mf.py`, `scripts/real_mf.py` | local condition runners |
+| `scripts/synth_mf.py` | local condition runner |
 | `scripts/sft_lora.py` | on-policy LoRA-SFT trainer |
 | `scripts/validate_pyrefly_lsp.py` | validates `<defn>` against a live `pyrefly lsp` daemon |
 | `scripts/grpo_cost.py` | cost-reward GRPO corroboration (optional) |
