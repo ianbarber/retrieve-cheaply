@@ -1,3 +1,0 @@
-# Install the project and its runtime dependencies in editable mode.
-# For development extras: pip install -e '.[dev]'
--e .
