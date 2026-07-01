@@ -3,13 +3,13 @@
 grayscale-legible, vector PDF output (+ PNG previews). Every number is read from runs/agent/*.json;
 nothing is hardcoded. Run: .venv-streams.system/bin/python scripts/make_figures.py
 
-Figures -> docs/figures/fig{1..6}.pdf:
-  fig1  C2  tool-value ablation: input tokens with <defn> vs read-only, per model
-  fig2  C1  information redundant: held-out-scored inference test (check_types does not reduce latent bugs)
-  fig3  C3  election is capability-gated: <defn> use by model on the obscure real-code suite
-  fig4  C3  the 7B on-policy training win (use / cost / success), with held-out types
-  fig5  C3  the learned policy is a boundary (action use by definition-sufficient vs read-required)
-  fig6  C1  execution feedback is redundant for a frontier agent: held-out pass@1 flat across the
+Figures -> docs/figures/fig{1..6}.pdf (in report appearance order):
+  fig1  C1  tool-value ablation: input tokens with <defn> vs read-only, per model
+  fig2  C2  election is capability-gated: <defn> use by model on the obscure real-code suite
+  fig3  C2  the 7B on-policy training win (use / cost / success), with held-out types
+  fig4  C2  the learned policy is a boundary (action use by definition-sufficient vs read-required)
+  fig5  C3  information redundant: held-out-scored inference test (check_types does not reduce latent bugs)
+  fig6  C3  execution feedback is redundant for a frontier agent: held-out pass@1 flat across the
             no-run / elect-to-run / handed-over arms, only efficiency (turns) moves
 """
 import json, os, sys
@@ -61,7 +61,7 @@ def save(fig, name):
     print(f"wrote {OUT}/{name}.pdf")
 
 
-# ---------- Figure 1 (C2): tool-value ablation — tokens with <defn> vs read-only ----------
+# ---------- Figure 1 (C1): tool-value ablation — tokens with <defn> vs read-only ----------
 # Same model, action toggled. 27B local (in_tokens), two frontier models (prompt_tokens).
 abl = [("27B", "er2_27b_base.json", "er2_27b_readonly.json"),
        ("sonnet-4.5", "fr_sonnet45_withdefn.json", "fr_sonnet45_readonly.json"),
@@ -84,7 +84,7 @@ for i in x:
     ax.text(i, ro[i] * 1.15, f"{ro[i]/max(withd[i],1):.1f}×", ha="center", fontsize=10, fontweight="bold")
 save(fig, "fig1")
 
-# ---------- Figure 2 (C1): information redundant — held-out-scored inference test ----------
+# ---------- Figure 5 (C3): information redundant — held-out-scored inference test ----------
 # gapd2: the wrong fix passes the visible test but fails a hidden held-out test and is pyrefly-flagged.
 # Held-out pass@1 (rich tasks) across 3 conditions: realistic (no hint), fair-no-check, fair-+check.
 def rich(p): return [r for r in rows(p) if r.get("group") == "rich"]
@@ -104,9 +104,9 @@ ax.set_title("A type checker does not reduce latent bugs (held-out scored)")
 ax.legend(frameon=False, fontsize=9, ncol=3, loc="upper center")
 ax.text(0.5, 0.04, "0 latent bugs in every condition", transform=ax.transAxes, ha="center",
         fontsize=9, style="italic", color="#444444")
-save(fig, "fig2")
+save(fig, "fig5")
 
-# ---------- Figure 3 (C3): election is capability-gated — <defn> use by model ----------
+# ---------- Figure 2 (C2): election is capability-gated — <defn> use by model ----------
 # All on the obscure real-code suite (effic_real2). Weak model only elects after training;
 # capable models elect from prompt framing.
 elec = [("7B\n(default)", "er2_base.json", C["grey"]),
@@ -124,9 +124,9 @@ ax.set_ylabel("go-to-definition use (%)"); ax.set_ylim(0, 112)
 ax.set_title("Election is capability-gated: weak model needs training, capable models need framing")
 for i, v in enumerate(evals):
     ax.text(i, v + 2, f"{v:.0f}%", ha="center", fontsize=10)
-save(fig, "fig3")
+save(fig, "fig2")
 
-# ---------- Figure 4 (C3 detail): the 7B on-policy training win ----------
+# ---------- Figure 3 (C2 detail): the 7B on-policy training win ----------
 base = [r for r in rows("powered_retest_base.json") if r["task"] in DEFN] + rows("powered_retest_base_x.json")
 sft = [r for r in rows("powered_retest_sft.json") if r["task"] in DEFN] + rows("powered_retest_sft_x.json")
 fig, axes = plt.subplots(1, 3, figsize=(9.4, 3.3), constrained_layout=True)
@@ -148,9 +148,9 @@ axes[2].bar([i+w/2 for i in xx], [hp, hq], w, color=C["sky"], label="held-out ty
 axes[2].set_xticks(xx); axes[2].set_xticklabels(g); axes[2].set_ylabel("success (%)"); axes[2].set_ylim(0, 109)
 axes[2].set_title("(c) task success"); axes[2].legend(frameon=False, fontsize=9)
 fig.suptitle("Training a 7B to prefer cheap retrieval (definition-sufficient tasks, 12 seeds)", y=1.06)
-save(fig, "fig4")
+save(fig, "fig3")
 
-# ---------- Figure 5 (C3 boundary): action use by task type, the policy is a boundary ----------
+# ---------- Figure 4 (C2 boundary): action use by task type, the policy is a boundary ----------
 def used_read(x): return x.get("n_reads", 0) > 0
 base_r = [r for r in rows("powered_retest_base.json") if r["task"] in READ]
 sft_r = [r for r in rows("powered_retest_sft.json") if r["task"] in READ]
@@ -168,9 +168,9 @@ ax.bar([i+1.5*w for i in xx], post_r, w, color=C["vermillion"], hatch="//", labe
 ax.set_xticks(list(xx)); ax.set_xticklabels(cats); ax.set_ylabel("action use (%)"); ax.set_ylim(0, 115)
 ax.set_title("The learned policy is a boundary, not a collapse")
 ax.legend(frameon=False, fontsize=8, ncol=2, loc="upper center")
-save(fig, "fig5")
+save(fig, "fig4")
 
-# ---------- Figure 6 (C1): execution feedback is redundant, an efficiency lever only ----------
+# ---------- Figure 6 (C3): execution feedback is redundant, an efficiency lever only ----------
 # Runtime-feedback test: hold model+task fixed, vary execution access across three arms
 # (no run_tests / elect to run / result handed over for free). Held-out pass@1 is flat; only
 # turns move. Combines the structural and trap tiers per (model, arm).

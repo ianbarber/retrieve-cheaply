@@ -1,14 +1,14 @@
 # LSPs for LLMs
 
 Code, result data, and reproduction scripts for the tech report [REPORT.md](./REPORT.md),
-*Making a Language Server Pay Off for a Coding Agent: Redundant Information, Cheaper Retrieval*.
+*Language Servers Help Coding Agents by Making Retrieval Cheaper, Not by Adding Context*.
 
 Do language servers help coding agents by supplying **information**, and do they make retrieval
 **cheaper**? The win is the second: a cheap go-to-definition action saves tokens at equal success
 under three conditions, and getting the agent to use it is free for capable models and trainable for
-weak ones. The first is no wherever the agent can read the source and derive the fact, which held on
-every channel and task we tested. That covers a lot of real code; a very large or highly complex
-codebase, where the fact is not readable in the steps available, is where a language server's
+weak ones. The first is no wherever the agent can read the source and derive the fact in budget, which
+held on every channel and task we tested. That covers a lot of real code; a very large or highly complex
+codebase, where the fact is not readable within the agent's read budget, is where a language server's
 information might still help, and we did not test that.
 
 ## The result
@@ -28,15 +28,15 @@ information might still help, and we did not test that.
    tokens. A capable model needs no training: framing `<defn>` in the system prompt as cheaper than
    a read moves an untrained 27B to 88 to 93% use and a frontier model to 100%.
 
-3. **Information is redundant when it is readable.** When the fact a language server would supply is
-   derivable from the source by reading, handing it to a self-retrieving agent does not raise pass@1,
-   on every channel we tested (correction, completeness, navigation, prevention, scale, type
-   inference). Both frontier models solve the held-out-scored inference test 18/18 with zero latent
-   bugs, with a `check_types()` tool and without it. The same holds for execution feedback, a fact not
-   in the text: on 14 small bug-fixes two frontier models score 100% held-out whether they can run the
-   code, elect to run it, or are handed the result free, and only efficiency (turns) moves. We did not
-   test very large or highly complex codebases, where the fact may not be readable and a language
-   server may then help.
+3. **Information is redundant when it is readable in budget.** When the fact a language server would
+   supply is derivable from the source by reading within the agent's read budget, handing it to a
+   self-retrieving agent does not raise pass@1, on every channel we tested (correction, completeness,
+   navigation, prevention, scale, type inference). Both frontier models solve the held-out-scored
+   inference test 18/18 with zero latent bugs, with a `check_types()` tool and without it. The same holds
+   for execution feedback, a fact not in the text: on 14 small bug-fixes two frontier models score 100%
+   held-out whether they can run the code, elect to run it, or are handed the result free, and only
+   efficiency (turns) moves. We did not test very large or highly complex codebases, where the fact may
+   not be readable in budget and a language server may then help.
 
 ## The recipe
 
@@ -61,12 +61,12 @@ real-code and tool-ablation runs. The `scripts/run_*.sh` drivers regenerate the 
 
 | Driver | Reproduces |
 |---|---|
-| `run_relabel2.sh` | 7B on-policy training (harvest, SFT, retest), report §5 |
-| `run_toolablation.sh` | tool-value ablation, with `<defn>` vs read-only, report §4 |
-| `run_frontier.sh` | frontier election and efficiency via OpenRouter, report §4 to §5 |
-| `run_gapd_frontier.sh` | the type-inference information channel, report §3 |
-| `run_gapd2_frontier.sh` | the held-out-scored fair inference test, report §3 |
-| `run_runtime_frontier.sh` | the execution-feedback boundary test (no-run / run / handed-over), report §3 |
+| `run_relabel2.sh` | 7B on-policy training (harvest, SFT, retest), report §4 |
+| `run_toolablation.sh` | tool-value ablation, with `<defn>` vs read-only, report §3 |
+| `run_frontier.sh` | frontier election and efficiency via OpenRouter, report §3 to §4 |
+| `run_gapd_frontier.sh` | the type-inference information channel, report §5 |
+| `run_gapd2_frontier.sh` | the held-out-scored fair inference test, report §5 |
+| `run_runtime_frontier.sh` | the execution-feedback boundary test (no-run / run / handed-over), report §5 |
 | `run_relabel2_27b.sh` | 27B cross-scale transfer, Appendix B |
 | `run_grpo.sh` | cost-reward RL corroboration, Appendix A |
 

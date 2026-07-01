@@ -33,13 +33,13 @@ cleanup; see `log.md` / git history if you need them.
 - `make_figures.py` — all six figures from the result JSONs.
 
 ## Shell drivers
-- `run_relabel2.sh` — on-policy relabel training headline (harvest → SFT → retest), report §5.
+- `run_relabel2.sh` — on-policy relabel training headline (harvest → SFT → retest), report §4.
 - `run_relabel2_27b.sh` — Qwen3.6-27B scale-transfer, Appendix B.
-- `run_toolablation.sh` — tool-value ablation (with-`defn` vs read-only), report §4.
-- `run_effic_real.sh` — real-code transfer / un-memorized suites, report §4.
-- `run_frontier.sh` — frontier election + efficiency via OpenRouter, report §4–5.
+- `run_toolablation.sh` — tool-value ablation (with-`defn` vs read-only), report §3.
+- `run_effic_real.sh` — real-code transfer / un-memorized suites, report §3.
+- `run_frontier.sh` — frontier election + efficiency via OpenRouter, report §3–4.
 - `run_seeds_ext.sh` — seed extension for the 27B + frontier efficiency runs.
-- `run_gapd_frontier.sh`, `run_gapd2_frontier.sh` — type-inference channel (gapd2 = fair held-out test), §3.
-- `run_runtime_frontier.sh` — the execution-feedback boundary test (no-run / run / handed-over), §3.
+- `run_gapd_frontier.sh`, `run_gapd2_frontier.sh` — type-inference channel (gapd2 = fair held-out test), §5.
+- `run_runtime_frontier.sh` — the execution-feedback boundary test (no-run / run / handed-over), §5.
 - `run_real_lsp_headline.sh` / `run_lsp_headline.sh` — live `pyrefly lsp` daemon validation, §2.
 - `run_grpo.sh` — multi-round cost-RL GRPO corroboration, Appendix A.
