@@ -1,44 +1,45 @@
 # LSPs for LLMs
 
-Code, result data, and reproduction scripts for the tech report [REPORT.md](./REPORT.md),
-*Language Servers Help Coding Agents by Making Retrieval Cheaper, Not by Adding Context*.
+Code, result data, and reproduction scripts for the in-progress tech report
+[REPORT.md](./REPORT.md), *When Does a Language Server Help a Coding Agent? Work-in-Progress Findings*.
 
-Do language servers help coding agents by supplying **information**, and do they make retrieval
-**cheaper**? The win is the second: a cheap go-to-definition action saves tokens at equal success
-under three conditions, and getting the agent to use it is free for capable models and trainable for
-weak ones. The first is no wherever the agent can read the source and derive the fact in budget, which
-held on every channel and task we tested. That covers a lot of real code; a very large or highly complex
-codebase, where the fact is not readable within the agent's read budget, is where a language server's
-information might still help, and we did not test that.
+**Status: work in progress.** We are exploring when a language server (LSP) actually helps an LLM
+coding agent, by separating the two things it offers, **information** (diagnostics, types, references)
+and **cheaper retrieval** (go-to-definition instead of a whole-file read), and toggling each at fixed
+model capability.
 
-## The result
+## Current findings (work in progress)
 
-1. **Efficiency is the win, under three conditions.** A `<defn>` action cuts input tokens 3.5 to 4.7
-   times at equal success, when retrieval is required, the counterfactual is a whole-file read, and
-   the agent chooses the cheap action. The tool-value ablation toggles the action on the same model:
+- **Information is redundant when it is readable in budget.** Wherever the agent can read the source and
+  derive the fact, handing over the language server's information does not raise pass@1, on every channel
+  we tested (correction, completeness, navigation, prevention, scale, type inference) and, as a boundary
+  check, on runtime behavior. Both frontier models solve the held-out-scored inference test 18/18 with
+  zero latent bugs, with a `check_types()` tool and without it. (Untested: a codebase too large or tangled
+  to read in budget.)
+- **Election is capability-gated.** A 7B uses `<defn>` 2% of the time by default and ignores a prompt
+  telling it to prefer the action; one on-policy training round takes it to 100% use and 4.5× fewer
+  tokens. A capable model needs only framing: presenting `<defn>` as cheaper than a read moves an
+  untrained 27B to 88 to 93% use and a frontier model to 100%.
+- **Efficiency is a win only against a whole-file read.** Toggling the action on the same model, `<defn>`
+  cuts input tokens 3.5 to 4.7× at equal success:
 
-   | model | tokens with `<defn>` | tokens read-only | factor |
-   |---|---|---|---|
-   | 27B (real obscure suite) | 1302 | 4563 | 3.5× |
-   | claude-sonnet-4.5 (tool-calling) | 6018 | 21985 | 3.7× |
-   | deepseek-chat-v3.1 (tool-calling) | 7705 | 36192 | 4.7× |
+  | model | tokens with `<defn>` | tokens read-only | factor |
+  |---|---|---|---|
+  | 27B (real obscure suite) | 1302 | 4563 | 3.5× |
+  | claude-sonnet-4.5 (tool-calling) | 6018 | 21985 | 3.7× |
+  | deepseek-chat-v3.1 (tool-calling) | 7705 | 36192 | 4.7× |
 
-2. **Election is capability-gated.** A 7B uses `<defn>` 2% by default and ignores a prompt telling
-   it to prefer the action; one on-policy training round takes it to 100% use and 4.5 times fewer
-   tokens. A capable model needs no training: framing `<defn>` in the system prompt as cheaper than
-   a read moves an untrained 27B to 88 to 93% use and a frontier model to 100%.
+  But that baseline is a *forced whole-file read*. An in-the-wild probe with a real bash agent
+  (mini-swe-agent on SWE-bench Verified) finds a capable agent retrieves just as cheaply with `grep` plus
+  ranged `sed`, uses go-to-definition little even when prompted, and reads the file anyway when it does
+  (additive, not substitutive). So the efficiency edge does not clearly transfer past the whole-file
+  baseline. See REPORT.md §3.4 and `docs/real_repo_progress.md`.
+- **Open question (next).** `grep` is textual; a language server is semantic. Where does semantic
+  resolution (receiver-type and overload disambiguation, re-exports and aliases, precise references)
+  supply something a text search cannot, and does that precision change a capable agent's *outcome*, not
+  just its path? That is the experiment we are setting up.
 
-3. **Information is redundant when it is readable in budget.** When the fact a language server would
-   supply is derivable from the source by reading within the agent's read budget, handing it to a
-   self-retrieving agent does not raise pass@1, on every channel we tested (correction, completeness,
-   navigation, prevention, scale, type inference). Both frontier models solve the held-out-scored
-   inference test 18/18 with zero latent bugs, with a `check_types()` tool and without it. The same holds
-   for execution feedback, a fact not in the text: on 14 small bug-fixes two frontier models score 100%
-   held-out whether they can run the code, elect to run it, or are handed the result free, and only
-   efficiency (turns) moves. We did not test very large or highly complex codebases, where the fact may
-   not be readable in budget and a language server may then help.
-
-## The recipe
+## The recipe (for the efficiency win, scoped to a whole-file-read baseline)
 
 1. Expose go-to-definition as an action, not diagnostics as context. The information in
    diagnostics, references, and completion is redundant for a self-retrieving agent.
@@ -70,6 +71,10 @@ real-code and tool-ablation runs. The `scripts/run_*.sh` drivers regenerate the 
 | `run_relabel2_27b.sh` | 27B cross-scale transfer, Appendix B |
 | `run_grpo.sh` | cost-reward RL corroboration, Appendix A |
 
+The in-the-wild probe (report §3.4) is exploratory: `scripts/realbench/mini_ablate.py` runs
+mini-swe-agent on a SWE-bench Verified task under three arms (bash-only / `codenav` advertised / strongly
+framed) in the task's Docker container. Findings and per-arm logs: `docs/real_repo_progress.md`.
+
 ## Test a different model or approach
 
 `scripts/api_agent.py` is a model-agnostic tool-calling harness. Set `OPENROUTER_API_KEY` (or place
@@ -83,16 +88,12 @@ python scripts/api_agent.py out.json --model anthropic/claude-sonnet-4.5 \
 # the read-only counterfactual (same, with <defn> removed):
 python scripts/api_agent.py out_ro.json --model anthropic/claude-sonnet-4.5 \
     --suite effic_real2 --no-defn --seeds 2 --budget-usd 12
-# the information channel (a check_types() tool available vs not):
-python scripts/api_agent.py out_gd.json --model anthropic/claude-sonnet-4.5 \
-    --suite gapd --with-check --seeds 2 --budget-usd 6
-# the execution-feedback boundary (no-run / elect-to-run / handed-over arms):
-python scripts/api_agent.py out_rt.json --model anthropic/claude-sonnet-4.5 \
-    --suite runtime --no-hint --no-test --seeds 3 --budget-usd 6   # R0: drop --no-test for R1, add --auto-feedback for R2
 ```
 
-The local harness (`scripts/synth_mf.py`) does the same for open-weight models, with `--no-defn`
-(tool ablation) and `--adapter` (a trained policy).
+Other suites swap `--suite`: `gapd --with-check` (the type-inference information channel) and `runtime
+--no-hint --no-test` (the execution-feedback boundary; drop `--no-test` for elect-to-run, add
+`--auto-feedback` for handed-over). The local harness (`scripts/synth_mf.py`) does the same for
+open-weight models, with `--no-defn` (tool ablation) and `--adapter` (a trained policy).
 
 ## Code layout
 
@@ -110,11 +111,10 @@ The local harness (`scripts/synth_mf.py`) does the same for open-weight models, 
 | `scripts/sft_lora.py` | on-policy LoRA-SFT trainer |
 | `scripts/validate_pyrefly_lsp.py` | validates `<defn>` against a live `pyrefly lsp` daemon |
 | `scripts/grpo_cost.py` | cost-reward GRPO corroboration (optional) |
+| `scripts/realbench/mini_ablate.py`, `codenav.py` | in-the-wild probe: mini-swe-agent + language-server-as-CLI (§3.4) |
 
 ## Layout and environment
 
-`runs/agent/` holds the committed result JSONs; `runs/sft/` holds trained LoRA adapters (gitignored
-binaries); `log.md` is the full chronological lab log; `docs/` has figures and the bibliography.
-Pyrefly is the static analyzer, default path `.venv-streams/bin/pyrefly`, overridable with
-`STREAMS_PYREFLY`. Hardware for the local runs: a single NVIDIA DGX Spark (GB10, 128 GB unified
-memory).
+`runs/agent/` holds committed result JSONs; `runs/sft/` trained LoRA adapters (gitignored); `log.md` is
+the chronological lab log; `docs/` has figures and the bibliography. Static analyzer: Pyrefly
+(`.venv-streams/bin/pyrefly`, override `STREAMS_PYREFLY`). Local runs: one NVIDIA DGX Spark (GB10, 128 GB).

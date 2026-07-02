@@ -1,4 +1,14 @@
-# Language Servers Help Coding Agents by Making Retrieval Cheaper, Not by Adding Context
+# When Does a Language Server Help a Coding Agent? Work-in-Progress Findings
+
+> **Status: work in progress.** This is an exploration in progress, not a finished result. The
+> synthetic and frontier ablations (information redundancy, capability-gated election, the training
+> recipe) are complete and hold as stated. The efficiency claim is being actively qualified. A
+> go-to-definition action is cheaper than a *whole-file read*, but a recent in-the-wild ablation with a
+> real bash agent (§3.4) finds that a capable agent already retrieves just as cheaply with `grep` plus
+> ranged `sed`, and that even when it is prompted to use go-to-definition it reads the file anyway. So
+> against a competent agent's natural behaviour the language server's *efficiency* advantage is small;
+> the win is real only against a forced whole-file-read baseline. The sharper question this raises,
+> where *semantic* resolution supplies information that *textual* search cannot, is open (§7).
 
 ## Abstract
 
@@ -13,14 +23,24 @@ information itself (diagnostics, references, completion, type inference, and eve
 behavior) does not raise success when the agent can derive the same fact by reading the source in
 budget, which held on every channel and task we tested. This covers a lot of real code, but not all of
 it: a very large or highly complex codebase, where the needed fact is not readable within the agent's
-read budget, may carry information we did not test.
+read budget, may carry information we did not test. A caveat we are actively working through: the efficiency
+win is measured against a whole-file-read baseline, and a capable agent in a bash scaffold does not read
+whole files, it retrieves with `grep` and ranged `sed`, which is as cheap as go-to-definition, so the
+efficiency advantage does not clearly transfer to that setting (§3.4). We treat the retrieval-efficiency
+result as scoped to the whole-file-read counterfactual, and are now investigating whether a language
+server's *semantic* resolution (types, re-exports, overload and receiver disambiguation) supplies
+anything a textual `grep` cannot.
 
 ## Contributions
 
-- **Efficiency is the win, under three conditions.** A go-to-definition action reduces input tokens
-  3.5 to 4.7 times at equal success, and only when retrieval is required, the counterfactual is a
-  whole-file read, and the agent chooses the cheap action. We show this on synthetic and real
-  vendored-library tasks, for a 7B, a 27B, and two frontier models.
+- **Efficiency is the win against a whole-file-read baseline, under three conditions.** A
+  go-to-definition action reduces input tokens 3.5 to 4.7 times at equal success, and only when
+  retrieval is required, the counterfactual is a whole-file read, and the agent chooses the cheap
+  action. We show this on synthetic and real vendored-library tasks, for a 7B, a 27B, and two frontier
+  models. **In progress (§3.4):** when the counterfactual is not a whole-file read but a capable agent's
+  own `grep` + ranged `sed`, the advantage largely disappears, because that agent already self-retrieves
+  cheaply, and prompting it to use go-to-definition adds a call rather than replacing a read. So the
+  efficiency win is scoped to the whole-file-read baseline, not a competent bash agent in the wild.
 - **Election is capability-gated.** A capable model chooses the cheap action when the system
   prompt frames it as cheaper (a 27B at 88 to 93%, a frontier model at 100%); a 7B needs on-policy
   training (near-zero to 100%). We give the training recipe and show that prompting and offline
@@ -153,6 +173,76 @@ read can pay off; the symbol is consulted, not edited. The vendored-library suit
 An off-the-shelf option, RefactorBench (Gautam et al., 2025), edits the symbol's own file, so the agent
 loads that file to edit it regardless of `<defn>` and efficiency has nothing to save, which is why we
 did not use it.
+
+### 3.4 In the wild, a capable bash agent's grep and sed match go-to-definition (work in progress)
+
+The three conditions above make the efficiency win contingent, and condition (2), that the counterfactual
+is a whole-file read, is the one most in doubt outside the synthetic suite. Our `<read>` action returns a
+whole file because that is the only read the synthetic harness offers. A production agent has a shell, and
+a shell can read a *range*. So we asked whether the win survives when the baseline is not a forced
+whole-file read but a competent agent using ordinary shell primitives.
+
+**Setup.** We drive **mini-swe-agent** (a minimal, credible bash-only SWE agent) on SWE-bench Verified
+tasks, inside each task's own Docker container, so the agent gets real test feedback in the loop. The
+language server is exposed as a shell command, `codenav defn SYMBOL` / `codenav refs SYMBOL` (an
+AST-backed go-to-definition and find-references, the same resolution `<defn>` uses), and ablated by
+presence: **R** bash only, **D** `codenav` installed and advertised, **D+** `codenav` plus a strong
+system-prompt directive to prefer it over reading files. We run three tasks whose fix genuinely depends on
+a symbol defined in a large other file (`astropy-14182` `QTable` 4247 lines, `sympy-14531` `Normal` 2987
+lines, `sphinx-8265` `Index`), one seed each. The reported quantity is behavioural: input tokens per model
+call (which normalises for step count), and how the agent actually retrieves.
+
+| task | arm | input tokens / call | `codenav` calls | whole-file reads | exit |
+|---|---|---:|---:|---:|---|
+| astropy | R | 16952 | 0 | 3 | submitted patch |
+| astropy | D | 16721 | 1 | 3 | step limit |
+| astropy | D+ | 17975 | 7 | 2 | step limit |
+| sympy | R | 19763 | 0 | 2 | submitted patch |
+| sympy | D | 19742 | 0 | 2 | step limit |
+| sympy | D+ | 18651 | 5 | 1 | step limit |
+| sphinx | R | 22951 | 0 | 1 | step limit |
+| sphinx | D | 17217 | 8 | 0 | step limit |
+| sphinx | D+ | 17262 | 0 | 3 | step limit |
+
+Three things hold up, robust to the confounds below.
+
+1. **Election is prompt-liftable, even in a real agent.** Strong framing raised go-to-definition use where
+   mild advertisement did not (astropy 0/1/7, sympy 0/0/5), consistent with §4, now shown in the wild.
+   (Noisy at one seed: sphinx went 0/8/0.)
+2. **Eliciting it does not lower token cost.** Per-call input tokens do not fall when `codenav` is used:
+   the heaviest-`codenav` arm (astropy D+, 7 calls) is the *fattest*, and sphinx's two lean arms include
+   one that used `codenav` zero times. There is no `codenav`-to-savings effect.
+3. **The whole-file-read counterfactual barely occurs.** Whole-file reads are 0 to 3 per 44 to 60 actions
+   in every arm; the agent retrieves with `grep` and ranged `sed -n`. The expensive read the synthetic
+   3.5 to 4.7 times beat is not what a capable bash agent does.
+
+**Why: go-to-definition is additive, not substitutive.** Cross-checking each `codenav defn SYMBOL`
+against the trajectory's reads, in roughly 16 of 18 defn calls the agent *also read the same file it just
+resolved*, via grep or sed, often heavily: sympy's D+ arm resolved three symbols in `str.py` and still
+`sed`-read `str.py` 22 times; astropy's D+ arm resolved three symbols in `rst.py` and still `cat`-read the
+whole `rst.py`. A definition *span* is not what makes a fix. The agent needs the edit site, the surrounding
+context, the tests, and the call sites, which is a read of the file, and the isolated definition does not
+provide it. So go-to-definition does not displace a read; it is one more call on top of the reads the
+agent makes anyway. A concrete existence proof: astropy-14182's R arm submitted a real patch using eight
+`grep`, two `sed`, three `cat`, and *zero* `codenav`, fixing a task that involves `QTable` (4247 lines)
+without ever reading its definition or touching the language server.
+
+**Reading of this.** For a capable agent with shell primitives, go-to-definition is efficiency-neutral:
+`grep` plus ranged `sed` already retrieves the same symbol as cheaply, so the language server's residual
+efficiency value, which §3 established against a whole-file read, does not clearly transfer. The synthetic
+3.5 to 4.7 times is a property of the forced whole-file-read baseline, not of retrieval in the wild. This
+sharpens the open question rather than closing the topic: `grep` is *textual* and a language server is
+*semantic*, so the place a language server could still pay off is where semantic resolution beats a text
+match (receiver-type and overload disambiguation, re-exports and aliases, references that exclude
+same-named unrelated symbols). Whether that precision changes a capable agent's *outcome*, not just its
+path, is what we test next (§7).
+
+*Caveats. One seed per cell, three tasks, one model (`claude-sonnet-4.5`), and a 60-step cap under which
+only the two R arms converged, so there is no matched-success cell here and the raw off/on token ratios
+are confounded by termination; the per-call tokens and the retrieval-behaviour distribution are the
+reliable lenses, not the ratios. This is an early in-the-wild probe, not a finished measurement. Total
+spend for this probe was about 6.30 USD; the setup and per-arm logs are in `docs/real_repo_progress.md`
+and `scripts/realbench/mini_ablate.py`.*
 
 ## 4. Election is capability-gated (C2)
 
@@ -338,6 +428,19 @@ ours.
   and the non-guessability of tasks. We validate that the effect survives on real vendored library code
   and at the frontier in the tool-calling modality (§3), but the read-required boundary covers two reasons
   a read is needed (name-hidden, many-symbol), not all.
+- **The efficiency win is scoped to a whole-file-read baseline (open, and the next experiment).** Our
+  in-the-wild probe (§3.4) finds that a capable bash agent retrieves with `grep` plus ranged `sed` rather
+  than whole-file reads, so go-to-definition saves little against it, and when prompted to use it the
+  agent reads the file anyway. This is early evidence (one model, three tasks, one seed), but it scopes
+  the efficiency result to the whole-file-read counterfactual. The sharper open question is where a
+  language server's *semantic* resolution supplies information a *textual* `grep` cannot: receiver-type or
+  overload disambiguation when a symbol name is common (a method like `save`, `add`, or `take` defined on
+  many classes), definitions reached through re-exports or aliases that a text search resolves to the
+  wrong site or misses entirely, and find-references that exclude same-named unrelated symbols. The next
+  experiment isolates whether that precision changes a capable agent's *outcome* (correctness,
+  mis-localization) rather than its token count, on tasks where the cross-file symbol is textually
+  ambiguous. We expect the effect to be small if the agent can disambiguate by reading a few `grep` hits,
+  and are testing that directly.
 - **Redundancy holds where the fact is readable in budget.** Across the channels we tested, the language
   server's information is redundant for a self-retrieving agent, because the agent reads the source and
   derives the fact within its read budget. A fact the agent cannot recover by reading, a runtime value it would have to execute for, an
@@ -362,14 +465,20 @@ ours.
 
 ## 8. Conclusion
 
-A language server's payoff for a coding agent is a cheaper retrieval action. A go-to-definition cuts input
-tokens 3.5 to 4.7 times at equal success, under three conditions: retrieval is required, the alternative is
-a whole-file read, and the agent chooses the cheap action. Election is the practitioner's lever. A capable
-model chooses the cheap action when the prompt frames it as cheaper; a weak model learns to through one
-round of on-policy imitation, where prompting and offline cloning fail. The information a language server
+Against a whole-file-read baseline, a language server's payoff for a coding agent is a cheaper retrieval
+action: a go-to-definition cuts input tokens 3.5 to 4.7 times at equal success, under three conditions,
+retrieval is required, the alternative is a whole-file read, and the agent chooses the cheap action.
+Election is the practitioner's lever. A capable model chooses the cheap action when the prompt frames it
+as cheaper; a weak model learns to through one round of on-policy imitation, where prompting and offline
+cloning fail. That efficiency result is scoped to the whole-file-read counterfactual, and this is the part
+we are still working through: a capable agent with a shell does not read whole files, it uses `grep` and
+ranged `sed`, which is as cheap as go-to-definition, so in that setting the efficiency advantage is small
+and go-to-definition adds a call rather than replacing a read (§3.4). The information a language server
 supplies does not raise success when the agent can read the source and derive the same fact, which held on
 every channel and task we tested. A very large or highly tangled codebase, where the needed facts are not
-readable in budget, is where its information might still pay off; we did not test that regime.
+readable in budget, is where its information might still pay off; we did not test that regime. The open
+question we take up next is whether a language server's *semantic* resolution, as opposed to its cheaper
+retrieval, supplies anything a *textual* search cannot when a symbol is ambiguous (§7).
 
 **The recipe.** Expose go-to-definition as an action, not diagnostics as context. Frame it in the system
 prompt as cheaper than a whole-file read; a capable model then uses it without training. If the model is
