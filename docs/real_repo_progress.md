@@ -202,6 +202,23 @@ Caveats: one seed/cell; 3 tasks; one model (sonnet); step cap 60 so only 2/9 arm
 matched-success cell, hence per-call tokens / behaviour are the reliable lenses, not raw ratios).
 Spend: ~$5.65 (confirm) + $0.65 (smoke) = ~$6.30.
 
+**Mechanism (why eliciting codenav buys nothing): it is additive, not substitutive.** Cross-checking
+each `codenav defn SYMBOL` against the trajectory's read commands, in ~16 of 18 defn calls the agent
+**also read the same file it just defn'd**, via grep/sed/cat - often heavily:
+- sympy-onx defn'd `StrPrinter` / `_print_Limit` / `_print_Relational` (all in `str.py`) and still
+  `sed -n`'d `str.py` **22 times**.
+- astropy-onx defn'd `RST` / `SimpleRSTHeader` / `SimpleRSTData` (all in `rst.py`) and still `cat`'d
+  the **whole** `rst.py`.
+- sphinx-on defn'd `unparse` -> `ast.py`, then `sed -n '71,250p' ast.py` (a 180-line read); touched
+  `ast.py` 13 times.
+
+A definition *span* is not what makes a fix: the agent needs the edit site, surrounding context,
+tests, and call sites - i.e. a read of the file - which the span does not provide. So `codenav defn`
+does not displace a read; it is an extra call on top of the reads the agent does anyway. This is the
+mechanism behind the null token result, and why the heaviest-codenav arm (astropy-onx) was *fatter*,
+not leaner. The efficiency premise ("defn replaces an expensive whole-file read") fails twice over:
+the agent rarely whole-file-reads, and when it defn's it reads the file regardless.
+
 ## Honest next steps (for discussion / next session)
 
 1. **Hand-audit the top ~15** from `candidates.json`. The scanner is a ranked shortlist, not the final
