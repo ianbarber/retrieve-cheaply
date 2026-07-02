@@ -107,6 +107,48 @@ spec), route `RealRepoEnv.run_tests` to it, give the agent `run_tests`, then re-
 at ~$0.5-1.0/rollout, so a focused 8-task x R/D/I x 2-model x 2-seed run is ~$30; keep it tight. Total
 spend so far: ~$2.60 (smokes + this pilot), no more until this is decided.
 
+## mini-swe-agent + LSP-tool ablation: built, and the smoke undercuts the premise (2026-07-01)
+
+Per the decision to use a real, credible agent, wired up **mini-swe-agent** (Princeton SWE-agent
+team's minimal bash-only agent; strong SWE-bench Verified scores) and ablated the language server
+as a **shell command**, which fits its bash-only design exactly:
+
+- `scripts/realbench/codenav.py` - standalone, pure-stdlib CLI: `codenav defn SYMBOL` (go-to-def
+  span) and `codenav refs SYMBOL` (find-references). Runs inside the task container against
+  `/testbed`; grep-prefilter keeps it cheap on big repos; indentation-based span extraction is
+  py3.6+ safe (no `ast.end_lineno`).
+- `scripts/realbench/mini_ablate.py` - two-arm driver. **off** = stock mini-swe-agent; **on** =
+  identical + `codenav` base64-injected via the `env_startup_command` hook + one prompt paragraph
+  advertising it as the cheap way to retrieve a definition. Records per arm: input tokens (sum of
+  `prompt_tokens`), peak context, model calls, whether `codenav` was actually called, patch.
+  Runs inside the SWE-bench container (test feedback free; no native-venv build needed).
+
+**Integration is validated end to end** (zero-API container check + a $0.65 one-task run):
+codenav injects and resolves real django symbols under the container's py3.6/ASCII locale
+(this caught a UnicodeEncodeError, now fixed); OpenRouter routing works; token usage (incl. real
+`cost`) is captured; patches are emitted in swebench format ready for `score.py`.
+
+**But the one-task smoke (django-11138, sonnet, both arms) undercuts the efficiency premise.**
+The `on` arm **never called `codenav`** despite it being installed and advertised. Sonnet's 40
+actions were 17x `sed -n 'X,Yp'` (ranged reads) + 15x `grep` + 6x `cat`. A capable agent in a
+bash scaffold **already self-retrieves cheaply**: it greps to localize, then reads a narrow line
+range - it does go-to-definition by hand with primitives it trusts. So the counterfactual the
+efficiency claim rests on - *the agent pays for an expensive whole-file read* - **does not occur
+for a strong bash agent**. The synthetic 3.5-4.7x was measured against a baseline whose only read
+action was whole-file; a real agent never takes that action, so the language server's token
+advantage over it largely evaporates. Token ratio here was 0.90x (the `on` arm used slightly
+*more*, doing more of the same), not a saving.
+
+Caveats (why this is a signal, not yet a headline): (1) one task, one model, one seed; (2) the
+40-step cap was too tight - both arms hit `LimitsExceeded` with empty patches (mini-swe's default
+is 250), so there is no matched-success cell here; (3) django-11138 had no genuine large-def need
+anyway - the scanner's flagged cross-file dep (`lower` in defaultfilters.py) was a **false
+positive** (the real fix is a timezone bug in `db/backends/*/operations.py`). To confirm the
+finding, the right next run is 2-3 tasks with a *genuine* large-type-definition need (astropy-14182
+`QTable` 4247L, sphinx-8265 `Index`, sympy-14531 `Normal`) at a higher step limit, to see whether
+the agent ever does a whole-file read that `codenav` would replace, or whether grep+ranged-read
+always dominates. Prediction: small-to-zero gap. Spend so far this build: ~$0.65.
+
 ## Honest next steps (for discussion / next session)
 
 1. **Hand-audit the top ~15** from `candidates.json`. The scanner is a ranked shortlist, not the final
