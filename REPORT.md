@@ -7,8 +7,13 @@
 > real bash agent (§3.4) finds that a capable agent already retrieves just as cheaply with `grep` plus
 > ranged `sed`, and that even when it is prompted to use go-to-definition it reads the file anyway. So
 > against a competent agent's natural behaviour the language server's *efficiency* advantage is small;
-> the win is real only against a forced whole-file-read baseline. The sharper question this raises,
-> where *semantic* resolution supplies information that *textual* search cannot, is open (§7).
+> the win is real only against a forced whole-file-read baseline. We then answered the sharper question,
+> whether *semantic* resolution supplies anything *textual* search cannot: it does not for a self-retrieving
+> agent, because the capable model resolves which override binds by reading the receiver's type, and where
+> the type is not statically readable the dispatch is dynamic and the server cannot resolve it either
+> (§3.5). That reframes the result toward the type system: the value is the readable type, not the
+> navigation over it, so the next questions are how much a type annotation is worth and whether a type
+> checker helps when authoring new code.
 
 ## Abstract
 
@@ -27,9 +32,13 @@ read budget, may carry information we did not test. A caveat we are actively wor
 win is measured against a whole-file-read baseline, and a capable agent in a bash scaffold does not read
 whole files, it retrieves with `grep` and ranged `sed`, which is as cheap as go-to-definition, so the
 efficiency advantage does not clearly transfer to that setting (§3.4). We treat the retrieval-efficiency
-result as scoped to the whole-file-read counterfactual, and are now investigating whether a language
-server's *semantic* resolution (types, re-exports, overload and receiver disambiguation) supplies
-anything a textual `grep` cannot.
+result as scoped to the whole-file-read counterfactual, and tested whether a language server's *semantic*
+resolution supplies anything a textual `grep` cannot on a dispatch domain built to favour it: it does not,
+because the capable model resolves which override binds by reading the receiver's type (a token ratio near
+one), and where the type is not statically readable the dispatch is dynamic and the server cannot resolve
+it either (§3.5). This reframes the finding toward the types the code carries rather than the navigation
+over them: the value is a readable type the agent reads, and a type checker's contribution is keeping those
+annotations correct.
 
 ## Contributions
 
@@ -244,7 +253,7 @@ reliable lenses, not the ratios. This is an early in-the-wild probe, not a finis
 spend for this probe was about 6.30 USD; the setup and per-arm logs are in `docs/real_repo_progress.md`
 and `scripts/realbench/mini_ablate.py`.*
 
-### 3.5 Type-aware precision is also redundant for a capable agent, where we could test it (work in progress)
+### 3.5 Precision and efficiency: redundant for a capable agent when the receiver type is readable
 
 §3.4 concerns retrieval cost. A sharper case for a language server is *precision under ambiguity*: when a
 method name is defined on many classes, `grep def foo` returns every one and cannot say which override
@@ -260,15 +269,36 @@ called** the type-aware tool: it localized the correct override by grep-and-read
 precision joins information and efficiency. Where the agent can read the source, a language server's
 receiver-aware resolution does not change the outcome, because the agent disambiguates by reading.
 
-Two honest limits. This is one task and one strong model, a probe not a measurement (§7). And it is a
-*correctness* result, not an *efficiency* one: because the agent did not use the tool, we cannot yet say
-whether using it would be cheaper. Whether a language server's precision buys token efficiency in this
-domain, once a model actually elects the tool, is capability- and policy-gated exactly as in §4, and is
-the experiment we take up next: `grep` returns 21 candidates to wade through and `goto` returns one, so
-for a weaker or trained model the token gap could be real even where it is not for a strong agent that
-reads its way to the answer. We probe that with a local model (base solve with grep and sed, then the
-tool available, then prompted, then a DAgger relabel if prompting does not elicit it), measuring tokens
-at matched success.
+Two honest limits framed that as a probe, so we then ran the efficiency test directly. A controlled
+dispatch suite of fifteen tasks (a method overridden on eight to fifteen classes, a statically typed
+receiver in `app.py`, one buggy override, and a pytest that fails at base and passes on the right fix, with
+a real pyrefly go-to-definition tool) was driven by two local models, Qwen2.5-Coder-7B and Qwen3.6-27B,
+under three arms: `grep` plus ranged read only, the tool available, and the tool prompted as the cheap way
+to pick the right override. The measure is input tokens at matched success plus a paired per-task delta.
+
+The result is a clean negative for a capable model, and it points somewhere more interesting than the
+tool. The 27B resolves 15 of 15 under every arm, and the paired token ratio of `grep` versus
+go-to-definition is essentially one (0.97 with the tool merely available, 1.04 with it prompted; per-task
+deltas small and mixed, with occasional thrash outliers in both directions). The mechanism is the point:
+in the `grep`-only arm the 27B barely greps (0.3 calls per task), and its first action is to open the
+single correct override file. It reads the receiver's type annotation, maps the type to the class, and
+goes straight there. The weak 7B does not benefit either: it resolves only two to four of fifteen with the
+solved sets disjoint across arms (so no matched-success pair exists and the efficiency delta is
+undefined), and prompting it to prefer the tool makes both its resolution and its token cost worse,
+because its bottleneck is multi-file edit competence, not retrieval or election. So the synthetic 3.5 to
+4.7 times win (§3, against a whole-file read) does not transfer to this realistic baseline, in the very
+domain built to favour the language server.
+
+The reframe this forces is the useful finding. The 27B localizes for free because the code carries a
+correct type annotation, which it reads. That is *why* the language server is redundant: the fact goto
+would compute, which override binds for this receiver, is already written in the source as a type the
+model reads. The argument closes on itself. If dispatch is statically resolvable the type is in the source
+and the agent reads it, so navigation is redundant; if it is not statically resolvable it is dynamic, and
+the server's static goto cannot resolve it either. Navigation never beats a readable type. So the value is
+not in the language server's navigation, it is in the types themselves, and a type checker's contribution
+is keeping those annotations correct so the code stays self-describing, not feeding the agent a live
+lookup. How much the annotation is worth (measured by stripping it), and whether a type checker helps when
+*authoring* new code rather than navigating existing code, are the two questions we take up next (§7).
 
 ## 4. Election is capability-gated (C2)
 
@@ -470,15 +500,23 @@ ours.
   exactly these common-name cases (it flagged `add`/`lower`/`append`/`rjust` to a same-named template
   filter when the true receiver is a builtin), which a type-aware go-to-definition would not. The honest
   counter is that a capable agent infers the receiver type by reading the call site, so this likely
-  changes its path (steps, mis-localization) more than its *outcome*. A first probe (§3.5) bears this
-  out: we built the type-aware go-to-definition (pyrefly-backed) and ran it against grep on a real
-  dispatch-ambiguous task (django-11211, a method with 21 overrides); the strong agent resolved the task
-  either way and never elected the tool, disambiguating by reading. So precision does not change a strong
-  agent's *correctness*. The piece still open is *efficiency*: because the agent did not use the tool we
-  have no token comparison, and grep returns 21 candidates while goto returns one, so the token gap could
-  be real for a weaker or trained model that does elect it. We probe this next with a local model across
-  a grep baseline, tool-available, tool-prompted, and DAgger-trained conditions, measuring tokens at
-  matched success, the same election and cost-imitation levers as §4 applied to this domain.
+  changes its path (steps, mis-localization) more than its *outcome*. Both probes (§3.5) bear this out and
+  then close the question. On a real dispatch-ambiguous task (django-11211, a method with 21 overrides) the
+  frontier agent resolved it either way and never elected the tool. On a controlled fifteen-task dispatch
+  suite driven by two local models, the capable 27B resolved 15 of 15 under every arm with a `grep`-versus
+  go-to-definition token ratio of essentially one (0.97 to 1.04), because in the `grep` arm it barely greps
+  (0.3 calls per task) and opens the correct override file directly, having read the receiver's type; the
+  weak 7B did not benefit and prompting it toward the tool made both its resolution and its cost worse. So
+  precision and efficiency are both redundant here, and for the same reason: the disambiguator, the
+  receiver's type, is written in the source and the agent reads it. This closes the efficiency question
+  with a clean negative and reframes the whole result. If dispatch is statically resolvable the type is
+  readable and navigation is redundant; if it is not, dispatch is dynamic and a static goto cannot resolve
+  it either, so navigation never beats a readable type. The value is in the types, not the navigation over
+  them. That turns the open question from the language server to the type system: how much is a readable
+  annotation worth to a self-retrieving agent (measured by stripping it), and does a type checker help when
+  *authoring* new code rather than navigating existing code, which is a different regime from the bug-fix
+  inference test in §5 and is the one place a checker's fast feedback on undefined names, signatures, and
+  imports might still pay. Those are the experiments we take up next.
 - **Redundancy holds where the fact is readable in budget.** Across the channels we tested, the language
   server's information is redundant for a self-retrieving agent, because the agent reads the source and
   derives the fact within its read budget. A fact the agent cannot recover by reading, a runtime value it would have to execute for, an
@@ -514,9 +552,17 @@ ranged `sed`, which is as cheap as go-to-definition, so in that setting the effi
 and go-to-definition adds a call rather than replacing a read (§3.4). The information a language server
 supplies does not raise success when the agent can read the source and derive the same fact, which held on
 every channel and task we tested. A very large or highly tangled codebase, where the needed facts are not
-readable in budget, is where its information might still pay off; we did not test that regime. The open
-question we take up next is whether a language server's *semantic* resolution, as opposed to its cheaper
-retrieval, supplies anything a *textual* search cannot when a symbol is ambiguous (§7).
+readable in budget, is where its information might still pay off; we did not test that regime. We took up
+the sharper question, whether a language server's *semantic* resolution supplies anything a *textual*
+search cannot when a symbol is ambiguous, and the answer is no for a self-retrieving agent. On a dispatch
+domain built to favour it, the capable model resolves which override binds by reading the receiver's type,
+so go-to-definition is redundant (a token ratio near one); and where the type is not statically readable
+the dispatch is dynamic and the server cannot resolve it either (§3.5). That reframes the result: the
+value is not in the language server's navigation but in the types the code carries and the agent reads, and
+a type checker's role is to keep those annotations correct, not to feed the agent a lookup. The question
+this opens, and the one we take up next, is the type system itself, how much a readable annotation is worth
+to a self-retriever and whether a type checker helps when authoring new code rather than navigating
+existing code (§7).
 
 **The recipe.** Expose go-to-definition as an action, not diagnostics as context. Frame it in the system
 prompt as cheaper than a whole-file read; a capable model then uses it without training. If the model is
