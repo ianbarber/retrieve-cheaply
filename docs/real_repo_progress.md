@@ -414,6 +414,48 @@ go-to-definition buys no token efficiency for a capable model, because reading t
 cheap path the model already takes. Note on DAgger: election was never the 7B's gap here (it elects defn
 when framed), so the report's election-DAgger lever does not apply; the gap is edit competence.
 
+### The reframe: types are load-bearing, LSP navigation is not (2026-07-03)
+
+Ian's reframe of the negative. The 27B localizes for free because the code carries a correct type
+annotation, which it reads (the grep_base trajectories confirm the FIRST action opens the one buggy
+override file, having read the receiver type in app.py). So the fact go-to-definition would compute,
+which override binds, is already written in the source as a type the model reads. The argument closes:
+if dispatch is statically resolvable the type is in the source and the agent reads it, so navigation is
+redundant; if it is not statically resolvable it is dynamic, and a static goto cannot resolve it either.
+Navigation never beats a readable type. So the value is not in the LSP's navigation, it is in the TYPES
+themselves, and a type checker's contribution is keeping those annotations correct so the code stays
+self-describing, not feeding the agent a live lookup. This has been folded through REPORT.md (status,
+abstract, 3.5, 7, conclusion). New research line: (1) how much is a readable annotation worth (strip it);
+(2) does a type checker help when AUTHORING new code (a different regime from the section-5 bug-fix test).
+Memory: [[project_types_pivot]].
+
+### Exp 1: receiver-type ablation (annotated / stripped / indirection)
+
+Added a `--typing` ladder to the dispatch suite (dispatch_tasks.py build_tasks(typing=), local_dispatch.py
+--typing). Same 15 tasks, same code, varying the DISTANCE from the call site to the type:
+- L0 annotated (current): `def run(x: Buggy, ...)`. Type at the call site.
+- L1 stripped: `def run(x, ...)`. Type only in the test's construction `run(Buggy(), ...)`, one hop.
+- L2 indirection: `x = make_recv()` with `def make_recv() -> Buggy`. Type behind a return-annotated
+  factory, a trace.
+
+**pyrefly-resolution validation (build-time, before the model run) is itself the crux result:**
+
+```
+variant         base/gold/grep      pyrefly goto resolves the right override
+L0 annotated    pass (15x3)         15/15  True
+L1 stripped     pass                 0/15  (returns NOTHING: a bare param's type is not inferable)
+L2 indirection  pass                15/15  True
+```
+
+So the LSP can substitute for a missing call-site annotation ONLY when the type stays statically
+inferable (L2, via the factory return), NOT when it is knowable solely from the test's runtime
+construction (L1). This is the mechanism behind the reframe, shown at the tool level. Now running the
+27B across L1 + L2 x {grep_base, defn_avail, defn_prompt} (90 rollouts) to measure the AGENT side:
+(a) does grep_base token cost rise L0 -> L1 -> L2 (how much the annotation is worth to the agent); (b) at
+L2, where goto resolves, does defn beat grep_base (the one spot the LSP could earn its keep by skipping
+the factory trace); (c) at L1, where goto returns nothing, does the useless defn cause thrash or a clean
+fallback. Results below when the run lands. All local compute, no API spend.
+
 ## Where could a language server still beat grep+sed? semantic vs textual (subagent analysis, 2026-07-02)
 
 grep/sed are textual; a language server is semantic (it resolves receiver types, imports/re-exports,
