@@ -38,7 +38,11 @@ EDIT_RE = re.compile(
     r'(?=\n\s*(?:END\b|>>>>>>>|<test\s*/>|<done\s*/>|SEARCH\b)|\Z)', re.S)
 DONE_RE = re.compile(r'<done\s*/>')
 TEST_RE = re.compile(r'<test\s*/>')
-READ_RE = re.compile(r'<read\s+path="(?P<path>[^"]+)"\s*/>')   # gather repo context
+# <read> now optionally takes a line range (realistic `sed -n` baseline, not just whole-file).
+READ_RE = re.compile(r'<read\s+path="(?P<path>[^"]+)"'
+                     r'(?:\s+lines="(?P<rs>\d+)\s*-\s*(?P<re>\d+)")?\s*/>')   # gather repo context
+# <grep> textual search across the repo (the realistic baseline retrieval a shell agent uses).
+GREP_RE = re.compile(r'<grep\s+pat="(?P<pat>[^"]+)"(?:\s+path="(?P<gpath>[^"]+)")?\s*/>')
 # PULL LSP actions (efficiency-as-policy experiment): a CHEAP retrieval action the model can ELECT
 # instead of reading whole files. Backed by the env's live resolver, with no gold fallback.
 FINDREFS_RE = re.compile(r'<findrefs\s+sym="(?P<sym>[^"]+)"\s*/>')   # go-to-references: where is SYM used
@@ -130,8 +134,10 @@ class StreamAgent:
                  max_new_tokens=3000, max_tests=8, max_turns=12, max_bad=5,
                  max_reads=6, edit_mode="search", temperature=0.0, seed=0,
                  force_lsp=False, relabel=False, device=None,
-                 use_lsp_defn=False, advertised_symbols=None, lsp_disabled=False):
+                 use_lsp_defn=False, advertised_symbols=None, lsp_disabled=False,
+                 sys_override=None):
         assert edit_mode in ("search", "line")
+        self.sys_override = sys_override   # dispatch experiment: runner supplies the per-condition tool advertisement
         self.temperature, self.seed = temperature, seed
         self.model, self.tok, self.env = model, tok, env
         self.max_new, self.max_tests, self.max_turns = max_new_tokens, max_tests, max_turns
@@ -176,6 +182,36 @@ class StreamAgent:
             if refs:
                 return refs
         return None
+
+    def _grep(self, pat, path=None, cap=60):
+        """Env-agnostic textual search (the realistic shell baseline: `grep -rn`).
+        Returns file:line: text hits across the repo (or a single file). No LSP, purely textual,
+        so a symbol overridden on N classes yields N hits the model must disambiguate by reading."""
+        try:
+            rx = re.compile(pat)
+        except re.error:
+            rx = re.compile(re.escape(pat))
+        files = [path] if path else (self.env.list_files() if hasattr(self.env, "list_files") else [])
+        hits = []
+        for f in files:
+            try:
+                src = self.env.read_file(f)
+            except Exception:
+                continue
+            for i, ln in enumerate(src.splitlines(), 1):
+                if rx.search(ln):
+                    hits.append(f"{f}:{i}: {ln.strip()[:200]}")
+                    if len(hits) >= cap:
+                        return hits, True
+        return hits, False
+
+    def _read_range(self, path, a, b):
+        """Ranged read (the realistic `sed -n 'a,bp'`): just the requested lines, numbered."""
+        src = self.env.read_file(path)
+        lines = src.splitlines()
+        a = max(1, a); b = min(len(lines), b)
+        window = "\n".join(f"{i:>4}| {lines[i-1]}" for i in range(a, b + 1))
+        return f'<file path="{path}" lines="{a}-{b}">\n{window}\n</file>'
 
     def _run_tests(self, cap=None):
         """Env-agnostic: TaskEnv accepts max_p2p; MockEnv doesn't."""
@@ -241,7 +277,11 @@ class StreamAgent:
         tok = self.tok
         editable = editable or [target_file]
         # build the chat prompt; assistant stream is what we generate + parse
-        if self.edit_mode == "line" and len(editable) > 1:
+        if self.sys_override:
+            # dispatch experiment: the runner dictates exactly which retrieval actions are advertised
+            sys_text = self.sys_override.format(file=target_file,
+                                                files=", ".join(f"`{f}`" for f in editable))
+        elif self.edit_mode == "line" and len(editable) > 1:
             sys_text = SYS_LINE_MULTI.format(files=", ".join(f"`{f}`" for f in editable))
         else:
             sys_tmpl = {"line": SYS_LINE}.get(self.edit_mode, SYS)
@@ -267,6 +307,7 @@ class StreamAgent:
         done_from = 0         # char index from which to look for <done/>
         test_from = 0         # char index from which to look for <test/>
         read_from = 0         # char index from which to look for <read/>
+        grep_from = 0         # char index from which to look for <grep/>
         lsp_from = 0          # char index from which to look for <findrefs/>/<defn/>
         n_tests = n_edits = n_reads = n_lsp = turns = 0
         fail_streak = 0       # consecutive non-applying / no-op edits (anti-degeneracy)
@@ -422,8 +463,12 @@ class StreamAgent:
                     events.append({"tok": t, "type": "read_blocked", "path": rpath})
                     continue
                 read_from = rdm.end(); n_reads += 1
+                ranged = bool(rdm["rs"] and rdm["re"])
                 try:
-                    if len(editable) > 1:
+                    if ranged:
+                        # realistic `sed -n 'a,bp'`: just the requested window (cheap, targeted)
+                        obs = self._read_range(rpath, int(rdm["rs"]), int(rdm["re"]))
+                    elif len(editable) > 1:
                         # multi-file: hand back a NUMBERED view so a DISCOVERED file is immediately editable
                         obs = self._file_view(rpath)
                     else:
@@ -434,7 +479,27 @@ class StreamAgent:
                     obs = f"Could not read {rpath}: {type(e).__name__}: {e}"
                 turns += 1
                 deliver_turn(obs)
-                events.append({"tok": t, "type": "read", "n": n_reads, "path": rpath})
+                events.append({"tok": t, "type": "read", "n": n_reads, "path": rpath,
+                               "ranged": ranged})
+                continue
+
+            # detect <grep pat="..."/> -> textual search across the repo (the baseline retrieval)
+            gm = GREP_RE.search(emitted, grep_from)
+            if gm and n_reads < self.max_reads:
+                grep_from = gm.end(); n_reads += 1
+                pat = gm["pat"]; hits = []
+                try:
+                    hits, capped = self._grep(pat, gm["gpath"])
+                    if hits:
+                        body = "\n".join(hits) + ("\n... (more hits truncated)" if capped else "")
+                        obs = f'<grep pat="{pat}" hits="{len(hits)}">\n{body}\n</grep>'
+                    else:
+                        obs = f'<grep pat="{pat}" hits="0">no matches</grep>'
+                except Exception as e:
+                    obs = f"grep failed for {pat!r}: {type(e).__name__}: {e}"
+                turns += 1
+                deliver_turn(obs)
+                events.append({"tok": t, "type": "grep", "n": n_reads, "pat": pat, "nhits": len(hits)})
                 continue
 
             # PULL LSP actions: <findrefs sym=.../> and <defn sym=.../>.
