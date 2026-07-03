@@ -161,19 +161,45 @@ class StreamAgent:
         if self.use_lsp_defn and hasattr(self.env, "lsp_definition"):
             if file or line or col:
                 try:
-                    src, _ = self.env.lsp_definition(sym, file=file, line=line, col=col)
+                    src, path = self.env.lsp_definition(sym, file=file, line=line, col=col)
                 except TypeError:
-                    src, _ = self.env.lsp_definition(sym)   # env w/o use-site support (MultiFileEnv)
+                    src, path = self.env.lsp_definition(sym)   # env w/o use-site support (MultiFileEnv)
             else:
-                src, _ = self.env.lsp_definition(sym)
+                src, path = self.env.lsp_definition(sym)
             if src:
-                return src
+                return src, path
             # LSP miss/timeout: fall through to the AST resolver (never hang on the daemon)
         if hasattr(self.env, "goto_definition"):
-            src, _ = self.env.goto_definition(sym)
+            src, path = self.env.goto_definition(sym)
             if src:
-                return src
-        return None
+                return src, path
+        return None, None
+
+    def _fmt_defn(self, sym, defn, path):
+        """Format the go-to-definition observation. In LINE-edit mode, anchor the resolved span with
+        its file path and REAL line numbers so the model can write a valid <edit path lines="a-b">
+        straight from it (a bare span has no anchors to edit against, which makes defn unusable for a
+        line edit). Search mode keeps the plain span so the existing experiments are unchanged. The
+        span is the enclosing class, whose `class ...:` first line is unique within its file, so the
+        line anchor is robust even when the method name repeats across sibling overrides."""
+        if not defn:
+            return f'<defn sym="{sym}">\n(no definition found)\n</defn>'
+        if self.edit_mode == "line" and path:
+            start = None
+            try:
+                flines = self.env.read_file(path).splitlines()
+                dlines = defn.splitlines()
+                first = next((l for l in dlines if l.strip()), None)
+                if first is not None:
+                    start = next((i + 1 for i, l in enumerate(flines) if l == first), None)
+            except Exception:
+                dlines = defn.splitlines()
+            if start is not None:
+                body = "\n".join(f"{start + i:>4}| {l}" for i, l in enumerate(dlines))
+                return (f'<defn sym="{sym}" path="{path}" lines="{start}-{start + len(dlines) - 1}">\n'
+                        f'{body}\n</defn>')
+            return f'<defn sym="{sym}" path="{path}">\n{defn}\n</defn>'
+        return f'<defn sym="{sym}">\n{defn}\n</defn>'
 
     def _resolve_refs(self, sym):
         """REAL find-references via the env's resolver. No oracle fallback."""
@@ -524,10 +550,11 @@ class StreamAgent:
                     events.append({"tok": t, "type": "findrefs", "n": n_lsp, "sym": sym, "hits": len(refs or [])})
                 else:
                     lsp_from = dfm.end(); n_lsp += 1; sym = dfm["sym"]
-                    defn = self._resolve_defn(sym, file=dfm.group("file"),
-                                              line=dfm.group("line"), col=dfm.group("col"))
-                    obs = (f"<defn sym=\"{sym}\">\n" + (defn if defn else "(no definition found)") + "\n</defn>")
-                    events.append({"tok": t, "type": "defn", "n": n_lsp, "sym": sym, "found": bool(defn)})
+                    defn, dpath = self._resolve_defn(sym, file=dfm.group("file"),
+                                                     line=dfm.group("line"), col=dfm.group("col"))
+                    obs = self._fmt_defn(sym, defn, dpath)
+                    events.append({"tok": t, "type": "defn", "n": n_lsp, "sym": sym, "found": bool(defn),
+                                   "path": dpath})
                 turns += 1
                 deliver_turn(obs)
                 continue
