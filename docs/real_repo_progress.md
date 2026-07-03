@@ -282,6 +282,45 @@ pyrefly + tests stay native x86 and only inference is remote. Recon: vLLM not ye
 Qwen2.5-Coder-{7B,14B} and smaller are cached; a prompt-electing model (27B-class) tests efficiency
 without training, a 7B needs the DAgger step. Not started; this is the next build.
 
+### Dispatch-efficiency experiment: harness + 7B smoke (2026-07-02)
+
+Built the local-model dispatch-efficiency probe (no vLLM needed: the transformers harness already runs
+Qwen locally and does DAgger). Two harness additions to `scaffold/stream_agent.py`, both committed:
+- **Realistic baseline actions.** `<grep pat="REGEX"/>` (textual search over the repo, so a method on N
+  classes returns N hits to disambiguate) and `<read path lines="a-b"/>` (ranged `sed -n`). Previously the
+  only read was a whole-file `<read>`, i.e. the strawman baseline; now the baseline is what a shell agent
+  actually does. Plus a `sys_override` hook so the runner dictates the per-condition tool advertisement.
+- **`<defn>` anchor fix.** In line-edit mode `<defn>` now returns the resolved class span WITH its file
+  path and real line numbers (`_resolve_defn` returns `(src, path)`, `_fmt_defn` numbers it). Search mode
+  is byte-identical, so the report's existing experiments are untouched.
+
+Tasks (`scripts/realbench/dispatch_tasks.py`): 3 self-contained on-disk repos where a method is overridden
+on ~10 classes, a typed receiver in `app.py` calls it, exactly one override is buggy, and a pytest fails
+at base / passes on the right fix. `codec_serialize` (serialize on 10 handlers, receiver JsonHandler),
+`field_validate` (validate on 10 fields, receiver EmailField), `node_to_str`. Runner
+`scripts/realbench/local_dispatch.py`; conditions `grep_base` (grep+ranged-read, no defn), `defn_avail`
+(+LSP `<defn>`, neutral), `defn_prompt` (defn framed as the cheap way to pick the right override). Metric:
+`in_toks` at matched success + election counts.
+
+7B smoke (Qwen2.5-Coder-7B, run BEFORE the anchor fix, so the defn cells are invalid but still informative):
+
+```
+grep_base   resolved=1/3  mean_in_toks=1827 (resolved=1371)  n_defn=0.0  n_grep=1.3
+defn_avail  resolved=0/3  mean_in_toks=4880                   n_defn=1.0
+defn_prompt resolved=0/3  mean_in_toks=4204                   n_defn=3.3
+```
+
+Findings: (1) the 7B is weak on the line-edit protocol (only field_validate solved via grep, cleanly at
+1371 tokens with 2 grep + 2 ranged reads; codec flailed to the read budget, node looped without editing).
+(2) **Prompt framing lifts defn election** even in the 7B: mean n_defn 1.0 -> 3.3 neutral -> prompted. (3)
+Every defn cell FAILED, but purely from the anchor bug (the model elected defn, got the right class, then
+could not anchor a line edit and thrashed) - fixed and re-running. Reframe the metric this suggests: for a
+weak model the LSP's value here looks like RESOLUTION (handing it the right class among 10, which grep+read
+forces it to REASON to) more than token efficiency, since a clean grep solve (~1371) and a clean defn solve
+are comparable in tokens. Next: 27B (Qwen3.6-27B) with the fix across all three conditions (running), then
+7B + DAgger. Caveat to watch: the override classes are small (~10 lines), so a precise-reading model's
+grep baseline is already cheap and defn saves little; if the effect needs amplifying, enlarge the classes.
+
 ## Where could a language server still beat grep+sed? semantic vs textual (subagent analysis, 2026-07-02)
 
 grep/sed are textual; a language server is semantic (it resolves receiver types, imports/re-exports,
