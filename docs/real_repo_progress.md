@@ -267,6 +267,21 @@ resolved@1 here - the only place LSP precision can change an OUTCOME is a task t
 mis-localization, which points at a WEAKER model. Spend: off $0.76 + nav $0.89 = ~$1.65; both scored
 native (no emulation). Driver arms `nav`/`navx` + score.py dict-preds fix committed.
 
+**Reframing (the piece this does NOT settle): efficiency.** The django-11211 result says the agent solves
+the *information/correctness* problem by reading. It says nothing about *efficiency*, because sonnet
+never USED pyrefly_goto, so there is no token comparison. And the dispatch domain is exactly where goto
+might beat grep+sed: `grep def get_prep_value` returns 21 candidates the agent must wade through, whereas
+goto returns the one. Whether that saves tokens is the open efficiency question, and (per the report's
+own §3-4) it is capability- and policy-gated: a strong model won't elect the cheap action without being
+pushed. So the natural next probe uses the LOCAL model (free, and trainable), mirroring the report's
+efficiency/election/DAgger arc in this real domain: base solve with grep+sed, then LSP available, then
+prompt to prefer it, and worst case a DAgger relabel to push toward it, measuring tokens at matched
+success. Architecture (reuses the working chunklebox setup): serve the local Qwen on the GB10 (vLLM),
+run mini_ablate on chunklebox against that endpoint over Tailscale (100.78.95.73), so containers +
+pyrefly + tests stay native x86 and only inference is remote. Recon: vLLM not yet installed on the GB10;
+Qwen2.5-Coder-{7B,14B} and smaller are cached; a prompt-electing model (27B-class) tests efficiency
+without training, a 7B needs the DAgger step. Not started; this is the next build.
+
 ## Where could a language server still beat grep+sed? semantic vs textual (subagent analysis, 2026-07-02)
 
 grep/sed are textual; a language server is semantic (it resolves receiver types, imports/re-exports,

@@ -244,6 +244,32 @@ reliable lenses, not the ratios. This is an early in-the-wild probe, not a finis
 spend for this probe was about 6.30 USD; the setup and per-arm logs are in `docs/real_repo_progress.md`
 and `scripts/realbench/mini_ablate.py`.*
 
+### 3.5 Type-aware precision is also redundant for a capable agent, where we could test it (work in progress)
+
+§3.4 concerns retrieval cost. A sharper case for a language server is *precision under ambiguity*: when a
+method name is defined on many classes, `grep def foo` returns every one and cannot say which override
+binds for a given object, whereas a type-aware go-to-definition resolves the receiver's type and returns
+the single correct one. We built that tool (`pyrefly_nav goto`, backed by the pyrefly language server;
+`goto x.foo()` with `x: Sub` resolves to `Sub.foo`, not the base or an unrelated same-named method) and
+tested it on a real dispatch-ambiguous task, running natively so the agent gets real in-loop test feedback.
+
+On django-11211 the fix edits one of **21** `get_prep_value` overrides (`grep def get_prep_value` returns
+all 21). We ran the agent (`claude-sonnet-4.5`) with grep and sed only (G) and with `pyrefly_nav goto`
+installed and advertised (T). Both **resolved** the task, held-out tests passing. But the T arm **never
+called** the type-aware tool: it localized the correct override by grep-and-read, exactly as G did. So
+precision joins information and efficiency. Where the agent can read the source, a language server's
+receiver-aware resolution does not change the outcome, because the agent disambiguates by reading.
+
+Two honest limits. This is one task and one strong model, a probe not a measurement (§7). And it is a
+*correctness* result, not an *efficiency* one: because the agent did not use the tool, we cannot yet say
+whether using it would be cheaper. Whether a language server's precision buys token efficiency in this
+domain, once a model actually elects the tool, is capability- and policy-gated exactly as in §4, and is
+the experiment we take up next: `grep` returns 21 candidates to wade through and `goto` returns one, so
+for a weaker or trained model the token gap could be real even where it is not for a strong agent that
+reads its way to the answer. We probe that with a local model (base solve with grep and sed, then the
+tool available, then prompted, then a DAgger relabel if prompting does not elicit it), measuring tokens
+at matched success.
+
 ## 4. Election is capability-gated (C2)
 
 Conditions (1) and (2) are properties of the task and the model's reading habit. Condition (3), that
@@ -444,11 +470,15 @@ ours.
   exactly these common-name cases (it flagged `add`/`lower`/`append`/`rjust` to a same-named template
   filter when the true receiver is a builtin), which a type-aware go-to-definition would not. The honest
   counter is that a capable agent infers the receiver type by reading the call site, so this likely
-  changes its path (steps, mis-localization) more than its *outcome*; we expect the effect to be
-  capability-gated, larger for a weaker model. The next experiment isolates this: tasks selected for
-  textual ambiguity at the fix site, a grep-only arm versus a genuinely type-aware go-to-definition arm
-  (backed by a real language server, not the AST resolver, which shares grep's blind spot), scored on
-  resolved@1 and a mis-localization rate, with a weaker model included.
+  changes its path (steps, mis-localization) more than its *outcome*. A first probe (§3.5) bears this
+  out: we built the type-aware go-to-definition (pyrefly-backed) and ran it against grep on a real
+  dispatch-ambiguous task (django-11211, a method with 21 overrides); the strong agent resolved the task
+  either way and never elected the tool, disambiguating by reading. So precision does not change a strong
+  agent's *correctness*. The piece still open is *efficiency*: because the agent did not use the tool we
+  have no token comparison, and grep returns 21 candidates while goto returns one, so the token gap could
+  be real for a weaker or trained model that does elect it. We probe this next with a local model across
+  a grep baseline, tool-available, tool-prompted, and DAgger-trained conditions, measuring tokens at
+  matched success, the same election and cost-imitation levers as §4 applied to this domain.
 - **Redundancy holds where the fact is readable in budget.** Across the channels we tested, the language
   server's information is redundant for a self-retrieving agent, because the agent reads the source and
   derives the fact within its read budget. A fact the agent cannot recover by reading, a runtime value it would have to execute for, an
