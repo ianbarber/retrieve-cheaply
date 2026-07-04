@@ -525,8 +525,33 @@ elect), `feedback` (pyrefly diagnostics volunteered automatically after each edi
 pass@1 (primary), visible pass, edits/iterations to green, residual type-error count (pyrefly on the final
 submission), input tokens. Models: local 27B and 7B (free, capability contrast; the hypothesis is the
 checker helps a weaker model that errs more), with a frontier run as an optional section-5 comparison.
-Harness reuses section 5 (api_agent check_types / synth_mf + stream_agent gapd path). Build delegated;
-smoke on the 27B first. Results below.
+Harness reuses section 5 (api_agent check_types / synth_mf + stream_agent gapd path).
+
+Built: `scripts/synth_tasks_authoring.py` (12 tasks, all pass GATE A: stub fails held-out, gold passes
+visible+held-out and is pyrefly-clean, and a type_wrong sketch surfaces a real diagnostic; surface spans
+TypedDict, dataclass, generics, Protocol, enum, NamedTuple, Callable, Counter). stream_agent got a
+`<check/>` action + auto-check feedback + an authoring system prompt; synth_mf got `--suite authoring
+--arm {none,check,feedback}` with held-out + residual-diagnostic scoring; api_agent parity. Gated so
+existing suites are unchanged.
+
+**27B smoke (3 tasks x 3 arms):**
+
+```
+arm       held_out  residual_diag  n_checks  in_tok
+none        3/3        0.0           0.0       1293
+check       3/3        0.0           0.0       1340
+feedback    3/3        0.0           1.0       1335
+```
+
+Null, but for a NEW reason vs section 5. Not "the wrong fix is well-typed so the checker cannot be the
+unique detector", but simpler: the 27B authored all three modules CORRECTLY and TYPE-CLEANLY in a single
+edit, so there were no organic type errors to catch. In `check` it never elected `<check>` (0); in
+`feedback` the volunteered check ran once, found nothing, and only lengthened the trajectory. A capable
+model authoring a small well-specified module makes no type errors, so the checker is redundant here too.
+
+This points the real test at a WEAKER model (organic errors -> something for the checker to catch) or
+harder tasks. Now running the full 12 tasks x 3 arms on the 7B (the capability-gated test) and the 27B
+(confirm the null at N=12), temp 0. Results below.
 
 ## Where could a language server still beat grep+sed? semantic vs textual (subagent analysis, 2026-07-02)
 
