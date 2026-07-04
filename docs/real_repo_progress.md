@@ -454,7 +454,33 @@ construction (L1). This is the mechanism behind the reframe, shown at the tool l
 (a) does grep_base token cost rise L0 -> L1 -> L2 (how much the annotation is worth to the agent); (b) at
 L2, where goto resolves, does defn beat grep_base (the one spot the LSP could earn its keep by skipping
 the factory trace); (c) at L1, where goto returns nothing, does the useless defn cause thrash or a clean
-fallback. Results below when the run lands. All local compute, no API spend.
+fallback. All local compute, no API spend.
+
+**27B L1 stripped result:**
+
+```
+grep_base   resolved=14/15  mean_in_toks(resolved)=1429  n_grep=0.3   (L0 annotated was 1436, 15/15)
+defn_avail  resolved=15/15  mean_in_toks=1452  ratio grep/defn=0.984  (goto returns NOTHING at L1)
+defn_prompt resolved=14/15  mean_in_toks=1512  ratio grep/defn=0.945
+```
+
+Findings: (a) stripping the call-site annotation does NOT degrade the 27B (1429 vs L0's 1436, 14/15 vs
+15/15) - it reads the receiver type from the test's construction `run(Buggy(), ...)` instead of the
+annotation. So it is READABLE TYPE INFO (annotation OR construction site), not the annotation specifically,
+that is load-bearing. (b) defn is genuinely useless at L1 (pyrefly returns nothing), yet the capable model
+handles it gracefully: defn_avail still resolves 15/15 by falling back to reading (no thrash), at ~1.0x
+cost; only when PROMPTED to prefer the dead tool (defn_prompt) does it pay a small penalty (0.945, i.e.
+grep slightly cheaper). A capable model tolerates a useless language server.
+
+Design caveat (important, applies to L2 too): `build_prompt` shows the FULL app.py (the call site) plus
+the failing test in the prompt, so the receiver type is never actually HIDDEN from the model - it is
+always somewhere in the shown source (annotation at L0, construction at L1, factory at L2). So this ladder
+tests type-LOCATION-within-readable-source, not type-that-requires-retrieval. That is why L1 does not
+degrade: the type just moved from app.py to the test, both shown. A stronger test of "how much does
+retrieval of the type cost" would HIDE app.py and force the agent to fetch it; noted as a possible follow
+up. Even so the result is consistent with the reframe: wherever the type sits in readable source, the
+capable model reads it and the LSP is redundant (and at L1 the LSP cannot even resolve). L2 indirection
+(where goto CAN resolve) below.
 
 ## Where could a language server still beat grep+sed? semantic vs textual (subagent analysis, 2026-07-02)
 
