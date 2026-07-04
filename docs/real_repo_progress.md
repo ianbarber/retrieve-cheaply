@@ -479,8 +479,32 @@ tests type-LOCATION-within-readable-source, not type-that-requires-retrieval. Th
 degrade: the type just moved from app.py to the test, both shown. A stronger test of "how much does
 retrieval of the type cost" would HIDE app.py and force the agent to fetch it; noted as a possible follow
 up. Even so the result is consistent with the reframe: wherever the type sits in readable source, the
-capable model reads it and the LSP is redundant (and at L1 the LSP cannot even resolve). L2 indirection
-(where goto CAN resolve) below.
+capable model reads it and the LSP is redundant (and at L1 the LSP cannot even resolve).
+
+**27B L2 indirection result (goto CAN resolve here, 15/15):**
+
+```
+grep_base   resolved=14/15  mean_in_toks(resolved)=1465  n_grep=0.3
+defn_avail  resolved=15/15  mean_in_toks=1514  ratio grep/defn=0.982
+defn_prompt resolved=15/15  mean_in_toks=1403  ratio grep/defn=1.065
+```
+
+The crux test lands negative. Even at L2, where the type is behind a factory (a genuine trace for grep)
+AND pyrefly goto resolves it 15/15, go-to-definition does NOT beat grep_base: the ratio is ~1.0 (0.98
+available, 1.07 prompted), with defn occasionally causing a big thrash (job_priority: grep 1526 vs
+defn_avail 2673). The 27B reads the factory in the shown app.py and traces the type just as cheaply.
+
+**Full ladder, 27B grep_base mean_in_toks(resolved): L0 1436 -> L1 1429 -> L2 1465.** Essentially FLAT.
+Moving the receiver type farther from the call site (annotation -> construction -> factory indirection)
+does not raise the capable model's cost, and defn stays ~neutral (0.98-1.07) at every rung, including the
+one where it resolves. Conclusion of Exp 1 as designed: the type's LOCATION does not matter when the
+source containing it is shown, because the model reads it. This confirms the reframe robustly, with the
+stated caveat that the harness always shows app.py + the test, so the type is never truly HIDDEN. To
+measure the cost of RETRIEVING the type (the only regime where goto could save a read or two), a variant
+that hides app.py and forces the fetch is needed. But note the LSP's ceiling is intrinsically small: for a
+capable model any statically resolvable type is readable in one or two reads, so goto can save at most
+that. This bounded ceiling is the deep reason the reframe holds and why the more interesting next question
+is the type CHECKER at authoring time (Exp 2), not squeezing the navigation result further.
 
 ## Where could a language server still beat grep+sed? semantic vs textual (subagent analysis, 2026-07-02)
 
