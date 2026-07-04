@@ -12,8 +12,11 @@
 > agent, because the capable model resolves which override binds by reading the receiver's type, and where
 > the type is not statically readable the dispatch is dynamic and the server cannot resolve it either
 > (§3.5). That reframes the result toward the type system: the value is the readable type, not the
-> navigation over it, so the next questions are how much a type annotation is worth and whether a type
-> checker helps when authoring new code.
+> navigation over it. Both follow-ups confirm it. Stripping the type from the call site to a factory leaves
+> the capable model's cost flat (it reads the type wherever it sits), and a type checker does not help when
+> authoring new code either, redundant at both capability tiers because a capable model makes no type errors
+> and a weak model cannot act on the diagnostics (§5). The type system's value is a readable, correct type,
+> not a server that navigates it or a checker that critiques writing it.
 
 ## Abstract
 
@@ -38,7 +41,9 @@ because the capable model resolves which override binds by reading the receiver'
 one), and where the type is not statically readable the dispatch is dynamic and the server cannot resolve
 it either (§3.5). This reframes the finding toward the types the code carries rather than the navigation
 over them: the value is a readable type the agent reads, and a type checker's contribution is keeping those
-annotations correct.
+annotations correct. A checker does not help the agent write the code either: on a twelve-task authoring
+suite it is redundant at both capability tiers, since a capable model authors type-clean modules with no
+error to catch and a weak model cannot act on the diagnostics (§5).
 
 ## Contributions
 
@@ -404,6 +409,24 @@ reading and do not ship the inference bug for the checker to catch.
 checker is available both models call it (deepseek on all 18 rollouts, sonnet on 10 of 18), and the
 outcome is unchanged.*
 
+**Authoring.** That test toggles the checker on *bug fixes*, where the point is that a wrong fix can be
+well-typed. A different regime is *authoring*, where the agent writes a larger module from a spec and type
+errors arise organically across a bigger surface (undefined names, wrong signatures, bad imports, arity,
+attribute access), so fast checker feedback could in principle pay. We test it with a twelve-task
+authoring suite (each a typed stub the agent implements, with held-out scoring and a residual-type-error
+count on the final submission) under three arms: no checker, an elective `check_types` action, and one
+that volunteers the checker's diagnostics after every edit. It helps at neither capability tier, for two
+mirror-image reasons. The capable model (Qwen3.6-27B) authors all twelve modules correctly and essentially
+type-clean in a single edit (12/12 held-out in every arm), so there is no error to catch; it never elects
+the checker, and the volunteered diagnostics report nothing. The weak model (Qwen2.5-Coder-7B) does make
+type errors but cannot use the checker to fix them: its best arm is *no checker* (6/12, against 3/12 and
+4/12 with it), its residual type errors are flat at about two per task across all three arms, and
+volunteering diagnostics after every edit floods it into thrash (10.4 edits and 2.3 times the tokens of
+the no-checker arm) while cleaning nothing up. It sees the diagnostics and cannot act on them, the same
+edit-competence ceiling that stopped it converting a resolved definition into a correct edit in §3.5. So
+the checker is redundant for the model that does not need it and unusable for the model that does, at
+authoring just as at bug-fixing.
+
 A language server computes from source the agent can also read. Across correction, completeness,
 navigation, prevention, scale, and type inference, a capable agent reads that source and derives the
 same fact, so the information is redundant and the value of a language server is the cost of retrieval,
@@ -518,11 +541,15 @@ ours.
   with a clean negative and reframes the whole result. If dispatch is statically resolvable the type is
   readable and navigation is redundant; if it is not, dispatch is dynamic and a static goto cannot resolve
   it either, so navigation never beats a readable type. The value is in the types, not the navigation over
-  them. That turns the open question from the language server to the type system: how much is a readable
-  annotation worth to a self-retrieving agent (measured by stripping it), and does a type checker help when
-  *authoring* new code rather than navigating existing code, which is a different regime from the bug-fix
-  inference test in §5 and is the one place a checker's fast feedback on undefined names, signatures, and
-  imports might still pay. Those are the experiments we take up next.
+  them. That turns the open question from the language server to the type system, and we ran both halves.
+  Stripping the receiver type from the call-site annotation to a return-annotated factory leaves the capable
+  model's cost flat (grep-only tokens of 1436, 1429, 1465 across the three), because it reads the type
+  wherever it sits; the annotation's location does not matter, only that the type is readable. And a type
+  checker does not help when *authoring* new code either (§5 authoring extension): the capable model writes
+  type-clean modules with no error to catch, and the weak model cannot act on the diagnostics and is flooded
+  by them, its best arm being no checker. So both halves confirm the reframe: the type system's value is a
+  readable, correct type, not a language server that navigates it or a checker that critiques the writing of
+  it.
 - **Redundancy holds where the fact is readable in budget.** Across the channels we tested, the language
   server's information is redundant for a self-retrieving agent, because the agent reads the source and
   derives the fact within its read budget. A fact the agent cannot recover by reading, a runtime value it would have to execute for, an
@@ -564,11 +591,16 @@ search cannot when a symbol is ambiguous, and the answer is no for a self-retrie
 domain built to favour it, the capable model resolves which override binds by reading the receiver's type,
 so go-to-definition is redundant (a token ratio near one); and where the type is not statically readable
 the dispatch is dynamic and the server cannot resolve it either (§3.5). That reframes the result: the
-value is not in the language server's navigation but in the types the code carries and the agent reads, and
-a type checker's role is to keep those annotations correct, not to feed the agent a lookup. The question
-this opens, and the one we take up next, is the type system itself, how much a readable annotation is worth
-to a self-retriever and whether a type checker helps when authoring new code rather than navigating
-existing code (§7).
+value is not in the language server's navigation but in the types the code carries and the agent reads. We
+tested that reframe on both sides. On the navigation side, moving the receiver type from the call-site
+annotation to a return-annotated factory leaves the capable model's cost flat, because it reads the type
+wherever it sits, and go-to-definition stays neutral even where it resolves (§3.5). On the authoring side, a
+type checker does not help the agent write the code either, at either capability tier: the capable model
+authors type-clean modules with no error to catch and never elects the checker, and the weak model cannot
+act on the diagnostics and is only flooded by them, its best arm being no checker at all (§5). So the type
+system's value is the types being present and correct, a gate the checker enforces on committed code so it
+stays self-describing for the next self-retrieving agent, not live navigation over the code and not live
+feedback while writing it.
 
 **The recipe.** Expose go-to-definition as an action, not diagnostics as context. Frame it in the system
 prompt as cheaper than a whole-file read; a capable model then uses it without training. If the model is
