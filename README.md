@@ -1,18 +1,26 @@
 # The Value Is the Type, Not the Language Server
 
-Code, result data, and reproduction scripts for the in-progress tech report
+Code, result data, and reproduction scripts for the draft tech report
 [REPORT.md](./REPORT.md), *The Value Is the Type, Not the Language Server*.
 
-**Status: work in progress.** We are exploring when a language server (LSP) actually helps an LLM
-coding agent, by separating what it offers, **information** (diagnostics, types, references), **cheaper
-retrieval** (go-to-definition instead of a whole-file read), and **semantic precision** (which
-definition binds when a name is ambiguous), and toggling each at fixed model capability. The finding has
-converged on a reframe: the value is in the code's **types** being readable and correct, not in a
-language server that navigates them. A capable agent reads the receiver type and self-localizes, so
-navigation is redundant; and a type checker does not help it write the code either. The checker's role is
-a gate that keeps committed types correct, not live navigation or authoring feedback.
+**Status: stable findings, draft writeup.** The core result has converged. We separate what a language
+server (LSP) offers, **information** (diagnostics, types, references), **cheaper retrieval**
+(go-to-definition instead of a whole-file read), and **semantic precision** (which definition binds when a
+name is ambiguous), and toggle each at fixed model capability. The value is in the code's **types** being
+readable and correct, not in a language server that navigates them. A capable agent reads the receiver type
+and self-localizes, so navigation is redundant; and a type checker does not help it write the code live.
+The checker's role is a gate that keeps committed types correct, not live navigation or authoring
+feedback. Remaining work is packaging and boundary testing, not a blocker on the current claims.
 
 ## Current findings
+
+| finding | status | boundary |
+|---|---|---|
+| LSP information is redundant when the fact is readable in budget. | Stable across tested channels. | Very large/tangled codebases remain untested. |
+| Go-to-definition saves tokens against a whole-file-read baseline. | Stable controlled-baseline result. | Does not clearly transfer to grep/ranged-read agents. |
+| Election is capability-gated. | Stable. | Useful mainly when the cheap action can replace an expensive read. |
+| Semantic goto is redundant when receiver types are readable. | Stable on dispatch suite and real probe. | More real tasks would sharpen external validity, not the mechanism. |
+| Type-checker feedback does not help live authoring in tested regimes. | Stable for 27B/7B authoring suite. | Harder authoring tasks may move the boundary. |
 
 - **Information is redundant when it is readable in budget.** Wherever the agent can read the source and
   derive the fact, handing over the language server's information does not raise pass@1, on every channel
@@ -75,11 +83,15 @@ a gate that keeps committed types correct, not live navigation or authoring feed
 ```bash
 pip install -e .                       # add '.[api]' for the frontier tool-calling path
 python3 scripts/analysis/stats.py      # recompute the 7B training numbers from committed JSONs
+python3 scripts/analysis/analyze_dispatch.py
+python3 scripts/analysis/analyze_authoring.py
+python3 scripts/analyze_runtime.py
 ```
 
 `stats.py` recomputes the weak-model efficiency-recipe numbers from the committed `runs/agent/*.json` and
-checks each against `REPORT.md` (`[MATCH]` lines). `scripts/analyze_runtime.py` recomputes the execution
-feedback matrix, including the semantic-trap tier. The `scripts/run_*.sh` drivers regenerate the JSONs:
+checks each against `REPORT.md` (`[MATCH]` lines). `scripts/analysis/analyze_dispatch.py`,
+`scripts/analysis/analyze_authoring.py`, and `scripts/analyze_runtime.py` recompute the newer
+types-reframe and boundary-test summaries. The `scripts/run_*.sh` drivers regenerate the JSONs:
 
 | Driver | Reproduces |
 |---|---|

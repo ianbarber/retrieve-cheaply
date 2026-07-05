@@ -1,7 +1,10 @@
 # Real-repo generalization experiment: plan, validity invariant, harness spec
 
-Status: DRAFT for review (built overnight 2026-06-30). No matrix runs yet. This is the artifact
-to review before we spend on runs.
+> **Historical note.** This was the draft plan for the real-repo generalization pass as of 2026-06-30.
+> It is preserved as design provenance, not as the current project state. The follow-up work moved through
+> `docs/real_repo_progress.md` into the report's current conclusion: the whole-file-read efficiency result
+> is scoped to that baseline, realistic grep/ranged-read retrieval removes most of the advantage, and the
+> stable reframe is that readable, correct types are the useful artifact.
 
 ## Why
 

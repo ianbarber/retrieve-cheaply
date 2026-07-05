@@ -37,6 +37,8 @@ The tool-value ablation at fixed capability uses:
 These files support the later finding that the efficiency result is scoped to whole-file reads, and that
 semantic goto is redundant when the relevant type is readable.
 
+Run `python3 scripts/analysis/analyze_dispatch.py` from the repo root to summarize these files.
+
 | file(s) | report section | what it shows |
 |---|---|---|
 | `realbench/dispatch/local_Qwen3.6-27B.json` | §3.5 | 15-task dispatch suite, annotated receiver type: 27B solves 15/15, grep-vs-goto token ratio near 1 |
@@ -55,6 +57,8 @@ not all committed here.
 | `agent/gd2_*_{realistic,nocheck,withcheck}.json` | §5 | held-out type-inference tasks: both frontier models solve 18/18 with and without `check_types()` |
 | `agent/exp2_27b_{none,check,feedback}.json` | §5 | authoring suite: 27B solves 12/12 and is essentially type-clean without checker help |
 | `agent/exp2_7b_{none,check,feedback}.json` | §5 | authoring suite: 7B is worse with checker access/feedback; residual type errors stay flat |
+
+Run `python3 scripts/analysis/analyze_authoring.py` from the repo root to summarize the authoring files.
 
 ## Runtime Boundary
 

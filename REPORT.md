@@ -2,8 +2,8 @@
 
 ## When Does a Language Server Help a Coding Agent?
 
-> **Status: work in progress.** The current result has converged on a narrower and more useful claim than
-> "language servers help agents." A go-to-definition action is a real token win against a forced
+> **Status: stable findings, draft writeup.** The current result has converged on a narrower and more
+> useful claim than "language servers help agents." A go-to-definition action is a real token win against a forced
 > whole-file-read baseline, but that win largely disappears once the counterfactual is a capable bash
 > agent's ordinary `grep` plus ranged `sed` retrieval. The sharper semantic-precision case also comes out
 > negative for a self-retrieving agent: when dispatch is statically resolvable, the receiver type is
@@ -11,6 +11,14 @@
 > resolve it either. The durable value is therefore the code's **readable, correct types**, not live LSP
 > navigation over them. A type checker matters as a gate that keeps committed code self-describing; in our
 > authoring tests, it does not help the agent write the code live.
+
+| finding | status | boundary |
+|---|---|---|
+| LSP information is redundant when the fact is readable in budget. | Stable across tested channels. | Very large/tangled codebases remain untested. |
+| Go-to-definition saves tokens against a whole-file-read baseline. | Stable controlled-baseline result. | Does not clearly transfer to grep/ranged-read agents. |
+| Election is capability-gated. | Stable. | Useful mainly when the cheap action can replace an expensive read. |
+| Semantic goto is redundant when receiver types are readable. | Stable on dispatch suite and real probe. | More real tasks would sharpen external validity, not the mechanism. |
+| Type-checker feedback does not help live authoring in tested regimes. | Stable for 27B/7B authoring suite. | Harder authoring tasks may move the boundary. |
 
 ## Abstract
 

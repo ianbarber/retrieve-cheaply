@@ -1,5 +1,11 @@
 # Real-repo experiment: overnight progress (2026-06-30 → 07-01)
 
+> **Historical lab log.** This file is a chronological record of the real-repo follow-up work, including
+> hypotheses and "next steps" that were later resolved. It should be read as provenance for `REPORT.md`,
+> not as current project status. The current stable conclusion is: go-to-definition is a controlled
+> whole-file-read efficiency win; against capable grep/ranged-read agents and receiver-type dispatch, LSP
+> navigation is redundant; the durable value is readable, correct types.
+
 Morning summary of what got built and what it found. Design + validity invariant are in
 `docs/real_repo_plan.md`. No matrix runs yet (that needs the env-setup step below); this pass built and
 validated the pipeline and produced the auditable candidate pool.

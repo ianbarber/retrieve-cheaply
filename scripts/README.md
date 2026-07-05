@@ -35,6 +35,9 @@ cleanup; see `log.md` / git history if you need them.
 - `analysis/stats.py` — **reproduce the 7B training numbers**: recomputes the table from the
   committed `runs/agent/*.json` and checks each against `REPORT.md`.
 - `analysis/effic_real_stats.py` — paired stats for the real-code and tool-ablation runs.
+- `analysis/analyze_dispatch.py` — summarizes the dispatch/goto runs and paired grep-vs-goto token
+  ratios that support the types reframe.
+- `analysis/analyze_authoring.py` — summarizes the authoring/checker arms and residual diagnostics.
 - `analyze_runtime.py` — the execution-feedback matrix analysis, including the semantic-trap extension
   files (`*_trap.json`).
 - `make_figures.py` — all six figures from the result JSONs.
