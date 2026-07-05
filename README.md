@@ -1,7 +1,7 @@
-# LSPs for LLMs
+# The Value Is the Type, Not the Language Server
 
 Code, result data, and reproduction scripts for the in-progress tech report
-[REPORT.md](./REPORT.md), *When Does a Language Server Help a Coding Agent? Work-in-Progress Findings*.
+[REPORT.md](./REPORT.md), *The Value Is the Type, Not the Language Server*.
 
 **Status: work in progress.** We are exploring when a language server (LSP) actually helps an LLM
 coding agent, by separating what it offers, **information** (diagnostics, types, references), **cheaper
@@ -12,7 +12,7 @@ language server that navigates them. A capable agent reads the receiver type and
 navigation is redundant; and a type checker does not help it write the code either. The checker's role is
 a gate that keeps committed types correct, not live navigation or authoring feedback.
 
-## Current findings (work in progress)
+## Current findings
 
 - **Information is redundant when it is readable in budget.** Wherever the agent can read the source and
   derive the fact, handing over the language server's information does not raise pass@1, on every channel
@@ -74,12 +74,12 @@ a gate that keeps committed types correct, not live navigation or authoring feed
 
 ```bash
 pip install -e .                       # add '.[api]' for the frontier tool-calling path
-python scripts/analysis/stats.py       # recompute the 7B training numbers from committed JSONs
+python3 scripts/analysis/stats.py      # recompute the 7B training numbers from committed JSONs
 ```
 
-`stats.py` recomputes every weak-model training number from the committed `runs/agent/*.json` and
-checks each against `REPORT.md` (`[MATCH]` lines). `effic_real_stats.py` does the paired stats for the
-real-code and tool-ablation runs. The `scripts/run_*.sh` drivers regenerate the JSONs:
+`stats.py` recomputes the weak-model efficiency-recipe numbers from the committed `runs/agent/*.json` and
+checks each against `REPORT.md` (`[MATCH]` lines). `scripts/analyze_runtime.py` recomputes the execution
+feedback matrix, including the semantic-trap tier. The `scripts/run_*.sh` drivers regenerate the JSONs:
 
 | Driver | Reproduces |
 |---|---|
@@ -111,10 +111,10 @@ measure election and the tool-value ablation, with a hard spend cap:
 
 ```bash
 # election and efficiency on the obscure real-code suite:
-python scripts/api_agent.py out.json --model anthropic/claude-sonnet-4.5 \
+python3 scripts/api_agent.py out.json --model anthropic/claude-sonnet-4.5 \
     --suite effic_real2 --seeds 2 --budget-usd 5
 # the read-only counterfactual (same, with <defn> removed):
-python scripts/api_agent.py out_ro.json --model anthropic/claude-sonnet-4.5 \
+python3 scripts/api_agent.py out_ro.json --model anthropic/claude-sonnet-4.5 \
     --suite effic_real2 --no-defn --seeds 2 --budget-usd 12
 ```
 

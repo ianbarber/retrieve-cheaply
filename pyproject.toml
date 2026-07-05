@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "streams"
 dynamic = ["version"]
-description = "Language servers help coding agents by making retrieval cheaper, not by adding context"
+description = "Experiments on types, language servers, and retrieval for coding agents"
 requires-python = ">=3.10"
 dependencies = [
     "torch",

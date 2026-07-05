@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Reproduce the EFFICIENCY-RECIPE headline statistics from the committed result JSONs.
+"""Reproduce the whole-file-read efficiency-recipe statistics from committed result JSONs.
 
-This is the canonical reproducer for the tech report (REPORT.md). The result is:
+This is the canonical reproducer for the controlled efficiency-recipe part of REPORT.md. The result is:
 training a 7B coding agent on-policy to prefer cheap go-to-definition (`<defn>`) over
-expensive whole-file `<read>` makes a real LSP a several-x token win at maintained-or-
-better success. Each block below is labelled with its REPORT.md section and prints, per
+expensive whole-file `<read>` makes goto a several-x token win at maintained-or-better success in that
+baseline. Each block below is labelled with its REPORT.md section and prints, per
 arm: use-defn% / use-read% / resolved n/N (Wilson 95% CI) / mean input tokens, plus the
 token ratio and the paired test (exact McNemar on success, exact two-sided sign test on
-the paired token comparison). The TOKEN-MEAN METHOD is named in each block: the §5.1
+the paired token comparison). The TOKEN-MEAN METHOD is named in each block: the §4
 headline / relabel-only / real-LSP / 27B-all and GRPO use a PLAIN per-arm mean over all
 rows; the pilot and the isolation control use a MATCHED-OUTCOME mean (input tokens
 averaged only over (task,seed) pairs both arms resolve).
@@ -17,29 +17,29 @@ and frontier validation are reproduced by run_toolablation.sh / run_frontier.sh 
 scripts/analysis/effic_real_stats.py.
 
 What it prints (report section  <-  repo file):
-  §5 training headline (defn-sufficient, real resolver, n=48)
+  §4 training headline (defn-sufficient, real resolver, n=48)
         3086 -> 688 (4.5x), 0->100% defn, succ 0.65->1.00 (McNemar b=17/c=0)
         PRE  = reallsp_base.json  group=='rich'   (== powered_retest_base.json rich)
         POST = reallsp_sft.json   group=='rich'   (== powered_retest_sft.json  rich)
-  §5 relabel-only retest (the method in isolation, n=48): 3086 -> 724 (4.3x), 0->100%
+  §4 relabel-only retest (the method in isolation, n=48): 3086 -> 724 (4.3x), 0->100%
         PRE  = effic_retest_base.json     POST = relabel2_retest.json
-  §5 teacher-forced pilot, MATCHED-OUTCOME (lead-<defn>, 12 seeds, n=84): 2108 -> 675 (3.1x)
+  §4 teacher-forced pilot, MATCHED-OUTCOME (lead-<defn>, 12 seeds, n=84): 2108 -> 675 (3.1x)
         PRE  = powered_retest_base.json rich (seeds 0-3) + powered_retest_base_x.json (4-11)
         POST = powered_retest_sft.json  rich (seeds 0-3) + powered_retest_sft_x.json  (4-11)
         success McNemar over all 144 pairs: b=57/c=3
-  §4 isolation control, MATCHED-OUTCOME (read-trained vs defn-trained, n=40): 3191 -> 684 (4.7x)
+  §3 isolation control, MATCHED-OUTCOME (read-trained vs defn-trained, n=40): 3191 -> 684 (4.7x)
         read-trained = effic_readtrained_retest.json (== effic_retest_sft.json)
         defn-trained = powered_retest_sft.json group=='rich'
   §2 real-LSP validation (live pyrefly daemon, n=24): 2894 -> 689, 0->100%, 0.58->1.00
         PRE  = lsp_base.json      POST = lsp_sft.json
-  §5 boundary / non-degeneracy (read-required subset, n=24): read stays ~100%, succ 0.54->0.83
+  §4 boundary / non-degeneracy (read-required subset, n=24): read stays ~100%, succ 0.54->0.83
         PRE  = reallsp_base.json group=='readreq'   POST = reallsp_sft.json group=='readreq'
   Appendix A GRPO cost-RL corroboration: clean retest 86% defn / 663 tok / 100% solved (n=36)
         grpo_retest.json ; harvest trajectory grpo_harvest_0..4.json ; under-trained grpo_retest_round1.json
   Appendix B 27B transfer (n=24): 4058 -> 726 (5.5x at matched success), 0->100%, 0.96->1.00
         PRE  = 27b_base.json      POST = 27b_retest.json
 
-Run:  python scripts/analysis/stats.py   (from the repo root)
+Run:  python3 scripts/analysis/stats.py   (from the repo root)
 """
 import json, math, os, statistics
 
@@ -148,11 +148,11 @@ def check(label, got, paper, tol=2):
 
 # ---------------------------------------------------------------------------
 print("=" * 78)
-print("STREAMS — EFFICIENCY RECIPE reproducer  (numbers should match REPORT.md)")
+print("STREAMS — WHOLE-FILE-READ EFFICIENCY RECIPE reproducer")
 print("=" * 78)
 
-# --- §5.1 HEADLINE: defn-sufficient, real AST resolver, plain per-arm token mean ---
-print("\n== report §5 — training headline: defn-sufficient, real resolver (n=48) ==")
+# --- §4 HEADLINE: defn-sufficient, real AST resolver, plain per-arm token mean ---
+print("\n== report §4 — training headline: defn-sufficient, real resolver (n=48) ==")
 print("   token-mean method: PLAIN per-arm mean over all rows")
 h_pre = group(load(A("reallsp_base.json")), "rich")
 h_post = group(load(A("reallsp_sft.json")), "rich")
@@ -169,8 +169,8 @@ print(f"  success McNemar (n={n} pairs): POST-only b={b}, PRE-only c={c}, exact 
 check("tokens 3086->688", round(mt_pre), 3086); check("tokens 3086->688", round(mt_post), 688)
 check("McNemar b=17/c=0", b, 17, tol=0)
 
-# --- §5.1 relabel-only retest: the method in isolation ---
-print("\n== report §5 — relabel-only retest (method in isolation, n=48) ==")
+# --- §4 relabel-only retest: the method in isolation ---
+print("\n== report §4 — relabel-only retest (method in isolation, n=48) ==")
 print("   token-mean method: PLAIN per-arm mean over all rows")
 r_pre = load(A("effic_retest_base.json"))
 r_post = load(A("relabel2_retest.json"))
@@ -184,8 +184,8 @@ print(f"  paired token sign test (all {pt['n']} pairs): POST cheaper {pt['cheape
       f"worse {pt['worse']}, exact two-sided p={pt['sign_p']:.1e}")
 check("tokens 3086->724", round(rp), 3086); check("tokens 3086->724", round(rq), 724)
 
-# --- §5.1 pilot, MATCHED-OUTCOME (teacher-forced lead-<defn>, 12 seeds) ---
-print("\n== report §5 — teacher-forced pilot (lead-<defn>, 12 seeds), MATCHED-OUTCOME (n=84) ==")
+# --- §4 pilot, MATCHED-OUTCOME (teacher-forced lead-<defn>, 12 seeds) ---
+print("\n== report §4 — teacher-forced pilot (lead-<defn>, 12 seeds), MATCHED-OUTCOME (n=84) ==")
 print("   token-mean method: MATCHED-OUTCOME (mean input tokens over (task,seed) BOTH arms solve)")
 p_pre = group(load(A("powered_retest_base.json")), "rich") + load(A("powered_retest_base_x.json"))
 p_post = group(load(A("powered_retest_sft.json")), "rich") + load(A("powered_retest_sft_x.json"))
@@ -201,8 +201,8 @@ print(f"  success McNemar (all {n} pairs): POST-only={b}, PRE-only={c}, exact p=
 check("matched 2108->675", round(mo['pre']), 2108); check("matched 2108->675", round(mo['post']), 675)
 check("McNemar POST-only=57/PRE-only=3", b, 57, tol=0)
 
-# --- §5.3 isolation control, MATCHED-OUTCOME (read-trained vs defn-trained) ---
-print("\n== report §4 — isolation control: read-trained vs defn-trained, MATCHED-OUTCOME (n=40) ==")
+# --- §3 isolation control, MATCHED-OUTCOME (read-trained vs defn-trained) ---
+print("\n== report §3 — isolation control: read-trained vs defn-trained, MATCHED-OUTCOME (n=40) ==")
 print("   token-mean method: MATCHED-OUTCOME (over tasks BOTH trained models solve)")
 read_trained = load(A("effic_readtrained_retest.json"))
 defn_trained = group(load(A("powered_retest_sft.json")), "rich")
@@ -230,8 +230,8 @@ print(f"  success: {lpres}/{len(l_pre)} -> {lposts}/{len(l_post)}  "
       f"McNemar b={b}, c={c}, exact p={p:.1e}")
 check("tokens 2894->689", round(lp), 2894); check("tokens 2894->689", round(lq), 689)
 
-# --- §5.2 boundary / non-degeneracy: read-required subset ---
-print("\n== report §5 — boundary / non-degeneracy (read-required subset, n=24) ==")
+# --- §4 boundary / non-degeneracy: read-required subset ---
+print("\n== report §4 — boundary / non-degeneracy (read-required subset, n=24) ==")
 print("   read rate STAYS ~100%; success RISES; tokens go UP (correctly pays the read cost)")
 b_pre = group(load(A("reallsp_base.json")), "readreq")
 b_post = group(load(A("reallsp_sft.json")), "readreq")
@@ -244,7 +244,7 @@ print(f"  success {bps}/{len(b_pre)}={bps/len(b_pre):.2f} -> {bqs}/{len(b_post)}
 check("succ 0.54->0.83", round(bps/len(b_pre), 2), 0.54, tol=0.02)
 check("succ 0.54->0.83", round(bqs/len(b_post), 2), 0.83, tol=0.02)
 
-# --- §5.3 GRPO cost-RL corroboration ---
+# --- Appendix A GRPO cost-RL corroboration ---
 print("\n== report Appendix A — GRPO cost-RL corroboration ==")
 print("   independent objective (token-cost reward) reaches the SFT operating point")
 g = load(A("grpo_retest.json"))

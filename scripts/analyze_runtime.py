@@ -6,13 +6,16 @@ Three arms per model on the `runtime` suite, scored HELD-OUT (`resolved`):
   R1 run       : the agent elects to run the visible test.
   R2 auto-fb   : the env volunteers the visible-test result after each edit.
 
+The committed data is split into the original structural/easy tasks and the later semantic-trap
+extension (`*_trap.json`). This analyzer aggregates both, matching the report's 14-task runtime claim.
+
 The contrast that answers "does runtime feedback help a strong agent":
   R1 - R0  = the value of having execution at all (the headline).
   R2 - R1  = whether the agent under-uses execution (handing it over for free).
-Stratified by simulation difficulty (hard vs easy) to test whether execution's value
+Stratified by simulation difficulty (hard / easy / trap) to test whether execution's value
 rises with how hard the code is to mentally execute.
 
-Run: .venv-streams.system/bin/python scripts/analyze_runtime.py
+Run: python3 scripts/analyze_runtime.py
 """
 import json
 import glob
@@ -22,7 +25,11 @@ from collections import defaultdict
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 A = lambda p: os.path.join(ROOT, "runs", "agent", p)
 
-ARMS = [("R0 no-test", "r0_notest"), ("R1 run", "r1_run"), ("R2 auto-fb", "r2_auto")]
+ARMS = [
+    ("R0 no-test", ("r0_notest", "r0_trap")),
+    ("R1 run", ("r1_run", "r1_trap")),
+    ("R2 auto-fb", ("r2_auto", "r2_trap")),
+]
 MODELS = [("deepseek-v3.1", "deepseek"), ("sonnet-4.5", "sonnet45")]
 
 
@@ -30,6 +37,14 @@ def rows(path):
     if not os.path.exists(path):
         return []
     return json.load(open(path)).get("rows", [])
+
+
+def arm_rows(model_key, suffixes):
+    out = []
+    for suffix in suffixes:
+        final_rows = rows(A(f"rt_{model_key}_{suffix}.json"))
+        out += final_rows or rows(A(f"rt_{model_key}_{suffix}.json.partial"))
+    return out
 
 
 def pct(rs, key="resolved"):
@@ -60,8 +75,9 @@ def main():
     for mlabel, mkey in MODELS:
         print(f"{mlabel:16}", end="")
         vals = {}
-        for _, akey in ARMS:
-            rs = rows(A(f"rt_{mkey}_{akey}.json")) or rows(A(f"rt_{mkey}_{akey}.json.partial"))
+        for _, suffixes in ARMS:
+            rs = arm_rows(mkey, suffixes)
+            akey = suffixes[0]
             grand[akey] += rs
             vals[akey] = pct(rs)
             print(f"{vals[akey]:>12.1f}%", end="")
@@ -72,7 +88,8 @@ def main():
     # pooled
     print(f"{'POOLED':16}", end="")
     pv = {}
-    for _, akey in ARMS:
+    for _, suffixes in ARMS:
+        akey = suffixes[0]
         pv[akey] = pct(grand[akey])
         print(f"{pv[akey]:>12.1f}%", end="")
     print(f"{pv['r1_run']-pv['r0_notest']:>+8.1f}{pv['r2_auto']-pv['r1_run']:>+8.1f}")
@@ -85,10 +102,11 @@ def main():
     for label, _ in ARMS:
         print(f"{label:>13}", end="")
     print(f"{'R1-R0':>9}")
-    for diff in ("hard", "easy"):
+    for diff in ("hard", "easy", "trap"):
         print(f"{diff:16}", end="")
         vals = {}
-        for _, akey in ARMS:
+        for _, suffixes in ARMS:
+            akey = suffixes[0]
             rs = [r for r in grand[akey] if sim.get(r["task"]) == diff]
             vals[akey] = pct(rs)
             print(f"{vals[akey]:>12.1f}%", end="")
@@ -99,8 +117,8 @@ def main():
     print("EXECUTION BEHAVIOUR (R1: did the agent elect to run; how many edits/turns)")
     print("=" * 78)
     for mlabel, mkey in MODELS:
-        for alabel, akey in ARMS:
-            rs = rows(A(f"rt_{mkey}_{akey}.json")) or rows(A(f"rt_{mkey}_{akey}.json.partial"))
+        for alabel, suffixes in ARMS:
+            rs = arm_rows(mkey, suffixes)
             if not rs:
                 continue
             ran = mean(rs, lambda r: 1.0 if (r.get("n_test", 0) + r.get("n_auto_test", 0)) > 0 else 0.0)

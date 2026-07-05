@@ -16,20 +16,27 @@ cleanup; see `log.md` / git history if you need them.
   channel; `gapd2` adds held-out scoring so a `check_types()` tool can be the unique detector.
 - `synth_tasks_runtime.py` — the execution-feedback boundary suite (structural, easy, and
   Python-semantic-trap tiers; held-out scored, well-typed so the only detector is execution).
+- `realbench/dispatch_tasks.py` — dispatch-ambiguity suite used to test whether semantic goto beats
+  grep/ranged reads when many classes define the same method.
+- `synth_tasks_authoring.py` — typed authoring suite used to test whether live checker diagnostics help
+  while writing new code.
 
 ## Core recipe
 - `synth_mf.py` — local condition runner (rollouts / harvest / retest).
-  `--suite {effic,effic_real,effic_real2,gapd,efficread,effmix}`, `--no-defn` (tool ablation),
-  `--adapter` (trained policy).
+  `--suite {effic,effic_real,effic_real2,gapd,efficread,effmix,authoring}`, `--no-defn` (tool ablation),
+  `--adapter` (trained policy), and `--arm {none,check,feedback}` for authoring.
 - `api_agent.py` — OpenRouter tool-calling harness: test any frontier model in the deployment
   modality (`--no-defn`, `--with-check`, `--no-test` / `--auto-feedback`, hard `--budget-usd` cap).
+- `realbench/local_dispatch.py` — local dispatch runner with `grep_base`, `defn_avail`, and
+  `defn_prompt` conditions plus the `annotated` / `stripped` / `indirection` typing ladder.
 - `sft_lora.py` — the on-policy LoRA-SFT trainer (the relabel, the headline training step).
 - `grpo_cost.py` — cost-reward GRPO trainer (independent corroboration, Appendix A).
 - `validate_pyrefly_lsp.py` — validates `<defn>` against a live `pyrefly lsp` daemon.
 - `analysis/stats.py` — **reproduce the 7B training numbers**: recomputes the table from the
   committed `runs/agent/*.json` and checks each against `REPORT.md`.
 - `analysis/effic_real_stats.py` — paired stats for the real-code and tool-ablation runs.
-- `analyze_runtime.py` — the execution-feedback matrix analysis (held-out pass@1 by arm).
+- `analyze_runtime.py` — the execution-feedback matrix analysis, including the semantic-trap extension
+  files (`*_trap.json`).
 - `make_figures.py` — all six figures from the result JSONs.
 
 ## Shell drivers

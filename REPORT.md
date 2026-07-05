@@ -1,64 +1,43 @@
-# When Does a Language Server Help a Coding Agent? Work-in-Progress Findings
+# The Value Is the Type, Not the Language Server
 
-> **Status: work in progress.** This is an exploration in progress, not a finished result. The
-> synthetic and frontier ablations (information redundancy, capability-gated election, the training
-> recipe) are complete and hold as stated. The efficiency claim is being actively qualified. A
-> go-to-definition action is cheaper than a *whole-file read*, but a recent in-the-wild ablation with a
-> real bash agent (§3.4) finds that a capable agent already retrieves just as cheaply with `grep` plus
-> ranged `sed`, and that even when it is prompted to use go-to-definition it reads the file anyway. So
-> against a competent agent's natural behaviour the language server's *efficiency* advantage is small;
-> the win is real only against a forced whole-file-read baseline. We then answered the sharper question,
-> whether *semantic* resolution supplies anything *textual* search cannot: it does not for a self-retrieving
-> agent, because the capable model resolves which override binds by reading the receiver's type, and where
-> the type is not statically readable the dispatch is dynamic and the server cannot resolve it either
-> (§3.5). That reframes the result toward the type system: the value is the readable type, not the
-> navigation over it. Both follow-ups confirm it. Stripping the type from the call site to a factory leaves
-> the capable model's cost flat (it reads the type wherever it sits), and a type checker does not help when
-> authoring new code either, redundant at both capability tiers because a capable model makes no type errors
-> and a weak model cannot act on the diagnostics (§5). The type system's value is a readable, correct type,
-> not a server that navigates it or a checker that critiques writing it.
+## When Does a Language Server Help a Coding Agent?
+
+> **Status: work in progress.** The current result has converged on a narrower and more useful claim than
+> "language servers help agents." A go-to-definition action is a real token win against a forced
+> whole-file-read baseline, but that win largely disappears once the counterfactual is a capable bash
+> agent's ordinary `grep` plus ranged `sed` retrieval. The sharper semantic-precision case also comes out
+> negative for a self-retrieving agent: when dispatch is statically resolvable, the receiver type is
+> readable in source and the agent reads it; when it is not statically resolvable, static goto cannot
+> resolve it either. The durable value is therefore the code's **readable, correct types**, not live LSP
+> navigation over them. A type checker matters as a gate that keeps committed code self-describing; in our
+> authoring tests, it does not help the agent write the code live.
 
 ## Abstract
 
-Do language servers help coding agents by supplying information, and do they make retrieval cheaper?
-We measure both across synthetic and real-repository tasks, a 7B and a 27B open model, and frontier
-models in a tool-calling loop, by toggling each language-server capability at fixed model capability.
-The payoff is retrieval efficiency: a go-to-definition action cuts input tokens 3.5 to 4.7 times at
-equal success, but only when retrieval is required, the alternative is a whole-file read, and the
-agent chooses the cheap action. A capable model chooses it from prompt framing alone (a frontier model
-on 100% of rollouts); a 7B has to be trained to (near-zero to 100% use, 4.5 times fewer tokens). The
-information itself (diagnostics, references, completion, type inference, and even the program's runtime
-behavior) does not raise success when the agent can derive the same fact by reading the source in
-budget, which held on every channel and task we tested. This covers a lot of real code, but not all of
-it: a very large or highly complex codebase, where the needed fact is not readable within the agent's
-read budget, may carry information we did not test. A caveat we are actively working through: the efficiency
-win is measured against a whole-file-read baseline, and a capable agent in a bash scaffold does not read
-whole files, it retrieves with `grep` and ranged `sed`, which is as cheap as go-to-definition, so the
-efficiency advantage does not clearly transfer to that setting (§3.4). We treat the retrieval-efficiency
-result as scoped to the whole-file-read counterfactual, and tested whether a language server's *semantic*
-resolution supplies anything a textual `grep` cannot on a dispatch domain built to favour it: it does not,
-because the capable model resolves which override binds by reading the receiver's type (a token ratio near
-one), and where the type is not statically readable the dispatch is dynamic and the server cannot resolve
-it either (§3.5). This reframes the finding toward the types the code carries rather than the navigation
-over them: the value is a readable type the agent reads, and a type checker's contribution is keeping those
-annotations correct. A checker does not help the agent write the code either: on a twelve-task authoring
-suite it is redundant at both capability tiers, since a capable model authors type-clean modules with no
-error to catch and a weak model cannot act on the diagnostics (§5).
+Do language servers help coding agents because they supply information, retrieve context cheaply, or
+resolve symbols semantically? We measure each channel across synthetic and real-repository tasks, a 7B and
+a 27B open model, and frontier models in a tool-calling loop, by toggling each capability at fixed model
+capability. The central finding is that the **type information written in the code** is more valuable than
+live language-server access to it. LSP information (diagnostics, references, completion, type inference,
+and even execution feedback as a boundary check) does not raise success when the agent can derive the same
+fact by reading source in budget. Go-to-definition does cut input tokens 3.5 to 4.7 times at equal success,
+but only in the controlled counterfactual where retrieval is required, the alternative is a whole-file
+read, and the agent chooses the cheap action. A capable model chooses it from prompt framing; a 7B has to
+be trained to (near-zero to 100% use, 4.5 times fewer tokens).
+
+That efficiency result does not generalize cleanly to a capable bash agent, which already retrieves with
+`grep` and ranged `sed` and often reads the file after using goto anyway. We then tested the stronger case
+for a language server, semantic precision under ambiguous dispatch. It also does not help a capable
+self-retrieving agent: on a 15-task dispatch suite built to favor goto, the capable 27B resolves which
+override binds by reading the receiver type and goes straight to the right class, with a grep-versus-goto
+token ratio near one. Moving the receiver type from a call-site annotation to a factory leaves cost flat,
+because the agent reads the type wherever it sits. Finally, a type checker does not help live authoring: a
+27B authors type-clean modules with no error to catch, while a 7B cannot act on the diagnostics and
+thrashes when they are volunteered. The type system's value is therefore to keep code self-describing for
+the next self-retrieving agent, not to provide live navigation or live critique during writing.
 
 ## Contributions
 
-- **Efficiency is the win against a whole-file-read baseline, under three conditions.** A
-  go-to-definition action reduces input tokens 3.5 to 4.7 times at equal success, and only when
-  retrieval is required, the counterfactual is a whole-file read, and the agent chooses the cheap
-  action. We show this on synthetic and real vendored-library tasks, for a 7B, a 27B, and two frontier
-  models. **In progress (§3.4):** when the counterfactual is not a whole-file read but a capable agent's
-  own `grep` + ranged `sed`, the advantage largely disappears, because that agent already self-retrieves
-  cheaply, and prompting it to use go-to-definition adds a call rather than replacing a read. So the
-  efficiency win is scoped to the whole-file-read baseline, not a competent bash agent in the wild.
-- **Election is capability-gated.** A capable model chooses the cheap action when the system
-  prompt frames it as cheaper (a 27B at 88 to 93%, a frontier model at 100%); a 7B needs on-policy
-  training (near-zero to 100%). We give the training recipe and show that prompting and offline
-  imitation fail for the weak model.
 - **Information is redundant when it is readable in budget.** When the fact a language server would
   supply is derivable from the source by reading within the agent's read budget, handing it to a
   self-retrieving agent does not raise pass@1. This held on every channel we tested (correction,
@@ -66,21 +45,35 @@ error to catch and a weak model cannot act on the diagnostics (§5).
   program's runtime behavior. It covers a lot of real code. We did not test very large or highly complex
   codebases, or facts that appear only at run time, where the fact may not be readable in budget and a
   language server may then carry information that helps.
+- **Efficiency is a controlled-baseline win, not the main story.** A go-to-definition action reduces input
+  tokens 3.5 to 4.7 times at equal success when retrieval is required, the counterfactual is a whole-file
+  read, and the agent chooses the cheap action. But against a capable agent's own `grep` plus ranged `sed`,
+  the advantage largely disappears: the agent already self-retrieves cheaply, and goto often adds a call
+  rather than replacing a read.
+- **Semantic precision is redundant for a capable model when types are readable.** On a dispatch domain
+  built to favor language-server goto, the capable model reads the receiver type and opens the correct
+  override directly; goto stays token-neutral. If dispatch is statically resolvable, the type is readable
+  source; if it is not, static goto cannot resolve it either. The useful artifact is the readable type.
+- **Election is capability-gated, but only matters in the controlled baseline.** A capable model chooses
+  the cheap action when the system prompt frames it as cheaper (a 27B at 88 to 93%, a frontier model at
+  100%); a 7B needs on-policy training (near-zero to 100%). The recipe is useful when the product really
+  exposes only whole-file reads or similarly expensive retrieval.
 
 ---
 
 ## 1. Introduction
 
-Coding agents spend most of their tokens retrieving context. A language server offers a coding
-agent two things: information (diagnostics, inferred types, reference lists) and cheaper retrieval
-(a go-to-definition that returns one symbol instead of a whole file). We ask which one helps, and
-under what conditions.
+Coding agents spend most of their tokens retrieving context. A language server offers a coding agent
+three plausible advantages: information (diagnostics, inferred types, reference lists), cheaper retrieval
+(a go-to-definition that returns one symbol instead of a whole file), and semantic precision (the binding
+of a name when textual search is ambiguous). We ask which one helps, and under what conditions.
 
 A capable agent can read files on its own. Whatever a language server computes, it computes from
 source the agent can also read, so its information may be redundant. Prior work treats
 language-server feedback as a useful reward or context signal (Zhang et al., 2025); we find that
 for a self-retrieving agent the information does not raise success wherever the agent can read the
-source and derive it in budget, and the residual value is the cost of retrieval.
+source and derive it in budget. We then ask whether cheaper or more precise retrieval changes the agent's
+path enough to matter.
 
 Whether an agent then uses a cheaper retrieval action is a policy question, not an information one.
 An agent will not use a cheaper action because it exists. We separate the information value from
@@ -89,11 +82,13 @@ with and without a given language-server action, rather than compare a trained m
 untrained one. We do this across two synthetic task families, real vendored library code, a 7B and
 a 27B open model, and two frontier models driven through a tool-calling API.
 
-The result is a deployable account of when a language server pays off in an agentic loop, and how
-to get the agent to use it. On the synthetic efficiency suite a 7B moves from near-zero to 100%
-go-to-definition use and from 3086 to 688 input tokens after one on-policy training round; an
-untrained 27B reaches 88 to 93% use from prompt framing; a frontier model in a tool-calling loop
-reaches 100% use and a 3.7 times token reduction at equal success (Figure 1).
+The controlled answer is useful but narrow. On the synthetic efficiency suite a 7B moves from near-zero
+to 100% go-to-definition use and from 3086 to 688 input tokens after one on-policy training round; an
+untrained 27B reaches 88 to 93% use from prompt framing; a frontier model in a tool-calling loop reaches
+100% use and a 3.7 times token reduction at equal success (Figure 1). Later sections show why this is not
+the full story: once the baseline is a capable agent's ordinary grep-and-range-read workflow, and once
+semantic dispatch is tested directly, the durable value moves from the language server to the readable
+types in the code.
 
 ![Tool-value ablation across models](docs/figures/fig1.png)
 
@@ -188,7 +183,7 @@ An off-the-shelf option, RefactorBench (Gautam et al., 2025), edits the symbol's
 loads that file to edit it regardless of `<defn>` and efficiency has nothing to save, which is why we
 did not use it.
 
-### 3.4 In the wild, a capable bash agent's grep and sed match go-to-definition (work in progress)
+### 3.4 In the wild, a capable bash agent's grep and sed match go-to-definition
 
 The three conditions above make the efficiency win contingent, and condition (2), that the counterfactual
 is a whole-file read, is the one most in doubt outside the synthetic suite. Our `<read>` action returns a
@@ -245,18 +240,14 @@ without ever reading its definition or touching the language server.
 `grep` plus ranged `sed` already retrieves the same symbol as cheaply, so the language server's residual
 efficiency value, which §3 established against a whole-file read, does not clearly transfer. The synthetic
 3.5 to 4.7 times is a property of the forced whole-file-read baseline, not of retrieval in the wild. This
-sharpens the open question rather than closing the topic: `grep` is *textual* and a language server is
-*semantic*, so the place a language server could still pay off is where semantic resolution beats a text
-match (receiver-type and overload disambiguation, re-exports and aliases, references that exclude
-same-named unrelated symbols). Whether that precision changes a capable agent's *outcome*, not just its
-path, is what we test next (§7).
+left the stronger semantic question: can a language server beat textual search when the symbol name is
+ambiguous? §3.5 tests that case directly.
 
 *Caveats. One seed per cell, three tasks, one model (`claude-sonnet-4.5`), and a 60-step cap under which
 only the two R arms converged, so there is no matched-success cell here and the raw off/on token ratios
 are confounded by termination; the per-call tokens and the retrieval-behaviour distribution are the
-reliable lenses, not the ratios. This is an early in-the-wild probe, not a finished measurement. Total
-spend for this probe was about 6.30 USD; the setup and per-arm logs are in `docs/real_repo_progress.md`
-and `scripts/realbench/mini_ablate.py`.*
+reliable lenses, not the ratios. The setup and per-arm logs are in `docs/real_repo_progress.md` and
+`scripts/realbench/mini_ablate.py`.*
 
 ### 3.5 Precision and efficiency: redundant for a capable agent when the receiver type is readable
 
@@ -307,9 +298,8 @@ the call-site annotation to the test's construction to a return-annotated factor
 model's cost flat (grep-only input tokens of 1436, 1429, and 1465 across the three), because the type
 stays somewhere in the source the model reads, and go-to-definition stays neutral (ratio 0.98 to 1.07)
 even in the factory case where it does resolve. So it is readable type information, wherever it sits, that
-carries the localization, not the call-site annotation specifically and not the language server. The
-remaining question, whether a type checker helps when *authoring* new code rather than navigating existing
-code, is the one we take up next (§7).
+carries the localization, not the call-site annotation specifically and not the language server. §5 tests
+the other side of the type-system reframe: whether the checker helps the agent write typed code live.
 
 ## 4. Election is capability-gated (C2)
 
@@ -513,11 +503,11 @@ ours.
   and the non-guessability of tasks. We validate that the effect survives on real vendored library code
   and at the frontier in the tool-calling modality (§3), but the read-required boundary covers two reasons
   a read is needed (name-hidden, many-symbol), not all.
-- **The efficiency win is scoped to a whole-file-read baseline (open, and the next experiment).** Our
+- **The efficiency win is scoped to a whole-file-read baseline.** Our
   in-the-wild probe (§3.4) finds that a capable bash agent retrieves with `grep` plus ranged `sed` rather
   than whole-file reads, so go-to-definition saves little against it, and when prompted to use it the
   agent reads the file anyway. This is early evidence (one model, three tasks, one seed), but it scopes
-  the efficiency result to the whole-file-read counterfactual. The sharper open question is where a
+  the efficiency result to the whole-file-read counterfactual. The sharper question is where a
   language server's *semantic* resolution supplies information a *textual* `grep` cannot. Two regimes look
   promising. Receiver-type and overload disambiguation: `x.foo()` binds to `foo` on the type of `x`, but
   `grep def foo` returns every same-named method on every class (`def add` has 15 definitions in django,
@@ -541,7 +531,7 @@ ours.
   with a clean negative and reframes the whole result. If dispatch is statically resolvable the type is
   readable and navigation is redundant; if it is not, dispatch is dynamic and a static goto cannot resolve
   it either, so navigation never beats a readable type. The value is in the types, not the navigation over
-  them. That turns the open question from the language server to the type system, and we ran both halves.
+  them. That turns the question from the language server to the type system, and we ran both halves.
   Stripping the receiver type from the call-site annotation to a return-annotated factory leaves the capable
   model's cost flat (grep-only tokens of 1436, 1429, 1465 across the three), because it reads the type
   wherever it sits; the annotation's location does not matter, only that the type is readable. And a type
@@ -574,33 +564,24 @@ ours.
 
 ## 8. Conclusion
 
-Against a whole-file-read baseline, a language server's payoff for a coding agent is a cheaper retrieval
-action: a go-to-definition cuts input tokens 3.5 to 4.7 times at equal success, under three conditions,
-retrieval is required, the alternative is a whole-file read, and the agent chooses the cheap action.
-Election is the practitioner's lever. A capable model chooses the cheap action when the prompt frames it
-as cheaper; a weak model learns to through one round of on-policy imitation, where prompting and offline
-cloning fail. That efficiency result is scoped to the whole-file-read counterfactual, and this is the part
-we are still working through: a capable agent with a shell does not read whole files, it uses `grep` and
-ranged `sed`, which is as cheap as go-to-definition, so in that setting the efficiency advantage is small
-and go-to-definition adds a call rather than replacing a read (§3.4). The information a language server
-supplies does not raise success when the agent can read the source and derive the same fact, which held on
-every channel and task we tested. A very large or highly tangled codebase, where the needed facts are not
-readable in budget, is where its information might still pay off; we did not test that regime. We took up
-the sharper question, whether a language server's *semantic* resolution supplies anything a *textual*
-search cannot when a symbol is ambiguous, and the answer is no for a self-retrieving agent. On a dispatch
-domain built to favour it, the capable model resolves which override binds by reading the receiver's type,
-so go-to-definition is redundant (a token ratio near one); and where the type is not statically readable
-the dispatch is dynamic and the server cannot resolve it either (§3.5). That reframes the result: the
-value is not in the language server's navigation but in the types the code carries and the agent reads. We
-tested that reframe on both sides. On the navigation side, moving the receiver type from the call-site
-annotation to a return-annotated factory leaves the capable model's cost flat, because it reads the type
-wherever it sits, and go-to-definition stays neutral even where it resolves (§3.5). On the authoring side, a
-type checker does not help the agent write the code either, at either capability tier: the capable model
-authors type-clean modules with no error to catch and never elects the checker, and the weak model cannot
-act on the diagnostics and is only flooded by them, its best arm being no checker at all (§5). So the type
-system's value is the types being present and correct, a gate the checker enforces on committed code so it
-stays self-describing for the next self-retrieving agent, not live navigation over the code and not live
-feedback while writing it.
+The main payoff is not live language-server access; it is typed code that stays readable and correct.
+Against a whole-file-read baseline, go-to-definition is a real efficiency tool: it cuts input tokens 3.5
+to 4.7 times at equal success when retrieval is required, the alternative is a whole-file read, and the
+agent chooses the cheap action. Election is the practitioner's lever in that regime: a capable model uses
+the action when the prompt frames it as cheaper, while a weak model needs on-policy imitation.
+
+But that is a controlled-baseline result. A capable agent with a shell does not normally read whole files;
+it uses `grep` and ranged `sed`, and go-to-definition adds a call more often than it replaces a read. The
+semantic-precision case closes the same way. On a dispatch domain built to favour language-server goto,
+the capable model resolves which override binds by reading the receiver's type, so goto is token-neutral;
+where the type is not statically readable, static goto cannot resolve the dispatch either. Moving the type
+from a call-site annotation to a return-annotated factory leaves cost flat because the model reads the type
+wherever it sits. A type checker also does not help the agent write typed code live: the capable model has
+no errors to catch, and the weak model cannot act on the diagnostics.
+
+So the type system's value is the types being present and correct. A checker is valuable as a gate on
+committed code, keeping the codebase self-describing for the next self-retrieving agent; it is not, in the
+regimes we tested, a useful live navigator or live authoring critic.
 
 **The recipe.** Expose go-to-definition as an action, not diagnostics as context. Frame it in the system
 prompt as cheaper than a whole-file read; a capable model then uses it without training. If the model is
