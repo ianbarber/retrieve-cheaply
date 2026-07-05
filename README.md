@@ -4,9 +4,13 @@ Code, result data, and reproduction scripts for the in-progress tech report
 [REPORT.md](./REPORT.md), *When Does a Language Server Help a Coding Agent? Work-in-Progress Findings*.
 
 **Status: work in progress.** We are exploring when a language server (LSP) actually helps an LLM
-coding agent, by separating the two things it offers, **information** (diagnostics, types, references)
-and **cheaper retrieval** (go-to-definition instead of a whole-file read), and toggling each at fixed
-model capability.
+coding agent, by separating what it offers, **information** (diagnostics, types, references), **cheaper
+retrieval** (go-to-definition instead of a whole-file read), and **semantic precision** (which
+definition binds when a name is ambiguous), and toggling each at fixed model capability. The finding has
+converged on a reframe: the value is in the code's **types** being readable and correct, not in a
+language server that navigates them. A capable agent reads the receiver type and self-localizes, so
+navigation is redundant; and a type checker does not help it write the code either. The checker's role is
+a gate that keeps committed types correct, not live navigation or authoring feedback.
 
 ## Current findings (work in progress)
 
@@ -14,8 +18,9 @@ model capability.
   derive the fact, handing over the language server's information does not raise pass@1, on every channel
   we tested (correction, completeness, navigation, prevention, scale, type inference) and, as a boundary
   check, on runtime behavior. Both frontier models solve the held-out-scored inference test 18/18 with
-  zero latent bugs, with a `check_types()` tool and without it. (Untested: a codebase too large or tangled
-  to read in budget.)
+  zero latent bugs, with a `check_types()` tool and without it. The same redundancy extends to semantic
+  precision (below) and to type-checker feedback while authoring new code (below). (Untested: a codebase
+  too large or tangled to read in budget.)
 - **Election is capability-gated.** A 7B uses `<defn>` 2% of the time by default and ignores a prompt
   telling it to prefer the action; one on-policy training round takes it to 100% use and 4.5× fewer
   tokens. A capable model needs only framing: presenting `<defn>` as cheaper than a read moves an
@@ -34,10 +39,26 @@ model capability.
   ranged `sed`, uses go-to-definition little even when prompted, and reads the file anyway when it does
   (additive, not substitutive). So the efficiency edge does not clearly transfer past the whole-file
   baseline. See REPORT.md §3.4 and `docs/real_repo_progress.md`.
-- **Open question (next).** `grep` is textual; a language server is semantic. Where does semantic
-  resolution (receiver-type and overload disambiguation, re-exports and aliases, precise references)
-  supply something a text search cannot, and does that precision change a capable agent's *outcome*, not
-  just its path? That is the experiment we are setting up.
+- **Precision is redundant too, and the value turns out to be the types, not the navigation.** We tested
+  the sharper question, whether a language server's *semantic* resolution supplies anything a *textual*
+  `grep` cannot when a name is ambiguous, on a 15-task dispatch domain built to favour it (a method
+  overridden on 8 to 15 classes). It does not: the capable 27B resolves 15/15 with a grep-versus
+  go-to-definition token ratio of ~1.0 (0.97 to 1.04) and barely greps, because it reads the receiver's
+  *type* and opens the one correct override directly; a frontier agent on a real 21-override task never
+  elects the tool at all. If dispatch is statically resolvable the type is in the source and the agent
+  reads it (navigation redundant); if it is not, dispatch is dynamic and a static goto cannot resolve it
+  either. Navigation never beats a readable type. An annotation-stripping ablation confirms it: moving the
+  receiver type from the call-site annotation to a factory leaves the model's cost flat (grep-only tokens
+  1436, 1429, 1465), so readable type information, wherever it sits, carries the localization. See
+  REPORT.md §3.5.
+- **A type checker does not help when authoring new code either.** On a 12-task authoring suite (implement
+  a typed module from a spec, held-out scored), toggling the checker changes nothing at either capability
+  tier: the 27B authors 12/12 type-clean with no error to catch and never elects it; the 7B's best arm is
+  *no checker* (6/12 versus 3/12 and 4/12), its residual type errors stay flat, and volunteering
+  diagnostics after every edit floods it into thrash (10.4 edits, 2.3× the tokens) without cleaning
+  anything up. Redundant for the model that makes no errors, unusable for the one that cannot act on the
+  diagnostics. So the type system's value is a readable, correct type, a gate the checker keeps honest on
+  committed code, not live navigation or live authoring feedback. See REPORT.md §5.
 
 ## The recipe (for the efficiency win, scoped to a whole-file-read baseline)
 
@@ -74,6 +95,13 @@ real-code and tool-ablation runs. The `scripts/run_*.sh` drivers regenerate the 
 The in-the-wild probe (report §3.4) is exploratory: `scripts/realbench/mini_ablate.py` runs
 mini-swe-agent on a SWE-bench Verified task under three arms (bash-only / `codenav` advertised / strongly
 framed) in the task's Docker container. Findings and per-arm logs: `docs/real_repo_progress.md`.
+
+The dispatch-efficiency and types experiments (report §3.5) run locally:
+`scripts/realbench/local_dispatch.py` drives the on-disk dispatch tasks in `dispatch_tasks.py` (a real
+`pyrefly` go-to-definition via `pyrefly_nav.py`) under `--conds grep_base,defn_avail,defn_prompt`, with
+`--typing {annotated,stripped,indirection}` for the annotation-stripping ablation. The authoring
+type-checker experiment (report §5) is `scripts/synth_mf.py --suite authoring --arm {none,check,feedback}`
+over `scripts/synth_tasks_authoring.py`. Results and logs: `docs/real_repo_progress.md`.
 
 ## Test a different model or approach
 
@@ -112,6 +140,8 @@ open-weight models, with `--no-defn` (tool ablation) and `--adapter` (a trained 
 | `scripts/validate_pyrefly_lsp.py` | validates `<defn>` against a live `pyrefly lsp` daemon |
 | `scripts/grpo_cost.py` | cost-reward GRPO corroboration (optional) |
 | `scripts/realbench/mini_ablate.py`, `codenav.py` | in-the-wild probe: mini-swe-agent + language-server-as-CLI (§3.4) |
+| `scripts/realbench/dispatch_tasks.py`, `local_dispatch.py`, `pyrefly_nav.py` | dispatch-efficiency + annotation ablation with a real `pyrefly` goto (§3.5) |
+| `scripts/synth_tasks_authoring.py` | authoring suite for the type-checker-at-authoring test (§5) |
 
 ## Layout and environment
 
