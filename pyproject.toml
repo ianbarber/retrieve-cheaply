@@ -30,8 +30,8 @@ realbench = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/ianbarber/retrieve-cheaply"
-Repository = "https://github.com/ianbarber/retrieve-cheaply"
+Homepage = "https://github.com/ianbarber/lsps-for-llms"
+Repository = "https://github.com/ianbarber/lsps-for-llms"
 
 [tool.setuptools]
 packages = ["scaffold", "scripts", "scripts.analysis"]
