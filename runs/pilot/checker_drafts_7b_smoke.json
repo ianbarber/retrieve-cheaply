@@ -1,0 +1,521 @@
+{
+  "protocol": "checker-paired-v1",
+  "kind": "natural_drafts",
+  "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+  "model_meta": {
+    "revision": "c03e6d358207e414f1eca0bb1891e29f1db0e242",
+    "transformers": "5.9.0",
+    "torch": "2.11.0+cu128",
+    "dtype": "torch.bfloat16"
+  },
+  "config": {
+    "command": "generate",
+    "out": "runs/pilot/checker_drafts_7b_smoke.json",
+    "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "names": "auth_shapes_protocol",
+    "seed": 0,
+    "temperature": 0.7,
+    "max_new": 1800,
+    "max_turns": 10,
+    "max_reads": 5,
+    "gpu_only": true
+  },
+  "pyrefly": {
+    "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+    "version": "pyrefly 1.0.0"
+  },
+  "drafts": [
+    {
+      "draft_id": "natural-auth_shapes_protocol-s0",
+      "task": "auth_shapes_protocol",
+      "group": "med",
+      "seed": 0,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "files": {
+        "target.py": "from lib import Shape, summary\n\n\nclass Circle:\n    \"\"\"A circle of the given radius.\"\"\"\n\n    def __init__(self, radius: float) -> None:\n    def __init__(self, radius: float) -> None:\n        self.radius = radius\n\n    def area(self) -> float:\n        return 3.14159 * self.radius ** 2\n\n    def label(self) -> str:\n        return f\"circle={self.area():.1f}\"\n        return f\"circle={self.area():.1f}\"\n        return f\"circle={self.area():.1f}\"\n        return f\"circle={self.area():.1f}\"\n        return f\"circle={self.area():.1f}\"\n        return f\"circle={self.area():.1f}\"\n    def __init__(self, side: float) -> None:\n        self.side = side\n\n    def area(self) -> float:\n        return self.side ** 2\n\n    def label(self) -> str:\n        return f\"square={self.area():.1f}\"\n    def label(self) -> str:\ndef default_report() -> str:\n    \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n    return report([Circle(1.0), Square(1.0)])\n    def label(self) -> str:\ndef default_report() -> str:\n    \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n    return report([Circle(1.0), Square(1.0)])\n    def label(self) -> str:\ndef default_report() -> str:\n    \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n    return report([Circle(1.0), Square(1.0)])\ndef report(shapes: list[Shape]) -> str:\n    \"\"\"Delegate to lib.summary.\"\"\"\n    return summary(shapes)\n    return summary(shapes)\n    return summary(shapes)\n    raise NotImplementedError\n\n\ndef default_report() -> str:\n    \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n    raise NotImplementedError\n",
+        "lib.py": "from typing import Protocol\n\n\nclass Shape(Protocol):\n    def area(self) -> float: ...\n    def label(self) -> str: ...\n\n\ndef summary(shapes: list[Shape]) -> str:\n    \"\"\"One 'label=area' term per shape (area to 1 dp), joined by ', '.\"\"\"\n    return \", \".join(f\"{s.label()}={s.area():.1f}\" for s in shapes)\n"
+      },
+      "target": "target.py",
+      "test": "from target import Circle, Square, report, default_report\nr = report([Circle(1.0), Square(2.0)])\nassert \"circle=3.1\" in r\nassert \"square=4.0\" in r\nassert default_report().count(\"=\") == 2\n",
+      "held_out": "from target import Circle, Square, report\nshapes = [Square(3.0), Circle(2.0)]\nassert report(shapes) == \"square=9.0, circle=12.6\"\n",
+      "draft_target_sha256": "b3da3cc3bd9576b86e4dfbc1ac71e8d0c50a069f058958d6e859ad6717ed9bf7",
+      "coherent": false,
+      "visible_pass": false,
+      "held_pass": false,
+      "baseline_diagnostics": [],
+      "draft_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 8,
+          "column": 5,
+          "stop_line": 8,
+          "stop_column": 8,
+          "code": "parse-error",
+          "message": "Parse error: Expected an indented block after function definition",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "   7|     def __init__(self, radius: float) -> None:\n   8|     def __init__(self, radius: float) -> None:\n   9|         self.radius = radius"
+        },
+        {
+          "path": "target.py",
+          "line": 9,
+          "column": 9,
+          "stop_line": 9,
+          "stop_column": 20,
+          "code": "missing-attribute",
+          "message": "Object of class `Circle` has no attribute `radius`",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "   8|     def __init__(self, radius: float) -> None:\n   9|         self.radius = radius\n  10| "
+        },
+        {
+          "path": "target.py",
+          "line": 12,
+          "column": 26,
+          "stop_line": 12,
+          "stop_column": 37,
+          "code": "missing-attribute",
+          "message": "Object of class `Circle` has no attribute `radius`",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "  11|     def area(self) -> float:\n  12|         return 3.14159 * self.radius ** 2\n  13| "
+        },
+        {
+          "path": "target.py",
+          "line": 29,
+          "column": 24,
+          "stop_line": 29,
+          "stop_column": 27,
+          "code": "bad-return",
+          "message": "Function declared to return `str` but is missing an explicit `return`",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "  28|         return f\"square={self.area():.1f}\"\n  29|     def label(self) -> str:\n  30| def default_report() -> str:"
+        },
+        {
+          "path": "target.py",
+          "line": 29,
+          "column": 28,
+          "stop_line": 30,
+          "stop_column": 1,
+          "code": "parse-error",
+          "message": "Parse error: Expected an indented block after function definition",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "  28|         return f\"square={self.area():.1f}\"\n  29|     def label(self) -> str:\n  30| def default_report() -> str:"
+        },
+        {
+          "path": "target.py",
+          "line": 30,
+          "column": 25,
+          "stop_line": 30,
+          "stop_column": 28,
+          "code": "bad-return",
+          "message": "Function declared to return `str`, but one or more paths are missing an explicit `return`",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "  29|     def label(self) -> str:\n  30| def default_report() -> str:\n  31|     \"\"\"summary of a unit Circle followed by a unit Square.\"\"\""
+        },
+        {
+          "path": "target.py",
+          "line": 32,
+          "column": 33,
+          "stop_line": 32,
+          "stop_column": 39,
+          "code": "unknown-name",
+          "message": "Could not find name `Square`",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "  31|     \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n  32|     return report([Circle(1.0), Square(1.0)])\n  33|     def label(self) -> str:"
+        },
+        {
+          "path": "target.py",
+          "line": 33,
+          "column": 24,
+          "stop_line": 33,
+          "stop_column": 27,
+          "code": "bad-return",
+          "message": "Function declared to return `str` but is missing an explicit `return`",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "  32|     return report([Circle(1.0), Square(1.0)])\n  33|     def label(self) -> str:\n  34| def default_report() -> str:"
+        },
+        {
+          "path": "target.py",
+          "line": 33,
+          "column": 28,
+          "stop_line": 34,
+          "stop_column": 1,
+          "code": "parse-error",
+          "message": "Parse error: Expected an indented block after function definition",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "  32|     return report([Circle(1.0), Square(1.0)])\n  33|     def label(self) -> str:\n  34| def default_report() -> str:"
+        },
+        {
+          "path": "target.py",
+          "line": 34,
+          "column": 25,
+          "stop_line": 34,
+          "stop_column": 28,
+          "code": "bad-return",
+          "message": "Function declared to return `str`, but one or more paths are missing an explicit `return`",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "  33|     def label(self) -> str:\n  34| def default_report() -> str:\n  35|     \"\"\"summary of a unit Circle followed by a unit Square.\"\"\""
+        },
+        {
+          "path": "target.py",
+          "line": 36,
+          "column": 33,
+          "stop_line": 36,
+          "stop_column": 39,
+          "code": "unknown-name",
+          "message": "Could not find name `Square`",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "  35|     \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n  36|     return report([Circle(1.0), Square(1.0)])\n  37|     def label(self) -> str:"
+        },
+        {
+          "path": "target.py",
+          "line": 37,
+          "column": 24,
+          "stop_line": 37,
+          "stop_column": 27,
+          "code": "bad-return",
+          "message": "Function declared to return `str` but is missing an explicit `return`",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "  36|     return report([Circle(1.0), Square(1.0)])\n  37|     def label(self) -> str:\n  38| def default_report() -> str:"
+        },
+        {
+          "path": "target.py",
+          "line": 37,
+          "column": 28,
+          "stop_line": 38,
+          "stop_column": 1,
+          "code": "parse-error",
+          "message": "Parse error: Expected an indented block after function definition",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "  36|     return report([Circle(1.0), Square(1.0)])\n  37|     def label(self) -> str:\n  38| def default_report() -> str:"
+        },
+        {
+          "path": "target.py",
+          "line": 40,
+          "column": 33,
+          "stop_line": 40,
+          "stop_column": 39,
+          "code": "unknown-name",
+          "message": "Could not find name `Square`",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "  39|     \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n  40|     return report([Circle(1.0), Square(1.0)])\n  41| def report(shapes: list[Shape]) -> str:"
+        }
+      ],
+      "checker_latency_ms": 129.8,
+      "events": [
+        {
+          "tok": 99,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "8-14",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def __init__(self, radius: float) -> None:\n        self.radius = radius\n\n    def area(self) -> float:\n        return 3.14159 * self.radius ** 2\n\n    def label(self) -> str:\n        return f\"circle={self.area():.1f}\""
+        },
+        {
+          "tok": 102,
+          "type": "test",
+          "n": 1,
+          "resolved": false
+        },
+        {
+          "tok": 102,
+          "type": "turn",
+          "n": 1,
+          "via": "test"
+        },
+        {
+          "tok": 222,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "8-14",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def __init__(self, radius: float) -> None:\n        self.radius = radius\n\n    def area(self) -> float:\n        return 3.14159 * self.radius ** 2\n\n    def label(self) -> str:\n        return f\"circle={self.area():.1f}\""
+        },
+        {
+          "tok": 313,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "21-27",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def __init__(self, side: float) -> None:\n        self.side = side\n\n    def area(self) -> float:\n        return self.side ** 2\n\n    def label(self) -> str:\n        return f\"square={self.area():.1f}\""
+        },
+        {
+          "tok": 316,
+          "type": "test",
+          "n": 2,
+          "resolved": false
+        },
+        {
+          "tok": 316,
+          "type": "turn",
+          "n": 2,
+          "via": "test"
+        },
+        {
+          "tok": 439,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "8-14",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def __init__(self, radius: float) -> None:\n        self.radius = radius\n\n    def area(self) -> float:\n        return 3.14159 * self.radius ** 2\n\n    def label(self) -> str:\n        return f\"circle={self.area():.1f}\""
+        },
+        {
+          "tok": 519,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "21-27",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def __init__(self, side: float) -> None:\n        self.side = side\n\n    def area(self) -> float:\n        return self.side ** 2\n\n    def label(self) -> str:\n        return f\"square={self.area():.1f}\""
+        },
+        {
+          "tok": 575,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "30-30",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "def default_report() -> str:\n    \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n    return report([Circle(1.0), Square(1.0)])"
+        },
+        {
+          "tok": 578,
+          "type": "test",
+          "n": 3,
+          "resolved": false
+        },
+        {
+          "tok": 578,
+          "type": "turn",
+          "n": 3,
+          "via": "test"
+        },
+        {
+          "tok": 701,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "8-14",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def __init__(self, radius: float) -> None:\n        self.radius = radius\n\n    def area(self) -> float:\n        return 3.14159 * self.radius ** 2\n\n    def label(self) -> str:\n        return f\"circle={self.area():.1f}\""
+        },
+        {
+          "tok": 781,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "21-27",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def __init__(self, side: float) -> None:\n        self.side = side\n\n    def area(self) -> float:\n        return self.side ** 2\n\n    def label(self) -> str:\n        return f\"square={self.area():.1f}\""
+        },
+        {
+          "tok": 837,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "30-30",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "def default_report() -> str:\n    \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n    return report([Circle(1.0), Square(1.0)])"
+        },
+        {
+          "tok": 885,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "37-42",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "def report(shapes: list[Shape]) -> str:\n    \"\"\"Delegate to lib.summary.\"\"\"\n    return summary(shapes)"
+        },
+        {
+          "tok": 888,
+          "type": "test",
+          "n": 4,
+          "resolved": false
+        },
+        {
+          "tok": 888,
+          "type": "turn",
+          "n": 4,
+          "via": "test"
+        },
+        {
+          "tok": 1011,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "8-14",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def __init__(self, radius: float) -> None:\n        self.radius = radius\n\n    def area(self) -> float:\n        return 3.14159 * self.radius ** 2\n\n    def label(self) -> str:\n        return f\"circle={self.area():.1f}\""
+        },
+        {
+          "tok": 1091,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "21-27",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def __init__(self, side: float) -> None:\n        self.side = side\n\n    def area(self) -> float:\n        return self.side ** 2\n\n    def label(self) -> str:\n        return f\"square={self.area():.1f}\""
+        },
+        {
+          "tok": 1147,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "30-30",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "def default_report() -> str:\n    \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n    return report([Circle(1.0), Square(1.0)])"
+        },
+        {
+          "tok": 1195,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "37-42",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "def report(shapes: list[Shape]) -> str:\n    \"\"\"Delegate to lib.summary.\"\"\"\n    return summary(shapes)"
+        },
+        {
+          "tok": 1198,
+          "type": "test",
+          "n": 5,
+          "resolved": false
+        },
+        {
+          "tok": 1198,
+          "type": "turn",
+          "n": 5,
+          "via": "test"
+        },
+        {
+          "tok": 1321,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "8-14",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def __init__(self, radius: float) -> None:\n        self.radius = radius\n\n    def area(self) -> float:\n        return 3.14159 * self.radius ** 2\n\n    def label(self) -> str:\n        return f\"circle={self.area():.1f}\""
+        },
+        {
+          "tok": 1401,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "21-27",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def __init__(self, side: float) -> None:\n        self.side = side\n\n    def area(self) -> float:\n        return self.side ** 2\n\n    def label(self) -> str:\n        return f\"square={self.area():.1f}\""
+        },
+        {
+          "tok": 1457,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "30-30",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "def default_report() -> str:\n    \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n    return report([Circle(1.0), Square(1.0)])"
+        },
+        {
+          "tok": 1505,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "37-42",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "def report(shapes: list[Shape]) -> str:\n    \"\"\"Delegate to lib.summary.\"\"\"\n    return summary(shapes)"
+        },
+        {
+          "tok": 1508,
+          "type": "test",
+          "n": 6,
+          "resolved": false
+        },
+        {
+          "tok": 1508,
+          "type": "turn",
+          "n": 6,
+          "via": "test"
+        },
+        {
+          "tok": 1631,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "8-14",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def __init__(self, radius: float) -> None:\n        self.radius = radius\n\n    def area(self) -> float:\n        return 3.14159 * self.radius ** 2\n\n    def label(self) -> str:\n        return f\"circle={self.area():.1f}\""
+        },
+        {
+          "tok": 1711,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "21-27",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def __init__(self, side: float) -> None:\n        self.side = side\n\n    def area(self) -> float:\n        return self.side ** 2\n\n    def label(self) -> str:\n        return f\"square={self.area():.1f}\""
+        },
+        {
+          "tok": 1767,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "30-30",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "def default_report() -> str:\n    \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n    return report([Circle(1.0), Square(1.0)])"
+        }
+      ],
+      "in_tokens": 4030,
+      "out_tokens": 1800,
+      "file_sha256": {
+        "lib.py": "6504f47f0389f9c244158310ffbcf8a2e7c3abe0ce52d69dae57fc4f69cdd897",
+        "target.py": "b3da3cc3bd9576b86e4dfbc1ac71e8d0c50a069f058958d6e859ad6717ed9bf7"
+      },
+      "workspace_sha256": "e8d2d22be8efb65f69cdd3964bae996be286360594c925f78c6ce1ce84505622"
+    }
+  ],
+  "rechecked_by": "checker-paired-v1 structured diagnostic collector",
+  "protocol_source_sha256": {
+    "scripts/experiments/checker_paired.py": "7bb64807986ef645b3b01a0438d148755faa2e3397d0bb14421db5ce02aaed5c",
+    "scripts/experiments/diagnostics.py": "98f3e55a2077055aa170ae6cbe09d839ae784a1605f58838478cc2e59d35b746",
+    "scripts/analysis/analyze_checker_paired.py": "3935fc3c01a2f34e09faf2e8192140a7dafe0d96ac64a3b4919ec16f496cde38",
+    "scripts/synth_tasks_authoring.py": "51af9d800d0f6812286343b74c9d578b5ad1a599f9a4bbf184246c7efb94a58e",
+    "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+    "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
+    "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+    "scripts/run_checker_paired.sh": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
+  }
+}

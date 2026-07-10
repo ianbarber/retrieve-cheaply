@@ -6,10 +6,7 @@
 # (run_relabel2.sh) so the token comparison is apples-to-apples. Trained first (fast: ~<100 out
 # tokens/solve), then base (slow: reads the big file, long generations). Resumable: existing
 # output jsons are skipped. Sequential only (pyrefly-init shares a daemon socket).
-set -u
-cd /home/ianbarber/Projects/Streams
-export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HOME=/mnt/nas/hf-cache
-PY=.venv-streams.system/bin/python
+source "$(dirname -- "${BASH_SOURCE[0]}")/common.sh"
 M="${MODEL:-Qwen/Qwen2.5-Coder-7B-Instruct}"
 ADAPTER="${ADAPTER:-runs/sft/effic_lora_powered}"
 SEEDS="${SEEDS:-4}"
@@ -17,7 +14,7 @@ SUITE="${SUITE:-effic_real}"          # effic_real (famous, base-guessable) | ef
 PREFIX="${PREFIX:-er}"                # output basename: ${PREFIX}_trained.json / ${PREFIX}_base.json
 COMMON="--suite $SUITE --model $M --gpu-only --conds A --lsp-tools --temp 0.7 \
         --max-reads 4 --max-turns 14 --max-new 3000 --seeds $SEEDS"
-pkill -9 -f "[p]yrefly" 2>/dev/null
+pkill -9 -f "[p]yrefly lsp" 2>/dev/null || true
 
 if [ ! -f runs/agent/${PREFIX}_trained.json ]; then
   echo "[${PREFIX}-trained-start $(date +%T)]"

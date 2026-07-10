@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Summarize the dispatch/goto experiments that support REPORT.md section 3.5.
+"""Summarize the historical dispatch/goto experiment and its scoped limitations.
 
 The dispatch runs test whether a type-aware go-to-definition beats a realistic textual baseline
 (`grep` plus reads) when a method name is overridden on many classes. The important quantity is the
@@ -107,6 +107,8 @@ def main() -> None:
     print("- 27B annotated: 15/15 solved in grep_base and defn_prompt; ratio ~= 1.04.")
     print("- 27B stripped/indirection: grep_base solved-token means stay flat at about 1436, 1429, 1465.")
     print("- 7B annotated: sparse solved sets, no stable matched-success efficiency claim.")
+    print("- The prompts disclose concrete receiver information; these data do not identify a typed-vs-erased effect.")
+    print("- No equivalence margin was preregistered, so near-one ratios are descriptive, not equivalence evidence.")
 
 
 if __name__ == "__main__":

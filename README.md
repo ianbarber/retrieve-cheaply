@@ -1,162 +1,132 @@
-# The Value Is the Type, Not the Language Server
+# When Do Language Servers Help Coding Agents?
 
-Code, result data, and reproduction scripts for the draft tech report
-[REPORT.md](./REPORT.md), *The Value Is the Type, Not the Language Server*.
+This repository studies a conditional engineering question rather than defending a universal LSP claim:
 
-**Status: stable findings, draft writeup.** The core result has converged. We separate what a language
-server (LSP) offers, **information** (diagnostics, types, references), **cheaper retrieval**
-(go-to-definition instead of a whole-file read), and **semantic precision** (which definition binds when a
-name is ambiguous), and toggle each at fixed model capability. The value is in the code's **types** being
-readable and correct, not in a language server that navigates them. A capable agent reads the receiver type
-and self-localizes, so navigation is redundant; and a type checker does not help it write the code live.
-The checker's role is a gate that keeps committed types correct, not live navigation or authoring
-feedback. Remaining work is packaging and boundary testing, not a blocker on the current claims.
+> When do semantic retrieval, readable/inferred types, checker feedback, and server-backed operations
+> improve a coding agent after election, actionability, latency, and context costs are counted?
+
+The working model is:
+
+`opportunity × correctness/uniqueness × compression × election × actionability − cost`.
+
+LSP is the transport; a language server is the semantic implementation; types are semantic substrate; a
+type checker produces consistency diagnostics; and pull tools, pushed context, patch-boundary feedback,
+gates, rerankers, constrained decoding, and training rewards are distinct integrations.
 
 ## Current findings
 
-| finding | status | boundary |
-|---|---|---|
-| LSP information is redundant when the fact is readable in budget. | Stable across tested channels. | Very large/tangled codebases remain untested. |
-| Go-to-definition saves tokens against a whole-file-read baseline. | Stable controlled-baseline result. | Does not clearly transfer to grep/ranged-read agents. |
-| Election is capability-gated. | Stable. | Useful mainly when the cheap action can replace an expensive read. |
-| Semantic goto is redundant when receiver types are readable. | Stable on dispatch suite and real probe. | More real tasks would sharpen external validity, not the mechanism. |
-| Type-checker feedback does not help live authoring in tested regimes. | Stable for 27B/7B authoring suite. | Harder authoring tasks may move the boundary. |
+**Supported, narrow positive.** A compact definition result cuts pooled input tokens 3.5–4.7x at unchanged
+success when the counterfactual is a whole-file library read. After averaging rollout seeds within task,
+the treatment is cheaper on 11/11 local-27B tasks, 11/11 Sonnet tasks, and 10/11 DeepSeek tasks. Mean
+per-task ratios are 4.02, 3.65, and 6.03; medians are 3.83, 3.01, and 2.70. Most of these runs use a static
+AST resolver, so this supports compact retrieval, not LSP transport in general.
 
-- **Information is redundant when it is readable in budget.** Wherever the agent can read the source and
-  derive the fact, handing over the language server's information does not raise pass@1, on every channel
-  we tested (correction, completeness, navigation, prevention, scale, type inference) and, as a boundary
-  check, on runtime behavior. Both frontier models solve the held-out-scored inference test 18/18 with
-  zero latent bugs, with a `check_types()` tool and without it. The same redundancy extends to semantic
-  precision (below) and to type-checker feedback while authoring new code (below). (Untested: a codebase
-  too large or tangled to read in budget.)
-- **Election is capability-gated.** A 7B uses `<defn>` 2% of the time by default and ignores a prompt
-  telling it to prefer the action; one on-policy training round takes it to 100% use and 4.5× fewer
-  tokens. A capable model needs only framing: presenting `<defn>` as cheaper than a read moves an
-  untrained 27B to 88 to 93% use and a frontier model to 100%.
-- **Efficiency is a win only against a whole-file read.** Toggling the action on the same model, `<defn>`
-  cuts input tokens 3.5 to 4.7× at equal success:
+**Supported policy result.** Tool election is model- and policy-dependent. Prompting works in some
+capable-model runs; on-policy relabeling and cost-reward training change a 7B model’s retrieval choice.
+This is not evidence for a monotonic parameter-count law.
 
-  | model | tokens with `<defn>` | tokens read-only | factor |
-  |---|---|---|---|
-  | 27B (real obscure suite) | 1302 | 4563 | 3.5× |
-  | claude-sonnet-4.5 (tool-calling) | 6018 | 21985 | 3.7× |
-  | deepseek-chat-v3.1 (tool-calling) | 7705 | 36192 | 4.7× |
+**Tentative negative regimes.** A historical dispatch suite shows near-one token ratios when a capable
+agent can read the concrete receiver and open the target directly. The suite leaks that information and
+has no erased-type arm, so it does not prove semantic navigation is redundant. Historical checker arms
+compare unrelated first drafts, and their residual counts were contaminated by an in-workspace test file.
+Corrected replay nevertheless finds checker-positive diagnostics in both coherent recoverable historical
+workspaces. Execution/checker inference suites are at behavioral ceiling, but checker opportunity was not
+measured there; neither fact establishes equivalence.
 
-  But that baseline is a *forced whole-file read*. An in-the-wild probe with a real bash agent
-  (mini-swe-agent on SWE-bench Verified) finds a capable agent retrieves just as cheaply with `grep` plus
-  ranged `sed`, uses go-to-definition little even when prompted, and reads the file anyway when it does
-  (additive, not substitutive). So the efficiency edge does not clearly transfer past the whole-file
-  baseline. See REPORT.md §3.4 and `docs/real_repo_progress.md`.
-- **Precision is redundant too, and the value turns out to be the types, not the navigation.** We tested
-  the sharper question, whether a language server's *semantic* resolution supplies anything a *textual*
-  `grep` cannot when a name is ambiguous, on a 15-task dispatch domain built to favour it (a method
-  overridden on 8 to 15 classes). It does not: the capable 27B resolves 15/15 with a grep-versus
-  go-to-definition token ratio of ~1.0 (0.97 to 1.04) and barely greps, because it reads the receiver's
-  *type* and opens the one correct override directly; a frontier agent on a real 21-override task never
-  elects the tool at all. If dispatch is statically resolvable the type is in the source and the agent
-  reads it (navigation redundant); if it is not, dispatch is dynamic and a static goto cannot resolve it
-  either. Navigation never beats a readable type. An annotation-stripping ablation confirms it: moving the
-  receiver type from the call-site annotation to a factory leaves the model's cost flat (grep-only tokens
-  1436, 1429, 1465), so readable type information, wherever it sits, carries the localization. See
-  REPORT.md §3.5.
-- **A type checker does not help when authoring new code either.** On a 12-task authoring suite (implement
-  a typed module from a spec, held-out scored), toggling the checker changes nothing at either capability
-  tier: the 27B authors 12/12 type-clean with no error to catch and never elects it; the 7B's best arm is
-  *no checker* (6/12 versus 3/12 and 4/12), its residual type errors stay flat, and volunteering
-  diagnostics after every edit floods it into thrash (10.4 edits, 2.3× the tokens) without cleaning
-  anything up. Redundant for the model that makes no errors, unusable for the one that cannot act on the
-  diagnostics. So the type system's value is a readable, correct type, a gate the checker keeps honest on
-  committed code, not live navigation or live authoring feedback. See REPORT.md §5.
+**New pilot evidence.** The typed/erased navigation apparatus passes base/gold, held-out, runtime-equivalence,
+leakage, and strict live-Pyrefly manipulation checks on all four pilot instances and twelve additional
+apparatus-audit instances. Those 12 are not confirmation because validator changes followed their first
+inspection; a new disjoint 12-instance confirmation split passes mechanical checks and is reserved behind
+source hashes without model exposure. A local 7B
+pilot clears its edit-only control (2/2) but is uniformly floored in all 12 causal/deployment cells. Typed
+automatic context localizes 2/2 correct files and halves input tokens, yet yields 0/2 success, exposing an
+actionability bottleneck. Fresh checker calibration likewise stops correctly: 7B produces 0/3 coherent
+drafts, while 14B produces 2/8 and both are type-clean. Neither reaches the 20–70% opportunity band;
+paired revisions and navigation confirmation remain unrun.
 
-## The recipe (for the efficiency win, scoped to a whole-file-read baseline)
+See [REPORT.md](REPORT.md) for the evidence, limitations, related work, and practitioner decision table;
+[evidence/claim_ledger.md](evidence/claim_ledger.md) for claim-by-claim status; and
+[evidence/protocols.md](evidence/protocols.md) for the frozen protocols and zero-paid-spend run budget.
 
-1. Expose go-to-definition as an action, not diagnostics as context. The information in
-   diagnostics, references, and completion is redundant for a self-retrieving agent.
-2. Frame it in the system prompt as cheaper than a read. Capable models then use it without training.
-3. If the model is weak enough to ignore the framing, train the preference on-policy: roll out the
-   agent, rewrite its `<read>` of a resolvable symbol to `<defn sym>`, and fine-tune on the relabeled
-   trajectories (one DAgger round).
-4. Mix in tasks that genuinely need a full read, so the agent learns when the cheap action suffices.
+## Fast reproduction
 
-## Reproduce
+Python 3.10+ is required. Install the analysis/LSP development dependencies, then run the no-model
+reproducer:
 
 ```bash
-pip install -e .                       # add '.[api]' for the frontier tool-calling path
-python3 scripts/analysis/stats.py      # recompute the 7B training numbers from committed JSONs
-python3 scripts/analysis/analyze_dispatch.py
-python3 scripts/analysis/analyze_authoring.py
-python3 scripts/analyze_runtime.py
+python3 -m pip install -e '.[dev,analysis]'
+python3 scripts/analysis/reproduce_all.py
 ```
 
-`stats.py` recomputes the weak-model efficiency-recipe numbers from the committed `runs/agent/*.json` and
-checks each against `REPORT.md` (`[MATCH]` lines). `scripts/analysis/analyze_dispatch.py`,
-`scripts/analysis/analyze_authoring.py`, and `scripts/analyze_runtime.py` recompute the newer
-types-reframe and boundary-test summaries. The `scripts/run_*.sh` drivers regenerate the JSONs:
+The command verifies `evidence/manifest.json`, reruns every analyzer retained in the report, recomputes
+task-level effects, and reruns all navigation mechanical gates. It makes no model or API calls.
+Pyrefly is discovered from `STREAMS_PYREFLY`, `PYREFLY_BIN`, PATH, `.venv/bin`, or
+`.venv-streams/bin`.
 
-| Driver | Reproduces |
-|---|---|
-| `run_relabel2.sh` | 7B on-policy training (harvest, SFT, retest), report §4 |
-| `run_toolablation.sh` | tool-value ablation, with `<defn>` vs read-only, report §3 |
-| `run_frontier.sh` | frontier election and efficiency via OpenRouter, report §3 to §4 |
-| `run_gapd_frontier.sh` | the type-inference information channel, report §5 |
-| `run_gapd2_frontier.sh` | the held-out-scored fair inference test, report §5 |
-| `run_runtime_frontier.sh` | the execution-feedback boundary test (no-run / run / handed-over), report §5 |
-| `run_relabel2_27b.sh` | 27B cross-scale transfer, Appendix B |
-| `run_grpo.sh` | cost-reward RL corroboration, Appendix A |
-
-The in-the-wild probe (report §3.4) is exploratory: `scripts/realbench/mini_ablate.py` runs
-mini-swe-agent on a SWE-bench Verified task under three arms (bash-only / `codenav` advertised / strongly
-framed) in the task's Docker container. Findings and per-arm logs: `docs/real_repo_progress.md`.
-
-The dispatch-efficiency and types experiments (report §3.5) run locally:
-`scripts/realbench/local_dispatch.py` drives the on-disk dispatch tasks in `dispatch_tasks.py` (a real
-`pyrefly` go-to-definition via `pyrefly_nav.py`) under `--conds grep_base,defn_avail,defn_prompt`, with
-`--typing {annotated,stripped,indirection}` for the annotation-stripping ablation. The authoring
-type-checker experiment (report §5) is `scripts/synth_mf.py --suite authoring --arm {none,check,feedback}`
-over `scripts/synth_tasks_authoring.py`. Results and logs: `docs/real_repo_progress.md`.
-
-## Test a different model or approach
-
-`scripts/api_agent.py` is a model-agnostic tool-calling harness. Set `OPENROUTER_API_KEY` (or place
-the key in a `.orkey` file at the repo root, gitignored) and point it at any OpenRouter model to
-measure election and the tool-value ablation, with a hard spend cap:
+Targeted commands:
 
 ```bash
-# election and efficiency on the obscure real-code suite:
-python3 scripts/api_agent.py out.json --model anthropic/claude-sonnet-4.5 \
-    --suite effic_real2 --seeds 2 --budget-usd 5
-# the read-only counterfactual (same, with <defn> removed):
-python3 scripts/api_agent.py out_ro.json --model anthropic/claude-sonnet-4.5 \
-    --suite effic_real2 --no-defn --seeds 2 --budget-usd 12
+python3 scripts/analysis/stats.py
+python3 scripts/analysis/effic_real_stats.py \
+  --base runs/agent/er2_27b_readonly.json \
+  --trained runs/agent/er2_27b_base.json --label 27B
+python3 scripts/analysis/task_level_effects.py \
+  --base runs/agent/er2_27b_readonly.json \
+  --treatment runs/agent/er2_27b_base.json --label 27B
+python3 scripts/experiments/navigation_tasks.py --split pilot
 ```
 
-Other suites swap `--suite`: `gapd --with-check` (the type-inference information channel) and `runtime
---no-hint --no-test` (the execution-feedback boundary; drop `--no-test` for elect-to-run, add
-`--auto-feedback` for handed-over). The local harness (`scripts/synth_mf.py`) does the same for
-open-weight models, with `--no-defn` (tool ablation) and `--adapter` (a trained policy).
+## Expensive runs
 
-## Code layout
+No paid API run is authorized. The committed pilots used locally cached 7B/14B models with a monetary cap
+of `$0`; these commands regenerate the development runs:
 
-| Path | What it is |
+```bash
+PYTHON=python3 scripts/run_navigation_pilot.sh
+PYTHON=python3 scripts/run_checker_paired.sh
+```
+
+The confirmation command is intentionally separate and runs only after the positive control and pilot
+clear the preregistered gates. It currently exits before model loading because the committed pilot is
+uniformly floored:
+
+```bash
+PYTHON=python3 scripts/run_navigation_confirmation.sh
+```
+
+Historical OpenRouter drivers still require `OPENROUTER_API_KEY` or `.orkey` and enforce their own
+`--budget-usd` limits. Do not run them merely to reproduce the report; committed JSON is sufficient.
+
+## Decision recipe
+
+| condition | use |
 |---|---|
-| `scaffold/stream_agent.py` | local token-stream coding agent (`<read>`/`<defn>`/`<findrefs>`/`<test>`/`<edit>`, `--no-defn` ablation) |
-| `scaffold/mock_env.py` | in-memory workspace with real Pyrefly and the `<defn>` resolver |
-| `scripts/api_agent.py` | OpenRouter tool-calling harness (test any frontier model) |
-| `scripts/synth_tasks_effic.py` | synthetic definition-sufficient efficiency suite |
-| `scripts/synth_tasks_efficread.py` | read-required boundary suite |
-| `scripts/synth_tasks_effic_real{,2}.py` | real vendored-library suites (`effic_real_vendor/`) |
-| `scripts/synth_tasks_gapd.py`, `scripts/synth_tasks_gapd2.py` | type-inference suite (gapd2 adds held-out scoring) |
-| `scripts/synth_tasks_runtime.py` | execution-feedback boundary suite (structural, easy, and semantic-trap tiers) |
-| `scripts/synth_mf.py` | local condition runner |
-| `scripts/sft_lora.py` | on-policy LoRA-SFT trainer |
-| `scripts/validate_pyrefly_lsp.py` | validates `<defn>` against a live `pyrefly lsp` daemon |
-| `scripts/grpo_cost.py` | cost-reward GRPO corroboration (optional) |
-| `scripts/realbench/mini_ablate.py`, `codenav.py` | in-the-wild probe: mini-swe-agent + language-server-as-CLI (§3.4) |
-| `scripts/realbench/dispatch_tasks.py`, `local_dispatch.py`, `pyrefly_nav.py` | dispatch-efficiency + annotation ablation with a real `pyrefly` goto (§3.5) |
-| `scripts/synth_tasks_authoring.py` | authoring suite for the type-checker-at-authoring test (§5) |
+| Fact is visible, lexically unique, and cheap to read | grep plus ranged textual retrieval |
+| Binding is ambiguous or remote; re-exports, overloads, factories, or inheritance defeat text | semantic pull navigation |
+| Compact result can replace a large read | automatic or elected definition/method span |
+| Valuable tool is not elected | cheap/precise prompt framing, then policy training |
+| Natural coherent drafts have checker-detectable errors and the model can revise | patch-boundary diagnostic deltas |
+| Self-repair is unreliable and accepted regressions matter | checker gate or offline reranking |
+| Invalid candidates should never enter the search | constrained decoding or training reward |
 
-## Layout and environment
+Always measure whether semantic retrieval substitutes for a read, the checker opportunity rate, whether
+the model edits diagnosed locations, and accepted-defect rate. Static tooling will not solve dynamic
+behavior, logical errors outside the type system, incorrect annotations, `Any` boundaries, or failures the
+model cannot act on.
 
-`runs/agent/` holds committed result JSONs; `runs/sft/` trained LoRA adapters (gitignored); `log.md` is
-the chronological lab log; `docs/` has figures and the bibliography. Static analyzer: Pyrefly
-(`.venv-streams/bin/pyrefly`, override `STREAMS_PYREFLY`). Local runs: one NVIDIA DGX Spark (GB10, 128 GB).
+## Repository layout
+
+| path | purpose |
+|---|---|
+| `REPORT.md` | final conditional argument and practitioner framework |
+| `evidence/` | claim ledger, preregistered protocols, hashes, provenance warnings |
+| `runs/agent/` | committed historical raw model results |
+| `runs/protocol/` | mechanical checks and draft-recovery audit artifacts |
+| `scripts/experiments/` | typed/erased navigation and paired-checker harnesses |
+| `scripts/analysis/` | historical and task-level analyzers plus the fast reproducer |
+| `scripts/realbench/` | SWE-bench scanning and historical dispatch tooling |
+| `scaffold/` | agent and workspace environments |
+| `docs/real_repo_progress.md` | preserved chronological research log; not the final claim source |
+
+Historical evidence is preserved. Where raw data or exact provenance is missing, the claim ledger marks
+the result tentative or unsupported instead of reconstructing certainty from `log.md` summaries.

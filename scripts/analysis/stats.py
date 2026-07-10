@@ -8,7 +8,7 @@ baseline. Each block below is labelled with its REPORT.md section and prints, pe
 arm: use-defn% / use-read% / resolved n/N (Wilson 95% CI) / mean input tokens, plus the
 token ratio and the paired test (exact McNemar on success, exact two-sided sign test on
 the paired token comparison). The TOKEN-MEAN METHOD is named in each block: the §4
-headline / relabel-only / real-LSP / 27B-all and GRPO use a PLAIN per-arm mean over all
+headline / relabel-only / live-first-hybrid / 27B-all and GRPO use a PLAIN per-arm mean over all
 rows; the pilot and the isolation control use a MATCHED-OUTCOME mean (input tokens
 averaged only over (task,seed) pairs both arms resolve).
 
@@ -17,7 +17,7 @@ and frontier validation are reproduced by run_toolablation.sh / run_frontier.sh 
 scripts/analysis/effic_real_stats.py.
 
 What it prints (report section  <-  repo file):
-  §4 training headline (defn-sufficient, real resolver, n=48)
+  §4 training headline (defn-sufficient, workspace AST resolver, n=48)
         3086 -> 688 (4.5x), 0->100% defn, succ 0.65->1.00 (McNemar b=17/c=0)
         PRE  = reallsp_base.json  group=='rich'   (== powered_retest_base.json rich)
         POST = reallsp_sft.json   group=='rich'   (== powered_retest_sft.json  rich)
@@ -30,7 +30,7 @@ What it prints (report section  <-  repo file):
   §3 isolation control, MATCHED-OUTCOME (read-trained vs defn-trained, n=40): 3191 -> 684 (4.7x)
         read-trained = effic_readtrained_retest.json (== effic_retest_sft.json)
         defn-trained = powered_retest_sft.json group=='rich'
-  §2 real-LSP validation (live pyrefly daemon, n=24): 2894 -> 689, 0->100%, 0.58->1.00
+  §2 live-first hybrid validation (Pyrefly with AST fallback, n=24): 2894 -> 689, 0->100%, 0.58->1.00
         PRE  = lsp_base.json      POST = lsp_sft.json
   §4 boundary / non-degeneracy (read-required subset, n=24): read stays ~100%, succ 0.54->0.83
         PRE  = reallsp_base.json group=='readreq'   POST = reallsp_sft.json group=='readreq'
@@ -41,10 +41,14 @@ What it prints (report section  <-  repo file):
 
 Run:  python3 scripts/analysis/stats.py   (from the repo root)
 """
-import json, math, os, statistics
+import json
+import math
+import os
+import statistics
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
-A = lambda p: os.path.join(ROOT, "runs", "agent", p)
+def A(path):
+    return os.path.join(ROOT, "runs", "agent", path)
 
 
 def load(path):
@@ -152,7 +156,7 @@ print("STREAMS — WHOLE-FILE-READ EFFICIENCY RECIPE reproducer")
 print("=" * 78)
 
 # --- §4 HEADLINE: defn-sufficient, real AST resolver, plain per-arm token mean ---
-print("\n== report §4 — training headline: defn-sufficient, real resolver (n=48) ==")
+print("\n== historical training headline: defn-sufficient, workspace AST resolver (n=48) ==")
 print("   token-mean method: PLAIN per-arm mean over all rows")
 h_pre = group(load(A("reallsp_base.json")), "rich")
 h_post = group(load(A("reallsp_sft.json")), "rich")
@@ -166,11 +170,12 @@ print(f"  paired token sign test (all {pt['n']} pairs): POST cheaper {pt['cheape
       f"worse {pt['worse']}, exact two-sided p={pt['sign_p']:.1e}")
 b, c, p, n = mcnemar(h_post, h_pre)
 print(f"  success McNemar (n={n} pairs): POST-only b={b}, PRE-only c={c}, exact p={p:.1e}")
-check("tokens 3086->688", round(mt_pre), 3086); check("tokens 3086->688", round(mt_post), 688)
+check("tokens 3086->688", round(mt_pre), 3086)
+check("tokens 3086->688", round(mt_post), 688)
 check("McNemar b=17/c=0", b, 17, tol=0)
 
 # --- §4 relabel-only retest: the method in isolation ---
-print("\n== report §4 — relabel-only retest (method in isolation, n=48) ==")
+print("\n== historical relabel-only retest (method in isolation, n=48) ==")
 print("   token-mean method: PLAIN per-arm mean over all rows")
 r_pre = load(A("effic_retest_base.json"))
 r_post = load(A("relabel2_retest.json"))
@@ -182,10 +187,11 @@ print(f"  token ratio: {rp/rq:.1f}x cheaper  ({rp:.0f} -> {rq:.0f})")
 pt = paired_token_all(r_pre, r_post)
 print(f"  paired token sign test (all {pt['n']} pairs): POST cheaper {pt['cheaper']}/{pt['n']}, "
       f"worse {pt['worse']}, exact two-sided p={pt['sign_p']:.1e}")
-check("tokens 3086->724", round(rp), 3086); check("tokens 3086->724", round(rq), 724)
+check("tokens 3086->724", round(rp), 3086)
+check("tokens 3086->724", round(rq), 724)
 
 # --- §4 pilot, MATCHED-OUTCOME (teacher-forced lead-<defn>, 12 seeds) ---
-print("\n== report §4 — teacher-forced pilot (lead-<defn>, 12 seeds), MATCHED-OUTCOME (n=84) ==")
+print("\n== historical teacher-forced pilot (lead-<defn>, 12 seeds), MATCHED-OUTCOME (n=84) ==")
 print("   token-mean method: MATCHED-OUTCOME (mean input tokens over (task,seed) BOTH arms solve)")
 p_pre = group(load(A("powered_retest_base.json")), "rich") + load(A("powered_retest_base_x.json"))
 p_post = group(load(A("powered_retest_sft.json")), "rich") + load(A("powered_retest_sft_x.json"))
@@ -198,11 +204,12 @@ print(f"  MATCHED-OUTCOME (n={mo['n']}): PRE {mo['pre']:.0f} -> POST {mo['post']
 b, c, p, n = mcnemar(p_post, p_pre)
 print(f"  success McNemar (all {n} pairs): POST-only={b}, PRE-only={c}, exact p={p:.1e}  "
       f"(== the report's c=57/b=3, opposite POST/PRE label convention)")
-check("matched 2108->675", round(mo['pre']), 2108); check("matched 2108->675", round(mo['post']), 675)
+check("matched 2108->675", round(mo['pre']), 2108)
+check("matched 2108->675", round(mo['post']), 675)
 check("McNemar POST-only=57/PRE-only=3", b, 57, tol=0)
 
 # --- §3 isolation control, MATCHED-OUTCOME (read-trained vs defn-trained) ---
-print("\n== report §3 — isolation control: read-trained vs defn-trained, MATCHED-OUTCOME (n=40) ==")
+print("\n== isolation control: read-trained vs defn-trained, MATCHED-OUTCOME (n=40) ==")
 print("   token-mean method: MATCHED-OUTCOME (over tasks BOTH trained models solve)")
 read_trained = load(A("effic_readtrained_retest.json"))
 defn_trained = group(load(A("powered_retest_sft.json")), "rich")
@@ -212,11 +219,12 @@ mo = matched_outcome(read_trained, defn_trained)
 print(f"  MATCHED-OUTCOME (n={mo['n']}): read {mo['pre']:.0f} -> defn {mo['post']:.0f} "
       f"= {mo['pre']/mo['post']:.1f}x cheaper; defn cheaper {mo['cheaper']}/{mo['n']}, "
       f"exact two-sided sign p={mo['sign_p']:.1e}")
-check("3191->684", round(mo['pre']), 3191); check("3191->684", round(mo['post']), 684)
+check("3191->684", round(mo['pre']), 3191)
+check("3191->684", round(mo['post']), 684)
 check("sign p~6.8e-4", round(mo['sign_p'], 5), 0.00068, tol=0.0002)
 
-# --- §5 / item-3 real-LSP headline: live pyrefly daemon ---
-print("\n== report §2 — real-LSP validation (live pyrefly daemon, n=24) ==")
+# --- live-first Pyrefly headline; historical harness may fall back to AST ---
+print("\n== live-first hybrid validation (Pyrefly with AST fallback, n=24) ==")
 print("   token-mean method: PLAIN per-arm mean over all rows")
 l_pre = load(A("lsp_base.json"))
 l_post = load(A("lsp_sft.json"))
@@ -228,10 +236,11 @@ print(f"  token ratio: {lp/lq:.1f}x cheaper  ({lp:.0f} -> {lq:.0f})")
 b, c, p, n = mcnemar(l_post, l_pre)
 print(f"  success: {lpres}/{len(l_pre)} -> {lposts}/{len(l_post)}  "
       f"McNemar b={b}, c={c}, exact p={p:.1e}")
-check("tokens 2894->689", round(lp), 2894); check("tokens 2894->689", round(lq), 689)
+check("tokens 2894->689", round(lp), 2894)
+check("tokens 2894->689", round(lq), 689)
 
 # --- §4 boundary / non-degeneracy: read-required subset ---
-print("\n== report §4 — boundary / non-degeneracy (read-required subset, n=24) ==")
+print("\n== read-required boundary / non-degeneracy (n=24) ==")
 print("   read rate STAYS ~100%; success RISES; tokens go UP (correctly pays the read cost)")
 b_pre = group(load(A("reallsp_base.json")), "readreq")
 b_post = group(load(A("reallsp_sft.json")), "readreq")
@@ -245,7 +254,7 @@ check("succ 0.54->0.83", round(bps/len(b_pre), 2), 0.54, tol=0.02)
 check("succ 0.54->0.83", round(bqs/len(b_post), 2), 0.83, tol=0.02)
 
 # --- Appendix A GRPO cost-RL corroboration ---
-print("\n== report Appendix A — GRPO cost-RL corroboration ==")
+print("\n== historical GRPO cost-RL corroboration ==")
 print("   independent objective (token-cost reward) reaches the SFT operating point")
 g = load(A("grpo_retest.json"))
 ng, resg, dg, rdg, mtg = arm(g)
@@ -268,7 +277,7 @@ print(f"  under-trained 1-round retest (n={n1}): use-defn {d1}/{n1}={d1/n1:.0%} 
       f"resolved {r1res}/{n1}, mean_in_tok {mt1:.0f}")
 
 # --- §Limitations 27B transfer ---
-print("\n== report Appendix B — 27B transfer (Qwen3.6-27B, n=24) ==")
+print("\n== historical 27B training transfer (Qwen3.6-27B, n=24) ==")
 print("   token-mean method: ALL-rows for PRE; MATCHED-SUCCESS for the 5.5x ratio")
 q_pre = load(A("27b_base.json"))
 q_post = load(A("27b_retest.json"))
@@ -280,9 +289,10 @@ mo = matched_outcome(q_pre, q_post)
 print(f"  all-rows tokens {qp:.0f} -> {qq:.0f}; MATCHED-SUCCESS (n={mo['n']}): "
       f"{mo['pre']:.0f} -> {mo['post']:.0f} = {mo['pre']/mo['post']:.1f}x cheaper")
 print(f"  success {qps}/{len(q_pre)}={qps/len(q_pre):.2f} -> {qqs}/{len(q_post)}={qqs/len(q_post):.2f}")
-check("tokens 4058->726", round(qp), 4058); check("tokens 4058->726", round(qq), 726)
+check("tokens 4058->726", round(qp), 4058)
+check("tokens 4058->726", round(qq), 726)
 check("matched 5.5x", round(mo['pre'] / mo['post'], 1), 5.5, tol=0.2)
 
 print("\n" + "=" * 78)
-print("Done. Every [MATCH] above confirms the printed number equals REPORT.md (within rounding).")
+print("Done. Every [MATCH] confirms a retained numeric anchor in REPORT.md (within rounding).")
 print("=" * 78)

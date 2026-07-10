@@ -2,9 +2,7 @@
 # Frontier API validation (tool-calling modality): does a frontier model elect <defn> and is the
 # efficiency win present? effic_real2 with-defn vs read-only (--no-defn), via OpenRouter. Budget-capped
 # per command. Resumable (skip existing outputs). pyrefly-free (api_agent skips pyrefly w/o --with-check).
-set -u
-cd /home/ianbarber/Projects/Streams
-PY=.venv-streams.system/bin/python
+source "$(dirname -- "${BASH_SOURCE[0]}")/common.sh"
 SEEDS="${SEEDS:-2}"
 RR="--suite effic_real2 --seeds $SEEDS --max-reads 6 --max-turns 14 --temperature 0.7"
 # model : tag : withdefn-budget$ : readonly-budget$   (read-only is the cost driver — it reads big files)

@@ -11,8 +11,7 @@ Conditions (retrieval-tool advertisement is the only variable; capability held f
   defn_prompt : same tools, but the advertisement FRAMES <defn> as the cheaper/precise way to
                 find which override binds for the receiver.
 
-  HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HOME=/mnt/nas/hf-cache \
-    .venv-streams.system/bin/python scripts/realbench/local_dispatch.py \
+  python3 scripts/realbench/local_dispatch.py \
       --model Qwen/Qwen2.5-Coder-7B-Instruct --conds grep_base,defn_avail,defn_prompt --gpu-only
 """
 import os
@@ -22,7 +21,6 @@ import json
 import time
 import argparse
 
-os.environ.setdefault("HF_HOME", "/mnt/nas/hf-cache")
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)

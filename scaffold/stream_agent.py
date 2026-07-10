@@ -37,6 +37,7 @@ EDIT_RE = re.compile(
     r'(?:<<<<<<<\s*)?SEARCH\s*\n(?P<search>.*?)\n(?:END\s*\n)?(?:=======|REPLACE)\s*\n(?P<replace>.*?)'
     r'(?=\n\s*(?:END\b|>>>>>>>|<test\s*/>|<done\s*/>|SEARCH\b)|\Z)', re.S)
 DONE_RE = re.compile(r'<done\s*/>')
+SUBMIT_DRAFT_RE = re.compile(r'<submit_draft\s*/>')
 TEST_RE = re.compile(r'<test\s*/>')
 # <check/> — Exp 2 authoring arm: run the static type checker (env.pyrefly_diagnostics) WITHOUT
 # executing the code, so the agent can catch organic type errors before it runs the tests.
@@ -168,12 +169,15 @@ class StreamAgent:
                  max_reads=6, edit_mode="search", temperature=0.0, seed=0,
                  force_lsp=False, relabel=False, device=None,
                  use_lsp_defn=False, advertised_symbols=None, lsp_disabled=False,
-                 sys_override=None, authoring=False, allow_check=False, auto_check=False):
+                 sys_override=None, authoring=False, allow_check=False, auto_check=False,
+                 lsp_fallback=True, acceptance_gate=False, draft_submission=False):
         assert edit_mode in ("search", "line")
         self.sys_override = sys_override   # dispatch experiment: runner supplies the per-condition tool advertisement
         self.authoring = authoring   # Exp 2: reframe the system prompt as IMPLEMENT-a-module (not fix-a-bug)
         self.allow_check = allow_check   # Exp 2 `check` arm: advertise + honour a model-elected <check/> action
         self.auto_check = auto_check     # Exp 2 `feedback` arm: VOLUNTEER pyrefly diagnostics after every applied edit
+        self.acceptance_gate = acceptance_gate
+        self.draft_submission = draft_submission
         self.temperature, self.seed = temperature, seed
         self.model, self.tok, self.env = model, tok, env
         self.max_new, self.max_tests, self.max_turns = max_new_tokens, max_tests, max_turns
@@ -184,6 +188,7 @@ class StreamAgent:
         self.use_lsp_defn = use_lsp_defn   # back <defn> with a LIVE pyrefly LSP daemon (env.lsp_definition) instead of AST
         self.advertised_symbols = advertised_symbols or []   # symbols the model may query when reads are blocked
         self.lsp_disabled = lsp_disabled   # tool-value ablation: <defn>/<findrefs> genuinely UNAVAILABLE (read-only)
+        self.lsp_fallback = lsp_fallback
         self.test_p2p_cap = 5    # in-loop <test/> caps P2P for speed; final resolved runs full
         self.edit_mode = edit_mode
         self.dev = device or model.device
@@ -204,7 +209,10 @@ class StreamAgent:
                 src, path = self.env.lsp_definition(sym)
             if src:
                 return src, path
-            # LSP miss/timeout: fall through to the AST resolver (never hang on the daemon)
+            if not self.lsp_fallback:
+                return None, None
+            # Historical runs used an AST fallback after an LSP miss. New causal
+            # experiments disable it so the treatment is the server's result.
         if hasattr(self.env, "goto_definition"):
             src, path = self.env.goto_definition(sym)
             if src:
@@ -291,7 +299,10 @@ class StreamAgent:
                 diag = self.env.pyrefly_diagnostics() or ""
             except Exception as e:
                 diag = f"(type checker error: {type(e).__name__})"
-        n_diag = len([l for l in diag.splitlines() if l.strip()])
+        if hasattr(self.env, "last_raw_diagnostics"):
+            n_diag = len(self.env.last_raw_diagnostics)
+        else:
+            n_diag = len([l for l in diag.splitlines() if l.strip()])
         body = diag.strip() if diag.strip() else "(no type errors)"
         return "<check_result>\n" + body + "\n</check_result>", n_diag
 
@@ -388,6 +399,7 @@ class StreamAgent:
         relabel_keep_from = [None]  # --relabel: drop everything before this out_ids index from the SFT trace
         applied_upto = 0      # char index up to which edits are applied
         done_from = 0         # char index from which to look for <done/>
+        submit_from = 0       # first-draft boundary for paired checker experiments
         test_from = 0         # char index from which to look for <test/>
         read_from = 0         # char index from which to look for <read/>
         grep_from = 0         # char index from which to look for <grep/>
@@ -396,7 +408,7 @@ class StreamAgent:
         n_tests = n_edits = n_reads = n_lsp = n_checks = turns = 0
         fail_streak = 0       # consecutive non-applying / no-op edits (anti-degeneracy)
         changed_files = set()  # files edited since the last turn -> re-show their numbered view
-        done_seen = resolved = bailed = False
+        done_seen = resolved = bailed = draft_submitted = False
         last_test = None
         events = []           # trajectory log
         eos = tok.eos_token_id
@@ -526,6 +538,13 @@ class StreamAgent:
                     continue
 
             # detect <check/> -> run the static type checker (Exp 2 `check` arm), splice diagnostics
+            sm = SUBMIT_DRAFT_RE.search(emitted, submit_from)
+            if sm and self.draft_submission:
+                submit_from = sm.end()
+                draft_submitted = True
+                events.append({"tok": t, "type": "submit_draft"})
+                break
+
             cm = CHECK_RE.search(emitted, check_from)
             if cm and self.allow_check:
                 check_from = cm.end(); n_checks += 1
@@ -612,7 +631,10 @@ class StreamAgent:
                     obs = f"grep failed for {pat!r}: {type(e).__name__}: {e}"
                 turns += 1
                 deliver_turn(obs)
-                events.append({"tok": t, "type": "grep", "n": n_reads, "pat": pat, "nhits": len(hits)})
+                events.append({
+                    "tok": t, "type": "grep", "n": n_reads, "pat": pat, "nhits": len(hits),
+                    "paths": sorted({hit.split(":", 1)[0] for hit in hits}),
+                })
                 continue
 
             # PULL LSP actions: <findrefs sym=.../> and <defn sym=.../>.
@@ -649,6 +671,21 @@ class StreamAgent:
             dm = DONE_RE.search(emitted, done_from)
             if dm:
                 done_from = dm.end()
+                if self.acceptance_gate:
+                    obs, n_diag = self._check_obs()
+                    n_checks += 1
+                    if n_diag:
+                        turns += 1
+                        deliver_turn(
+                            "<acceptance_gate status=\"rejected\">\n"
+                            "New type errors remain; revise the coherent patch before finishing.\n"
+                            + obs + "\n</acceptance_gate>"
+                        )
+                        events.append({"tok": t, "type": "gate_reject", "n": n_checks,
+                                       "n_diag": n_diag})
+                        continue
+                    events.append({"tok": t, "type": "gate_accept", "n": n_checks,
+                                   "n_diag": 0})
                 done_seen = True
                 break
 
@@ -659,7 +696,8 @@ class StreamAgent:
         sft_input_ids = prompt_list + kept_ids
         sft_labels = [-100] * len(prompt_list) + kept_labels   # prompt masked; train only on model actions
         return {"resolved": result.get("resolved"),
-                "bailed": bailed, "tests": result, "metrics": self.env.metrics(),
+                "bailed": bailed, "done_seen": done_seen, "draft_submitted": draft_submitted,
+                "tests": result, "metrics": self.env.metrics(),
                 "events": events, "stream": emitted,
                 "out_tokens": t, "in_tokens": in_toks, "n_tokens": t,
                 "n_edits": n_edits, "n_tests": n_tests, "n_reads": n_reads, "n_greps": 0, "n_lsp": n_lsp,

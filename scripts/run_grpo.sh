@@ -7,10 +7,7 @@
 # Round 0 = the WILD 7B (no adapter) baseline harvest, so we can see in_tokens DROP across rounds.
 # Watch across rounds: mean reward UP, mean in_tokens DOWN, %resolved (stay/up), %use-defn UP.
 # Mirrors run_relabel2.sh's harvest->train->resample shell pattern (idempotent: skips finished artifacts).
-set -u
-cd /home/ianbarber/Projects/Streams
-export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HOME=/mnt/nas/hf-cache
-PY=.venv-streams.system/bin/python
+source "$(dirname -- "${BASH_SOURCE[0]}")/common.sh"
 M="Qwen/Qwen2.5-Coder-7B-Instruct"
 ADAPTER="runs/sft/effic_lora_grpo"
 

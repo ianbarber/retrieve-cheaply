@@ -14,11 +14,9 @@ no class qualifier returns `(None, None)` on purpose (forces the model to
 disambiguate), per the real-repo plan.
 
 Operational gotchas honoured (the project has been burned by these):
-  * pyrefly LSP daemons DEADLOCK under concurrency -> we spawn ONE at a time,
-    kill it after, and run strictly sequentially; every read has a timeout so a
-    hang fails loudly instead of forever; on ANY error we return (None, None).
-  * stale daemons are purged with the bracket self-exclusion `[p]yrefly` so we
-    never SIGKILL our own shell.
+  * pyrefly LSP daemons can deadlock under concurrency -> we spawn ONE at a time,
+    terminate only the process owned by the client, and run strictly sequentially;
+    every read has a timeout so a hang fails instead of blocking forever.
   * a standalone `pyrefly.toml` wants TOP-LEVEL keys (`project-includes=[...]`),
     NOT a `[tool.pyrefly]` table -> we (re)write the correct form when untracked.
   * RefactorBench AST tests use CWD-relative paths like `../src/...`, so we run
@@ -37,14 +35,9 @@ import shutil
 import subprocess
 import sys
 
-PYREFLY = os.path.abspath(
-    os.path.expanduser(
-        os.environ.get(
-            "STREAMS_PYREFLY",
-            "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
-        )
-    )
-)
+from scaffold.tooling import pyrefly_or_name
+
+PYREFLY = pyrefly_or_name()
 
 # ----------------------------------------------------------------------------
 # SymbolResolver — qualified-symbol AST go-to-definition
@@ -201,6 +194,8 @@ class RealRepoEnv:
         self.lsp_index_sleep = lsp_index_sleep
         self.lsp_timeout = lsp_timeout
         self.force_diag = force_diag
+        self.lsp_latencies = []
+        self.lsp_errors = []
         self._py = sys.executable
         self._lsp_module = None
 
@@ -366,12 +361,6 @@ class RealRepoEnv:
             self._lsp_module = mod
         return self._lsp_module
 
-    @staticmethod
-    def _kill_daemons():
-        # bracket self-exclusion: the pattern "[p]yrefly lsp" cannot match the
-        # pkill command's own argv, so we never SIGKILL our own shell.
-        subprocess.run(["pkill", "-9", "-f", "[p]yrefly lsp"], capture_output=True)
-
     def _lsp_query(self, use_rel, use_line0, use_col0):
         """Spawn ONE pyrefly LSP daemon over the repo, didOpen the relevant
         files, query textDocument/definition at the use-site, return
@@ -381,7 +370,6 @@ class RealRepoEnv:
         path_to_uri = mod.path_to_uri
         uri_to_path = mod.uri_to_path
         files = self._files_dict()
-        self._kill_daemons()
         client = LspClient(self.repo_dir)
         try:
             client.request("initialize", {
@@ -406,7 +394,6 @@ class RealRepoEnv:
             }, timeout=self.lsp_timeout)
         finally:
             client.close()
-            self._kill_daemons()
         if not result:
             return None, None, None, None
         loc = result[0] if isinstance(result, list) else result
@@ -436,6 +423,7 @@ class RealRepoEnv:
         LSP-resolved location is expanded to the enclosing TOP-LEVEL node's full
         source span (same as MultiFileEnv.lsp_definition). Returns (None,None) on
         any error (never hangs)."""
+        started = time.perf_counter()
         try:
             if file is not None and (line is not None or col is not None):
                 use_rel = file
@@ -466,8 +454,11 @@ class RealRepoEnv:
             except Exception:
                 pass
             return (span or None), rel
-        except Exception:
+        except Exception as exc:
+            self.lsp_errors.append(f"{type(exc).__name__}: {exc}")
             return None, None
+        finally:
+            self.lsp_latencies.append(time.perf_counter() - started)
 
     # --- pyrefly diagnostics ----------------------------------------------
     def _pyrefly_subtree_abs(self):
@@ -578,8 +569,7 @@ class RealRepoEnv:
             return ""
 
     def close(self):
-        """No rmtree (we do NOT own the repo dir); just purge any LSP daemon."""
-        self._kill_daemons()
+        """No-op: the environment does not own the repository; each LSP client closes itself."""
 
 
 if __name__ == "__main__":

@@ -39,7 +39,7 @@ GATE A (no model), enforced by __main__ for every task:
   D  the task has type-error surface: pyrefly on the STUB and/or the type_wrong sketch
      surfaces >= 1 diagnostic in target.py (so a checker could catch an organic mistake).
 
-Run the verifier with .venv-streams.system/bin/python (one pyrefly process at a time;
+Run the verifier with python3 (one pyrefly process at a time;
 pkill -9 -f "[p]yrefly" between stale daemons if needed).
 """
 from textwrap import dedent

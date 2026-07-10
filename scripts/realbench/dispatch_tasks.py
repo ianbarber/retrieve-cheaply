@@ -13,7 +13,7 @@ Run this module directly for GATE 1 (no model): it checks, per task, that the te
 passes after the gold fix, that grep sees >=8 `def NAME`, and that pyrefly's receiver-aware goto
 resolves to the RIGHT (buggy) override file rather than a sibling.
 
-  .venv-streams.system/bin/python scripts/realbench/dispatch_tasks.py
+  python3 scripts/realbench/dispatch_tasks.py
 """
 from __future__ import annotations
 import os

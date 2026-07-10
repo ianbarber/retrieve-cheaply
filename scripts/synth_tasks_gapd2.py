@@ -58,7 +58,7 @@ The schema deliberately OMITS gapd's `symbol`/`wrong_kind` and ADDS `held_out`:
 so the verifier checks whole-program pyrefly; no current task needs it — P3 was the only
 candidate and it is dropped — but the machinery is implemented and tested.)
 
-Run the verifier with .venv-streams.system/bin/python; one pyrefly process at a time
+Run the verifier with python3; one pyrefly process at a time
 (pkill -9 -f "[p]yrefly" between stale daemons if needed). Do NOT wire this into
 synth_mf.py (the local runner has no held-out scoring); api_agent.py loads it via
 --suite gapd2 / TASKS_GAPD2.

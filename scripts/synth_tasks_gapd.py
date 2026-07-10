@@ -45,7 +45,7 @@ VERIFIER (`__main__`, adapts effic_real2 R1-R5 + a new R6):
   R6  THE INFO CHANNEL: rich -> the wrong guess yields >=1 target-scoped pyrefly TYPE
       error (printed verbatim so a human can judge it is genuinely informative);
       control -> the wrong guess yields 0 target-scoped errors (pyrefly is blind here).
-Run with .venv-streams.system/bin/python; one pyrefly process at a time.
+Run with python3; one pyrefly process at a time.
 """
 
 

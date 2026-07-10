@@ -57,7 +57,7 @@ penalised for a file it cannot read):
   name, group("hard"|"easy"), target("target.py"), files{"target.py": stub},
   test(VISIBLE), held_out(HELD-OUT), gold_target, wrong_guess, sim, note.
 
-Run the verifier with .venv-streams.system/bin/python; one pyrefly process at a time.
+Run the verifier with python3; one pyrefly process at a time.
 api_agent.py loads it via --suite runtime / TASKS_RUNTIME.
 """
 

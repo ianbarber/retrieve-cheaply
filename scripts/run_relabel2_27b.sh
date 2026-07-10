@@ -3,10 +3,7 @@
 # Qwen3.6-27B (qwen3_5, hybrid-reasoning <think>; default config). Lighter seeds than the 7B headline since
 # this is a robustness/scale check and the 27B is ~3-4x slower. PRE baseline (no adapter) + relabel harvest
 # + LoRA SFT + POST retest, all on the 12 definition-sufficient effic tasks.
-set -u
-cd /home/ianbarber/Projects/Streams
-export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HOME=/mnt/nas/hf-cache
-PY=.venv-streams.system/bin/python
+source "$(dirname -- "${BASH_SOURCE[0]}")/common.sh"
 M="Qwen/Qwen3.6-27B"
 DEFN_TRAIN="effic_account_defn,effic_transfer_defn,effic_span_defn,effic_store_defn,effic_point_defn,effic_config_defn,effic_matrix_defn,effic_lexer_defn,effic_color_defn"
 COMMON="--suite effic --model $M --gpu-only --conds A --lsp-tools --temp 0.7 --max-reads 4 --max-turns 14 --max-new 3000"

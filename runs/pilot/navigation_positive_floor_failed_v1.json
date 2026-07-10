@@ -1,0 +1,204 @@
+{
+  "protocol": "navigation-v1",
+  "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+  "model_meta": {
+    "revision": "c03e6d358207e414f1eca0bb1891e29f1db0e242",
+    "transformers": "5.9.0",
+    "torch": "2.11.0+cu128",
+    "dtype": "torch.bfloat16"
+  },
+  "config": {
+    "out": "runs/pilot/navigation_positive.json",
+    "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "split": "pilot",
+    "cells": "positive",
+    "names": "nav_pilot_17011,nav_pilot_17027",
+    "seeds": 1,
+    "seed_start": 0,
+    "temperature": 0.0,
+    "max_new": 800,
+    "max_turns": 12,
+    "max_reads": 12,
+    "gpu_only": true,
+    "tmp_root": null
+  },
+  "cells": [
+    [
+      "typed",
+      "positive_control"
+    ]
+  ],
+  "protocol_source_sha256": {
+    "scripts/experiments/navigation_tasks.py": "6760aaeb8663403444473b356488a586a1d4b9bc495fce7081b6fc2817f5b50c",
+    "scripts/experiments/run_navigation.py": "cbf24a3133582decc6ca122c74894e4adfebc709e56bf6570fe94ec2cf750918",
+    "scripts/analysis/analyze_navigation.py": "7b7935a305545a865b7dd44fa24d248f48a5a193b1c1e56f0e829e1d119758e4",
+    "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+    "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+    "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+    "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81"
+  },
+  "pyrefly": {
+    "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+    "version": "pyrefly 1.0.0"
+  },
+  "rows": [
+    {
+      "task": "nav_pilot_17011",
+      "family": 17011,
+      "split": "pilot",
+      "variant": "typed",
+      "arm": "positive_control",
+      "seed": 0,
+      "resolved": true,
+      "visible_pass": true,
+      "held_out_pass": true,
+      "bailed": false,
+      "in_tokens": 644,
+      "out_tokens": 59,
+      "turns": 2,
+      "n_reads": 0,
+      "n_lsp": 0,
+      "n_tests": 1,
+      "n_edits": 1,
+      "wall_sec": 7.735,
+      "server_latency_ms": 0,
+      "server_call_latencies_ms": [],
+      "server_errors": [],
+      "semantic_supplied_path": "pkg/units/uantyk.py",
+      "correct_file_localized_before_first_edit": true,
+      "first_edit_path": "pkg/units/uantyk.py",
+      "wrong_file_edits": 0,
+      "semantic_then_target_read": false,
+      "events": [
+        {
+          "tok": 57,
+          "type": "line_edit",
+          "path": "pkg/units/uantyk.py",
+          "lines": "20-21",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def mvzmgvtx(self, value: int) -> int:\n        return value + 43"
+        },
+        {
+          "tok": 57,
+          "type": "turn",
+          "n": 1,
+          "via": "eos"
+        },
+        {
+          "tok": 58,
+          "type": "test",
+          "n": 1,
+          "resolved": true
+        },
+        {
+          "tok": 58,
+          "type": "turn",
+          "n": 2,
+          "via": "test"
+        }
+      ],
+      "stream_tail": "<edit path=\"pkg/units/uantyk.py\" lines=\"20-21\">\n  20|     def mvzmgvtx(self, value: int) -> int:\n  21|         return value + 43\n</edit><|im_end|>\n<|im_start|>user\nRun <test/> to check whether your edit fixed the tests.\n\nCurrent `pkg/units/uantyk.py` (edit against THIS exact text):\n  1| from pkg.base import Bdnejktb\n  2| \n  3| \n  4| class Cjletsxe(Bdnejktb):\n  5|     def mvzmgvtx(self, value: int) -> int:\n  6|         return value + 33\n  7| \n  8| \n  9| class Ckcahnwd(Bdnejktb):\n 10|     def mvzmgvtx(self, value: int) -> int:\n 11|         return value + 58\n 12| \n 13| \n 14| class Cxpfxihy(Bdnejktb):\n 15|     def mvzmgvtx(self, value: int) -> int:\n 16|         return value + 65\n 17| \n 18| \n 19| class Cccctrhg(Bdnejktb):\n 20|     def mvzmgvtx(self, value: int) -> int:\n 21|         return value + 43<|im_end|>\n<|im_start|>assistant\n<<|im_end|>\n<|im_start|>user\n<test_result>\nALL TESTS PASS.\n</test_result>\nTests pass \u2014 emit <done/> if the fix is complete.<|im_end|>\n<|im_start|>assistant\n<"
+    },
+    {
+      "task": "nav_pilot_17027",
+      "family": 17027,
+      "split": "pilot",
+      "variant": "typed",
+      "arm": "positive_control",
+      "seed": 0,
+      "resolved": false,
+      "visible_pass": false,
+      "held_out_pass": false,
+      "bailed": false,
+      "in_tokens": 1418,
+      "out_tokens": 800,
+      "turns": 9,
+      "n_reads": 7,
+      "n_lsp": 0,
+      "n_tests": 1,
+      "n_edits": 0,
+      "wall_sec": 78.591,
+      "server_latency_ms": 0,
+      "server_call_latencies_ms": [],
+      "server_errors": [],
+      "semantic_supplied_path": "pkg/units/umeewq.py",
+      "correct_file_localized_before_first_edit": true,
+      "first_edit_path": null,
+      "wrong_file_edits": 0,
+      "semantic_then_target_read": true,
+      "events": [
+        {
+          "tok": 35,
+          "type": "grep",
+          "n": 1,
+          "pat": "regex",
+          "nhits": 0,
+          "paths": []
+        },
+        {
+          "tok": 96,
+          "type": "read",
+          "n": 2,
+          "path": "pkg/units/umeewq.py",
+          "ranged": true
+        },
+        {
+          "tok": 206,
+          "type": "read",
+          "n": 3,
+          "path": "pkg/factory.py",
+          "ranged": true
+        },
+        {
+          "tok": 347,
+          "type": "read",
+          "n": 4,
+          "path": "pkg/units/uixtob.py",
+          "ranged": true
+        },
+        {
+          "tok": 424,
+          "type": "read",
+          "n": 5,
+          "path": "pkg/units/uiiymg.py",
+          "ranged": true
+        },
+        {
+          "tok": 552,
+          "type": "turn",
+          "n": 6,
+          "via": "eos"
+        },
+        {
+          "tok": 553,
+          "type": "test",
+          "n": 1,
+          "resolved": false
+        },
+        {
+          "tok": 553,
+          "type": "turn",
+          "n": 7,
+          "via": "test"
+        },
+        {
+          "tok": 620,
+          "type": "read",
+          "n": 6,
+          "path": "pkg/units/umeewq.py",
+          "ranged": true
+        },
+        {
+          "tok": 701,
+          "type": "read",
+          "n": 7,
+          "path": "pkg/factory.py",
+          "ranged": true
+        }
+      ],
+      "stream_tail": "|>assistant\nFrom the code snippet, we can see that the `Cnnnzrpp` class multiplies the value by 7.\n\nSince \"kyynmt\" is not in the factory's `_items` dictionary, it seems that the factory is not correctly mapping the token to the appropriate class. We need to add the mapping for \"kyynmt\" to the `_items` dictionary.\n\nLet's edit the `pkg/factory.py` file to add the mapping for \"kyynmt\".\n\n<edit path=\"pkg/factory.py\" lines=\"8-8\">    \"kyynmt\": Cnnnzrpp,</edit><|im_end|>\n<|im_start|>user\nYou have not edited the file yet. Make a SEARCH/REPLACE edit to fix the bug, then emit <test/> to run the tests.<|im_end|>\n<|im_start|>assistant\nLet<|im_end|>\n<|im_start|>user\n<test_result>\nFAIL: F2P 0/1, P2P 0/0.\nAssertionError\n</test_result><|im_end|>\n<|im_start|>assistant\nIt seems that the test is still failing. Let's inspect the `pkg/units/umeewq.py` file again to see if we can find the implementation of `mkcusinq` that is being called by `execute`.\n\n<read path=\"pkg/units/umeewq.py\" lines=\"1-10\"/><|im_end|>\n<|im_start|>user\n<file path=\"pkg/units/umeewq.py\" lines=\"1-10\">\n   1| from pkg.base import Bwstwmxd\n   2| \n   3| \n   4| class Csxqghor(Bwstwmxd):\n   5|     def mkcusinq(self, value: int) -> int:\n   6|         return value * 17\n   7| \n   8| \n   9| class Cbtgvvgq(Bwstwmxd):\n  10|     def mkcusinq(self, value: int) -> int:\n</file><|im_end|>\n<|im_start|>assistant\nFrom the code snippet, we can see that the `Csxqghor` class multiplies the value by 17, while the `Cbtgvvgq` class has an incomplete implementation.\n\nLet's inspect the factory and registry to determine which class is being instantiated by `make('kyynmt')`.\n\n<read path=\"pkg/factory.py\" lines=\"1-10\"/><|im_end|>\n<|im_start|>user\n<file path=\"pkg/factory.py\" lines=\"1-10\">\n   1| from pkg.base import Bwstwmxd\n   2| from typing import cast\n   3| from pkg.units.uixtob import Chbravbf, Cqetbqln\n   4| from pkg.units.uiiymg import Cnnnzrpp, Cmwylhkq\n   5| from pkg.units.umeewq import Csxqghor, Cbtgvvgq\n   6| from pkg.units.urpfgf import Cmpujqfu, Cgpveshc\n   7| \n   8| _items: dict[str, type[Bwstwmxd]] = {\n   9|     \"khhwry\": Chbravbf,\n  10|     \"kbixla\": Cnnnzrpp,\n</file><|im_end|>\n<|im_start|>assistant\nFrom the factory code, we can see that the `_items` dictionary maps the string \"khhwry\" to `Chbravbf` and \"kbixla\" to `Cnnnzrpp`. Since \"kyynmt\" is not in the dictionary, it seems that the factory is not correctly mapping the token to the appropriate class.\n\nLet's inspect the `pkg/units/uixtob.py` and `pkg/units/uiiymg.py` files to"
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "protocol": "checker-paired-v1",
+  "kind": "natural_drafts",
+  "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+  "model_meta": {
+    "revision": "aedcc2d42b622764e023cf882b6652e646b95671",
+    "transformers": "5.9.0",
+    "torch": "2.11.0+cu128",
+    "dtype": "torch.bfloat16"
+  },
+  "config": {
+    "command": "generate",
+    "out": "runs/pilot/checker_drafts_14b.json",
+    "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+    "names": "auth_shapes_protocol,auth_machine_enum,auth_graph_edges",
+    "seed": 0,
+    "temperature": 0.7,
+    "max_new": 1400,
+    "max_turns": 12,
+    "max_reads": 6,
+    "gpu_only": true
+  },
+  "pyrefly": {
+    "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+    "version": "pyrefly 1.0.0"
+  },
+  "protocol_source_sha256": {
+    "scripts/experiments/checker_paired.py": "7bb64807986ef645b3b01a0438d148755faa2e3397d0bb14421db5ce02aaed5c",
+    "scripts/experiments/diagnostics.py": "98f3e55a2077055aa170ae6cbe09d839ae784a1605f58838478cc2e59d35b746",
+    "scripts/analysis/analyze_checker_paired.py": "3935fc3c01a2f34e09faf2e8192140a7dafe0d96ac64a3b4919ec16f496cde38",
+    "scripts/synth_tasks_authoring.py": "51af9d800d0f6812286343b74c9d578b5ad1a599f9a4bbf184246c7efb94a58e",
+    "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+    "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
+    "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+    "scripts/run_checker_paired.sh": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
+  },
+  "drafts": [
+    {
+      "draft_id": "natural-auth_shapes_protocol-s0",
+      "task": "auth_shapes_protocol",
+      "group": "med",
+      "seed": 0,
+      "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+      "files": {
+        "target.py": "from lib import Shape, summary\n\n\nclass Circle:\n    \"\"\"A circle of the given radius.\"\"\"\n\n    def __init__(self, radius: float) -> None:\n        raise NotImplementedError\n\n    def area(self) -> float:\n        raise NotImplementedError\n\n    def label(self) -> str:\n        raise NotImplementedError\n\n\nclass Square:\n    \"\"\"A square of the given side length.\"\"\"\n\n    def __init__(self, side: float) -> None:\n        raise NotImplementedError\n\n    def area(self) -> float:\n        raise NotImplementedError\n\n    def label(self) -> str:\n        raise NotImplementedError\n\n\ndef report(shapes: list[Shape]) -> str:\n    \"\"\"Delegate to lib.summary.\"\"\"\n    raise NotImplementedError\n\n\ndef default_report() -> str:\n    \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n    raise NotImplementedError\n",
+        "lib.py": "from typing import Protocol\n\n\nclass Shape(Protocol):\n    def area(self) -> float: ...\n    def label(self) -> str: ...\n\n\ndef summary(shapes: list[Shape]) -> str:\n    \"\"\"One 'label=area' term per shape (area to 1 dp), joined by ', '.\"\"\"\n    return \", \".join(f\"{s.label()}={s.area():.1f}\" for s in shapes)\n"
+      },
+      "target": "target.py",
+      "test": "from target import Circle, Square, report, default_report\nr = report([Circle(1.0), Square(2.0)])\nassert \"circle=3.1\" in r\nassert \"square=4.0\" in r\nassert default_report().count(\"=\") == 2\n",
+      "held_out": "from target import Circle, Square, report\nshapes = [Square(3.0), Circle(2.0)]\nassert report(shapes) == \"square=9.0, circle=12.6\"\n",
+      "draft_target_sha256": "cb86ca5fbc295f6fa6bec66fd0352ac2f7a19fb7df1fb9de334de98b63a1f829",
+      "initial_target_sha256": "cb86ca5fbc295f6fa6bec66fd0352ac2f7a19fb7df1fb9de334de98b63a1f829",
+      "file_sha256": {
+        "lib.py": "6504f47f0389f9c244158310ffbcf8a2e7c3abe0ce52d69dae57fc4f69cdd897",
+        "target.py": "cb86ca5fbc295f6fa6bec66fd0352ac2f7a19fb7df1fb9de334de98b63a1f829"
+      },
+      "workspace_sha256": "f6bcdc906bd1a0e5de215e6944881c88311a149c60551733a6367af7b81d6f9f",
+      "draft_submitted": false,
+      "coherent": false,
+      "visible_pass": false,
+      "held_pass": false,
+      "baseline_diagnostics": [],
+      "draft_diagnostics": [],
+      "checker_latency_ms": 145.2,
+      "events": [
+        {
+          "tok": 697,
+          "type": "turn",
+          "n": 1,
+          "via": "eos"
+        },
+        {
+          "tok": 1018,
+          "type": "turn",
+          "n": 2,
+          "via": "eos"
+        },
+        {
+          "tok": 1306,
+          "type": "turn",
+          "n": 3,
+          "via": "eos"
+        }
+      ],
+      "draft_stream": "To implement the required functionality, we need to define the methods for the `Circle` and `Square` classes, and the `report` and `default_report` functions according to their docstrings. We will also need to use the `Shape` class and `summary` function from the `lib` module.\n\nLet's start by implementing the methods for the `Circle` and `Square` classes.\n\n### Implementation of `Circle` class\n1. **`__init__` method**: Initialize the circle with a given radius.\n2. **`area` method**: Calculate the area of the circle.\n3. **`label` method**: Return a string label for the circle.\n\n### Implementation of `Square` class\n1. **`__init__` method**: Initialize the square with a given side length.\n2. **`area` method**: Calculate the area of the square.\n3. **`label` method**: Return a string label for the square.\n\n### Implementation of `report` function\nDelegate to the `lib.summary` function to generate a report of the given shapes.\n\n### Implementation of `default_report` function\nGenerate a report for a unit circle followed by a unit square.\n\nHere is the complete implementation:\n\n```python\nfrom lib import Shape, summary\n\nclass Circle:\n    \"\"\"A circle of the given radius.\"\"\"\n\n    def __init__(self, radius: float) -> None:\n        self.radius = radius\n\n    def area(self) -> float:\n        import math\n        return math.pi * self.radius ** 2\n\n    def label(self) -> str:\n        return f\"circle={self.radius:.1f}\"\n\n\nclass Square:\n    \"\"\"A square of the given side length.\"\"\"\n\n    def __init__(self, side: float) -> None:\n        self.side = side\n\n    def area(self) -> float:\n        return self.side ** 2\n\n    def label(self) -> str:\n        return f\"square={self.side:.1f}\"\n\n\ndef report(shapes: list[Shape]) -> str:\n    \"\"\"Delegate to lib.summary.\"\"\"\n    return summary(shapes)\n\n\ndef default_report() -> str:\n    \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n    unit_circle = Circle(1.0)\n    unit_square = Square(1.0)\n    return report([unit_circle, unit_square])\n```\n\n### Behavioral Specification\nTo ensure the implementation is correct, we can write the following assertions:\n\n```python\nfrom target import Circle, Square, report, default_report\n\n# Test Circle class\ncircle = Circle(1.0)\nassert circle.area() == 3.141592653589793\nassert circle.label() == \"circle=1.0\"\n\n# Test Square class\nsquare = Square(2.0)\nassert square.area() == 4.0\nassert square.label() == \"square=2.0\"\n\n# Test report function\nr = report([circle, square])\nassert \"circle=1.0\" in r\nassert \"square=2.0\" in r\n\n# Test default_report function\ndefault_r = default_report()\nassert \"circle=1.0\" in default_r\nassert \"square=1.0\" in default_r\nassert default_r.count(\"=\") == 2\n```\n\nNow, we can submit the draft:\n\n```python\nsubmit_draft()\n```<|im_end|>\n<|im_start|>user\nYou have not edited the file yet. Make a SEARCH/REPLACE edit to fix the bug, then emit <test/> to run the tests.<|im_end|>\n<|im_start|>assistant\nI see the issue. The `report` function is supposed to delegate to `lib.summary`, but the `Circle` and `Square` classes need to inherit from the `Shape` class to be recognized by `summary`. Let's fix this by making `Circle` and `Square` inherit from `Shape`.\n\nHere is the corrected implementation:\n\n```python\nfrom lib import Shape, summary\n\nclass Circle(Shape):\n    \"\"\"A circle of the given radius.\"\"\"\n\n    def __init__(self, radius: float) -> None:\n        self.radius = radius\n\n    def area(self) -> float:\n        import math\n        return math.pi * self.radius ** 2\n\n    def label(self) -> str:\n        return f\"circle={self.radius:.1f}\"\n\n\nclass Square(Shape):\n    \"\"\"A square of the given side length.\"\"\"\n\n    def __init__(self, side: float) -> None:\n        self.side = side\n\n    def area(self) -> float:\n        return self.side ** 2\n\n    def label(self) -> str:\n        return f\"square={self.side:.1f}\"\n\n\ndef report(shapes: list[Shape]) -> str:\n    \"\"\"Delegate to lib.summary.\"\"\"\n    return summary(shapes)\n\n\ndef default_report() -> str:\n    \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n    unit_circle = Circle(1.0)\n    unit_square = Square(1.0)\n    return report([unit_circle, unit_square])\n```\n\nNow, let's emit the test command:\n\n```python\ntest()\n```<|im_end|>\n<|im_start|>user\nYou have not edited the file yet. Make a SEARCH/REPLACE edit to fix the bug, then emit <test/> to run the tests.<|im_end|>\n<|im_start|>assistant\nSure, let's fix the issue by making the `Circle` and `Square` classes inherit from the `Shape` class. Here is the corrected code with the necessary changes:\n\n```python\nfrom lib import Shape, summary\n\nclass Circle(Shape):\n    \"\"\"A circle of the given radius.\"\"\"\n\n    def __init__(self, radius: float) -> None:\n        self.radius = radius\n\n    def area(self) -> float:\n        import math\n        return math.pi * self.radius ** 2\n\n    def label(self) -> str:\n        return f\"circle={self.radius:.1f}\"\n\n\nclass Square(Shape):\n    \"\"\"A square of the given side length.\"\"\"\n\n    def __init__(self, side: float) -> None:\n        self.side = side\n\n    def area(self) -> float:\n        return self.side ** 2\n\n    def label(self) -> str:\n        return f\"square={self.side:.1f}\"\n\n\ndef report(shapes: list[Shape]) -> str:\n    \"\"\"Delegate to lib.summary.\"\"\"\n    return summary(shapes)\n\n\ndef default_report() -> str:\n    \"\"\"summary of a unit Circle followed by a unit Square.\"\"\"\n    unit_circle = Circle(1.0)\n    unit_square = Square(1.0)\n    return report([unit_circle, unit_square])\n```\n\nNow, let's emit the test command:\n\n```python\ntest()\n```<|im_end|>\n<|im_start|>user\nYou have not edited the file yet. Make a SEARCH/REPLACE edit to fix the bug, then emit <test/> to run the tests.<|im_end|>\n<|im_start|>assistant\nI apologize for the confusion. Let's make the necessary changes directly in the code to ensure the `Circle` and `Square` classes inherit from the `Shape` class. Here is the corrected code:\n\n```python\nfrom lib import Shape, summary\n\nclass Circle(Shape):\n    \"\"\"A circle of the given radius.\"\"\"\n\n    def __init__(self, radius: float) -> None:\n        self.radius = radius\n\n    def area(self) -> float:\n       ",
+      "in_tokens": 681,
+      "out_tokens": 1400
+    },
+    {
+      "draft_id": "natural-auth_machine_enum-s0",
+      "task": "auth_machine_enum",
+      "group": "med",
+      "seed": 0,
+      "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+      "files": {
+        "target.py": "from lib import State, TRANSITIONS\n\n\nclass Machine:\n    \"\"\"A finite-state machine over State, starting in IDLE.\"\"\"\n\nfrom lib import State, TRANSITIONS\n\nclass Machine:\n    \"\"\"A finite-state machine over State, starting in IDLE.\"\"\"\n\n    def __init__(self) -> None:\n        self._current_state = State.IDLE\n\n    def current(self) -> State:\n        \"\"\"The current state.\"\"\"\n        return self._current_state\n\n    def can(self, target: State) -> bool:\n        \"\"\"True if a transition from the current state to target is allowed.\"\"\"\n        return target in TRANSITIONS[self._current_state]\n\n    def to(self, target: State) -> None:\n        \"\"\"Perform the transition; raise ValueError if it is not allowed.\"\"\"\n        if self.can(target):\n            self._current_state = target\n        else:\n            raise ValueError(f\"Transition from {self._current_state} to {target} is not allowed.\")\n",
+        "lib.py": "from enum import Enum\n\n\nclass State(Enum):\n    IDLE = \"idle\"\n    RUNNING = \"running\"\n    DONE = \"done\"\n\n\nTRANSITIONS: dict[State, set[State]] = {\n    State.IDLE: {State.RUNNING},\n    State.RUNNING: {State.DONE, State.IDLE},\n    State.DONE: set(),\n}\n"
+      },
+      "target": "target.py",
+      "test": "from target import Machine\nfrom lib import State\nm = Machine()\nassert m.current() == State.IDLE\nassert m.can(State.RUNNING) is True\nm.to(State.RUNNING)\nassert m.current() == State.RUNNING\n",
+      "held_out": "from target import Machine\nfrom lib import State\nm = Machine()\nm.to(State.RUNNING)\nassert m.can(State.IDLE) is True\nassert m.can(State.DONE) is True\nm.to(State.DONE)\nassert m.can(State.RUNNING) is False\nraised = False\ntry:\n    m.to(State.RUNNING)\nexcept ValueError:\n    raised = True\nassert raised\n",
+      "draft_target_sha256": "7b28393e637822d33585dda29af872e9678f229adf262549d94a51a3971da086",
+      "initial_target_sha256": "88918936e38f6ee0802703acdf8418e2dd137793fa1b037ca5088469859a083b",
+      "file_sha256": {
+        "lib.py": "3c8bb32bd97e623a2af225cd7d25552637264b5612d0eb0700a5a8e8037fdc39",
+        "target.py": "7b28393e637822d33585dda29af872e9678f229adf262549d94a51a3971da086"
+      },
+      "workspace_sha256": "abbe3bf5dd2139c54cea07bb4a4ceda5681794e491992f98e30d67619cdfa0f9",
+      "draft_submitted": true,
+      "coherent": true,
+      "visible_pass": true,
+      "held_pass": true,
+      "baseline_diagnostics": [],
+      "draft_diagnostics": [],
+      "checker_latency_ms": 117.3,
+      "events": [
+        {
+          "tok": 14,
+          "type": "read",
+          "n": 1,
+          "path": "lib.py",
+          "ranged": true
+        },
+        {
+          "tok": 29,
+          "type": "read",
+          "n": 2,
+          "path": "lib.py",
+          "ranged": true
+        },
+        {
+          "tok": 219,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "7-20",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "from lib import State, TRANSITIONS\n\nclass Machine:\n    \"\"\"A finite-state machine over State, starting in IDLE.\"\"\"\n\n    def __init__(self) -> None:\n        self._current_state = State.IDLE\n\n    def current(self) -> State:\n        \"\"\"The current state.\"\"\"\n        return self._current_state\n\n    def ca"
+        },
+        {
+          "tok": 223,
+          "type": "submit_draft"
+        }
+      ],
+      "draft_stream": "<read path=\"lib.py\" lines=\"1-10\"/>\n\n<|im_end|>\n<|im_start|>user\n<file path=\"lib.py\" lines=\"1-10\">\n   1| from enum import Enum\n   2| \n   3| \n   4| class State(Enum):\n   5|     IDLE = \"idle\"\n   6|     RUNNING = \"running\"\n   7|     DONE = \"done\"\n   8| \n   9| \n  10| TRANSITIONS: dict[State, set[State]] = {\n</file><|im_end|>\n<|im_start|>assistant\n<read path=\"lib.py\" lines=\"11-20\"/>\n\n<|im_end|>\n<|im_start|>user\n<file path=\"lib.py\" lines=\"11-14\">\n  11|     State.IDLE: {State.RUNNING},\n  12|     State.RUNNING: {State.DONE, State.IDLE},\n  13|     State.DONE: set(),\n  14| }\n</file><|im_end|>\n<|im_start|>assistant\n<edit path=\"target.py\" lines=\"7-20\">\n```python\nfrom lib import State, TRANSITIONS\n\nclass Machine:\n    \"\"\"A finite-state machine over State, starting in IDLE.\"\"\"\n\n    def __init__(self) -> None:\n        self._current_state = State.IDLE\n\n    def current(self) -> State:\n        \"\"\"The current state.\"\"\"\n        return self._current_state\n\n    def can(self, target: State) -> bool:\n        \"\"\"True if a transition from the current state to target is allowed.\"\"\"\n        return target in TRANSITIONS[self._current_state]\n\n    def to(self, target: State) -> None:\n        \"\"\"Perform the transition; raise ValueError if it is not allowed.\"\"\"\n        if self.can(target):\n            self._current_state = target\n        else:\n            raise ValueError(f\"Transition from {self._current_state} to {target} is not allowed.\")\n```\n</edit>\n\n<submit_draft/>",
+      "in_tokens": 620,
+      "out_tokens": 223
+    },
+    {
+      "draft_id": "natural-auth_graph_edges-s0",
+      "task": "auth_graph_edges",
+      "group": "tricky",
+      "seed": 0,
+      "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+      "files": {
+        "target.py": "from lib import Edge\n\n\nclass Graph:\n    \"\"\"A directed weighted graph accumulated from edges.\"\"\"\n\n    def __init__(self) -> None:\nfrom lib import Edge\n\nclass Graph:\n    \"\"\"A directed weighted graph accumulated from edges.\"\"\"\n\n    def __init__(self) -> None:\n        self.edges: list[Edge] = []\n\n    def add(self, edge: Edge) -> None:\n        \"\"\"Register an edge.\"\"\"\n        self.edges.append(edge)\n\n    def neighbors(self, node: str) -> list[str]:\n        \"\"\"Destinations one edge from node, in the order edges were added.\"\"\"\n        return [edge.dst for edge in self.edges if edge.src == node]\n\n    def cost(self, src: str, dst: str) -> int | None:\n        \"\"\"Weight of the src->dst edge, or None if there is no such edge.\"\"\"\n        for edge in self.edges:\n            if edge.src == src and edge.dst == dst:\n                return edge.weight\n        return None\n\n    def out_degree(self, node: str) -> int:\n        \"\"\"Number of edges leaving node.\"\"\"\n        return sum(1 for edge in self.edges if edge.src == node)\n",
+        "lib.py": "class Edge:\n    \"\"\"A weighted directed edge.\"\"\"\n\n    def __init__(self, src: str, dst: str, weight: int) -> None:\n        self.src = src\n        self.dst = dst\n        self.weight = weight\n"
+      },
+      "target": "target.py",
+      "test": "from target import Graph\nfrom lib import Edge\ng = Graph()\ng.add(Edge(\"a\", \"b\", 5))\ng.add(Edge(\"a\", \"c\", 2))\nassert g.neighbors(\"a\") == [\"b\", \"c\"]\nassert g.cost(\"a\", \"b\") == 5\nassert g.out_degree(\"a\") == 2\n",
+      "held_out": "from target import Graph\nfrom lib import Edge\ng = Graph()\ng.add(Edge(\"a\", \"b\", 5))\nassert g.cost(\"a\", \"z\") is None\nassert g.neighbors(\"z\") == []\nassert g.out_degree(\"z\") == 0\n",
+      "draft_target_sha256": "e9707a998e19e520d052b200ddf7eca874c9f5d7a6faa3d98ac97270b9fcf897",
+      "initial_target_sha256": "0ce3dbf9181a8371789f4313d8404da0a364d58477814be434ce7c7e960c271a",
+      "file_sha256": {
+        "lib.py": "b265f6ceecb89ba05b9accd4948db4a9fc96c7150be05deec5af4c21d1c06b53",
+        "target.py": "e9707a998e19e520d052b200ddf7eca874c9f5d7a6faa3d98ac97270b9fcf897"
+      },
+      "workspace_sha256": "17e89a6d8090480d21b62bfa4b82b895d50fc6e4c52bb7e2e7640f2172fbdde3",
+      "draft_submitted": true,
+      "coherent": false,
+      "visible_pass": false,
+      "held_pass": false,
+      "baseline_diagnostics": [],
+      "draft_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 7,
+          "column": 32,
+          "stop_line": 8,
+          "stop_column": 1,
+          "code": "parse-error",
+          "message": "Parse error: Expected an indented block after function definition",
+          "severity": "error",
+          "classification": "syntax_or_partial",
+          "frame": "   6| \n   7|     def __init__(self) -> None:\n   8| from lib import Edge"
+        }
+      ],
+      "checker_latency_ms": 117.0,
+      "events": [
+        {
+          "tok": 14,
+          "type": "read",
+          "n": 1,
+          "path": "lib.py",
+          "ranged": true
+        },
+        {
+          "tok": 243,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "8-24",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "from lib import Edge\n\nclass Graph:\n    \"\"\"A directed weighted graph accumulated from edges.\"\"\"\n\n    def __init__(self) -> None:\n        self.edges: list[Edge] = []\n\n    def add(self, edge: Edge) -> None:\n        \"\"\"Register an edge.\"\"\"\n        self.edges.append(edge)\n\n    def neighbors(self, node: s"
+        },
+        {
+          "tok": 247,
+          "type": "submit_draft"
+        }
+      ],
+      "draft_stream": "<read path=\"lib.py\" lines=\"1-10\"/>\n\n<|im_end|>\n<|im_start|>user\n<file path=\"lib.py\" lines=\"1-7\">\n   1| class Edge:\n   2|     \"\"\"A weighted directed edge.\"\"\"\n   3| \n   4|     def __init__(self, src: str, dst: str, weight: int) -> None:\n   5|         self.src = src\n   6|         self.dst = dst\n   7|         self.weight = weight\n</file><|im_end|>\n<|im_start|>assistant\n<edit path=\"target.py\" lines=\"8-24\">\n```python\nfrom lib import Edge\n\nclass Graph:\n    \"\"\"A directed weighted graph accumulated from edges.\"\"\"\n\n    def __init__(self) -> None:\n        self.edges: list[Edge] = []\n\n    def add(self, edge: Edge) -> None:\n        \"\"\"Register an edge.\"\"\"\n        self.edges.append(edge)\n\n    def neighbors(self, node: str) -> list[str]:\n        \"\"\"Destinations one edge from node, in the order edges were added.\"\"\"\n        return [edge.dst for edge in self.edges if edge.src == node]\n\n    def cost(self, src: str, dst: str) -> int | None:\n        \"\"\"Weight of the src->dst edge, or None if there is no such edge.\"\"\"\n        for edge in self.edges:\n            if edge.src == src and edge.dst == dst:\n                return edge.weight\n        return None\n\n    def out_degree(self, node: str) -> int:\n        \"\"\"Number of edges leaving node.\"\"\"\n        return sum(1 for edge in self.edges if edge.src == node)\n</edit>\n\n<submit_draft/>",
+      "in_tokens": 613,
+      "out_tokens": 247
+    }
+  ]
+}

@@ -3,12 +3,9 @@
 # headline token ratios are not 2-seed. Writes *_s23.json; merge into the base files after.
 # Strictly sequential (the 27B and gapd-with-check use pyrefly; the frontier effic arms are
 # pyrefly-free) so at most one pyrefly process runs at a time. Resumable (skip existing).
-set -u
-cd /home/ianbarber/Projects/Streams
-export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HOME=/mnt/nas/hf-cache
-PY=.venv-streams.system/bin/python
+source "$(dirname -- "${BASH_SOURCE[0]}")/common.sh"
 SS="--seed-start 2 --seeds 2"
-pkill -9 -f "[p]yrefly" 2>/dev/null
+pkill -9 -f "[p]yrefly lsp" 2>/dev/null || true
 
 # --- 27B local effic_real2 tool ablation (pyrefly) ---
 C27="--suite effic_real2 --model Qwen/Qwen3.6-27B --gpu-only --conds A --temp 0.7 --max-reads 4 --max-turns 14 --max-new 3000 $SS"

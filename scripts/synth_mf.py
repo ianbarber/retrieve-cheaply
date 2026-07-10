@@ -12,7 +12,6 @@ Final-recipe invocation (condition A only):
       [--lsp-defn] [--adapter PATH] [--names ...] [--seeds K] [--seed-start S]
 """
 import os, sys, json, time, argparse
-os.environ.setdefault("HF_HOME", "/mnt/nas/hf-cache")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer

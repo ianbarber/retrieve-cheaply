@@ -1,0 +1,4003 @@
+{
+  "schema_version": 1,
+  "git_revision_at_generation": "f90cd1f3d5a61cc559c64bb5a80a80b39b966cad",
+  "git_worktree_dirty_at_generation": true,
+  "platform_at_generation": "Linux-6.11.0-1016-nvidia-aarch64-with-glibc2.39",
+  "results": [
+    {
+      "path": "runs/agent/27b_base.json",
+      "sha256": "1ce83771f5f44ee71c6f960d2a192221e8a737f8e0245af156673e126d708aeb",
+      "bytes": 7623,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "lead_defn": false,
+        "relabel": false,
+        "grep": false,
+        "out": "runs/agent/27b_base.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 2,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen3.6-27B",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 2,
+      "actual_seeds": [
+        0,
+        1
+      ],
+      "n_rows": 24,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/27b_base.json"
+      ]
+    },
+    {
+      "path": "runs/agent/27b_retest.json",
+      "sha256": "e41022d16897e69b5e16a40222945013f3b9d491dc85d0e9855f417621c2e3c4",
+      "bytes": 7632,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "lead_defn": false,
+        "relabel": false,
+        "grep": false,
+        "out": "runs/agent/27b_retest.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 2,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_relabel2_27b",
+        "model": "Qwen/Qwen3.6-27B",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 2,
+      "actual_seeds": [
+        0,
+        1
+      ],
+      "n_rows": 24,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/27b_retest.json"
+      ]
+    },
+    {
+      "path": "runs/agent/effic_27b_curprompt.json",
+      "sha256": "82a5efa769fc8032ef8eadd1726dae7918ba08de34f26b3aed0a96cce782b561",
+      "bytes": 72779,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "no_defn": false,
+        "out": "runs/agent/effic_27b_curprompt.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 2,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen3.6-27B",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14
+      },
+      "declared_seeds": 2,
+      "actual_seeds": [
+        0,
+        1
+      ],
+      "n_rows": 24,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/effic_27b_curprompt.json"
+      ]
+    },
+    {
+      "path": "runs/agent/effic_readtrained_retest.json",
+      "sha256": "8efd36ad45721687ea281f942de9b2c0cbf2ca3c77ebcdc9bc6b276d4a06e55a",
+      "bytes": 14514,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "lead_defn": false,
+        "relabel": false,
+        "grep": false,
+        "out": "runs/agent/effic_readtrained_retest.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 4,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 4,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 48,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/effic_readtrained_retest.json"
+      ]
+    },
+    {
+      "path": "runs/agent/effic_retest_base.json",
+      "sha256": "c4f1c074ff336ffd1b9ab5b428e63d2d212e7600b5a680ccea2e5a6c05b68f33",
+      "bytes": 14486,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "grep": false,
+        "out": "runs/agent/effic_retest_base.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 4,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 4,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 48,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/effic_retest_base.json"
+      ]
+    },
+    {
+      "path": "runs/agent/effic_retest_sft.json",
+      "sha256": "aa611c9b5cdf85039b84d74394c216e6cd5ad929f74fdd84adbad703b5b40b92",
+      "bytes": 14468,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "grep": false,
+        "out": "runs/agent/effic_retest_sft.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 4,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 4,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 48,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/effic_retest_sft.json"
+      ]
+    },
+    {
+      "path": "runs/agent/er2_27b_base.json",
+      "sha256": "f65a44d073c57184b096a394bf522e359d815b62d8bc8161b4db5c9335eb7435",
+      "bytes": 163239,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic_real2",
+        "lsp_tools": true,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "out": "runs/agent/er2_27b_base.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 2,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen3.6-27B",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14
+      },
+      "declared_seeds": 2,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 44,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [],
+      "provenance_warning": "historical four-seed merge declares two seeds; source seed-2/3 shard is unavailable"
+    },
+    {
+      "path": "runs/agent/er2_27b_readonly.json",
+      "sha256": "0963416d6c2f1f00e0e81576d4c2196671d0c6ac1c258a280495d2097e87dfe3",
+      "bytes": 192086,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic_real2",
+        "lsp_tools": false,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "no_defn": true,
+        "out": "runs/agent/er2_27b_readonly.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 2,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen3.6-27B",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14
+      },
+      "declared_seeds": 2,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 44,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [],
+      "provenance_warning": "historical four-seed merge declares two seeds; source seed-2/3 shard is unavailable"
+    },
+    {
+      "path": "runs/agent/er2_27b_trained.json",
+      "sha256": "656795fd13cdadcd339ede7b8b8291bee1cdd3aa1405bd2120c20e52f413d63b",
+      "bytes": 85195,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic_real2",
+        "lsp_tools": true,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "out": "runs/agent/er2_27b_trained.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 2,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_relabel2_27b",
+        "model": "Qwen/Qwen3.6-27B",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14
+      },
+      "declared_seeds": 2,
+      "actual_seeds": [
+        0,
+        1
+      ],
+      "n_rows": 22,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/er2_27b_trained.json"
+      ]
+    },
+    {
+      "path": "runs/agent/er2_7b_readonly.json",
+      "sha256": "c3463fada06da42c153b85efa99ed446990884a918d99acbdc16b263911c6703",
+      "bytes": 293157,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic_real2",
+        "lsp_tools": false,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "no_defn": true,
+        "out": "runs/agent/er2_7b_readonly.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 4,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14
+      },
+      "declared_seeds": 4,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 44,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/er2_7b_readonly.json"
+      ]
+    },
+    {
+      "path": "runs/agent/er2_base.json",
+      "sha256": "bc13a3f2aa56f6876e193921ca1a5382837b43168e9a27ec6f61e2578eebbc2a",
+      "bytes": 337252,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic_real2",
+        "lsp_tools": true,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "out": "runs/agent/er2_base.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 4,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14
+      },
+      "declared_seeds": 4,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 44,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/er2_base.json"
+      ]
+    },
+    {
+      "path": "runs/agent/er2_trained.json",
+      "sha256": "c06a45e3e83b2ec0b14c12359eec1f53194a9caaacc7db1ddce9cd2e15fc4f9b",
+      "bytes": 275551,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic_real2",
+        "lsp_tools": true,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "out": "runs/agent/er2_trained.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 4,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_powered",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14
+      },
+      "declared_seeds": 4,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 44,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/er2_trained.json"
+      ]
+    },
+    {
+      "path": "runs/agent/er2_trained_lspdefn.json",
+      "sha256": "e08d385560b222aaff6a0249a779fc05d95d47be81503a6a66717b5ff2543b96",
+      "bytes": 135519,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic_real2",
+        "lsp_tools": true,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": true,
+        "no_defn": false,
+        "out": "runs/agent/er2_trained_lspdefn.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 2,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_powered",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14
+      },
+      "declared_seeds": 2,
+      "actual_seeds": [
+        0,
+        1
+      ],
+      "n_rows": 22,
+      "integration_mode": "live_first_language_server_with_ast_fallback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/er2_trained_lspdefn.json"
+      ]
+    },
+    {
+      "path": "runs/agent/er_base.json",
+      "sha256": "86bcc844491ad79d08d5c4a363d26ff7839c49d4ecaeb237ae83ef4e4876eef0",
+      "bytes": 243392,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic_real",
+        "lsp_tools": true,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "out": "runs/agent/er_base.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 4,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14
+      },
+      "declared_seeds": 4,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 52,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/er_base.json"
+      ]
+    },
+    {
+      "path": "runs/agent/er_trained.json",
+      "sha256": "18db88bd8b59ae89f03b2fdda95899fe5e1edf7bb6ef2cdd6d4bb62ae286d4c7",
+      "bytes": 193713,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic_real",
+        "lsp_tools": true,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "out": "runs/agent/er_trained.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 4,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_powered",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14
+      },
+      "declared_seeds": 4,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 52,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/er_trained.json"
+      ]
+    },
+    {
+      "path": "runs/agent/exp2_27b_check.json",
+      "sha256": "fb4c0bd7fa63176fc25e95a387b5cbaf19a3aedd5bef5b7e8d7e30e19e3e34f9",
+      "bytes": 53117,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "authoring",
+        "arm": "check",
+        "lsp_tools": false,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "no_defn": false,
+        "out": "runs/agent/exp2_27b_check.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 1,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen3.6-27B",
+        "gpu_only": true,
+        "max_new": 2200,
+        "max_reads": 6,
+        "max_turns": 12
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 12,
+      "integration_mode": "elective_pyrefly_cli_checker",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/exp2_27b_check.json"
+      ]
+    },
+    {
+      "path": "runs/agent/exp2_27b_feedback.json",
+      "sha256": "a10c758614d842ef3d67383f6225ddfa0cf0c02acf937eaea587e094986c71c6",
+      "bytes": 55180,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "authoring",
+        "arm": "feedback",
+        "lsp_tools": false,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "no_defn": false,
+        "out": "runs/agent/exp2_27b_feedback.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 1,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen3.6-27B",
+        "gpu_only": true,
+        "max_new": 2200,
+        "max_reads": 6,
+        "max_turns": 12
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 12,
+      "integration_mode": "after_every_edit_pyrefly_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/exp2_27b_feedback.json"
+      ]
+    },
+    {
+      "path": "runs/agent/exp2_27b_none.json",
+      "sha256": "902b9552a6b9c3d32cfd0d7d5d886dddfdcb327529ae4df03c680df4a0710ffe",
+      "bytes": 55925,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "authoring",
+        "arm": "none",
+        "lsp_tools": false,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "no_defn": false,
+        "out": "runs/agent/exp2_27b_none.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 1,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen3.6-27B",
+        "gpu_only": true,
+        "max_new": 2200,
+        "max_reads": 6,
+        "max_turns": 12
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 12,
+      "integration_mode": "checker_unavailable",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/exp2_27b_none.json"
+      ]
+    },
+    {
+      "path": "runs/agent/exp2_7b_check.json",
+      "sha256": "6f658a788244326fbbcbb1d4a99060870dc1125a89eabce13d2e4011dfe87375",
+      "bytes": 126067,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "authoring",
+        "arm": "check",
+        "lsp_tools": false,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "no_defn": false,
+        "out": "runs/agent/exp2_7b_check.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 1,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 2200,
+        "max_reads": 6,
+        "max_turns": 12
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 12,
+      "integration_mode": "elective_pyrefly_cli_checker",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/exp2_7b_check.json"
+      ]
+    },
+    {
+      "path": "runs/agent/exp2_7b_feedback.json",
+      "sha256": "6878f1d478ee4b40634a2258beb8a69c23b584328051c781b23005ee2cd7579f",
+      "bytes": 143795,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "authoring",
+        "arm": "feedback",
+        "lsp_tools": false,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "no_defn": false,
+        "out": "runs/agent/exp2_7b_feedback.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 1,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 2200,
+        "max_reads": 6,
+        "max_turns": 12
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 12,
+      "integration_mode": "after_every_edit_pyrefly_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/exp2_7b_feedback.json"
+      ]
+    },
+    {
+      "path": "runs/agent/exp2_7b_none.json",
+      "sha256": "496dff8367c0b3603f4f54dec135ed74777aa51028894e8d34ea6919078ff25f",
+      "bytes": 108801,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "authoring",
+        "arm": "none",
+        "lsp_tools": false,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "no_defn": false,
+        "out": "runs/agent/exp2_7b_none.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 1,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 2200,
+        "max_reads": 6,
+        "max_turns": 12
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 12,
+      "integration_mode": "checker_unavailable",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/exp2_7b_none.json"
+      ]
+    },
+    {
+      "path": "runs/agent/exp2_smoke_check.json",
+      "sha256": "4ee9959b6bf349d94d04116b5ed29cb50cce22904ed58b240a60f373cc20c59c",
+      "bytes": 14056,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.0,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "authoring",
+        "arm": "check",
+        "lsp_tools": false,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "no_defn": false,
+        "out": "runs/agent/exp2_smoke_check.json",
+        "conds": "A",
+        "names": "auth_bank_dataclass,auth_graph_edges,auth_fold_callable",
+        "seeds": 1,
+        "seed_start": 0,
+        "temp": 0.0,
+        "adapter": null,
+        "model": "Qwen/Qwen3.6-27B",
+        "gpu_only": true,
+        "max_new": 3500,
+        "max_reads": 6,
+        "max_turns": 20
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 3,
+      "integration_mode": "elective_pyrefly_cli_checker",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/exp2_smoke_check.json"
+      ]
+    },
+    {
+      "path": "runs/agent/exp2_smoke_feedback.json",
+      "sha256": "48d0c1451785f11ae591f6c4ff56fce49e94714ab65ad29a9e937af696de572b",
+      "bytes": 14754,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.0,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "authoring",
+        "arm": "feedback",
+        "lsp_tools": false,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "no_defn": false,
+        "out": "runs/agent/exp2_smoke_feedback.json",
+        "conds": "A",
+        "names": "auth_bank_dataclass,auth_graph_edges,auth_fold_callable",
+        "seeds": 1,
+        "seed_start": 0,
+        "temp": 0.0,
+        "adapter": null,
+        "model": "Qwen/Qwen3.6-27B",
+        "gpu_only": true,
+        "max_new": 3500,
+        "max_reads": 6,
+        "max_turns": 20
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 3,
+      "integration_mode": "after_every_edit_pyrefly_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/exp2_smoke_feedback.json"
+      ]
+    },
+    {
+      "path": "runs/agent/exp2_smoke_none.json",
+      "sha256": "2cf16113a3d59430c8cfdc2821438909d49d1846ddeffc0d22b6b201993c878d",
+      "bytes": 14567,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.0,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "authoring",
+        "arm": "none",
+        "lsp_tools": false,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "relabel": false,
+        "lsp_defn": false,
+        "no_defn": false,
+        "out": "runs/agent/exp2_smoke_none.json",
+        "conds": "A",
+        "names": "auth_bank_dataclass,auth_graph_edges,auth_fold_callable",
+        "seeds": 1,
+        "seed_start": 0,
+        "temp": 0.0,
+        "adapter": null,
+        "model": "Qwen/Qwen3.6-27B",
+        "gpu_only": true,
+        "max_new": 3500,
+        "max_reads": 6,
+        "max_turns": 20
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 3,
+      "integration_mode": "checker_unavailable",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/exp2_smoke_none.json"
+      ]
+    },
+    {
+      "path": "runs/agent/fr_deepseek_readonly.json",
+      "sha256": "97619aff8fe4582d74e07d12611925fa5dfbe0192646c0a632c0f25500efefa2",
+      "bytes": 46775,
+      "model": "deepseek/deepseek-chat-v3.1",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/fr_deepseek_readonly.json",
+        "model": "deepseek/deepseek-chat-v3.1",
+        "suite": "effic_real2",
+        "names": null,
+        "seeds": 2,
+        "seed_start": 0,
+        "no_defn": true,
+        "with_check": false,
+        "budget_usd": 3.0,
+        "max_turns": 14,
+        "max_reads": 6,
+        "temperature": 0.7
+      },
+      "declared_seeds": 2,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 44,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [],
+      "provenance_warning": "historical four-seed merge declares two seeds; source seed-2/3 shard is unavailable"
+    },
+    {
+      "path": "runs/agent/fr_deepseek_withdefn.json",
+      "sha256": "f5938bb8b9ae5ffb08ebbc7384f1a2b84af33b06866e0ab6f0e8917dc752cadd",
+      "bytes": 41607,
+      "model": "deepseek/deepseek-chat-v3.1",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/fr_deepseek_withdefn.json",
+        "model": "deepseek/deepseek-chat-v3.1",
+        "suite": "effic_real2",
+        "names": null,
+        "seeds": 2,
+        "seed_start": 0,
+        "no_defn": false,
+        "with_check": false,
+        "budget_usd": 1.0,
+        "max_turns": 14,
+        "max_reads": 6,
+        "temperature": 0.7
+      },
+      "declared_seeds": 2,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 44,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [],
+      "provenance_warning": "historical four-seed merge declares two seeds; source seed-2/3 shard is unavailable"
+    },
+    {
+      "path": "runs/agent/fr_sonnet45_readonly.json",
+      "sha256": "bab8260b4398054e5ac48c32facc8a45d5e64dfe119e45b1547090f277e7fe44",
+      "bytes": 40215,
+      "model": "anthropic/claude-sonnet-4.5",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/fr_sonnet45_readonly.json",
+        "model": "anthropic/claude-sonnet-4.5",
+        "suite": "effic_real2",
+        "names": null,
+        "seeds": 2,
+        "seed_start": 0,
+        "no_defn": true,
+        "with_check": false,
+        "budget_usd": 12.0,
+        "max_turns": 14,
+        "max_reads": 6,
+        "temperature": 0.7
+      },
+      "declared_seeds": 2,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 44,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [],
+      "provenance_warning": "historical four-seed merge declares two seeds; source seed-2/3 shard is unavailable"
+    },
+    {
+      "path": "runs/agent/fr_sonnet45_withdefn.json",
+      "sha256": "52a9c1b8d4e30b85d8a6b4e9a8f46ffbe247895c32faa67f069b11e20dcf8d4b",
+      "bytes": 37483,
+      "model": "anthropic/claude-sonnet-4.5",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/fr_sonnet45_withdefn.json",
+        "model": "anthropic/claude-sonnet-4.5",
+        "suite": "effic_real2",
+        "names": null,
+        "seeds": 2,
+        "seed_start": 0,
+        "no_defn": false,
+        "with_check": false,
+        "budget_usd": 3.0,
+        "max_turns": 14,
+        "max_reads": 6,
+        "temperature": 0.7
+      },
+      "declared_seeds": 2,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 44,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [],
+      "provenance_warning": "historical four-seed merge declares two seeds; source seed-2/3 shard is unavailable"
+    },
+    {
+      "path": "runs/agent/gd2_deepseek_nocheck.json",
+      "sha256": "e11be5f33241e1e1b16ad1577f03bc58c9c38d289af486fa4b2f2fa2b06baa11",
+      "bytes": 24145,
+      "model": "deepseek/deepseek-chat-v3.1",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/gd2_deepseek_nocheck.json",
+        "model": "deepseek/deepseek-chat-v3.1",
+        "suite": "gapd2",
+        "names": null,
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "with_check": false,
+        "budget_usd": 4.0,
+        "max_turns": 10,
+        "max_reads": 6,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 21,
+      "integration_mode": "hinted_no_checker",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/gd2_deepseek_nocheck.json"
+      ]
+    },
+    {
+      "path": "runs/agent/gd2_deepseek_realistic.json",
+      "sha256": "0e0a2e019c0f02517b62ae1d873de12c389396eb48a9cf1044b0716e209fd9f9",
+      "bytes": 20231,
+      "model": "deepseek/deepseek-chat-v3.1",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/gd2_deepseek_realistic.json",
+        "model": "deepseek/deepseek-chat-v3.1",
+        "suite": "gapd2",
+        "no_hint": true,
+        "names": null,
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "with_check": false,
+        "budget_usd": 4.0,
+        "max_turns": 10,
+        "max_reads": 6,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 21,
+      "integration_mode": "unhinted_no_checker",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/gd2_deepseek_realistic.json"
+      ]
+    },
+    {
+      "path": "runs/agent/gd2_deepseek_withcheck.json",
+      "sha256": "bfc31ec9e490c688454dca7c1abf1bd0c96751f75ab9aebda59dc859a720afb0",
+      "bytes": 24208,
+      "model": "deepseek/deepseek-chat-v3.1",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/gd2_deepseek_withcheck.json",
+        "model": "deepseek/deepseek-chat-v3.1",
+        "suite": "gapd2",
+        "names": null,
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "with_check": true,
+        "budget_usd": 4.0,
+        "max_turns": 10,
+        "max_reads": 6,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 21,
+      "integration_mode": "hinted_elective_pyrefly_cli_checker",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/gd2_deepseek_withcheck.json"
+      ]
+    },
+    {
+      "path": "runs/agent/gd2_sonnet45_nocheck.json",
+      "sha256": "09495ba339286f69fbdb624cd8bb1ceeb8fbfcce41f5ffa7834fd60b1cd5d7fc",
+      "bytes": 18892,
+      "model": "anthropic/claude-sonnet-4.5",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/gd2_sonnet45_nocheck.json",
+        "model": "anthropic/claude-sonnet-4.5",
+        "suite": "gapd2",
+        "names": null,
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "with_check": false,
+        "budget_usd": 10.0,
+        "max_turns": 10,
+        "max_reads": 6,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 21,
+      "integration_mode": "hinted_no_checker",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/gd2_sonnet45_nocheck.json"
+      ]
+    },
+    {
+      "path": "runs/agent/gd2_sonnet45_realistic.json",
+      "sha256": "d0485e8dd7f4c030443690ca692cab0a7b6fbf91cd462017b825779de182174a",
+      "bytes": 18114,
+      "model": "anthropic/claude-sonnet-4.5",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/gd2_sonnet45_realistic.json",
+        "model": "anthropic/claude-sonnet-4.5",
+        "suite": "gapd2",
+        "no_hint": true,
+        "names": null,
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "with_check": false,
+        "budget_usd": 10.0,
+        "max_turns": 10,
+        "max_reads": 6,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 21,
+      "integration_mode": "unhinted_no_checker",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/gd2_sonnet45_realistic.json"
+      ]
+    },
+    {
+      "path": "runs/agent/gd2_sonnet45_withcheck.json",
+      "sha256": "d2dccc178ab8f8866729a3d9d7a0342584b5c726e371f66d73b97aa243425084",
+      "bytes": 19895,
+      "model": "anthropic/claude-sonnet-4.5",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/gd2_sonnet45_withcheck.json",
+        "model": "anthropic/claude-sonnet-4.5",
+        "suite": "gapd2",
+        "names": null,
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "with_check": true,
+        "budget_usd": 10.0,
+        "max_turns": 10,
+        "max_reads": 6,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 21,
+      "integration_mode": "hinted_elective_pyrefly_cli_checker",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/gd2_sonnet45_withcheck.json"
+      ]
+    },
+    {
+      "path": "runs/agent/grpo_harvest_0.json",
+      "sha256": "a6853dbd0191a12d284de69f0b70ffdb754f43785e60ccfff321f12e0b079654",
+      "bytes": 23164,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": true,
+        "force_lsp": true,
+        "lead_defn": false,
+        "relabel": true,
+        "grep": false,
+        "lsp_defn": false,
+        "out": "runs/agent/grpo_harvest_0.json",
+        "conds": "A",
+        "names": "effic_account_defn,effic_transfer_defn,effic_span_defn,effic_store_defn,effic_point_defn,effic_config_defn,effic_matrix_defn,effic_lexer_defn,effic_color_defn",
+        "seeds": 8,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 8,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "n_rows": 72,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/grpo_harvest_0.json"
+      ]
+    },
+    {
+      "path": "runs/agent/grpo_harvest_1.json",
+      "sha256": "5ed946a0e3c96100de89f89e201d494095b5bb39d7fa3f50bbb11c441284cc17",
+      "bytes": 23164,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": true,
+        "force_lsp": true,
+        "lead_defn": false,
+        "relabel": true,
+        "grep": false,
+        "lsp_defn": false,
+        "out": "runs/agent/grpo_harvest_1.json",
+        "conds": "A",
+        "names": "effic_account_defn,effic_transfer_defn,effic_span_defn,effic_store_defn,effic_point_defn,effic_config_defn,effic_matrix_defn,effic_lexer_defn,effic_color_defn",
+        "seeds": 8,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 8,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "n_rows": 72,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/grpo_harvest_1.json"
+      ]
+    },
+    {
+      "path": "runs/agent/grpo_harvest_2.json",
+      "sha256": "a578e40e8392d325163018dfc7d8d949a35ed74065945165f5c695897a07f50c",
+      "bytes": 23150,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": true,
+        "force_lsp": true,
+        "lead_defn": false,
+        "relabel": true,
+        "grep": false,
+        "lsp_defn": false,
+        "out": "runs/agent/grpo_harvest_2.json",
+        "conds": "A",
+        "names": "effic_account_defn,effic_transfer_defn,effic_span_defn,effic_store_defn,effic_point_defn,effic_config_defn,effic_matrix_defn,effic_lexer_defn,effic_color_defn",
+        "seeds": 8,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_grpo",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 8,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "n_rows": 72,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/grpo_harvest_2.json"
+      ]
+    },
+    {
+      "path": "runs/agent/grpo_harvest_3.json",
+      "sha256": "da18945646f0d58756b53c1dab5b60fbbf387f9d4b7f82d3882efe869080792a",
+      "bytes": 22976,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": true,
+        "force_lsp": true,
+        "lead_defn": false,
+        "relabel": true,
+        "grep": false,
+        "lsp_defn": false,
+        "out": "runs/agent/grpo_harvest_3.json",
+        "conds": "A",
+        "names": "effic_account_defn,effic_transfer_defn,effic_span_defn,effic_store_defn,effic_point_defn,effic_config_defn,effic_matrix_defn,effic_lexer_defn,effic_color_defn",
+        "seeds": 8,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_grpo",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 8,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "n_rows": 72,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/grpo_harvest_3.json"
+      ]
+    },
+    {
+      "path": "runs/agent/grpo_harvest_4.json",
+      "sha256": "d08c57e33ff236a8bd5a686cbc4bf791ab6fe1516ab39eb64633929e392b546e",
+      "bytes": 23020,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": true,
+        "force_lsp": true,
+        "lead_defn": false,
+        "relabel": true,
+        "grep": false,
+        "lsp_defn": false,
+        "out": "runs/agent/grpo_harvest_4.json",
+        "conds": "A",
+        "names": "effic_account_defn,effic_transfer_defn,effic_span_defn,effic_store_defn,effic_point_defn,effic_config_defn,effic_matrix_defn,effic_lexer_defn,effic_color_defn",
+        "seeds": 8,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_grpo",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 8,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "n_rows": 72,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/grpo_harvest_4.json"
+      ]
+    },
+    {
+      "path": "runs/agent/grpo_retest.json",
+      "sha256": "47b5f3ecf142c25d49fbbc86b6e894e228c12627998a94bed9f0fbf352c544ed",
+      "bytes": 12018,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": true,
+        "force_lsp": false,
+        "lead_defn": false,
+        "relabel": false,
+        "grep": false,
+        "lsp_defn": false,
+        "out": "runs/agent/grpo_retest.json",
+        "conds": "A",
+        "names": "effic_account_defn,effic_transfer_defn,effic_span_defn,effic_store_defn,effic_point_defn,effic_config_defn,effic_matrix_defn,effic_lexer_defn,effic_color_defn",
+        "seeds": 4,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_grpo",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 4,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 36,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/grpo_retest.json"
+      ]
+    },
+    {
+      "path": "runs/agent/grpo_retest_round1.json",
+      "sha256": "0aa3321890216c4a41adb9c7705ce8c6ca3226ffad1c63b3dddd7b8269b4aabf",
+      "bytes": 6203,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "lead_defn": false,
+        "relabel": false,
+        "grep": false,
+        "lsp_defn": false,
+        "out": "runs/agent/grpo_retest.json",
+        "conds": "A",
+        "names": "effic_account_defn,effic_transfer_defn,effic_span_defn,effic_store_defn,effic_point_defn,effic_config_defn,effic_matrix_defn,effic_lexer_defn,effic_color_defn",
+        "seeds": 2,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_grpo",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 2200,
+        "max_reads": 6,
+        "max_turns": 12,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 2,
+      "actual_seeds": [
+        0,
+        1
+      ],
+      "n_rows": 18,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/grpo_retest_round1.json"
+      ]
+    },
+    {
+      "path": "runs/agent/lsp_base.json",
+      "sha256": "b4d6710a231d6fa35835f26549a062e25595157bc894fc4604341d723320f389",
+      "bytes": 7713,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "lead_defn": false,
+        "relabel": false,
+        "grep": false,
+        "lsp_defn": true,
+        "out": "runs/agent/lsp_base.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 2,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 2,
+      "actual_seeds": [
+        0,
+        1
+      ],
+      "n_rows": 24,
+      "integration_mode": "live_first_language_server_with_ast_fallback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/lsp_base.json"
+      ]
+    },
+    {
+      "path": "runs/agent/lsp_sft.json",
+      "sha256": "15a99cc7307475a740a1fa47c10aaa3e0cf4f12ca41eef67869942c7c3d08ecb",
+      "bytes": 7636,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "lead_defn": false,
+        "relabel": false,
+        "grep": false,
+        "lsp_defn": true,
+        "out": "runs/agent/lsp_sft.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 2,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_powered",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 2,
+      "actual_seeds": [
+        0,
+        1
+      ],
+      "n_rows": 24,
+      "integration_mode": "live_first_language_server_with_ast_fallback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/lsp_sft.json"
+      ]
+    },
+    {
+      "path": "runs/agent/powered_retest_base.json",
+      "sha256": "c1cbf0d54cf432215629bc5d55e559c57ae33f7589c983a86ee5e89e5291c7a9",
+      "bytes": 21556,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effmix",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "lead_defn": false,
+        "grep": false,
+        "out": "runs/agent/powered_retest_base.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 4,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 4,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 72,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/powered_retest_base.json"
+      ]
+    },
+    {
+      "path": "runs/agent/powered_retest_base_x.json",
+      "sha256": "d3ead62bd9447681ee97da15b62740b0f4de1751b67acb72e4a87a088265465c",
+      "bytes": 28205,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "lead_defn": false,
+        "grep": false,
+        "out": "runs/agent/powered_retest_base_x.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 8,
+        "seed_start": 4,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 8,
+      "actual_seeds": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "n_rows": 96,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/powered_retest_base_x.json"
+      ]
+    },
+    {
+      "path": "runs/agent/powered_retest_sft.json",
+      "sha256": "fcc68744fcc2c396b159afc57503d580f34d602d7ad0e1387dc576ff44a551ca",
+      "bytes": 21397,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effmix",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "lead_defn": false,
+        "grep": false,
+        "out": "runs/agent/powered_retest_sft.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 4,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_powered",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 4,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 72,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/powered_retest_sft.json"
+      ]
+    },
+    {
+      "path": "runs/agent/powered_retest_sft_x.json",
+      "sha256": "943178f177c133a3e7a4fc6a2099b5e3598abbc40e31642220b102fc69f28d7f",
+      "bytes": 27819,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "lead_defn": false,
+        "grep": false,
+        "out": "runs/agent/powered_retest_sft_x.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 8,
+        "seed_start": 4,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_powered",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 8,
+      "actual_seeds": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "n_rows": 96,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/powered_retest_sft_x.json"
+      ]
+    },
+    {
+      "path": "runs/agent/reallsp_base.json",
+      "sha256": "67307d9f9a7f425cc18d90a89fd348df66cb11f8c8951f1edc113a54d3bba47a",
+      "bytes": 21563,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effmix",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "lead_defn": false,
+        "relabel": false,
+        "grep": false,
+        "out": "runs/agent/reallsp_base.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 4,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": null,
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 4,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 72,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/reallsp_base.json"
+      ]
+    },
+    {
+      "path": "runs/agent/reallsp_sft.json",
+      "sha256": "bfe3137e61ef94216b6c24de4daefe4120f0945e034bbfaed3f7f4c747ffdb3b",
+      "bytes": 21402,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effmix",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "lead_defn": false,
+        "relabel": false,
+        "grep": false,
+        "out": "runs/agent/reallsp_sft.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 4,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_powered",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 4,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 72,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/reallsp_sft.json"
+      ]
+    },
+    {
+      "path": "runs/agent/relabel2_retest.json",
+      "sha256": "7fa116de3f13c13e4b60706507949b302730694453279426cbe9799533c5b5e4",
+      "bytes": 14402,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "suite": "effic",
+        "lsp_tools": true,
+        "channel": null,
+        "dry_run": false,
+        "save_sft": false,
+        "force_lsp": false,
+        "lead_defn": false,
+        "relabel": false,
+        "grep": false,
+        "out": "runs/agent/relabel2_retest.json",
+        "conds": "A",
+        "names": null,
+        "seeds": 4,
+        "seed_start": 0,
+        "temp": 0.7,
+        "adapter": "runs/sft/effic_lora_relabel2",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "gpu_only": true,
+        "max_new": 3000,
+        "max_reads": 4,
+        "max_turns": 14,
+        "latency": 8,
+        "debounce": 0,
+        "pause_align": false,
+        "announce_lsp": false,
+        "c_eager": false,
+        "syntax_gate": false,
+        "rich_signal": false,
+        "preread": false,
+        "clean_delivery": false,
+        "diag_filter": null,
+        "oracle": null,
+        "steer": null
+      },
+      "declared_seeds": 4,
+      "actual_seeds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "n_rows": 48,
+      "integration_mode": "static_ast_definition_retrieval",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/relabel2_retest.json"
+      ]
+    },
+    {
+      "path": "runs/agent/rt_deepseek_r0_notest.json",
+      "sha256": "f7a65056cf1d5daa85c26c7067f2f4823fc71adcdb7b74e2a1ae5bb01f7e8e1a",
+      "bytes": 20028,
+      "model": "deepseek/deepseek-chat-v3.1",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/rt_deepseek_r0_notest.json",
+        "model": "deepseek/deepseek-chat-v3.1",
+        "suite": "runtime",
+        "no_hint": true,
+        "names": null,
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "no_test": true,
+        "auto_feedback": false,
+        "with_check": false,
+        "budget_usd": 3.0,
+        "max_turns": 10,
+        "max_reads": 3,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 24,
+      "integration_mode": "execution_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/rt_deepseek_r0_notest.json"
+      ]
+    },
+    {
+      "path": "runs/agent/rt_deepseek_r0_trap.json",
+      "sha256": "0a3e5154fec4d367eb393b3cf3a48bc2e23a2135afe809b47ee91b16b3b22bc1",
+      "bytes": 17392,
+      "model": "deepseek/deepseek-chat-v3.1",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/rt_deepseek_r0_trap.json",
+        "model": "deepseek/deepseek-chat-v3.1",
+        "suite": "runtime",
+        "no_hint": true,
+        "names": "rt_strip_prefix,rt_bucket_floor,rt_round_even,rt_top_label,rt_every_other,rt_ring_positions",
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "no_test": true,
+        "auto_feedback": false,
+        "with_check": false,
+        "budget_usd": 3.0,
+        "max_turns": 10,
+        "max_reads": 3,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 18,
+      "integration_mode": "execution_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/rt_deepseek_r0_trap.json"
+      ]
+    },
+    {
+      "path": "runs/agent/rt_deepseek_r1_run.json",
+      "sha256": "6c9f31dea3aec53cba7f1651aa4743eff2888b94b2e2d129ead518501d3620f7",
+      "bytes": 22039,
+      "model": "deepseek/deepseek-chat-v3.1",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/rt_deepseek_r1_run.json",
+        "model": "deepseek/deepseek-chat-v3.1",
+        "suite": "runtime",
+        "no_hint": true,
+        "names": null,
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "no_test": false,
+        "auto_feedback": false,
+        "with_check": false,
+        "budget_usd": 3.0,
+        "max_turns": 10,
+        "max_reads": 3,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 24,
+      "integration_mode": "execution_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/rt_deepseek_r1_run.json"
+      ]
+    },
+    {
+      "path": "runs/agent/rt_deepseek_r1_trap.json",
+      "sha256": "aae5588b68a7cc0033222e87104681b494e2e7ba4b06b4d12520345113551705",
+      "bytes": 17100,
+      "model": "deepseek/deepseek-chat-v3.1",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/rt_deepseek_r1_trap.json",
+        "model": "deepseek/deepseek-chat-v3.1",
+        "suite": "runtime",
+        "no_hint": true,
+        "names": "rt_strip_prefix,rt_bucket_floor,rt_round_even,rt_top_label,rt_every_other,rt_ring_positions",
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "no_test": false,
+        "auto_feedback": false,
+        "with_check": false,
+        "budget_usd": 3.0,
+        "max_turns": 10,
+        "max_reads": 3,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 18,
+      "integration_mode": "execution_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/rt_deepseek_r1_trap.json"
+      ]
+    },
+    {
+      "path": "runs/agent/rt_deepseek_r2_auto.json",
+      "sha256": "edccdbf943f9c0fea8ec077e5cccc22206154937e22c1210ef1cfa3440871b03",
+      "bytes": 21460,
+      "model": "deepseek/deepseek-chat-v3.1",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/rt_deepseek_r2_auto.json",
+        "model": "deepseek/deepseek-chat-v3.1",
+        "suite": "runtime",
+        "no_hint": true,
+        "names": null,
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "no_test": false,
+        "auto_feedback": true,
+        "with_check": false,
+        "budget_usd": 3.0,
+        "max_turns": 10,
+        "max_reads": 3,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 24,
+      "integration_mode": "execution_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/rt_deepseek_r2_auto.json"
+      ]
+    },
+    {
+      "path": "runs/agent/rt_deepseek_r2_trap.json",
+      "sha256": "8514a948236ee2b8972182db46a2f7639076d7ae0b6d1891a59c4492a5ee5124",
+      "bytes": 17493,
+      "model": "deepseek/deepseek-chat-v3.1",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/rt_deepseek_r2_trap.json",
+        "model": "deepseek/deepseek-chat-v3.1",
+        "suite": "runtime",
+        "no_hint": true,
+        "names": "rt_strip_prefix,rt_bucket_floor,rt_round_even,rt_top_label,rt_every_other,rt_ring_positions",
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "no_test": false,
+        "auto_feedback": true,
+        "with_check": false,
+        "budget_usd": 3.0,
+        "max_turns": 10,
+        "max_reads": 3,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 18,
+      "integration_mode": "execution_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/rt_deepseek_r2_trap.json"
+      ]
+    },
+    {
+      "path": "runs/agent/rt_sonnet45_r0_notest.json",
+      "sha256": "0e431c658bbcbe5af3710e75eb37b5bad08ac7b1c74113dd8f517ec4e283dd53",
+      "bytes": 19857,
+      "model": "anthropic/claude-sonnet-4.5",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/rt_sonnet45_r0_notest.json",
+        "model": "anthropic/claude-sonnet-4.5",
+        "suite": "runtime",
+        "no_hint": true,
+        "names": null,
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "no_test": true,
+        "auto_feedback": false,
+        "with_check": false,
+        "budget_usd": 8.0,
+        "max_turns": 10,
+        "max_reads": 3,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 24,
+      "integration_mode": "execution_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/rt_sonnet45_r0_notest.json"
+      ]
+    },
+    {
+      "path": "runs/agent/rt_sonnet45_r0_trap.json",
+      "sha256": "05e6b01c2a5e2cf5c95b5ebf14d08837009e51ef08ef463f70209eff11bf50b9",
+      "bytes": 15152,
+      "model": "anthropic/claude-sonnet-4.5",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/rt_sonnet45_r0_trap.json",
+        "model": "anthropic/claude-sonnet-4.5",
+        "suite": "runtime",
+        "no_hint": true,
+        "names": "rt_strip_prefix,rt_bucket_floor,rt_round_even,rt_top_label,rt_every_other,rt_ring_positions",
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "no_test": true,
+        "auto_feedback": false,
+        "with_check": false,
+        "budget_usd": 8.0,
+        "max_turns": 10,
+        "max_reads": 3,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 18,
+      "integration_mode": "execution_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/rt_sonnet45_r0_trap.json"
+      ]
+    },
+    {
+      "path": "runs/agent/rt_sonnet45_r1_run.json",
+      "sha256": "64871e81edb0985263482f2db22a6562cf55e59f01564ddcbf5caf0017c10c63",
+      "bytes": 20766,
+      "model": "anthropic/claude-sonnet-4.5",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/rt_sonnet45_r1_run.json",
+        "model": "anthropic/claude-sonnet-4.5",
+        "suite": "runtime",
+        "no_hint": true,
+        "names": null,
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "no_test": false,
+        "auto_feedback": false,
+        "with_check": false,
+        "budget_usd": 8.0,
+        "max_turns": 10,
+        "max_reads": 3,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 24,
+      "integration_mode": "execution_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/rt_sonnet45_r1_run.json"
+      ]
+    },
+    {
+      "path": "runs/agent/rt_sonnet45_r1_trap.json",
+      "sha256": "17d0ef5f1de3cd89da8d4d1108d2089b24bd1898d089682f3126bc3fc112f0a2",
+      "bytes": 15858,
+      "model": "anthropic/claude-sonnet-4.5",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/rt_sonnet45_r1_trap.json",
+        "model": "anthropic/claude-sonnet-4.5",
+        "suite": "runtime",
+        "no_hint": true,
+        "names": "rt_strip_prefix,rt_bucket_floor,rt_round_even,rt_top_label,rt_every_other,rt_ring_positions",
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "no_test": false,
+        "auto_feedback": false,
+        "with_check": false,
+        "budget_usd": 8.0,
+        "max_turns": 10,
+        "max_reads": 3,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 18,
+      "integration_mode": "execution_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/rt_sonnet45_r1_trap.json"
+      ]
+    },
+    {
+      "path": "runs/agent/rt_sonnet45_r2_auto.json",
+      "sha256": "8413c3c89744f2a7202ec46707414df76e0426b550ea0da9af784278233c2ca5",
+      "bytes": 21153,
+      "model": "anthropic/claude-sonnet-4.5",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/rt_sonnet45_r2_auto.json",
+        "model": "anthropic/claude-sonnet-4.5",
+        "suite": "runtime",
+        "no_hint": true,
+        "names": null,
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "no_test": false,
+        "auto_feedback": true,
+        "with_check": false,
+        "budget_usd": 8.0,
+        "max_turns": 10,
+        "max_reads": 3,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 24,
+      "integration_mode": "execution_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/rt_sonnet45_r2_auto.json"
+      ]
+    },
+    {
+      "path": "runs/agent/rt_sonnet45_r2_trap.json",
+      "sha256": "965cf5bdcd7869c9aa978493357f868884328eae15fb5f756de4a8cb519ddc6b",
+      "bytes": 15999,
+      "model": "anthropic/claude-sonnet-4.5",
+      "temperature": 0.7,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "out": "runs/agent/rt_sonnet45_r2_trap.json",
+        "model": "anthropic/claude-sonnet-4.5",
+        "suite": "runtime",
+        "no_hint": true,
+        "names": "rt_strip_prefix,rt_bucket_floor,rt_round_even,rt_top_label,rt_every_other,rt_ring_positions",
+        "seeds": 3,
+        "seed_start": 0,
+        "no_defn": false,
+        "no_test": false,
+        "auto_feedback": true,
+        "with_check": false,
+        "budget_usd": 8.0,
+        "max_turns": 10,
+        "max_reads": 3,
+        "temperature": 0.7
+      },
+      "declared_seeds": 3,
+      "actual_seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_rows": 18,
+      "integration_mode": "execution_feedback",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/agent/rt_sonnet45_r2_trap.json"
+      ]
+    },
+    {
+      "path": "runs/pilot/checker_drafts_14b.json",
+      "sha256": "406d043ce068c6693f7bb71619f09bf41551b0e514f78295b994752be4d21595",
+      "bytes": 21837,
+      "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+      "temperature": 0.7,
+      "model_meta": {
+        "revision": "aedcc2d42b622764e023cf882b6652e646b95671",
+        "transformers": "5.9.0",
+        "torch": "2.11.0+cu128",
+        "dtype": "torch.bfloat16"
+      },
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "command": "generate",
+        "out": "runs/pilot/checker_drafts_14b.json",
+        "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+        "names": "auth_shapes_protocol,auth_machine_enum,auth_graph_edges",
+        "seed": 0,
+        "temperature": 0.7,
+        "max_new": 1400,
+        "max_turns": 12,
+        "max_reads": 6,
+        "gpu_only": true
+      },
+      "declared_seeds": null,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 3,
+      "integration_mode": "pyrefly_cli_diagnostic_delta",
+      "artifact_role": "natural_drafts",
+      "source_run_files": [
+        "runs/pilot/checker_drafts_14b.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/checker_paired.py": "7bb64807986ef645b3b01a0438d148755faa2e3397d0bb14421db5ce02aaed5c",
+        "scripts/experiments/diagnostics.py": "98f3e55a2077055aa170ae6cbe09d839ae784a1605f58838478cc2e59d35b746",
+        "scripts/analysis/analyze_checker_paired.py": "3935fc3c01a2f34e09faf2e8192140a7dafe0d96ac64a3b4919ec16f496cde38",
+        "scripts/synth_tasks_authoring.py": "51af9d800d0f6812286343b74c9d578b5ad1a599f9a4bbf184246c7efb94a58e",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/run_checker_paired.sh": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
+      }
+    },
+    {
+      "path": "runs/pilot/checker_drafts_14b_ext.json",
+      "sha256": "1bbe7b316f7538b624e978afe1a10976bdc94f7a7fe162d946f52a31995e6c25",
+      "bytes": 25274,
+      "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+      "temperature": 0.7,
+      "model_meta": {
+        "revision": "aedcc2d42b622764e023cf882b6652e646b95671",
+        "transformers": "5.9.0",
+        "torch": "2.11.0+cu128",
+        "dtype": "torch.bfloat16"
+      },
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "command": "generate",
+        "out": "runs/pilot/checker_drafts_14b_ext.json",
+        "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+        "names": "auth_bank_dataclass,auth_multimap_generic,auth_tokenizer_namedtuple,auth_fold_callable,auth_pipeline_handler",
+        "seed": 1,
+        "temperature": 0.7,
+        "max_new": 1400,
+        "max_turns": 12,
+        "max_reads": 6,
+        "gpu_only": true
+      },
+      "declared_seeds": null,
+      "actual_seeds": [
+        1
+      ],
+      "n_rows": 5,
+      "integration_mode": "pyrefly_cli_diagnostic_delta",
+      "artifact_role": "natural_drafts",
+      "source_run_files": [
+        "runs/pilot/checker_drafts_14b_ext.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/checker_paired.py": "7bb64807986ef645b3b01a0438d148755faa2e3397d0bb14421db5ce02aaed5c",
+        "scripts/experiments/diagnostics.py": "98f3e55a2077055aa170ae6cbe09d839ae784a1605f58838478cc2e59d35b746",
+        "scripts/analysis/analyze_checker_paired.py": "3935fc3c01a2f34e09faf2e8192140a7dafe0d96ac64a3b4919ec16f496cde38",
+        "scripts/synth_tasks_authoring.py": "51af9d800d0f6812286343b74c9d578b5ad1a599f9a4bbf184246c7efb94a58e",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/run_checker_paired.sh": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
+      }
+    },
+    {
+      "path": "runs/pilot/checker_drafts_7b.json",
+      "sha256": "0e6526ccc42ae37171a24183bb3f2a88be3f4c333352498c3f73665eb4efad47",
+      "bytes": 22174,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": {
+        "revision": "c03e6d358207e414f1eca0bb1891e29f1db0e242",
+        "transformers": "5.9.0",
+        "torch": "2.11.0+cu128",
+        "dtype": "torch.bfloat16"
+      },
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "command": "generate",
+        "out": "runs/pilot/checker_drafts_7b.json",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "names": "auth_shapes_protocol,auth_machine_enum,auth_graph_edges",
+        "seed": 0,
+        "temperature": 0.7,
+        "max_new": 1400,
+        "max_turns": 12,
+        "max_reads": 6,
+        "gpu_only": true
+      },
+      "declared_seeds": null,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 3,
+      "integration_mode": "pyrefly_cli_diagnostic_delta",
+      "artifact_role": "natural_drafts",
+      "source_run_files": [
+        "runs/pilot/checker_drafts_7b.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/checker_paired.py": "7bb64807986ef645b3b01a0438d148755faa2e3397d0bb14421db5ce02aaed5c",
+        "scripts/experiments/diagnostics.py": "98f3e55a2077055aa170ae6cbe09d839ae784a1605f58838478cc2e59d35b746",
+        "scripts/analysis/analyze_checker_paired.py": "3935fc3c01a2f34e09faf2e8192140a7dafe0d96ac64a3b4919ec16f496cde38",
+        "scripts/synth_tasks_authoring.py": "51af9d800d0f6812286343b74c9d578b5ad1a599f9a4bbf184246c7efb94a58e",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/run_checker_paired.sh": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
+      }
+    },
+    {
+      "path": "runs/pilot/checker_drafts_7b_smoke.json",
+      "sha256": "cb3906602eab6faa03429785be3dce602df4740cf7ae529179c0a881d38c3b91",
+      "bytes": 22190,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.7,
+      "model_meta": {
+        "revision": "c03e6d358207e414f1eca0bb1891e29f1db0e242",
+        "transformers": "5.9.0",
+        "torch": "2.11.0+cu128",
+        "dtype": "torch.bfloat16"
+      },
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "command": "generate",
+        "out": "runs/pilot/checker_drafts_7b_smoke.json",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "names": "auth_shapes_protocol",
+        "seed": 0,
+        "temperature": 0.7,
+        "max_new": 1800,
+        "max_turns": 10,
+        "max_reads": 5,
+        "gpu_only": true
+      },
+      "declared_seeds": null,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 1,
+      "integration_mode": "pyrefly_cli_diagnostic_delta",
+      "artifact_role": "rejected_pre_submission_boundary_smoke",
+      "source_run_files": [
+        "runs/pilot/checker_drafts_7b_smoke.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/checker_paired.py": "7bb64807986ef645b3b01a0438d148755faa2e3397d0bb14421db5ce02aaed5c",
+        "scripts/experiments/diagnostics.py": "98f3e55a2077055aa170ae6cbe09d839ae784a1605f58838478cc2e59d35b746",
+        "scripts/analysis/analyze_checker_paired.py": "3935fc3c01a2f34e09faf2e8192140a7dafe0d96ac64a3b4919ec16f496cde38",
+        "scripts/synth_tasks_authoring.py": "51af9d800d0f6812286343b74c9d578b5ad1a599f9a4bbf184246c7efb94a58e",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/run_checker_paired.sh": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
+      }
+    },
+    {
+      "path": "runs/pilot/navigation_all.json",
+      "sha256": "16b47fb74f496703b574b1e4bd443ebceff18aeb4f08007af5cbb3c432deb1a8",
+      "bytes": 72120,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.0,
+      "model_meta": {
+        "revision": "c03e6d358207e414f1eca0bb1891e29f1db0e242",
+        "transformers": "5.9.0",
+        "torch": "2.11.0+cu128",
+        "dtype": "torch.bfloat16"
+      },
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "out": "runs/pilot/navigation_all.json",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "split": "pilot",
+        "cells": "all",
+        "names": "nav_pilot_17011,nav_pilot_17027",
+        "seeds": 1,
+        "seed_start": 0,
+        "temperature": 0.0,
+        "max_new": 1000,
+        "max_turns": 12,
+        "max_reads": 12,
+        "gpu_only": true,
+        "tmp_root": null
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 12,
+      "integration_mode": "mixed_textual_and_strict_live_language_server_composed_span",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/pilot/navigation_all.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/navigation_tasks.py": "6760aaeb8663403444473b356488a586a1d4b9bc495fce7081b6fc2817f5b50c",
+        "scripts/experiments/run_navigation.py": "5334b07a5466a12decc1bd78fd01a3c35c7dd7a4cf1e2d737345447f74b76119",
+        "scripts/analysis/analyze_navigation.py": "7b7935a305545a865b7dd44fa24d248f48a5a193b1c1e56f0e829e1d119758e4",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81"
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/navigation_tasks.py",
+        "scripts/analysis/analyze_navigation.py"
+      ]
+    },
+    {
+      "path": "runs/pilot/navigation_positive.json",
+      "sha256": "7adc2305901edff3e7c6976484b9ebaf5952a6666df24eafcae1270653b1cb2b",
+      "bytes": 5913,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.0,
+      "model_meta": {
+        "revision": "c03e6d358207e414f1eca0bb1891e29f1db0e242",
+        "transformers": "5.9.0",
+        "torch": "2.11.0+cu128",
+        "dtype": "torch.bfloat16"
+      },
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "out": "runs/pilot/navigation_positive.json",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "split": "pilot",
+        "cells": "positive",
+        "names": "nav_pilot_17011,nav_pilot_17027",
+        "seeds": 1,
+        "seed_start": 0,
+        "temperature": 0.0,
+        "max_new": 400,
+        "max_turns": 12,
+        "max_reads": 12,
+        "gpu_only": true,
+        "tmp_root": null
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 2,
+      "integration_mode": "mixed_textual_and_strict_live_language_server_composed_span",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/pilot/navigation_positive.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/navigation_tasks.py": "6760aaeb8663403444473b356488a586a1d4b9bc495fce7081b6fc2817f5b50c",
+        "scripts/experiments/run_navigation.py": "5334b07a5466a12decc1bd78fd01a3c35c7dd7a4cf1e2d737345447f74b76119",
+        "scripts/analysis/analyze_navigation.py": "7b7935a305545a865b7dd44fa24d248f48a5a193b1c1e56f0e829e1d119758e4",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81"
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/navigation_tasks.py",
+        "scripts/analysis/analyze_navigation.py"
+      ]
+    },
+    {
+      "path": "runs/pilot/navigation_positive_floor_failed_v1.json",
+      "sha256": "5e86bdd9f7582bfc1bccdc803b53d5b8e7f880f1caf5b97d1bcaf14111183afb",
+      "bytes": 8909,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.0,
+      "model_meta": {
+        "revision": "c03e6d358207e414f1eca0bb1891e29f1db0e242",
+        "transformers": "5.9.0",
+        "torch": "2.11.0+cu128",
+        "dtype": "torch.bfloat16"
+      },
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "out": "runs/pilot/navigation_positive.json",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "split": "pilot",
+        "cells": "positive",
+        "names": "nav_pilot_17011,nav_pilot_17027",
+        "seeds": 1,
+        "seed_start": 0,
+        "temperature": 0.0,
+        "max_new": 800,
+        "max_turns": 12,
+        "max_reads": 12,
+        "gpu_only": true,
+        "tmp_root": null
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 2,
+      "integration_mode": "mixed_textual_and_strict_live_language_server_composed_span",
+      "artifact_role": "excluded_pilot_control_failed_edit_competence_floor",
+      "source_run_files": [
+        "runs/pilot/navigation_positive_floor_failed_v1.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/navigation_tasks.py": "6760aaeb8663403444473b356488a586a1d4b9bc495fce7081b6fc2817f5b50c",
+        "scripts/experiments/run_navigation.py": "cbf24a3133582decc6ca122c74894e4adfebc709e56bf6570fe94ec2cf750918",
+        "scripts/analysis/analyze_navigation.py": "7b7935a305545a865b7dd44fa24d248f48a5a193b1c1e56f0e829e1d119758e4",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81"
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/navigation_tasks.py",
+        "scripts/experiments/run_navigation.py",
+        "scripts/analysis/analyze_navigation.py"
+      ]
+    },
+    {
+      "path": "runs/pilot/navigation_positive_invalid_v0.json",
+      "sha256": "93c507f89d80e133bf2a4c442198d79546770a2868eca5ee659cf5db0eceeccb",
+      "bytes": 7587,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.0,
+      "model_meta": {
+        "revision": "c03e6d358207e414f1eca0bb1891e29f1db0e242",
+        "transformers": "5.9.0",
+        "torch": "2.11.0+cu128",
+        "dtype": "torch.bfloat16"
+      },
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "out": "runs/pilot/navigation_positive.json",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "split": "pilot",
+        "cells": "positive",
+        "names": "nav_pilot_17011,nav_pilot_17027",
+        "seeds": 1,
+        "seed_start": 0,
+        "temperature": 0.0,
+        "max_new": 2200,
+        "max_turns": 12,
+        "max_reads": 12,
+        "gpu_only": true,
+        "tmp_root": null
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 1,
+      "integration_mode": "mixed_textual_and_strict_live_language_server_composed_span",
+      "artifact_role": "rejected_control_contained_buggy_method_body",
+      "source_run_files": [
+        "runs/pilot/navigation_positive_invalid_v0.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/navigation_tasks.py": "6760aaeb8663403444473b356488a586a1d4b9bc495fce7081b6fc2817f5b50c",
+        "scripts/experiments/run_navigation.py": "8b4b91d581e8478872a11f3efb85ab31e2906c28337bcc0401a6864d491f480e",
+        "scripts/analysis/analyze_navigation.py": "7b7935a305545a865b7dd44fa24d248f48a5a193b1c1e56f0e829e1d119758e4",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81"
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/navigation_tasks.py",
+        "scripts/experiments/run_navigation.py",
+        "scripts/analysis/analyze_navigation.py"
+      ]
+    },
+    {
+      "path": "runs/protocol/checker_natural_drafts_legacy_7b.json",
+      "sha256": "61f2e03ec1a02b1299f9dfff0edf7f1cded6de9fcd6d40e2954cd7fd37532638",
+      "bytes": 50229,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 5,
+      "integration_mode": "pyrefly_cli_diagnostic_delta",
+      "artifact_role": "historical_workspace_reconstruction_not_paired_calibration",
+      "source_run_files": [
+        "runs/agent/exp2_7b_none.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/checker_paired.py": "7bb64807986ef645b3b01a0438d148755faa2e3397d0bb14421db5ce02aaed5c",
+        "scripts/experiments/diagnostics.py": "98f3e55a2077055aa170ae6cbe09d839ae784a1605f58838478cc2e59d35b746",
+        "scripts/analysis/analyze_checker_paired.py": "3935fc3c01a2f34e09faf2e8192140a7dafe0d96ac64a3b4919ec16f496cde38",
+        "scripts/synth_tasks_authoring.py": "51af9d800d0f6812286343b74c9d578b5ad1a599f9a4bbf184246c7efb94a58e",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/run_checker_paired.sh": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
+      }
+    },
+    {
+      "path": "runs/protocol/navigation_apparatus_validation.json",
+      "sha256": "62f5941afba703fe9192c8333538b4c1918a172df94f46a8ce854565c34b5abd",
+      "bytes": 19976,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "protocol": "navigation-v1",
+        "split": "apparatus",
+        "seeds": [
+          29009,
+          29017,
+          29021,
+          29023,
+          29027,
+          29033,
+          29059,
+          29063,
+          29077,
+          29083,
+          29089,
+          29101
+        ],
+        "templates": [
+          "subtract",
+          "affine",
+          "xor"
+        ]
+      },
+      "declared_seeds": [
+        29009,
+        29017,
+        29021,
+        29023,
+        29027,
+        29033,
+        29059,
+        29063,
+        29077,
+        29083,
+        29089,
+        29101
+      ],
+      "actual_seeds": [],
+      "n_rows": 12,
+      "integration_mode": "strict_live_language_server_manipulation_check",
+      "artifact_role": "mechanical_manipulation_and_leakage_validation",
+      "source_run_files": [
+        "runs/protocol/navigation_apparatus_validation.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/navigation_tasks.py": "f2d013348cbe61eaca1c26f52a98e19646bd9cb7b200c2cc3417af7ce17c313b",
+        "scripts/experiments/run_navigation.py": "5334b07a5466a12decc1bd78fd01a3c35c7dd7a4cf1e2d737345447f74b76119",
+        "scripts/analysis/analyze_navigation.py": "cde1ab68ec2c2f8b69668383dcdb336fdbb562f2740339ad94d85ac97007d7be",
+        "scripts/run_navigation_pilot.sh": "88fcc197e21c7c773a4431708ec5ff626ebfc890cb7ff61e03135dc1586fe679",
+        "scripts/run_navigation_confirmation.sh": "dfa4cb0545a119a5702282859172b78d0df64aa9ef118deadd664c910d3c4b98",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81"
+      }
+    },
+    {
+      "path": "runs/protocol/navigation_apparatus_validation_v0.json",
+      "sha256": "f4a378d5ace2a703622c81674a3c3fb82d5587a262c831b55e756d7e01841043",
+      "bytes": 17436,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "protocol": "navigation-v1",
+        "split": "confirmation",
+        "seeds": [
+          29009,
+          29017,
+          29021,
+          29023,
+          29027,
+          29033,
+          29059,
+          29063,
+          29077,
+          29083,
+          29089,
+          29101
+        ],
+        "templates": [
+          "subtract",
+          "affine",
+          "xor"
+        ]
+      },
+      "declared_seeds": [
+        29009,
+        29017,
+        29021,
+        29023,
+        29027,
+        29033,
+        29059,
+        29063,
+        29077,
+        29083,
+        29089,
+        29101
+      ],
+      "actual_seeds": [],
+      "n_rows": 12,
+      "integration_mode": "strict_live_language_server_manipulation_check",
+      "artifact_role": "mechanical_manipulation_and_leakage_validation",
+      "source_run_files": [
+        "runs/protocol/navigation_apparatus_validation_v0.json"
+      ]
+    },
+    {
+      "path": "runs/protocol/navigation_confirmation_validation.json",
+      "sha256": "2ae1e265d1032dc5791ab51a5a707659270a3765fea97f0c69bf337f8257b486",
+      "bytes": 20127,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "protocol": "navigation-v1",
+        "split": "confirmation",
+        "seeds": [
+          41011,
+          41017,
+          41023,
+          41039,
+          41047,
+          41051,
+          41057,
+          41077,
+          41081,
+          41083,
+          41099,
+          41113
+        ],
+        "templates": [
+          "modulo",
+          "square_offset",
+          "negate_offset"
+        ]
+      },
+      "declared_seeds": [
+        41011,
+        41017,
+        41023,
+        41039,
+        41047,
+        41051,
+        41057,
+        41077,
+        41081,
+        41083,
+        41099,
+        41113
+      ],
+      "actual_seeds": [],
+      "n_rows": 12,
+      "integration_mode": "strict_live_language_server_manipulation_check",
+      "artifact_role": "mechanical_manipulation_and_leakage_validation",
+      "source_run_files": [
+        "runs/protocol/navigation_confirmation_validation.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/navigation_tasks.py": "f2d013348cbe61eaca1c26f52a98e19646bd9cb7b200c2cc3417af7ce17c313b",
+        "scripts/experiments/run_navigation.py": "5334b07a5466a12decc1bd78fd01a3c35c7dd7a4cf1e2d737345447f74b76119",
+        "scripts/analysis/analyze_navigation.py": "cde1ab68ec2c2f8b69668383dcdb336fdbb562f2740339ad94d85ac97007d7be",
+        "scripts/run_navigation_pilot.sh": "88fcc197e21c7c773a4431708ec5ff626ebfc890cb7ff61e03135dc1586fe679",
+        "scripts/run_navigation_confirmation.sh": "dfa4cb0545a119a5702282859172b78d0df64aa9ef118deadd664c910d3c4b98",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81"
+      }
+    },
+    {
+      "path": "runs/protocol/navigation_pilot_validation.json",
+      "sha256": "b9fdbcaff3f2667c064322b7c0e5231bf5c181fbdcc427e30d1f29fdfb4ce3b6",
+      "bytes": 7507,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "protocol": "navigation-v1",
+        "split": "pilot",
+        "seeds": [
+          17011,
+          17027,
+          17033,
+          17041
+        ],
+        "templates": [
+          "add",
+          "multiply"
+        ]
+      },
+      "declared_seeds": [
+        17011,
+        17027,
+        17033,
+        17041
+      ],
+      "actual_seeds": [],
+      "n_rows": 4,
+      "integration_mode": "strict_live_language_server_manipulation_check",
+      "artifact_role": "mechanical_manipulation_and_leakage_validation",
+      "source_run_files": [
+        "runs/protocol/navigation_pilot_validation.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/navigation_tasks.py": "f2d013348cbe61eaca1c26f52a98e19646bd9cb7b200c2cc3417af7ce17c313b",
+        "scripts/experiments/run_navigation.py": "5334b07a5466a12decc1bd78fd01a3c35c7dd7a4cf1e2d737345447f74b76119",
+        "scripts/analysis/analyze_navigation.py": "cde1ab68ec2c2f8b69668383dcdb336fdbb562f2740339ad94d85ac97007d7be",
+        "scripts/run_navigation_pilot.sh": "88fcc197e21c7c773a4431708ec5ff626ebfc890cb7ff61e03135dc1586fe679",
+        "scripts/run_navigation_confirmation.sh": "dfa4cb0545a119a5702282859172b78d0df64aa9ef118deadd664c910d3c4b98",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81"
+      }
+    },
+    {
+      "path": "runs/realbench/candidates.json",
+      "sha256": "189aa89e6a45e51fa034ca7fe29f008e35ddc95699ca2a3409f5d787b6fba92b",
+      "bytes": 47658,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [],
+      "n_rows": 0,
+      "integration_mode": "candidate_scan",
+      "artifact_role": "external_validity_reconnaissance",
+      "source_run_files": [
+        "runs/realbench/candidates.json"
+      ]
+    },
+    {
+      "path": "runs/realbench/dispatch/local_Qwen2.5-Coder-7B-Instruct.json",
+      "sha256": "656aaa379e3018448fe43954e9d7930f13779f22d813c15297cb31dfdcbc3ab7",
+      "bytes": 286821,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.0,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "adapter": null,
+        "conds": "grep_base,defn_avail,defn_prompt",
+        "seeds": 1,
+        "seed_start": 0,
+        "temp": 0.0,
+        "gpu_only": true,
+        "max_new": 2400,
+        "max_reads": 12,
+        "max_turns": 14,
+        "tmp_root": "/tmp/streams_dispatch",
+        "out": null,
+        "names": null
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 45,
+      "integration_mode": "mixed_textual_and_live_language_server_plus_enclosing_span",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/realbench/dispatch/local_Qwen2.5-Coder-7B-Instruct.json"
+      ],
+      "row_treatments": [
+        "defn_avail",
+        "defn_prompt",
+        "grep_base"
+      ]
+    },
+    {
+      "path": "runs/realbench/dispatch/local_Qwen3.6-27B.json",
+      "sha256": "ffc2e2d7af32ccf528ec365b48d089eeeaf98eeceb4a33cca76fe5d2d5ad844e",
+      "bytes": 178059,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.0,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "model": "Qwen/Qwen3.6-27B",
+        "adapter": null,
+        "conds": "grep_base,defn_avail,defn_prompt",
+        "seeds": 1,
+        "seed_start": 0,
+        "temp": 0.0,
+        "gpu_only": true,
+        "max_new": 2400,
+        "max_reads": 12,
+        "max_turns": 14,
+        "tmp_root": "/tmp/streams_dispatch",
+        "out": null,
+        "names": null
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 45,
+      "integration_mode": "mixed_textual_and_live_language_server_plus_enclosing_span",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/realbench/dispatch/local_Qwen3.6-27B.json"
+      ],
+      "row_treatments": [
+        "defn_avail",
+        "defn_prompt",
+        "grep_base"
+      ]
+    },
+    {
+      "path": "runs/realbench/dispatch/local_Qwen3.6-27B_indirection.json",
+      "sha256": "320da11be6afbc29b783a7ed0317524c4eacb64183bced644e7ddd1bbe4f972d",
+      "bytes": 176488,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.0,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "model": "Qwen/Qwen3.6-27B",
+        "adapter": null,
+        "conds": "grep_base,defn_avail,defn_prompt",
+        "seeds": 1,
+        "seed_start": 0,
+        "temp": 0.0,
+        "gpu_only": true,
+        "max_new": 2600,
+        "max_reads": 12,
+        "max_turns": 16,
+        "tmp_root": "/tmp/streams_dispatch",
+        "typing": "indirection",
+        "out": "runs/realbench/dispatch/local_Qwen3.6-27B_indirection.json",
+        "names": null
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 45,
+      "integration_mode": "mixed_textual_and_live_language_server_plus_enclosing_span",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/realbench/dispatch/local_Qwen3.6-27B_indirection.json"
+      ],
+      "row_treatments": [
+        "defn_avail",
+        "defn_prompt",
+        "grep_base"
+      ]
+    },
+    {
+      "path": "runs/realbench/dispatch/local_Qwen3.6-27B_stripped.json",
+      "sha256": "339a4cf2e1c7a183133d5e96ba2882b7ff1aa3959486aadbef2712bd77d0380b",
+      "bytes": 184739,
+      "model": "Qwen/Qwen3.6-27B",
+      "temperature": 0.0,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {
+        "model": "Qwen/Qwen3.6-27B",
+        "adapter": null,
+        "conds": "grep_base,defn_avail,defn_prompt",
+        "seeds": 1,
+        "seed_start": 0,
+        "temp": 0.0,
+        "gpu_only": true,
+        "max_new": 2600,
+        "max_reads": 12,
+        "max_turns": 16,
+        "tmp_root": "/tmp/streams_dispatch",
+        "typing": "stripped",
+        "out": "runs/realbench/dispatch/local_Qwen3.6-27B_stripped.json",
+        "names": null
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 45,
+      "integration_mode": "mixed_textual_and_live_language_server_plus_enclosing_span",
+      "artifact_role": "committed_model_result",
+      "source_run_files": [
+        "runs/realbench/dispatch/local_Qwen3.6-27B_stripped.json"
+      ],
+      "row_treatments": [
+        "defn_avail",
+        "defn_prompt",
+        "grep_base"
+      ]
+    },
+    {
+      "path": "runs/realbench/dispatch_candidates.json",
+      "sha256": "b6bd5baa15b1814472072fe1f7ceedf82801d07c4f870fdf8fe223af90a226e6",
+      "bytes": 308581,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [],
+      "n_rows": 206,
+      "integration_mode": "candidate_scan",
+      "artifact_role": "external_validity_reconnaissance",
+      "source_run_files": [
+        "runs/realbench/dispatch_candidates.json"
+      ]
+    },
+    {
+      "path": "runs/realbench/scan/astropy_astropy.json",
+      "sha256": "facb3ba114a1e4c50129437cc65f18e016b65ecaa1334c0a3f9a01dfebc38051",
+      "bytes": 17854,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [],
+      "n_rows": 22,
+      "integration_mode": "candidate_scan",
+      "artifact_role": "external_validity_reconnaissance",
+      "source_run_files": [
+        "runs/realbench/scan/astropy_astropy.json"
+      ]
+    },
+    {
+      "path": "runs/realbench/scan/django_django.json",
+      "sha256": "b5ea214c648a4dad57dbcc987bb6a88b39acac88c341786b4359c580b461c634",
+      "bytes": 15281,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [],
+      "n_rows": 22,
+      "integration_mode": "candidate_scan",
+      "artifact_role": "external_validity_reconnaissance",
+      "source_run_files": [
+        "runs/realbench/scan/django_django.json"
+      ]
+    },
+    {
+      "path": "runs/realbench/scan/matplotlib_matplotlib.json",
+      "sha256": "865582068c68bea5a489a598ca34195a32e49092aa8accca8ed08a4c87031c21",
+      "bytes": 15618,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [],
+      "n_rows": 22,
+      "integration_mode": "candidate_scan",
+      "artifact_role": "external_validity_reconnaissance",
+      "source_run_files": [
+        "runs/realbench/scan/matplotlib_matplotlib.json"
+      ]
+    },
+    {
+      "path": "runs/realbench/scan/pydata_xarray.json",
+      "sha256": "a84edbb579c983bcca9b491e5a0805ee95656fef5cda36de75ff57d54c9069b5",
+      "bytes": 16871,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [],
+      "n_rows": 22,
+      "integration_mode": "candidate_scan",
+      "artifact_role": "external_validity_reconnaissance",
+      "source_run_files": [
+        "runs/realbench/scan/pydata_xarray.json"
+      ]
+    },
+    {
+      "path": "runs/realbench/scan/pylint-dev_pylint.json",
+      "sha256": "7b15c38a0cf107ba5c46d226223b07496952d56b2b23c32887f8d22022ca6fe7",
+      "bytes": 6420,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [],
+      "n_rows": 10,
+      "integration_mode": "candidate_scan",
+      "artifact_role": "external_validity_reconnaissance",
+      "source_run_files": [
+        "runs/realbench/scan/pylint-dev_pylint.json"
+      ]
+    },
+    {
+      "path": "runs/realbench/scan/pytest-dev_pytest.json",
+      "sha256": "ce505723bcb7a0b1b2f9f2b896ee2377d22051fecbac3c5d1270bad73beaa62a",
+      "bytes": 12423,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [],
+      "n_rows": 19,
+      "integration_mode": "candidate_scan",
+      "artifact_role": "external_validity_reconnaissance",
+      "source_run_files": [
+        "runs/realbench/scan/pytest-dev_pytest.json"
+      ]
+    },
+    {
+      "path": "runs/realbench/scan/scikit-learn_scikit-learn.json",
+      "sha256": "139bd42563a195ea0735c2f1dfc717cac7638ef01fc697917f365ef89449a164",
+      "bytes": 13842,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [],
+      "n_rows": 22,
+      "integration_mode": "candidate_scan",
+      "artifact_role": "external_validity_reconnaissance",
+      "source_run_files": [
+        "runs/realbench/scan/scikit-learn_scikit-learn.json"
+      ]
+    },
+    {
+      "path": "runs/realbench/scan/sphinx-doc_sphinx.json",
+      "sha256": "c39e54654f4c289d6b1de7a49423e406695f081d1cc2ccb0bcdef6d6ec84af26",
+      "bytes": 15938,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [],
+      "n_rows": 22,
+      "integration_mode": "candidate_scan",
+      "artifact_role": "external_validity_reconnaissance",
+      "source_run_files": [
+        "runs/realbench/scan/sphinx-doc_sphinx.json"
+      ]
+    },
+    {
+      "path": "runs/realbench/scan/sympy_sympy.json",
+      "sha256": "a0432290aad39d5debecd9c321ff53143f3a83cd60768c3d09b58059c451e10d",
+      "bytes": 21842,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [],
+      "n_rows": 22,
+      "integration_mode": "candidate_scan",
+      "artifact_role": "external_validity_reconnaissance",
+      "source_run_files": [
+        "runs/realbench/scan/sympy_sympy.json"
+      ]
+    }
+  ],
+  "analyzers": [
+    {
+      "path": "scripts/analysis/analyze_authoring.py",
+      "sha256": "7b60012842821903be8935fb20cffcf3f41b3e1a68d686985a7c06868c656a7c"
+    },
+    {
+      "path": "scripts/analysis/analyze_checker_calibration.py",
+      "sha256": "7805de6585ab845ab4c52ac154bc3949e7fcc1a5c29790baf1bb2f7fc2731b63"
+    },
+    {
+      "path": "scripts/analysis/analyze_checker_paired.py",
+      "sha256": "3935fc3c01a2f34e09faf2e8192140a7dafe0d96ac64a3b4919ec16f496cde38"
+    },
+    {
+      "path": "scripts/analysis/analyze_dispatch.py",
+      "sha256": "b62f4d6bf5b9aba6adfc64f69fc12c1bdeb5efc8f0fe206c047d813306a5187d"
+    },
+    {
+      "path": "scripts/analysis/analyze_inference.py",
+      "sha256": "4e48ddb86ae3d7893ae0005cd6ffe2475337aa6a071519e8b4a916291eb689f2"
+    },
+    {
+      "path": "scripts/analysis/analyze_navigation.py",
+      "sha256": "cde1ab68ec2c2f8b69668383dcdb336fdbb562f2740339ad94d85ac97007d7be"
+    },
+    {
+      "path": "scripts/analysis/effic_real_stats.py",
+      "sha256": "d4c238a16177b98836cabbf80b76e7dfede76ecf2c91e6e9c5823d8229eaf4b1"
+    },
+    {
+      "path": "scripts/analysis/reproduce_all.py",
+      "sha256": "eb45855b864931c94c92613e59384e5b958ded34a8c127c82cc3e82ad3ff1cb8"
+    },
+    {
+      "path": "scripts/analysis/stats.py",
+      "sha256": "b4a5e1d01c33fa7b4ad7557f85998e9ae86f9671a0f5fa2a5260f1f590e35437"
+    },
+    {
+      "path": "scripts/analysis/task_level_effects.py",
+      "sha256": "4cbe197dc2edd9a30abe9340ca87d9f8fc95409bf10b87ec4c69ec219c81019e"
+    },
+    {
+      "path": "scripts/analyze_runtime.py",
+      "sha256": "07c5036614a725a679e27cdbe32984578902b02f7c9953ca9f0d0718d80d5195"
+    }
+  ],
+  "protocol_sources": [
+    {
+      "path": "scripts/experiments/navigation_tasks.py",
+      "sha256": "f2d013348cbe61eaca1c26f52a98e19646bd9cb7b200c2cc3417af7ce17c313b"
+    },
+    {
+      "path": "scripts/experiments/run_navigation.py",
+      "sha256": "5334b07a5466a12decc1bd78fd01a3c35c7dd7a4cf1e2d737345447f74b76119"
+    },
+    {
+      "path": "scripts/experiments/checker_paired.py",
+      "sha256": "7bb64807986ef645b3b01a0438d148755faa2e3397d0bb14421db5ce02aaed5c"
+    },
+    {
+      "path": "scripts/experiments/diagnostics.py",
+      "sha256": "98f3e55a2077055aa170ae6cbe09d839ae784a1605f58838478cc2e59d35b746"
+    },
+    {
+      "path": "scaffold/stream_agent.py",
+      "sha256": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12"
+    },
+    {
+      "path": "scaffold/mock_env.py",
+      "sha256": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1"
+    },
+    {
+      "path": "scaffold/real_env.py",
+      "sha256": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b"
+    },
+    {
+      "path": "scaffold/tooling.py",
+      "sha256": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5"
+    },
+    {
+      "path": "scripts/validate_pyrefly_lsp.py",
+      "sha256": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81"
+    },
+    {
+      "path": "scripts/synth_tasks_authoring.py",
+      "sha256": "51af9d800d0f6812286343b74c9d578b5ad1a599f9a4bbf184246c7efb94a58e"
+    },
+    {
+      "path": "scripts/common.sh",
+      "sha256": "a40832dc22e99e1d5066280c3e7a7b6f3762aecbf97eb70b0a0d3c99cb26f9b8"
+    },
+    {
+      "path": "scripts/run_navigation_pilot.sh",
+      "sha256": "88fcc197e21c7c773a4431708ec5ff626ebfc890cb7ff61e03135dc1586fe679"
+    },
+    {
+      "path": "scripts/run_navigation_confirmation.sh",
+      "sha256": "dfa4cb0545a119a5702282859172b78d0df64aa9ef118deadd664c910d3c4b98"
+    },
+    {
+      "path": "scripts/run_checker_paired.sh",
+      "sha256": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "94eeedc48fedbea0f98116f399351470cc360c777113ba38ad5d6ba40abebd6c"
+    }
+  ],
+  "fast_command": "python3 scripts/analysis/reproduce_all.py",
+  "expensive_commands": {
+    "navigation_pilot": "scripts/run_navigation_pilot.sh",
+    "navigation_confirmation": "scripts/run_navigation_confirmation.sh",
+    "checker_drafts_and_revisions": "scripts/run_checker_paired.sh"
+  },
+  "provenance_notes": [
+    "Raw JSON configs are authoritative where report prose previously disagreed.",
+    "Pyrefly version was not recorded in historical JSON; logs mention 1.0.0 locally and 1.1.1 on the external dispatch host.",
+    "Historical model revisions and several provider snapshots were not recorded; model IDs alone are not exact revision provenance.",
+    "Files named reallsp are static-AST resolver runs; files named lsp are live-first hybrid runs."
+  ]
+}

@@ -6,12 +6,9 @@
 #   WITHOUT    = these read-only runs [--no-defn: <defn>/<findrefs> genuinely unavailable, stripped from prompt]
 # Suite = effic_real2 (obscure, retrieval genuinely required). Same model/seeds/caps as the with-tool runs.
 # Tells us: for a model that elects <defn> for free (27B), does the tool actually save tokens / lift success?
-set -u
-cd /home/ianbarber/Projects/Streams
-export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HOME=/mnt/nas/hf-cache
-PY=.venv-streams.system/bin/python
+source "$(dirname -- "${BASH_SOURCE[0]}")/common.sh"
 RO="--suite effic_real2 --gpu-only --conds A --no-defn --temp 0.7 --max-reads 4 --max-turns 14 --max-new 3000"
-pkill -9 -f "[p]yrefly" 2>/dev/null
+pkill -9 -f "[p]yrefly lsp" 2>/dev/null || true
 
 # 7B read-only (4 seeds, matches er2_base.json)
 if [ ! -f runs/agent/er2_7b_readonly.json ]; then

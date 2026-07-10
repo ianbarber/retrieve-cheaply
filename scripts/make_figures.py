@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate the report figures from the committed run JSONs. Okabe-Ito colorblind-safe palette,
 grayscale-legible, vector PDF output (+ PNG previews). Every number is read from runs/agent/*.json;
-nothing is hardcoded. Run: .venv-streams.system/bin/python scripts/make_figures.py
+nothing is hardcoded. Run: python3 scripts/make_figures.py
 
 Figures -> docs/figures/fig{1..6}.pdf (in report appearance order):
   fig1  C1  tool-value ablation: input tokens with <defn> vs read-only, per model

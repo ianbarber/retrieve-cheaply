@@ -4,10 +4,7 @@
 # first trained action from the CLEAN prompt (the fix for the masked-prefix variant that left read+redirect in context).
 # harvest (9 defn-sufficient train tasks) -> SFT effic_lora_relabel2 -> retest 12 defn-sufficient.
 # Compare %use-defn: broken-relabel ~0% (masked) vs THIS (dropped) vs lead-defn ~100% (teacher-forced).
-set -u
-cd /home/ianbarber/Projects/Streams
-export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HOME=/mnt/nas/hf-cache
-PY=.venv-streams.system/bin/python
+source "$(dirname -- "${BASH_SOURCE[0]}")/common.sh"
 M="Qwen/Qwen2.5-Coder-7B-Instruct"
 DEFN_TRAIN="effic_account_defn,effic_transfer_defn,effic_span_defn,effic_store_defn,effic_point_defn,effic_config_defn,effic_matrix_defn,effic_lexer_defn,effic_color_defn"
 COMMON="--suite effic --model $M --gpu-only --conds A --lsp-tools --temp 0.7 --max-reads 4 --max-turns 14 --max-new 3000"

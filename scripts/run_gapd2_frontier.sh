@@ -4,9 +4,7 @@
 # the wrong fix passes) and we score on a HELD-OUT test (which the wrong fix fails). With vs
 # without check_types; defn/read available in both, so the only difference is the type checker.
 # `resolved` = held-out score; `visible_pass` = the test the agent could run. Needs OPENROUTER_API_KEY.
-set -u
-cd /home/ianbarber/Projects/Streams
-PY=.venv-streams.system/bin/python
+source "$(dirname -- "${BASH_SOURCE[0]}")/common.sh"
 SEEDS="${SEEDS:-2}"
 GG="--suite gapd2 --seeds $SEEDS --max-reads 6 --max-turns 10 --temperature 0.7"
 for spec in "deepseek/deepseek-chat-v3.1:deepseek:4" "anthropic/claude-sonnet-4.5:sonnet45:10"; do

@@ -1,0 +1,248 @@
+{
+  "protocol": "checker-paired-v1",
+  "kind": "natural_drafts",
+  "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+  "model_meta": {
+    "revision": "aedcc2d42b622764e023cf882b6652e646b95671",
+    "transformers": "5.9.0",
+    "torch": "2.11.0+cu128",
+    "dtype": "torch.bfloat16"
+  },
+  "config": {
+    "command": "generate",
+    "out": "runs/pilot/checker_drafts_14b_ext.json",
+    "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+    "names": "auth_bank_dataclass,auth_multimap_generic,auth_tokenizer_namedtuple,auth_fold_callable,auth_pipeline_handler",
+    "seed": 1,
+    "temperature": 0.7,
+    "max_new": 1400,
+    "max_turns": 12,
+    "max_reads": 6,
+    "gpu_only": true
+  },
+  "pyrefly": {
+    "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+    "version": "pyrefly 1.0.0"
+  },
+  "protocol_source_sha256": {
+    "scripts/experiments/checker_paired.py": "7bb64807986ef645b3b01a0438d148755faa2e3397d0bb14421db5ce02aaed5c",
+    "scripts/experiments/diagnostics.py": "98f3e55a2077055aa170ae6cbe09d839ae784a1605f58838478cc2e59d35b746",
+    "scripts/analysis/analyze_checker_paired.py": "3935fc3c01a2f34e09faf2e8192140a7dafe0d96ac64a3b4919ec16f496cde38",
+    "scripts/synth_tasks_authoring.py": "51af9d800d0f6812286343b74c9d578b5ad1a599f9a4bbf184246c7efb94a58e",
+    "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+    "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
+    "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+    "scripts/run_checker_paired.sh": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
+  },
+  "drafts": [
+    {
+      "draft_id": "natural-auth_bank_dataclass-s1",
+      "task": "auth_bank_dataclass",
+      "group": "easy",
+      "seed": 1,
+      "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+      "files": {
+        "target.py": "from lib import Account, InsufficientFunds\n\n\nclass Bank:\n    \"\"\"A collection of named accounts.\"\"\"\n\n    def __init__(self) -> None:\n        raise NotImplementedError\n\n    def open(self, owner: str) -> Account:\n        \"\"\"Create and store a zero-balance account for owner; return it.\"\"\"\n        raise NotImplementedError\n\n    def deposit(self, owner: str, amount: int) -> None:\n        \"\"\"Deposit into an existing account.\"\"\"\n        raise NotImplementedError\n\n    def transfer(self, src: str, dst: str, amount: int) -> bool:\n        \"\"\"Move amount from src to dst. Return False (and change nothing) if\n        src has insufficient funds; return True on success.\"\"\"\n        raise NotImplementedError\n\n    def total_assets(self) -> int:\n        \"\"\"Sum of all account balances.\"\"\"\n        raise NotImplementedError\n",
+        "lib.py": "from dataclasses import dataclass\n\n\nclass InsufficientFunds(Exception):\n    \"\"\"Raised when an account cannot cover a debit.\"\"\"\n\n\n@dataclass\nclass Account:\n    owner: str\n    balance: int = 0\n\n    def deposit(self, amount: int) -> None:\n        self.balance += amount\n\n    def withdraw(self, amount: int) -> None:\n        if amount > self.balance:\n            raise InsufficientFunds(self.owner)\n        self.balance -= amount\n"
+      },
+      "target": "target.py",
+      "test": "from target import Bank\nb = Bank()\nb.open(\"alice\")\nb.open(\"bob\")\nb.deposit(\"alice\", 100)\nassert b.transfer(\"alice\", \"bob\", 40) is True\nassert b.total_assets() == 100\n",
+      "held_out": "from target import Bank\nb = Bank()\nb.open(\"alice\")\nb.open(\"bob\")\nb.deposit(\"alice\", 30)\nassert b.transfer(\"alice\", \"bob\", 50) is False\nassert b.total_assets() == 30\nassert b.transfer(\"alice\", \"bob\", 30) is True\nassert b.total_assets() == 30\n",
+      "draft_target_sha256": "d3fd249d40d6de1d0b4110685d422f711cb26a8d2e8184a6e16fb07b60d58204",
+      "initial_target_sha256": "d3fd249d40d6de1d0b4110685d422f711cb26a8d2e8184a6e16fb07b60d58204",
+      "file_sha256": {
+        "lib.py": "93b4c0188c95b25f0a217321303e17a6b4d3b4a2210bd73991253e3931097635",
+        "target.py": "d3fd249d40d6de1d0b4110685d422f711cb26a8d2e8184a6e16fb07b60d58204"
+      },
+      "workspace_sha256": "745a5e3b95d23749a3a662f17cfefbb09e8906618173f527d6b19afc7c544be6",
+      "draft_submitted": true,
+      "coherent": false,
+      "visible_pass": false,
+      "held_pass": false,
+      "baseline_diagnostics": [],
+      "draft_diagnostics": [],
+      "checker_latency_ms": 123.9,
+      "events": [
+        {
+          "tok": 455,
+          "type": "submit_draft"
+        }
+      ],
+      "draft_stream": "To implement the `Bank` class according to the provided docstrings, we need to define the following methods:\n\n1. `__init__`: Initialize the bank with an empty collection of accounts.\n2. `open`: Create and store a new zero-balance account for a given owner.\n3. `deposit`: Deposit a specified amount into an existing account.\n4. `transfer`: Transfer a specified amount from one account to another, handling insufficient funds.\n5. `total_assets`: Calculate the sum of all account balances.\n\nLet's start by implementing these methods.\n\n```python\n# target.py\nfrom lib import Account, InsufficientFunds\n\nclass Bank:\n    \"\"\"A collection of named accounts.\"\"\"\n\n    def __init__(self) -> None:\n        self.accounts = {}\n\n    def open(self, owner: str) -> Account:\n        \"\"\"Create and store a zero-balance account for owner; return it.\"\"\"\n        if owner in self.accounts:\n            raise ValueError(f\"Account for {owner} already exists.\")\n        account = Account(owner, 0)\n        self.accounts[owner] = account\n        return account\n\n    def deposit(self, owner: str, amount: int) -> None:\n        \"\"\"Deposit into an existing account.\"\"\"\n        if owner not in self.accounts:\n            raise ValueError(f\"Account for {owner} does not exist.\")\n        self.accounts[owner].deposit(amount)\n\n    def transfer(self, src: str, dst: str, amount: int) -> bool:\n        \"\"\"Move amount from src to dst. Return False (and change nothing) if\n        src has insufficient funds; return True on success.\"\"\"\n        if src not in self.accounts or dst not in self.accounts:\n            raise ValueError(f\"Account for {src} or {dst} does not exist.\")\n        src_account = self.accounts[src]\n        dst_account = self.accounts[dst]\n        try:\n            src_account.withdraw(amount)\n            dst_account.deposit(amount)\n            return True\n        except InsufficientFunds:\n            return False\n\n    def total_assets(self) -> int:\n        \"\"\"Sum of all account balances.\"\"\"\n        return sum(account.balance for account in self.accounts.values())\n```\n\nNow, let's submit the first draft.\n\n<submit_draft/>",
+      "in_tokens": 508,
+      "out_tokens": 455
+    },
+    {
+      "draft_id": "natural-auth_multimap_generic-s1",
+      "task": "auth_multimap_generic",
+      "group": "med",
+      "seed": 1,
+      "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+      "files": {
+        "target.py": "from typing import Generic, TypeVar\nfrom lib import Pair\n\nK = TypeVar(\"K\")\nV = TypeVar(\"V\")\n\n\nclass MultiMap(Generic[K, V]):\n    \"\"\"A map from each key to a list of values, in insertion order.\"\"\"\n\n    def __init__(self) -> None:\n        raise NotImplementedError\n\n    def add(self, key: K, value: V) -> None:\n        \"\"\"Append value to key's list (creating the list if key is new).\"\"\"\n        raise NotImplementedError\n\n    def get(self, key: K) -> list[V]:\n        \"\"\"Values for key in insertion order; empty list if key is absent.\"\"\"\n        raise NotImplementedError\n\n    def pairs(self) -> list[Pair[K, V]]:\n        \"\"\"Every (key, value) as a Pair. Keys in first-insertion order; within a\n        key, values in the order they were added.\"\"\"\n        raise NotImplementedError\n",
+        "lib.py": "from typing import Generic, TypeVar\n\nK = TypeVar(\"K\")\nV = TypeVar(\"V\")\n\n\nclass Pair(Generic[K, V]):\n    \"\"\"An immutable key/value pair.\"\"\"\n\n    def __init__(self, key: K, value: V) -> None:\n        self.key = key\n        self.value = value\n"
+      },
+      "target": "target.py",
+      "test": "from target import MultiMap\nm: MultiMap[str, int] = MultiMap()\nm.add(\"a\", 1)\nm.add(\"a\", 2)\nm.add(\"b\", 3)\nassert m.get(\"a\") == [1, 2]\nassert m.get(\"z\") == []\n",
+      "held_out": "from target import MultiMap\nm: MultiMap[str, int] = MultiMap()\nm.add(\"x\", 10)\nm.add(\"y\", 20)\nm.add(\"x\", 11)\nps = m.pairs()\nassert [(p.key, p.value) for p in ps] == [(\"x\", 10), (\"x\", 11), (\"y\", 20)]\n",
+      "draft_target_sha256": "f51863588964b3519c437f7185cc54e37ca56aac0b8275aad33b5fd6ed30c3ca",
+      "initial_target_sha256": "f51863588964b3519c437f7185cc54e37ca56aac0b8275aad33b5fd6ed30c3ca",
+      "file_sha256": {
+        "lib.py": "9efd11dc3d77aa3103b83cd48ed00c7055da35695ecddb1f74e6e15068d32a9b",
+        "target.py": "f51863588964b3519c437f7185cc54e37ca56aac0b8275aad33b5fd6ed30c3ca"
+      },
+      "workspace_sha256": "bc639890f5eb3f1d1faff85003bf56b7a7494469635b446e08dc65f1771f82ea",
+      "draft_submitted": true,
+      "coherent": false,
+      "visible_pass": false,
+      "held_pass": false,
+      "baseline_diagnostics": [],
+      "draft_diagnostics": [],
+      "checker_latency_ms": 112.4,
+      "events": [
+        {
+          "tok": 562,
+          "type": "submit_draft"
+        }
+      ],
+      "draft_stream": "To implement the `MultiMap` class as described, we need to use a dictionary to store keys and their corresponding lists of values. We will also maintain the order of insertion for both keys and values.\n\nHere's the implementation:\n\n```python\nfrom typing import Generic, TypeVar\nfrom lib import Pair\n\nK = TypeVar(\"K\")\nV = TypeVar(\"V\")\n\nclass MultiMap(Generic[K, V]):\n    \"\"\"A map from each key to a list of values, in insertion order.\"\"\"\n\n    def __init__(self) -> None:\n        self._data: dict[K, list[V]] = {}\n        self._order: list[K] = []\n\n    def add(self, key: K, value: V) -> None:\n        \"\"\"Append value to key's list (creating the list if key is new).\"\"\"\n        if key not in self._data:\n            self._data[key] = []\n            self._order.append(key)\n        self._data[key].append(value)\n\n    def get(self, key: K) -> list[V]:\n        \"\"\"Values for key in insertion order; empty list if key is absent.\"\"\"\n        return self._data.get(key, [])\n\n    def pairs(self) -> list[Pair[K, V]]:\n        \"\"\"Every (key, value) as a Pair. Keys in first-insertion order; within a\n        key, values in the order they were added.\"\"\"\n        return [Pair(k, v) for k in self._order for v in self._data[k]]\n\n# Example usage\nif __name__ == \"__main__\":\n    from target import MultiMap\n    m: MultiMap[str, int] = MultiMap()\n    m.add(\"a\", 1)\n    m.add(\"a\", 2)\n    m.add(\"b\", 3)\n    assert m.get(\"a\") == [1, 2]\n    assert m.get(\"z\") == []\n    print(m.pairs())\n```\n\nIn this implementation:\n- The `__init__` method initializes an empty dictionary `_data` to store the keys and their lists of values, and a list `_order` to keep track of the order of keys.\n- The `add` method appends a value to the list of the given key. If the key does not exist, it creates a new list for that key and adds the key to the `_order` list.\n- The `get` method returns the list of values for the given key, or an empty list if the key is absent.\n- The `pairs` method returns a list of `Pair` objects, where each pair consists of a key and a value. The pairs are ordered by the first insertion order of keys and the order of values within each key.\n\n<submit_draft/>",
+      "in_tokens": 533,
+      "out_tokens": 562
+    },
+    {
+      "draft_id": "natural-auth_tokenizer_namedtuple-s1",
+      "task": "auth_tokenizer_namedtuple",
+      "group": "easy",
+      "seed": 1,
+      "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+      "files": {
+        "target.py": "from lib import Token\n\n\ndef tokenize(text: str) -> list[Token]:\n    \"\"\"Split on whitespace. A word of only digits -> Token('num', int(word));\n    any other word -> Token('word', len(word)).\"\"\"\n    raise NotImplementedError\n\n\ndef sum_nums(tokens: list[Token]) -> int:\n    \"\"\"Sum the values of all 'num' tokens.\"\"\"\n    raise NotImplementedError\n",
+        "lib.py": "from typing import NamedTuple\n\n\nclass Token(NamedTuple):\n    kind: str\n    value: int\n"
+      },
+      "target": "target.py",
+      "test": "from target import tokenize, sum_nums\ntoks = tokenize(\"cat 12 dog 30\")\nassert sum_nums(toks) == 42\n",
+      "held_out": "from target import tokenize, sum_nums\nassert tokenize(\"\") == []\nassert sum_nums(tokenize(\"\")) == 0\ntoks = tokenize(\"7 hi 3\")\nassert [t.kind for t in toks] == [\"num\", \"word\", \"num\"]\nassert sum_nums(toks) == 10\n",
+      "draft_target_sha256": "1e0658561d45713c157bb13cbf07d99a0996a7570a2d2823bf3e947e3b4cbd2e",
+      "initial_target_sha256": "1e0658561d45713c157bb13cbf07d99a0996a7570a2d2823bf3e947e3b4cbd2e",
+      "file_sha256": {
+        "lib.py": "918b219f39a209bf3934ef8b38cebf52a7da0f60118f751d1ac90c33dd7f6887",
+        "target.py": "1e0658561d45713c157bb13cbf07d99a0996a7570a2d2823bf3e947e3b4cbd2e"
+      },
+      "workspace_sha256": "6da3ad110152298c6afd9a3e96d8382cdb66f1e839e8bc08b80a4eb751dc415a",
+      "draft_submitted": true,
+      "coherent": false,
+      "visible_pass": false,
+      "held_pass": false,
+      "baseline_diagnostics": [],
+      "draft_diagnostics": [],
+      "checker_latency_ms": 120.9,
+      "events": [
+        {
+          "tok": 425,
+          "type": "submit_draft"
+        }
+      ],
+      "draft_stream": "To implement the required functions in `target.py`, we need to understand the behavior specified in the docstrings and the Typed APIs available in `lib.py`. \n\n1. **`tokenize` function**: This function should split the input text on whitespace. If a word consists only of digits, it should be converted to a `Token('num', int(word))`. Any other word should be converted to a `Token('word', len(word))`.\n\n2. **`sum_nums` function**: This function should sum the values of all tokens that have the type `'num'`.\n\nLet's read the Typed APIs in `lib.py` to understand the `Token` class and then implement the functions accordingly.\n\n```python\n# Assuming lib.py contains the following:\n# class Token:\n#     def __init__(self, kind: str, value):\n#         self.kind = kind\n#         self.value = value\n```\n\nNow, let's implement the functions in `target.py`.\n\n```python\nfrom lib import Token\n\ndef tokenize(text: str) -> list[Token]:\n    \"\"\"Split on whitespace. A word of only digits -> Token('num', int(word));\n    any other word -> Token('word', len(word)).\"\"\"\n    tokens = []\n    words = text.split()\n    for word in words:\n        if word.isdigit():\n            tokens.append(Token('num', int(word)))\n        else:\n            tokens.append(Token('word', len(word)))\n    return tokens\n\ndef sum_nums(tokens: list[Token]) -> int:\n    \"\"\"Sum the values of all 'num' tokens.\"\"\"\n    return sum(token.value for token in tokens if token.kind == 'num')\n```\n\nThe implementation above follows the behavior specified in the docstrings. The `tokenize` function splits the input text into words, checks if each word is a digit, and creates the appropriate `Token` object. The `sum_nums` function then sums the values of all tokens that are of type `'num'`.\n\nNow, let's emit the `submit_draft` command to finalize the first complete draft.\n\n<submit_draft/>",
+      "in_tokens": 340,
+      "out_tokens": 425
+    },
+    {
+      "draft_id": "natural-auth_fold_callable-s1",
+      "task": "auth_fold_callable",
+      "group": "tricky",
+      "seed": 1,
+      "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+      "files": {
+        "target.py": "from lib import fold\n\n\nfrom lib import fold\n\ndef total(nums: list[int]) -> int:\n    \"\"\"Sum of nums, computed with fold.\"\"\"\n    return fold(nums, 0, lambda acc, num: acc + num)\n\ndef concat(words: list[str]) -> str:\n    \"\"\"Join words with no separator, computed with fold from an empty string.\"\"\"\n    return fold(words, \"\", lambda acc, word: acc + word)\n\ndef count_matching(items: list[int], threshold: int) -> int:\n    \"\"\"How many items are strictly greater than threshold, computed with fold.\"\"\"\n    return fold(items, 0, lambda acc, item: acc + (1 if item > threshold else 0))\n",
+        "lib.py": "from typing import Callable, TypeVar\n\nT = TypeVar(\"T\")\nU = TypeVar(\"U\")\n\n\ndef fold(items: list[T], init: U, step: Callable[[U, T], U]) -> U:\n    \"\"\"Left fold: thread step(acc, item) across items starting from init.\"\"\"\n    acc = init\n    for item in items:\n        acc = step(acc, item)\n    return acc\n"
+      },
+      "target": "target.py",
+      "test": "from target import total, concat, count_matching\nassert total([1, 2, 3]) == 6\nassert concat([\"a\", \"b\", \"c\"]) == \"abc\"\nassert count_matching([1, 5, 3, 8], 3) == 2\n",
+      "held_out": "from target import total, concat, count_matching\nassert total([]) == 0\nassert concat([]) == \"\"\nassert count_matching([], 0) == 0\nassert count_matching([3, 3, 4], 3) == 1\n",
+      "draft_target_sha256": "3634f9dedb8bf36b0188def49052380f0dbf981f8ab5d0e509c929d929179a6a",
+      "initial_target_sha256": "0838a9fadd2592a83e6a4b73c71fd3a5a76a8416337ae30cc202c388ed0b6ffa",
+      "file_sha256": {
+        "lib.py": "8ff0818ca5db841f00fac8deeda388648c146f377a9685ce4d2bbffdb2cc84d3",
+        "target.py": "3634f9dedb8bf36b0188def49052380f0dbf981f8ab5d0e509c929d929179a6a"
+      },
+      "workspace_sha256": "049ad223fa57276e9b4d80fc3a08a17733e0528c34107070f58c82dc84b7a07e",
+      "draft_submitted": true,
+      "coherent": true,
+      "visible_pass": true,
+      "held_pass": true,
+      "baseline_diagnostics": [],
+      "draft_diagnostics": [],
+      "checker_latency_ms": 116.0,
+      "events": [
+        {
+          "tok": 72,
+          "type": "read",
+          "n": 1,
+          "path": "lib.py",
+          "ranged": true
+        },
+        {
+          "tok": 351,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "4-16",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "from lib import fold\n\ndef total(nums: list[int]) -> int:\n    \"\"\"Sum of nums, computed with fold.\"\"\"\n    return fold(nums, 0, lambda acc, num: acc + num)\n\ndef concat(words: list[str]) -> str:\n    \"\"\"Join words with no separator, computed with fold from an empty string.\"\"\"\n    return fold(words, \"\", l"
+        },
+        {
+          "tok": 355,
+          "type": "submit_draft"
+        }
+      ],
+      "draft_stream": "To implement the functions `total`, `concat`, and `count_matching` using the `fold` function from the `lib` module, we need to understand how `fold` works. Let's inspect the `lib.py` file to see the API for `fold`.\n\n```python\n<read path=\"lib.py\" lines=\"1-10\"/>\n<|im_end|>\n<|im_start|>user\n<file path=\"lib.py\" lines=\"1-10\">\n   1| from typing import Callable, TypeVar\n   2| \n   3| T = TypeVar(\"T\")\n   4| U = TypeVar(\"U\")\n   5| \n   6| \n   7| def fold(items: list[T], init: U, step: Callable[[U, T], U]) -> U:\n   8|     \"\"\"Left fold: thread step(acc, item) across items starting from init.\"\"\"\n   9|     acc = init\n  10|     for item in items:\n</file><|im_end|>\n<|im_start|>assistant\nThe `fold` function takes three arguments:\n1. `items`: a list of elements of type `T`.\n2. `init`: an initial accumulator value of type `U`.\n3. `step`: a function that takes the accumulator value and an item from the list, and returns a new accumulator value.\n\nThe `fold` function processes each item in the list by applying the `step` function to the current accumulator and the item, updating the accumulator with the result.\n\nNow, let's implement the `total`, `concat`, and `count_matching` functions using the `fold` function.\n\n```python\n<edit path=\"target.py\" lines=\"4-16\">\nfrom lib import fold\n\ndef total(nums: list[int]) -> int:\n    \"\"\"Sum of nums, computed with fold.\"\"\"\n    return fold(nums, 0, lambda acc, num: acc + num)\n\ndef concat(words: list[str]) -> str:\n    \"\"\"Join words with no separator, computed with fold from an empty string.\"\"\"\n    return fold(words, \"\", lambda acc, word: acc + word)\n\ndef count_matching(items: list[int], threshold: int) -> int:\n    \"\"\"How many items are strictly greater than threshold, computed with fold.\"\"\"\n    return fold(items, 0, lambda acc, item: acc + (1 if item > threshold else 0))\n</edit>\n<submit_draft/>\n",
+      "in_tokens": 545,
+      "out_tokens": 355
+    },
+    {
+      "draft_id": "natural-auth_pipeline_handler-s1",
+      "task": "auth_pipeline_handler",
+      "group": "tricky",
+      "seed": 1,
+      "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+      "files": {
+        "target.py": "from lib import Handler, apply_all\n\n\nclass Pipeline:\n    \"\"\"An ordered pipeline of int->int stages.\"\"\"\n\n    def __init__(self) -> None:\n        raise NotImplementedError\n\n    def register(self, handler: Handler) -> None:\n        \"\"\"Append a stage to the end of the pipeline.\"\"\"\n        raise NotImplementedError\n\n    def run(self, value: int) -> int:\n        \"\"\"Thread value through every registered stage via apply_all.\"\"\"\n        raise NotImplementedError\n\n\ndef adder(n: int) -> Handler:\n    \"\"\"A stage that adds n to its input.\"\"\"\n    raise NotImplementedError\n",
+        "lib.py": "from typing import Callable\n\nHandler = Callable[[int], int]\n\n\ndef apply_all(handlers: list[Handler], value: int) -> int:\n    \"\"\"Apply each handler to value in turn, threading the result.\"\"\"\n    for h in handlers:\n        value = h(value)\n    return value\n"
+      },
+      "target": "target.py",
+      "test": "from target import Pipeline, adder\np = Pipeline()\np.register(adder(2))\np.register(adder(3))\nassert p.run(0) == 5\n",
+      "held_out": "from target import Pipeline, adder\np = Pipeline()\nassert p.run(7) == 7\np.register(adder(-1))\np.register(adder(-1))\nassert p.run(10) == 8\n",
+      "draft_target_sha256": "df91d78b0454c1c9a25bc60cdc9d4bcdd46ce2b53ea6caa7e038a69bc05a4128",
+      "initial_target_sha256": "df91d78b0454c1c9a25bc60cdc9d4bcdd46ce2b53ea6caa7e038a69bc05a4128",
+      "file_sha256": {
+        "lib.py": "78809cac0baa172a41187a7b9a754a57d5c14687078d8eb73ae5442f3f1582cf",
+        "target.py": "df91d78b0454c1c9a25bc60cdc9d4bcdd46ce2b53ea6caa7e038a69bc05a4128"
+      },
+      "workspace_sha256": "f4eda00e1a1cbed1753df8c32a0492ae3894ef9d8594b454c04eb6a73c39a2cb",
+      "draft_submitted": true,
+      "coherent": false,
+      "visible_pass": false,
+      "held_pass": false,
+      "baseline_diagnostics": [],
+      "draft_diagnostics": [],
+      "checker_latency_ms": 144.6,
+      "events": [
+        {
+          "tok": 86,
+          "type": "read",
+          "n": 1,
+          "path": "lib.py",
+          "ranged": true
+        },
+        {
+          "tok": 344,
+          "type": "submit_draft"
+        }
+      ],
+      "draft_stream": "To implement the `Pipeline` class and the `adder` function, we need to understand the behavior specified in the docstrings and the APIs available in `lib.py`. Let's start by inspecting the `lib.py` file to understand the `Handler` type and the `apply_all` function.\n\n### Inspect `lib.py`\n\n```python\n# <read path=\"lib.py\" lines=\"1-10\"/>\n<|im_end|>\n<|im_start|>user\n<file path=\"lib.py\" lines=\"1-10\">\n   1| from typing import Callable\n   2| \n   3| Handler = Callable[[int], int]\n   4| \n   5| \n   6| def apply_all(handlers: list[Handler], value: int) -> int:\n   7|     \"\"\"Apply each handler to value in turn, threading the result.\"\"\"\n   8|     for h in handlers:\n   9|         value = h(value)\n  10|     return value\n</file><|im_end|>\n<|im_start|>assistant\nBased on the `lib.py` file, we can see that:\n- `Handler` is a type alias for a callable that takes an integer and returns an integer.\n- `apply_all` is a function that applies a list of handlers to a value in sequence.\n\nNow, let's implement the `Pipeline` class and the `adder` function according to the docstrings and the behavior specified in the example.\n\n### Implement `Pipeline` and `adder`\n\n```python\nfrom lib import Handler, apply_all\n\nclass Pipeline:\n    \"\"\"An ordered pipeline of int->int stages.\"\"\"\n\n    def __init__(self) -> None:\n        self.stages: list[Handler] = []\n\n    def register(self, handler: Handler) -> None:\n        \"\"\"Append a stage to the end of the pipeline.\"\"\"\n        self.stages.append(handler)\n\n    def run(self, value: int) -> int:\n        \"\"\"Thread value through every registered stage via apply_all.\"\"\"\n        return apply_all(self.stages, value)\n\ndef adder(n: int) -> Handler:\n    \"\"\"A stage that adds n to its input.\"\"\"\n    def handler(x: int) -> int:\n        return x + n\n    return handler\n```\n\n### Submit the Draft\n\n```python\n<submit_draft/>\n",
+      "in_tokens": 550,
+      "out_tokens": 344
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Summarize the authoring/checker experiment that supports REPORT.md section 5.
+"""Summarize the historical, unpaired authoring/checker experiment.
 
 The authoring suite asks whether live static-checker feedback helps an agent write a typed module from a
 spec. Arms:
@@ -84,7 +84,8 @@ def main() -> None:
     feedback = summaries[("7B", "feedback")]
     if none["tokens"]:
         print(f"- 7B feedback token multiplier vs none: {feedback['tokens'] / none['tokens']:.2f}x.")
-    print("- Residual diagnostics stay about flat for 7B, so volunteered diagnostics add cost but do not clean up types.")
+    print("- These are independently generated trajectories, not revisions of identical drafts.")
+    print("- Historical residual counts are contaminated by _run_tests.py diagnostics and are not evidence of type cleanliness.")
 
 
 if __name__ == "__main__":

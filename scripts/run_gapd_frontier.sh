@@ -4,9 +4,7 @@
 # whether the type-checker is available. If with-check >> without, the LSP's type INFERENCE is a
 # non-redundant info channel; if ~equal, the model self-derives the types by reading (info redundant).
 # Budget-capped per command. Resumable. (with-check uses pyrefly; run after the pyrefly-free effic_real2 run.)
-set -u
-cd /home/ianbarber/Projects/Streams
-PY=.venv-streams.system/bin/python
+source "$(dirname -- "${BASH_SOURCE[0]}")/common.sh"
 SEEDS="${SEEDS:-2}"
 GG="--suite gapd --seeds $SEEDS --max-reads 6 --max-turns 14 --temperature 0.7"
 SPECS=(

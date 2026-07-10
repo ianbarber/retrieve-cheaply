@@ -13,14 +13,13 @@ For each of the 12 `effic` task symbols we:
   6. compare: SAME file AND the LSP range's defining line falls inside the AST
      span (overlap). Record agree / disagree / lsp-error.
 
-DEADLOCK GOTCHA: stale pyrefly daemons deadlock new ones. We pkill -9 before
-the run and terminate each daemon we spawn. STRICTLY SEQUENTIAL — one daemon at
-a time. Every JSON-RPC read has a generous timeout so a hang fails loudly.
+DEADLOCK GOTCHA: concurrent pyrefly daemons have deadlocked in this environment.
+Runs are strictly sequential, and the client terminates only the daemon it owns.
+Every JSON-RPC read has a generous timeout so a hang fails loudly.
 
 Run:
-  pkill -9 -f pyrefly
   HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
-    .venv-streams.system/bin/python scripts/validate_pyrefly_lsp.py
+    python3 scripts/validate_pyrefly_lsp.py
 """
 import os, sys, json, time, shutil, tempfile, subprocess
 from urllib.parse import urlparse, unquote, quote
@@ -31,14 +30,9 @@ os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-PYREFLY = os.path.abspath(
-    os.path.expanduser(
-        os.environ.get(
-            "STREAMS_PYREFLY",
-            "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
-        )
-    )
-)
+from scaffold.tooling import pyrefly_or_name
+
+PYREFLY = pyrefly_or_name()
 READ_TIMEOUT = 20.0   # seconds per JSON-RPC read; a hang fails loudly not forever
 
 

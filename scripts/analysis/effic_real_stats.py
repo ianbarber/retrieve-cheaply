@@ -14,7 +14,9 @@ Exact tests only (binomial), no scipy dependency.
 Usage:
   python scripts/analysis/effic_real_stats.py --base runs/agent/er_base.json --trained runs/agent/er_trained.json
 """
-import json, argparse, math
+import argparse
+import json
+import statistics
 from math import comb
 
 
@@ -28,15 +30,25 @@ def binom_two_sided(k, n, p=0.5):
 
 
 def used_defn(row):
-    return any(e.get("type") == "defn" and e.get("found") for e in row.get("events", []))
+    if row.get("n_defn", 0) > 0:
+        return True
+    return any((e.get("type") == "defn" or e.get("t") == "defn") and e.get("found")
+               for e in row.get("events", row.get("trace", [])))
 
 
 def used_findrefs(row):
-    return any(e.get("type") == "findrefs" and (e.get("hits") or 0) > 0 for e in row.get("events", []))
+    if row.get("n_findrefs", 0) > 0:
+        return True
+    return any((e.get("type") == "findrefs" or e.get("t") == "findrefs")
+               and (e.get("hits") or 0) > 0 for e in row.get("events", row.get("trace", [])))
 
 
 def retrieved(row):
-    return row.get("n_reads", 0) > 0 or used_defn(row) or used_findrefs(row)
+    return row.get("n_reads", row.get("n_read", 0)) > 0 or used_defn(row) or used_findrefs(row)
+
+
+def input_tokens(row):
+    return row.get("in_tokens", row.get("prompt_tokens", 0))
 
 
 def load(path):
@@ -50,9 +62,10 @@ def arm_summary(rows, label):
     n = len(rows)
     res = sum(bool(r["resolved"]) for r in rows)
     d = sum(used_defn(r) for r in rows)
-    rd = sum(r.get("n_reads", 0) > 0 for r in rows)
+    rd = sum(r.get("n_reads", r.get("n_read", 0)) > 0 for r in rows)
     ret = sum(retrieved(r) for r in rows)
-    intok = sum(r["in_tokens"] for r in rows) / max(n, 1)
+    tokens = [input_tokens(r) for r in rows]
+    intok = sum(tokens) / max(n, 1)
     bygrp = {}
     for g in ("rich", "plain", "control"):
         sub = [r for r in rows if r["group"] == g]
@@ -64,6 +77,7 @@ def arm_summary(rows, label):
     print(f"  %used <read> {rd}/{n} = {rd/max(n,1):.3f}")
     print(f"  %retrieved   {ret}/{n} = {ret/max(n,1):.3f}")
     print(f"  mean in_tok  {intok:.0f}")
+    print(f"  median in_tok {statistics.median(tokens):.0f}" if tokens else "  median in_tok -")
     return dict(n=n, success=res, mean_in=intok)
 
 
@@ -71,12 +85,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", required=True)
     ap.add_argument("--trained", required=True)
+    ap.add_argument("--label", default="paired retrieval arms")
     A = ap.parse_args()
     base, base_rows = load(A.base)
     trained, trained_rows = load(A.trained)
 
     print("=" * 70)
-    print("effic-real ZERO-SHOT TRANSFER:  base 7B  vs  effic_lora_powered")
+    print(f"effic-real paired analysis: {A.label}")
     print("=" * 70)
     arm_summary(base_rows, "BASE")
     arm_summary(trained_rows, "TRAINED")
@@ -96,15 +111,32 @@ def main():
     # Matched-outcome token reduction on pairs BOTH solve
     matched = [k for k in keys if base[k]["resolved"] and trained[k]["resolved"]]
     if matched:
-        bt = sum(base[k]["in_tokens"] for k in matched) / len(matched)
-        tt = sum(trained[k]["in_tokens"] for k in matched) / len(matched)
-        cheaper = sum(1 for k in matched if trained[k]["in_tokens"] < base[k]["in_tokens"])
-        p_sign = binom_two_sided(cheaper, len(matched))
+        bt = sum(input_tokens(base[k]) for k in matched) / len(matched)
+        tt = sum(input_tokens(trained[k]) for k in matched) / len(matched)
+        non_ties = [k for k in matched if input_tokens(trained[k]) != input_tokens(base[k])]
+        cheaper = sum(1 for k in non_ties if input_tokens(trained[k]) < input_tokens(base[k]))
+        p_sign = binom_two_sided(cheaper, len(non_ties))
         print(f"\nMatched-outcome tokens (n={len(matched)} both-solve cells):")
         print(f"  base mean in_tok    {bt:.0f}")
         print(f"  trained mean in_tok {tt:.0f}")
         print(f"  reduction           {bt/max(tt,1):.2f}x")
-        print(f"  trained cheaper in  {cheaper}/{len(matched)} cells   sign-test p = {p_sign:.4g}")
+        print(f"  trained cheaper in  {cheaper}/{len(non_ties)} non-tied cells "
+              f"({len(matched)-len(non_ties)} ties)   sign-test p = {p_sign:.4g}")
+
+        # Seeds are nested repetitions: average within task before describing
+        # the direction across the task generalization units.
+        tasks = sorted({task for task, _seed in matched})
+        task_deltas = []
+        for task in tasks:
+            task_keys = [k for k in matched if k[0] == task]
+            bmean = statistics.mean(input_tokens(base[k]) for k in task_keys)
+            tmean = statistics.mean(input_tokens(trained[k]) for k in task_keys)
+            task_deltas.append(bmean - tmean)
+        task_non_ties = [value for value in task_deltas if value != 0]
+        task_better = sum(value > 0 for value in task_non_ties)
+        task_p = binom_two_sided(task_better, len(task_non_ties))
+        print(f"  task-level direction {task_better}/{len(task_non_ties)} non-tied tasks "
+              f"favor trained; exact sign p={task_p:.4g}")
     else:
         print("\nNo (task,seed) cells solved by BOTH arms — cannot do matched-outcome tokens.")
 
@@ -119,7 +151,7 @@ def main():
         print(f"  guessable tasks (base solved cold): {dict(cc)}")
 
     # Per-task transfer table
-    print(f"\n--- per-task (trained %defn / success ; base %read / success) ---")
+    print("\n--- per-task (trained %defn / success ; base %read / success) ---")
     tasks = sorted(set(r["task"] for r in base_rows) | set(r["task"] for r in trained_rows))
     for t in tasks:
         tr = [r for r in trained_rows if r["task"] == t]
@@ -127,7 +159,8 @@ def main():
         def pct(rows, f): return f"{sum(f(r) for r in rows)}/{len(rows)}" if rows else "-"
         grp = (tr or ba)[0]["group"]
         print(f"  {t:26} [{grp:7}]  TRAINED defn {pct(tr,used_defn):5} succ {pct(tr,lambda r:r['resolved']):5}"
-              f"   |  BASE read {pct(ba,lambda r:r['n_reads']>0):5} succ {pct(ba,lambda r:r['resolved']):5}")
+              f"   |  BASE read {pct(ba,lambda r:r.get('n_reads',r.get('n_read',0))>0):5} "
+              f"succ {pct(ba,lambda r:r['resolved']):5}")
 
 
 if __name__ == "__main__":

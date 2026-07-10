@@ -1,55 +1,49 @@
 # scripts/
 
-The recipe and everything that produces a number in `REPORT.md`. Journey-only scripts
-(coverage-judging probes, no-delegation suite, old single-file suite, superseded drivers,
-and the RefactorBench / real-repo runner that the report did not use) were removed in the
-cleanup; see `log.md` / git history if you need them.
+The fast artifact command is:
 
-## Task suites
-- `synth_tasks_effic.py` — synthetic definition-sufficient efficiency suite (prefer a cheap
-  `<defn>` over reading a big lib). The training suite.
-- `synth_tasks_efficread.py` — read-required boundary tasks (`<defn>` insufficient → must
-  `<read>`); `effmix` = effic + efficread.
-- `synth_tasks_effic_real{,2}.py` — real vendored-library suites (`effic_real_vendor/`):
-  `effic_real` (familiar symbols), `effic_real2` (obscure, un-memorized symbols).
-- `synth_tasks_gapd.py`, `synth_tasks_gapd2.py` — type-inference tasks for the information
-  channel; `gapd2` adds held-out scoring so a `check_types()` tool can be the unique detector.
-- `synth_tasks_runtime.py` — the execution-feedback boundary suite (structural, easy, and
-  Python-semantic-trap tiers; held-out scored, well-typed so the only detector is execution).
-- `realbench/dispatch_tasks.py` — dispatch-ambiguity suite used to test whether semantic goto beats
-  grep/ranged reads when many classes define the same method.
-- `synth_tasks_authoring.py` — typed authoring suite used to test whether live checker diagnostics help
-  while writing new code.
+```bash
+python3 scripts/analysis/reproduce_all.py
+```
 
-## Core recipe
-- `synth_mf.py` — local condition runner (rollouts / harvest / retest).
-  `--suite {effic,effic_real,effic_real2,gapd,efficread,effmix,authoring}`, `--no-defn` (tool ablation),
-  `--adapter` (trained policy), and `--arm {none,check,feedback}` for authoring.
-- `api_agent.py` — OpenRouter tool-calling harness: test any frontier model in the deployment
-  modality (`--no-defn`, `--with-check`, `--no-test` / `--auto-feedback`, hard `--budget-usd` cap).
-- `realbench/local_dispatch.py` — local dispatch runner with `grep_base`, `defn_avail`, and
-  `defn_prompt` conditions plus the `annotated` / `stripped` / `indirection` typing ladder.
-- `sft_lora.py` — the on-policy LoRA-SFT trainer (the relabel, the headline training step).
-- `grpo_cost.py` — cost-reward GRPO trainer (independent corroboration, Appendix A).
-- `validate_pyrefly_lsp.py` — validates `<defn>` against a live `pyrefly lsp` daemon.
-- `analysis/stats.py` — **reproduce the 7B training numbers**: recomputes the table from the
-  committed `runs/agent/*.json` and checks each against `REPORT.md`.
-- `analysis/effic_real_stats.py` — paired stats for the real-code and tool-ablation runs.
-- `analysis/analyze_dispatch.py` — summarizes the dispatch/goto runs and paired grep-vs-goto token
-  ratios that support the types reframe.
-- `analysis/analyze_authoring.py` — summarizes the authoring/checker arms and residual diagnostics.
-- `analyze_runtime.py` — the execution-feedback matrix analysis, including the semantic-trap extension
-  files (`*_trap.json`).
-- `make_figures.py` — all six figures from the result JSONs.
+It makes no model/API calls. It verifies the evidence manifest, reruns the historical analyzers and
+task-level reanalysis, audits the checker artifacts, and revalidates the navigation manipulation splits.
 
-## Shell drivers
-- `run_relabel2.sh` — on-policy relabel training headline (harvest → SFT → retest), report §4.
-- `run_relabel2_27b.sh` — Qwen3.6-27B scale-transfer, Appendix B.
-- `run_toolablation.sh` — tool-value ablation (with-`defn` vs read-only), report §3.
-- `run_effic_real.sh` — real-code transfer / un-memorized suites, report §3.
-- `run_frontier.sh` — frontier election + efficiency via OpenRouter, report §3–4.
-- `run_seeds_ext.sh` — seed extension for the 27B + frontier efficiency runs.
-- `run_gapd_frontier.sh`, `run_gapd2_frontier.sh` — type-inference channel (gapd2 = fair held-out test), §5.
-- `run_runtime_frontier.sh` — the execution-feedback boundary test (no-run / run / handed-over), §5.
-- `run_real_lsp_headline.sh` / `run_lsp_headline.sh` — live `pyrefly lsp` daemon validation, §2.
-- `run_grpo.sh` — multi-round cost-RL GRPO corroboration, Appendix A.
+## New causal protocols
+
+- `experiments/navigation_tasks.py` generates deterministic typed/erased paired repositories and enforces
+  runtime, gold, leakage, override-count, and strict live-Pyrefly manipulation gates.
+- `experiments/run_navigation.py` runs core automatic-result cells and typed deployment/election cells,
+  recording localization, wrong-file edits, substitution, tokens, calls, turns, and latency.
+- `experiments/diagnostics.py` provides uncapped structured, target-scoped Pyrefly diagnostic deltas.
+- `experiments/checker_paired.py` generates or imports frozen natural drafts, then forks identical control,
+  coherent-patch diagnostic, gate, and noisy checker revisions.
+- `run_navigation_pilot.sh`, `run_navigation_confirmation.sh`, and `run_checker_paired.sh` are separate
+  local-model drivers. The confirmation script is intentionally not part of fast reproduction.
+
+## Historical suites and analyzers
+
+- `synth_tasks_effic*.py`, `synth_mf.py`, `sft_lora.py`, and `grpo_cost.py` implement the controlled
+  whole-file versus compact-definition retrieval and policy-training studies.
+- `realbench/dispatch_tasks.py` and `realbench/local_dispatch.py` implement the historical leaky dispatch
+  suite. It is preserved but no longer treated as a valid typed/erased causal experiment.
+- `synth_tasks_authoring.py` implements the historical unpaired authoring suite; its after-every-edit arm
+  is retained only as a noisy integration baseline.
+- `synth_tasks_gapd2.py` and `synth_tasks_runtime.py` provide the checker-inference and execution ceilings.
+- `analysis/stats.py` reproduces the 7B retrieval/training tables.
+- `analysis/effic_real_stats.py` handles local and API schemas, drops sign-test ties, and reports task
+  direction; `analysis/task_level_effects.py` averages seeds within task and bootstraps tasks.
+- `analysis/analyze_dispatch.py`, `analyze_authoring.py`, `analyze_inference.py`, and
+  `../analyze_runtime.py` reproduce scoped historical observations.
+- `analysis/analyze_navigation.py` and `analyze_checker_paired.py` are the preregistered outcome analyzers
+  for the new protocols.
+
+## Drivers and tools
+
+Every `run_*.sh` sources `common.sh`, derives the repository root from its own path, and honors
+`PYTHON`. Cache/offline variables are caller-controlled. Pyrefly discovery is implemented in
+`scaffold/tooling.py`; `realbench/pyrefly_nav.py` remains self-contained because it is copied alone into
+SWE-bench containers.
+
+`build_manifest.py` records hashes, raw configs, actual seeds, integration modes, source-run provenance,
+and known metadata warnings. Historical result JSON is never silently rewritten.

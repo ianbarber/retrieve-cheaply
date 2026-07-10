@@ -1,0 +1,535 @@
+{
+  "protocol": "navigation-v1",
+  "split": "confirmation",
+  "generator": "scripts/experiments/navigation_tasks.py",
+  "seeds": [
+    29009,
+    29017,
+    29021,
+    29023,
+    29027,
+    29033,
+    29059,
+    29063,
+    29077,
+    29083,
+    29089,
+    29101
+  ],
+  "templates": [
+    "subtract",
+    "affine",
+    "xor"
+  ],
+  "pyrefly": {
+    "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+    "version": "pyrefly 1.0.0"
+  },
+  "rows": [
+    {
+      "task": "nav_confirmation_29009",
+      "split": "confirmation",
+      "template": "subtract",
+      "n_overrides": 8,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "erased_lsp_nondiscriminating": true,
+        "lsp_server_healthy": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/uwmxju.py",
+          "span_hash": "0fff8b8af9143cff43c7f1ffc8168ead64de44338a41d658ae882964b1de8928",
+          "latency_ms": 2052.4,
+          "health_path": "pkg/units/uwmxju.py"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "6f1c41169ca16abadac1c778abe82479071ae53023e1188b84c3c9156bb272bb",
+          "latency_ms": 2050.9,
+          "health_path": "pkg/base.py"
+        }
+      },
+      "leakage": [],
+      "passed": true
+    },
+    {
+      "task": "nav_confirmation_29017",
+      "split": "confirmation",
+      "template": "affine",
+      "n_overrides": 15,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "erased_lsp_nondiscriminating": true,
+        "lsp_server_healthy": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/uffvgm.py",
+          "span_hash": "5578a0980b87465a2c7bf47b8cf4a8c0682823535dd8c1fd07bcef64a9ba22ca",
+          "latency_ms": 2043.4,
+          "health_path": "pkg/units/uffvgm.py"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "efe2825edb5ae3e85035b312a4eae986f02be0435be69e409b60513a31181bd9",
+          "latency_ms": 2050.4,
+          "health_path": "pkg/base.py"
+        }
+      },
+      "leakage": [],
+      "passed": true
+    },
+    {
+      "task": "nav_confirmation_29021",
+      "split": "confirmation",
+      "template": "xor",
+      "n_overrides": 13,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "erased_lsp_nondiscriminating": true,
+        "lsp_server_healthy": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/uakhuo.py",
+          "span_hash": "b4bf1072fb93980089d672586818180e3c7b23ac7cc05bdce16c6ecd8415d4f4",
+          "latency_ms": 2043.4,
+          "health_path": "pkg/units/uakhuo.py"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "be550bee259dc4f141e9d3274290617bff7f7bcb7e9d9417320f90c442aa1c62",
+          "latency_ms": 2051.3,
+          "health_path": "pkg/base.py"
+        }
+      },
+      "leakage": [],
+      "passed": true
+    },
+    {
+      "task": "nav_confirmation_29023",
+      "split": "confirmation",
+      "template": "subtract",
+      "n_overrides": 11,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "erased_lsp_nondiscriminating": true,
+        "lsp_server_healthy": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/urzwiz.py",
+          "span_hash": "072791e98bdfdee76dc1012decd6f1e3a06d85205c52a092e95a287ecbc05f67",
+          "latency_ms": 2050.7,
+          "health_path": "pkg/units/urzwiz.py"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "51ded2b53e56e150f7a9f010f567c2d805e643fba2f114acc04399a352b4a832",
+          "latency_ms": 2047.7,
+          "health_path": "pkg/base.py"
+        }
+      },
+      "leakage": [],
+      "passed": true
+    },
+    {
+      "task": "nav_confirmation_29027",
+      "split": "confirmation",
+      "template": "affine",
+      "n_overrides": 8,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "erased_lsp_nondiscriminating": true,
+        "lsp_server_healthy": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/uwhbgk.py",
+          "span_hash": "0bd93988532327dafec9d1691a580c10a7b5ae7e63fcd8bf645a652f738e0ad4",
+          "latency_ms": 2048.8,
+          "health_path": "pkg/units/uwhbgk.py"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "d2a49f657303902e213cb69a2e971363ea14d26d073d05b0b45138036b0c1cc1",
+          "latency_ms": 2049.8,
+          "health_path": "pkg/base.py"
+        }
+      },
+      "leakage": [],
+      "passed": true
+    },
+    {
+      "task": "nav_confirmation_29033",
+      "split": "confirmation",
+      "template": "xor",
+      "n_overrides": 10,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "erased_lsp_nondiscriminating": true,
+        "lsp_server_healthy": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/ummdkp.py",
+          "span_hash": "5ff1f57103583278b74ea577cd095ad6816d7b08077152d087091f60deb19549",
+          "latency_ms": 2058.8,
+          "health_path": "pkg/units/ummdkp.py"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "1524cc13ef122887766a245ce15293163c1e1f8ea545846f29ae0b505e82a93e",
+          "latency_ms": 2050.5,
+          "health_path": "pkg/base.py"
+        }
+      },
+      "leakage": [],
+      "passed": true
+    },
+    {
+      "task": "nav_confirmation_29059",
+      "split": "confirmation",
+      "template": "subtract",
+      "n_overrides": 9,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "erased_lsp_nondiscriminating": true,
+        "lsp_server_healthy": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/uwxmrs.py",
+          "span_hash": "41dba9d70388109e26fbda62a8bd4ae7f7a0ea7d6b57127c66a817758a9b9036",
+          "latency_ms": 2043.4,
+          "health_path": "pkg/units/uwxmrs.py"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "85814a34797be96317aaf236bd6171e84d0734f4544c4b51f2dd6f352e3cab8a",
+          "latency_ms": 2048.6,
+          "health_path": "pkg/base.py"
+        }
+      },
+      "leakage": [],
+      "passed": true
+    },
+    {
+      "task": "nav_confirmation_29063",
+      "split": "confirmation",
+      "template": "affine",
+      "n_overrides": 14,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "erased_lsp_nondiscriminating": true,
+        "lsp_server_healthy": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/ujnqpy.py",
+          "span_hash": "455540f51f91eab63f1f37ffbff22c96446b2df3d51b25c99c3617a8aff02e9b",
+          "latency_ms": 2043.9,
+          "health_path": "pkg/units/ujnqpy.py"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "fdca7825e7ca2927078a455afa05f24811ec75a8b8fea0a6de68e0b8f4d22805",
+          "latency_ms": 2042.8,
+          "health_path": "pkg/base.py"
+        }
+      },
+      "leakage": [],
+      "passed": true
+    },
+    {
+      "task": "nav_confirmation_29077",
+      "split": "confirmation",
+      "template": "xor",
+      "n_overrides": 14,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "erased_lsp_nondiscriminating": true,
+        "lsp_server_healthy": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/uqxoqv.py",
+          "span_hash": "5f94fe1cc98d99349cfa6e0c17c98556969c54a11e59125343a99bbdd6054354",
+          "latency_ms": 2042.2,
+          "health_path": "pkg/units/uqxoqv.py"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "a818de289220f67793c779f457374df5bb780fdd08a4c83237eabca47629d1e3",
+          "latency_ms": 2059.0,
+          "health_path": "pkg/base.py"
+        }
+      },
+      "leakage": [],
+      "passed": true
+    },
+    {
+      "task": "nav_confirmation_29083",
+      "split": "confirmation",
+      "template": "subtract",
+      "n_overrides": 9,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "erased_lsp_nondiscriminating": true,
+        "lsp_server_healthy": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/ulrzis.py",
+          "span_hash": "c9c28864557916f9c854cd5003112805ffb302d467183525216e6b57ec7ba1a3",
+          "latency_ms": 2049.5,
+          "health_path": "pkg/units/ulrzis.py"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "534bdb2eb26824292ba15c93d7bc32f704c23631c0b3bd32dfad8cc879728da2",
+          "latency_ms": 2059.0,
+          "health_path": "pkg/base.py"
+        }
+      },
+      "leakage": [],
+      "passed": true
+    },
+    {
+      "task": "nav_confirmation_29089",
+      "split": "confirmation",
+      "template": "affine",
+      "n_overrides": 14,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "erased_lsp_nondiscriminating": true,
+        "lsp_server_healthy": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/utufup.py",
+          "span_hash": "ecba48367fcbde2006c53b6e1a1b82418ccb267fbcced25fa6fd991666a0555c",
+          "latency_ms": 2059.5,
+          "health_path": "pkg/units/utufup.py"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "04a120c56380f8a862c1b44ba42d26148228471040823295949275c503046d3f",
+          "latency_ms": 2057.7,
+          "health_path": "pkg/base.py"
+        }
+      },
+      "leakage": [],
+      "passed": true
+    },
+    {
+      "task": "nav_confirmation_29101",
+      "split": "confirmation",
+      "template": "xor",
+      "n_overrides": 9,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "erased_lsp_nondiscriminating": true,
+        "lsp_server_healthy": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/uktdff.py",
+          "span_hash": "af782478f50d059c4c6675d02ff0ee7dd0c75c4f3e19c3344ebecc542bf3945f",
+          "latency_ms": 2043.0,
+          "health_path": "pkg/units/uktdff.py"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "5d6056fd031b269b38754b3cf2db1c0a52a2d0d50c133970454a6237160e0d95",
+          "latency_ms": 2043.0,
+          "health_path": "pkg/base.py"
+        }
+      },
+      "leakage": [],
+      "passed": true
+    }
+  ],
+  "passed": true
+}

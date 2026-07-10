@@ -12,9 +12,7 @@
 # "partial spec" note is off and auto-stop-on-visible-pass is the natural R1/R2 behaviour.
 # Every wrong fix is type-clean, so check_types is useless on this suite (execution-only).
 # Needs the OpenRouter key (repo-root .orkey or OPENROUTER_API_KEY).
-set -u
-cd /home/ianbarber/Projects/Streams
-PY=.venv-streams.system/bin/python
+source "$(dirname -- "${BASH_SOURCE[0]}")/common.sh"
 SEEDS="${SEEDS:-3}"
 COMMON="--suite runtime --seeds $SEEDS --max-reads 3 --max-turns 10 --temperature 0.7 --no-hint"
 

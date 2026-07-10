@@ -5,14 +5,9 @@ Runs real pyrefly via its CLI so diagnostics are authentic. Tests are executed a
 an assertion file."""
 import os, re, json, subprocess, tempfile, multiprocessing as mp
 
-PYREFLY = os.path.abspath(
-    os.path.expanduser(
-        os.environ.get(
-            "STREAMS_PYREFLY",
-            "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
-        )
-    )
-)
+from scaffold.tooling import pyrefly_or_name
+
+PYREFLY = pyrefly_or_name()
 SEV = {0: "error", 1: "error", 2: "warning", 3: "info"}
 
 class MockEnv:
@@ -22,8 +17,7 @@ class MockEnv:
         self.fp = os.path.join(self.ws, self.path)
         self._write(buggy_code)
         with open(os.path.join(self.ws, "pyrefly.toml"), "w") as f:
-            f.write("[tool.pyrefly]\nproject-includes = [\"*.py\"]\n")
-        subprocess.run([PYREFLY, "init"], cwd=self.ws, capture_output=True, text=True)
+            f.write('project-includes = ["*.py"]\n')
         self.force_diag = force_diag   # if set, pyrefly_diagnostics returns this (plumbing test)
         self.test_src, self.ep = test_src, entry_point
         self.chars_written = 0
@@ -169,8 +163,7 @@ class MultiFileEnv:
             with open(p, "w") as f: f.write(content)
         if not skip_pyrefly:
             with open(os.path.join(self.ws, "pyrefly.toml"), "w") as f:
-                f.write("[tool.pyrefly]\nproject-includes = [\"*.py\"]\n")
-            subprocess.run([PYREFLY, "init"], cwd=self.ws, capture_output=True, text=True)
+                f.write('project-includes = ["*.py"]\n')
         self._py = sys.executable
         self.chars_written = 0
         self.chars_deleted_after_first = 0
@@ -379,10 +372,10 @@ class MultiFileEnv:
         """Run a behavioural test in a fresh subprocess. Defaults to the VISIBLE test (self.test_src),
         what the agent's <test> sees; pass a different source to score on a HELD-OUT test (see score())."""
         src = test_src if test_src is not None else self.test_src
-        runner = os.path.join(self.ws, "_run_tests.py")
+        fd, runner = tempfile.mkstemp(prefix="streams_test_", suffix=".py")
+        os.close(fd)
         with open(runner, "w") as f:
-            f.write("import sys, os\nsys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))\n"
-                    + src + "\nprint('PASS')\n")
+            f.write(f"import sys\nsys.path.insert(0, {self.ws!r})\n" + src + "\nprint('PASS')\n")
         try:
             r = subprocess.run([self._py, runner], cwd=self.ws, capture_output=True,
                                text=True, timeout=20)
@@ -390,6 +383,11 @@ class MultiFileEnv:
             fail = "" if ok else (r.stderr.strip().splitlines()[-1] if r.stderr.strip() else "test failed")
         except subprocess.TimeoutExpired:
             ok, fail = False, "timeout"
+        finally:
+            try:
+                os.unlink(runner)
+            except OSError:
+                pass
         return {"resolved": ok, "f2p_pass": int(ok), "f2p_total": 1,
                 "p2p_pass": 0, "p2p_total": 0, "failure": fail[:300]}
 

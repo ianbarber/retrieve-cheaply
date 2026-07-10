@@ -18,14 +18,20 @@ dependencies = [
 # `pip install -e '.[dev]'` for the development stack.
 dev = [
     "pytest",
+    "pyrefly==1.0.0",
+]
+analysis = [
+    "matplotlib",
 ]
 # `pip install -e '.[api]'` to drive frontier models via OpenRouter (scripts/api_agent.py).
 api = [
     "openai",
+    "requests",
 ]
 # `pip install -e '.[realbench]'` for the real-repo SWE-bench experiment (scripts/realbench/).
 realbench = [
     "datasets",
+    "mini-swe-agent",
     "swebench",
 ]
 
@@ -34,7 +40,11 @@ Homepage = "https://github.com/ianbarber/lsps-for-llms"
 Repository = "https://github.com/ianbarber/lsps-for-llms"
 
 [tool.setuptools]
-packages = ["scaffold", "scripts", "scripts.analysis"]
+packages = ["scaffold", "scripts", "scripts.analysis", "scripts.experiments"]
 
 [tool.setuptools_scm]
 write_to = "_version.py"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
