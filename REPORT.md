@@ -23,9 +23,10 @@ residual counts were polluted by type-checking the generated test runner, althou
 finds genuine checker-positive opportunities in two coherent historical final workspaces.
 
 We therefore replace the old “types, not language servers” conclusion with a decision framework and two
-causal protocols. Experiment 1 pairs typed and erased factories and automatically supplies strict live
-Pyrefly results to separate semantic information from election. Its manipulation checks pass, but a local
-7B pilot is uniformly floored despite typed automatic results localizing the correct file. Experiment 2
+causal protocols. Experiment 1 pairs sound typed and erased factory stubs over byte-identical runtime code
+and automatically supplies strict live Pyrefly results to separate semantic information from election. Its
+repaired manipulation checks pass. The earlier 7B model pilot is invalid because its typed factory used a
+false gold-derived return contract, so no current causal model outcome is claimed. Experiment 2
 freezes natural drafts before paired revisions; fresh 7B and 14B calibration misses the required
 coherence/opportunity band, so paired checker outcomes remain unrun.
 The practical conclusion is conditional: use the cheapest integration that supplies unique, actionable
@@ -172,37 +173,46 @@ conclusion rather than deleted from repository history.
 
 ### 4.1 Experiment 1: readable types × semantic navigation
 
-`navigation-v1` generates paired repositories with identical runtime implementation trees, tests, and
+`navigation-v2` generates paired repositories with byte-identical runtime `.py` trees, tests, and
 gold patches. Each begins at `x.<neutral_method>(...)`, has 8–15 same-named overrides across files, and
 constructs the receiver through a remote factory/registry. Neutral names are deterministically randomized.
 The prompt and visible failure contain neither the concrete receiver class nor gold path.
 
-In the typed variant, the remote factory return contract names the concrete receiver. In erased, it
-returns only the base type. The textual baseline can still trace the registry. The automatic treatment
+Only `factory.pyi` differs. The typed stub soundly overloads every registry key with its actual concrete
+return and retains a base-returning `str` fallback; the erased stub returns only the base. The visible call
+retains the selected key as a `Literal`. Every declared return is checked against runtime construction, both
+variants are type-clean, and a widened `str` call must resolve back to base/null. The textual baseline can
+still trace the registry. The automatic treatment
 strictly asks live Pyrefly for definition-at-use-site and expands only the enclosing method; it never falls
 back to the AST resolver. Thus the four causal cells are typed/textual, typed/automatic result,
 erased/textual, and erased/automatic result. Typed deployment cells separately measure neutral election,
 cheap/precise framing, and the automatic upper bound.
 
-All four pilot instances across two development templates and twelve additional apparatus-audit instances
+The automatic result is now neutrally identified as current source context rather than an unexplained XML
+appendix. A separate oracle localization/actionability control supplies the byte-identical pristine buggy
+span from task metadata with the same framing and budget; it is outside the factorial estimate. The existing
+gold-copy control remains a stricter edit-competence floor. Failure of either control blocks interpretation
+of a model null.
+
+All four repaired pilot instances across two development templates and twelve additional apparatus-audit instances
 across three disjoint templates pass every mechanical check: visible and held-out
-base tests fail, both gold tests pass, runtime outputs match, gold is identical, override counts are valid,
+base tests fail, both gold tests pass, every runtime `.py` matches, all overloads match construction, both
+variants are type-clean, gold is identical, override counts are valid,
 typed goto reaches the gold override, erased goto returns a non-discriminating base/null result with an
 independent server-health query, and prompts
-contain no concrete class/path leakage. This is a **mechanical supported result**, not a model outcome. The
+contain no concrete class/path leakage, and widening removes discrimination. This is a **mechanical
+supported result**, not a model outcome. The
 apparatus-audit instances are not called confirmation because they were observed while the validator was
 still changing. A new disjoint 12-instance, three-template confirmation split is reserved behind protocol
 source hashes and passes the same mechanical checks; no model has seen it.
 
-The exploratory local 7B pilot clears the explicit edit-only positive control on 2/2 tasks, then fails all
-12 model cells: 0/2 held-out pass in each of the four causal and two deployment cells. Typed automatic
-results localize the correct file on 2/2 tasks versus 1/2 for typed textual retrieval and reduce mean input
-tokens from 1,988 to 997; the mean task-level total-token delta is −1,022 with a two-task bootstrap 95%
-interval of [−2,040, −3]. They do not cross the actionability bottleneck. Neutral tool availability is
-elected on 0/2 tasks; cheap/precise framing induces election on 1/2 (two calls) without a successful edit.
-These are two deterministic development tasks, so task-bootstrap pass intervals degenerate at a uniform
-floor and do not support equivalence or a causal type/navigation effect. The pilot is rejected and the
-one-shot confirmation remains blocked.
+The earlier local 7B `navigation-v1` pilot is invalid for this causal question. Its typed factory promised
+the one gold class for every string key and reinforced the false annotation with a cast. The committed 0/12
+matrix and 2/2 gold-copy control are preserved as rejected apparatus history, but its localization and token
+differences are not evidence about normal typed code. `navigation-v2` has no model outcomes yet. Its runner
+now writes one canonical matrix at the recorded 1,000-token cap, a 400-token gold-copy control, and a
+1,000-token buggy-span actionability control. The one-shot confirmation remains blocked until those controls
+pass and the causal pilot is neither uniformly floored nor ceilinged.
 
 ### 4.2 Experiment 2: paired checker opportunity and integration
 
@@ -215,7 +225,9 @@ file, range, code, concise message, and code frame. Tests run outside the checke
 Opportunity is a new semantic diagnostic on the natural draft. Calibration requires 20–70% opportunity
 among coherent submitted drafts while preserving viable edits. Results will be reported unconditionally
 and on the pre-treatment opportunity subset. The gate rejects `done` while new errors remain; its product
-metric is accepted type-clean correctness and abstention, not only pass@1. One older local 7B smoke artifact
+metrics include accepted type-clean correctness, abstention, and task-weighted draft-plus-revision tokens
+per accepted held-out-correct patch. Rejected, abstained, and wrong attempts remain in the cost numerator.
+One older local 7B smoke artifact
 predates the explicit `<submit_draft/>` boundary and contains repeated partial edits; corrected collection
 classifies all 14 diagnostics as syntax/partial cascades and rejects the workspace as incoherent. It is an
 apparatus smoke, not a compliant calibration.
@@ -303,11 +315,10 @@ and version data are incomplete. Synthetic task families provide causal control 
 validity. Twelve reserved confirmation instances will still be too few for tight equivalence claims; null language
 requires the preregistered margin and an interval within it.
 
-The manifest flags two source-hash differences on the exploratory navigation model rows: after those rows
-ran, `navigation_tasks.py` added the shell drivers to its provenance hash list and
-`analyze_navigation.py` added an explicit uniform-floor warning. The generator, prompt, tool behavior, and
-stored model rows were not changed. All mechanical and reserved-confirmation artifacts match the final
-source hashes; the exploratory rows retain their exact at-run hashes.
+The manifest classifies the exploratory `navigation-v1` model rows as invalidated historical artifacts.
+They cannot be regenerated from the repaired sound-contract generator and are never consumed by the
+`navigation-v2` confirmation gate. Current mechanical artifacts match the v2 source hashes; old raw rows
+remain unchanged.
 
 ## 8. Conclusion
 
@@ -318,8 +329,8 @@ cost. They do not help merely because a server exists or a type system is presen
 The supported positive result is compact retrieval against whole-file reads. The historical realistic
 retrieval, checker, and execution results identify plausible negative regimes but are ceilings, leaky
 tasks, noisy integrations, or small case studies rather than universal nulls. The new experiments make
-the missing causal distinctions explicit; their exploratory model regimes are rejected at actionability or
-draft-coherence/opportunity gates, and confirmation remains open.
+the missing causal distinctions explicit. The repaired navigation model pilot is unrun, the checker regime
+is rejected at its draft-coherence/opportunity gate, and confirmation remains open.
 
 The actionable recipe is: start with textual retrieval; add semantic pull for genuinely ambiguous or
 remote bindings; supply compact results automatically to measure the information upper bound; train

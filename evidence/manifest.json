@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "git_revision_at_generation": "f90cd1f3d5a61cc559c64bb5a80a80b39b966cad",
+  "git_revision_at_generation": "7653800fa33f187bf05d6dc14884c04228b3a9f8",
   "git_worktree_dirty_at_generation": true,
   "platform_at_generation": "Linux-6.11.0-1016-nvidia-aarch64-with-glibc2.39",
   "results": [
@@ -2879,7 +2879,12 @@
         "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/run_checker_paired.sh": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
-      }
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/checker_paired.py",
+        "scripts/analysis/analyze_checker_paired.py",
+        "scripts/run_checker_paired.sh"
+      ]
     },
     {
       "path": "runs/pilot/checker_drafts_14b_ext.json",
@@ -2928,7 +2933,12 @@
         "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/run_checker_paired.sh": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
-      }
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/checker_paired.py",
+        "scripts/analysis/analyze_checker_paired.py",
+        "scripts/run_checker_paired.sh"
+      ]
     },
     {
       "path": "runs/pilot/checker_drafts_7b.json",
@@ -2977,7 +2987,12 @@
         "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/run_checker_paired.sh": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
-      }
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/checker_paired.py",
+        "scripts/analysis/analyze_checker_paired.py",
+        "scripts/run_checker_paired.sh"
+      ]
     },
     {
       "path": "runs/pilot/checker_drafts_7b_smoke.json",
@@ -3026,7 +3041,12 @@
         "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/run_checker_paired.sh": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
-      }
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/checker_paired.py",
+        "scripts/analysis/analyze_checker_paired.py",
+        "scripts/run_checker_paired.sh"
+      ]
     },
     {
       "path": "runs/pilot/navigation_all.json",
@@ -3065,7 +3085,7 @@
       ],
       "n_rows": 12,
       "integration_mode": "mixed_textual_and_strict_live_language_server_composed_span",
-      "artifact_role": "committed_model_result",
+      "artifact_role": "invalidated_navigation_v1_unsound_gold_derived_contract",
       "source_run_files": [
         "runs/pilot/navigation_all.json"
       ],
@@ -3080,6 +3100,7 @@
       },
       "current_protocol_source_mismatches": [
         "scripts/experiments/navigation_tasks.py",
+        "scripts/experiments/run_navigation.py",
         "scripts/analysis/analyze_navigation.py"
       ]
     },
@@ -3120,7 +3141,7 @@
       ],
       "n_rows": 2,
       "integration_mode": "mixed_textual_and_strict_live_language_server_composed_span",
-      "artifact_role": "committed_model_result",
+      "artifact_role": "invalidated_navigation_v1_unsound_gold_derived_contract",
       "source_run_files": [
         "runs/pilot/navigation_positive.json"
       ],
@@ -3135,6 +3156,7 @@
       },
       "current_protocol_source_mismatches": [
         "scripts/experiments/navigation_tasks.py",
+        "scripts/experiments/run_navigation.py",
         "scripts/analysis/analyze_navigation.py"
       ]
     },
@@ -3175,7 +3197,7 @@
       ],
       "n_rows": 2,
       "integration_mode": "mixed_textual_and_strict_live_language_server_composed_span",
-      "artifact_role": "excluded_pilot_control_failed_edit_competence_floor",
+      "artifact_role": "invalidated_navigation_v1_unsound_gold_derived_contract",
       "source_run_files": [
         "runs/pilot/navigation_positive_floor_failed_v1.json"
       ],
@@ -3231,7 +3253,7 @@
       ],
       "n_rows": 1,
       "integration_mode": "mixed_textual_and_strict_live_language_server_composed_span",
-      "artifact_role": "rejected_control_contained_buggy_method_body",
+      "artifact_role": "invalidated_navigation_v1_unsound_gold_derived_contract",
       "source_run_files": [
         "runs/pilot/navigation_positive_invalid_v0.json"
       ],
@@ -3281,7 +3303,12 @@
         "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/run_checker_paired.sh": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
-      }
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/checker_paired.py",
+        "scripts/analysis/analyze_checker_paired.py",
+        "scripts/run_checker_paired.sh"
+      ]
     },
     {
       "path": "runs/protocol/navigation_apparatus_validation.json",
@@ -3334,7 +3361,7 @@
       "actual_seeds": [],
       "n_rows": 12,
       "integration_mode": "strict_live_language_server_manipulation_check",
-      "artifact_role": "mechanical_manipulation_and_leakage_validation",
+      "artifact_role": "invalidated_navigation_v1_unsound_gold_derived_contract",
       "source_run_files": [
         "runs/protocol/navigation_apparatus_validation.json"
       ],
@@ -3348,7 +3375,14 @@
         "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81"
-      }
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/navigation_tasks.py",
+        "scripts/experiments/run_navigation.py",
+        "scripts/analysis/analyze_navigation.py",
+        "scripts/run_navigation_pilot.sh",
+        "scripts/run_navigation_confirmation.sh"
+      ]
     },
     {
       "path": "runs/protocol/navigation_apparatus_validation_v0.json",
@@ -3401,7 +3435,7 @@
       "actual_seeds": [],
       "n_rows": 12,
       "integration_mode": "strict_live_language_server_manipulation_check",
-      "artifact_role": "mechanical_manipulation_and_leakage_validation",
+      "artifact_role": "invalidated_navigation_v1_unsound_gold_derived_contract",
       "source_run_files": [
         "runs/protocol/navigation_apparatus_validation_v0.json"
       ]
@@ -3457,7 +3491,7 @@
       "actual_seeds": [],
       "n_rows": 12,
       "integration_mode": "strict_live_language_server_manipulation_check",
-      "artifact_role": "mechanical_manipulation_and_leakage_validation",
+      "artifact_role": "invalidated_navigation_v1_unsound_gold_derived_contract",
       "source_run_files": [
         "runs/protocol/navigation_confirmation_validation.json"
       ],
@@ -3471,7 +3505,14 @@
         "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81"
-      }
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/navigation_tasks.py",
+        "scripts/experiments/run_navigation.py",
+        "scripts/analysis/analyze_navigation.py",
+        "scripts/run_navigation_pilot.sh",
+        "scripts/run_navigation_confirmation.sh"
+      ]
     },
     {
       "path": "runs/protocol/navigation_pilot_validation.json",
@@ -3507,7 +3548,7 @@
       "actual_seeds": [],
       "n_rows": 4,
       "integration_mode": "strict_live_language_server_manipulation_check",
-      "artifact_role": "mechanical_manipulation_and_leakage_validation",
+      "artifact_role": "invalidated_navigation_v1_unsound_gold_derived_contract",
       "source_run_files": [
         "runs/protocol/navigation_pilot_validation.json"
       ],
@@ -3521,6 +3562,200 @@
         "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81"
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/navigation_tasks.py",
+        "scripts/experiments/run_navigation.py",
+        "scripts/analysis/analyze_navigation.py",
+        "scripts/run_navigation_pilot.sh",
+        "scripts/run_navigation_confirmation.sh"
+      ]
+    },
+    {
+      "path": "runs/protocol/navigation_v2_apparatus_validation.json",
+      "sha256": "3f0f7fd5587fbec21f002a057c0043eed5dd0ad58ed41df1087103676462db91",
+      "bytes": 48545,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "protocol": "navigation-v2",
+        "split": "apparatus",
+        "seeds": [
+          29009,
+          29017,
+          29021,
+          29023,
+          29027,
+          29033,
+          29059,
+          29063,
+          29077,
+          29083,
+          29089,
+          29101
+        ],
+        "templates": [
+          "subtract",
+          "affine",
+          "xor"
+        ]
+      },
+      "declared_seeds": [
+        29009,
+        29017,
+        29021,
+        29023,
+        29027,
+        29033,
+        29059,
+        29063,
+        29077,
+        29083,
+        29089,
+        29101
+      ],
+      "actual_seeds": [],
+      "n_rows": 12,
+      "integration_mode": "strict_live_language_server_manipulation_check",
+      "artifact_role": "mechanical_manipulation_and_leakage_validation",
+      "source_run_files": [
+        "runs/protocol/navigation_v2_apparatus_validation.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/navigation_tasks.py": "f860fd07fdeb2d4f78d89a047c6804d79cc3babd60fab7e0a06e839679692d97",
+        "scripts/experiments/run_navigation.py": "82e1cb74292f6c86909cd05fea198c1873b2732c7f5554a9b28802049d96e8e5",
+        "scripts/analysis/analyze_navigation.py": "46b18b9f345dab8bff77d7fb01e58e55ffd1c94646e6d4fd83c7a4081b0d88a3",
+        "scripts/run_navigation_pilot.sh": "64b8acdd6c1fa9e55d1bf788a89114574396b84878a09823735d7f356bb9e8ff",
+        "scripts/run_navigation_confirmation.sh": "8d7cc8e4000bfe034dcdb522fe08f96eddf64c276d75df113a728be55790d2e0",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81",
+        "evidence/protocols.md": "dadfbf98fae7eb5d8b619d192d9504fcc72090ade05881ff54a82da649e82b66"
+      }
+    },
+    {
+      "path": "runs/protocol/navigation_v2_confirmation_validation.json",
+      "sha256": "88bb9e34424c31ff7b4feb4247f1cb7690572f905dab39b717ed04ff40812b71",
+      "bytes": 48820,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "protocol": "navigation-v2",
+        "split": "confirmation",
+        "seeds": [
+          41011,
+          41017,
+          41023,
+          41039,
+          41047,
+          41051,
+          41057,
+          41077,
+          41081,
+          41083,
+          41099,
+          41113
+        ],
+        "templates": [
+          "modulo",
+          "square_offset",
+          "negate_offset"
+        ]
+      },
+      "declared_seeds": [
+        41011,
+        41017,
+        41023,
+        41039,
+        41047,
+        41051,
+        41057,
+        41077,
+        41081,
+        41083,
+        41099,
+        41113
+      ],
+      "actual_seeds": [],
+      "n_rows": 12,
+      "integration_mode": "strict_live_language_server_manipulation_check",
+      "artifact_role": "mechanical_manipulation_and_leakage_validation",
+      "source_run_files": [
+        "runs/protocol/navigation_v2_confirmation_validation.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/navigation_tasks.py": "f860fd07fdeb2d4f78d89a047c6804d79cc3babd60fab7e0a06e839679692d97",
+        "scripts/experiments/run_navigation.py": "82e1cb74292f6c86909cd05fea198c1873b2732c7f5554a9b28802049d96e8e5",
+        "scripts/analysis/analyze_navigation.py": "46b18b9f345dab8bff77d7fb01e58e55ffd1c94646e6d4fd83c7a4081b0d88a3",
+        "scripts/run_navigation_pilot.sh": "64b8acdd6c1fa9e55d1bf788a89114574396b84878a09823735d7f356bb9e8ff",
+        "scripts/run_navigation_confirmation.sh": "8d7cc8e4000bfe034dcdb522fe08f96eddf64c276d75df113a728be55790d2e0",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81",
+        "evidence/protocols.md": "dadfbf98fae7eb5d8b619d192d9504fcc72090ade05881ff54a82da649e82b66"
+      }
+    },
+    {
+      "path": "runs/protocol/navigation_v2_pilot_validation.json",
+      "sha256": "346db0c78fd5e582794ffc7704064464d6b5d0dff927e8731fc9589e8336d9f2",
+      "bytes": 16764,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "protocol": "navigation-v2",
+        "split": "pilot",
+        "seeds": [
+          17011,
+          17027,
+          17033,
+          17041
+        ],
+        "templates": [
+          "add",
+          "multiply"
+        ]
+      },
+      "declared_seeds": [
+        17011,
+        17027,
+        17033,
+        17041
+      ],
+      "actual_seeds": [],
+      "n_rows": 4,
+      "integration_mode": "strict_live_language_server_manipulation_check",
+      "artifact_role": "mechanical_manipulation_and_leakage_validation",
+      "source_run_files": [
+        "runs/protocol/navigation_v2_pilot_validation.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/navigation_tasks.py": "f860fd07fdeb2d4f78d89a047c6804d79cc3babd60fab7e0a06e839679692d97",
+        "scripts/experiments/run_navigation.py": "82e1cb74292f6c86909cd05fea198c1873b2732c7f5554a9b28802049d96e8e5",
+        "scripts/analysis/analyze_navigation.py": "46b18b9f345dab8bff77d7fb01e58e55ffd1c94646e6d4fd83c7a4081b0d88a3",
+        "scripts/run_navigation_pilot.sh": "64b8acdd6c1fa9e55d1bf788a89114574396b84878a09823735d7f356bb9e8ff",
+        "scripts/run_navigation_confirmation.sh": "8d7cc8e4000bfe034dcdb522fe08f96eddf64c276d75df113a728be55790d2e0",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81",
+        "evidence/protocols.md": "dadfbf98fae7eb5d8b619d192d9504fcc72090ade05881ff54a82da649e82b66"
       }
     },
     {
@@ -3887,11 +4122,11 @@
     },
     {
       "path": "scripts/analysis/analyze_checker_calibration.py",
-      "sha256": "7805de6585ab845ab4c52ac154bc3949e7fcc1a5c29790baf1bb2f7fc2731b63"
+      "sha256": "b7c7b7b3b51ec21968104dd32e3a3b7e269ce5053fd6b9c89bbcdbe6c5d5fd54"
     },
     {
       "path": "scripts/analysis/analyze_checker_paired.py",
-      "sha256": "3935fc3c01a2f34e09faf2e8192140a7dafe0d96ac64a3b4919ec16f496cde38"
+      "sha256": "6abf4a341d4746ec9bddaa7339fbc81fc47d4a8c19849ba1f3f6bf628a1278aa"
     },
     {
       "path": "scripts/analysis/analyze_dispatch.py",
@@ -3903,7 +4138,7 @@
     },
     {
       "path": "scripts/analysis/analyze_navigation.py",
-      "sha256": "cde1ab68ec2c2f8b69668383dcdb336fdbb562f2740339ad94d85ac97007d7be"
+      "sha256": "46b18b9f345dab8bff77d7fb01e58e55ffd1c94646e6d4fd83c7a4081b0d88a3"
     },
     {
       "path": "scripts/analysis/effic_real_stats.py",
@@ -3911,7 +4146,7 @@
     },
     {
       "path": "scripts/analysis/reproduce_all.py",
-      "sha256": "eb45855b864931c94c92613e59384e5b958ded34a8c127c82cc3e82ad3ff1cb8"
+      "sha256": "fbd7c95c309788e52fe04d93f28bb6d7cbdb006548f4964a573bc253859c7d6e"
     },
     {
       "path": "scripts/analysis/stats.py",
@@ -3929,15 +4164,15 @@
   "protocol_sources": [
     {
       "path": "scripts/experiments/navigation_tasks.py",
-      "sha256": "f2d013348cbe61eaca1c26f52a98e19646bd9cb7b200c2cc3417af7ce17c313b"
+      "sha256": "f860fd07fdeb2d4f78d89a047c6804d79cc3babd60fab7e0a06e839679692d97"
     },
     {
       "path": "scripts/experiments/run_navigation.py",
-      "sha256": "5334b07a5466a12decc1bd78fd01a3c35c7dd7a4cf1e2d737345447f74b76119"
+      "sha256": "82e1cb74292f6c86909cd05fea198c1873b2732c7f5554a9b28802049d96e8e5"
     },
     {
       "path": "scripts/experiments/checker_paired.py",
-      "sha256": "7bb64807986ef645b3b01a0438d148755faa2e3397d0bb14421db5ce02aaed5c"
+      "sha256": "7f8f7dc52056d5fa64c5a8ed344b2946d6f85d83596796dadfa5727e4abe750d"
     },
     {
       "path": "scripts/experiments/diagnostics.py",
@@ -3973,15 +4208,15 @@
     },
     {
       "path": "scripts/run_navigation_pilot.sh",
-      "sha256": "88fcc197e21c7c773a4431708ec5ff626ebfc890cb7ff61e03135dc1586fe679"
+      "sha256": "64b8acdd6c1fa9e55d1bf788a89114574396b84878a09823735d7f356bb9e8ff"
     },
     {
       "path": "scripts/run_navigation_confirmation.sh",
-      "sha256": "dfa4cb0545a119a5702282859172b78d0df64aa9ef118deadd664c910d3c4b98"
+      "sha256": "8d7cc8e4000bfe034dcdb522fe08f96eddf64c276d75df113a728be55790d2e0"
     },
     {
       "path": "scripts/run_checker_paired.sh",
-      "sha256": "acf07c1692922cfca77697dbfdee4df663e941cdf16772eaa97b9345d3f69877"
+      "sha256": "7c1ea1f77ed3b11a6399be13771cac08bb7b83fcc16944c057321caa49fa6641"
     },
     {
       "path": "pyproject.toml",

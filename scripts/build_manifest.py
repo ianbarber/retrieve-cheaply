@@ -64,6 +64,8 @@ def integration(path: str, payload: dict) -> str:
 
 def artifact_role(path: str, payload: dict) -> str:
     name = Path(path).name
+    if payload.get("protocol") == "navigation-v1" and path.startswith(("runs/pilot/", "runs/protocol/")):
+        return "invalidated_navigation_v1_unsound_gold_derived_contract"
     if "navigation_" in name and path.startswith("runs/protocol/"):
         return "mechanical_manipulation_and_leakage_validation"
     if name == "checker_natural_drafts_legacy_7b.json":

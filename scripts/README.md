@@ -11,10 +11,12 @@ task-level reanalysis, audits the checker artifacts, and revalidates the navigat
 
 ## New causal protocols
 
-- `experiments/navigation_tasks.py` generates deterministic typed/erased paired repositories and enforces
-  runtime, gold, leakage, override-count, and strict live-Pyrefly manipulation gates.
-- `experiments/run_navigation.py` runs core automatic-result cells and typed deployment/election cells,
-  recording localization, wrong-file edits, substitution, tokens, calls, turns, and latency.
+- `experiments/navigation_tasks.py` generates deterministic typed/erased stub pairs over byte-identical
+  runtime code and enforces all-key contract, type-cleanliness, widening, gold, leakage, override-count,
+  and strict live-Pyrefly manipulation gates.
+- `experiments/run_navigation.py` runs the core automatic-result cells, the metadata-supplied buggy-span
+  actionability control, and typed deployment/election cells, recording localization, substitution, tokens,
+  calls, turns, and latency.
 - `experiments/diagnostics.py` provides uncapped structured, target-scoped Pyrefly diagnostic deltas.
 - `experiments/checker_paired.py` generates or imports frozen natural drafts, then forks identical control,
   coherent-patch diagnostic, gate, and noisy checker revisions.
@@ -35,8 +37,9 @@ task-level reanalysis, audits the checker artifacts, and revalidates the navigat
   direction; `analysis/task_level_effects.py` averages seeds within task and bootstraps tasks.
 - `analysis/analyze_dispatch.py`, `analyze_authoring.py`, `analyze_inference.py`, and
   `../analyze_runtime.py` reproduce scoped historical observations.
-- `analysis/analyze_navigation.py` and `analyze_checker_paired.py` are the preregistered outcome analyzers
-  for the new protocols.
+- `analysis/analyze_navigation.py` implements paired task effects and the preregistered 0.90–1.10
+  task-weighted token-ratio equivalence test. `analyze_checker_paired.py` includes task-weighted total
+  draft-plus-revision cost per accepted correct patch.
 
 ## Drivers and tools
 

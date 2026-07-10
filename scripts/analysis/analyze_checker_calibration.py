@@ -8,12 +8,13 @@ import json
 from pathlib import Path
 
 
-def main() -> None:
+def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("drafts", nargs="+")
     parser.add_argument("--minimum", type=float, default=0.2)
     parser.add_argument("--maximum", type=float, default=0.7)
     parser.add_argument("--min-coherent", type=int, default=2)
+    parser.add_argument("--enforce", action="store_true")
     args = parser.parse_args()
 
     all_drafts = []
@@ -37,7 +38,8 @@ def main() -> None:
     passed = len(coherent) >= args.min_coherent and args.minimum <= rate <= args.maximum
     print(f"combined model={models.pop()} drafts={len(all_drafts)} coherent={len(coherent)} "
           f"semantic-opportunity={len(opportunities)} rate={rate:.3f} gate_passed={passed}")
+    return 0 if passed or not args.enforce else 2
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

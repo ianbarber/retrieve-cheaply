@@ -33,14 +33,14 @@ Corrected replay nevertheless finds checker-positive diagnostics in both coheren
 workspaces. Execution/checker inference suites are at behavioral ceiling, but checker opportunity was not
 measured there; neither fact establishes equivalence.
 
-**New pilot evidence.** The typed/erased navigation apparatus passes base/gold, held-out, runtime-equivalence,
-leakage, and strict live-Pyrefly manipulation checks on all four pilot instances and twelve additional
+**New apparatus evidence.** The repaired `navigation-v2` typed/erased apparatus uses sound per-key `Literal`
+overloads in `.pyi` files over byte-identical runtime code. It passes base/gold, held-out, all-key runtime
+contract, type-cleanliness, leakage, widened-call, and strict live-Pyrefly checks on all four pilot instances and twelve additional
 apparatus-audit instances. Those 12 are not confirmation because validator changes followed their first
 inspection; a new disjoint 12-instance confirmation split passes mechanical checks and is reserved behind
-source hashes without model exposure. A local 7B
-pilot clears its edit-only control (2/2) but is uniformly floored in all 12 causal/deployment cells. Typed
-automatic context localizes 2/2 correct files and halves input tokens, yet yields 0/2 success, exposing an
-actionability bottleneck. Fresh checker calibration likewise stops correctly: 7B produces 0/3 coherent
+source hashes without model exposure. The earlier 7B `navigation-v1` pilot used an unsound gold-derived
+factory return and is retained only as invalid apparatus history; v2 model controls and causal cells are
+unrun. Fresh checker calibration stops correctly: 7B produces 0/3 coherent
 drafts, while 14B produces 2/8 and both are type-clean. Neither reaches the 20–70% opportunity band;
 paired revisions and navigation confirmation remain unrun.
 
@@ -78,17 +78,18 @@ python3 scripts/experiments/navigation_tasks.py --split pilot
 
 ## Expensive runs
 
-No paid API run is authorized. The committed pilots used locally cached 7B/14B models with a monetary cap
-of `$0`; these commands regenerate the development runs:
+No paid API run is authorized. The local pilots use cached 7B/14B models with a monetary cap of `$0`.
+The navigation command writes new v2 artifacts and preserves invalidated v1 evidence; the checker command
+exactly regenerates the three reported 1,400-token calibration batches:
 
 ```bash
 PYTHON=python3 scripts/run_navigation_pilot.sh
 PYTHON=python3 scripts/run_checker_paired.sh
 ```
 
-The confirmation command is intentionally separate and runs only after the positive control and pilot
-clear the preregistered gates. It currently exits before model loading because the committed pilot is
-uniformly floored:
+The confirmation command is intentionally separate and runs only after the v2 gold-copy and buggy-span
+controls and pilot clear the preregistered gates. It currently exits before model loading because those v2
+model artifacts do not exist:
 
 ```bash
 PYTHON=python3 scripts/run_navigation_confirmation.sh

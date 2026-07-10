@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import hashlib
 import json
 import sys
 import tempfile
@@ -19,6 +20,7 @@ if str(ROOT) not in sys.path:
 from scaffold.stream_agent import StreamAgent  # noqa: E402
 from scaffold.tooling import find_pyrefly  # noqa: E402
 from scripts.experiments.navigation_tasks import (  # noqa: E402
+    PROTOCOL_VERSION,
     _protocol_hashes,
     build_prompt,
     build_tasks,
@@ -27,13 +29,19 @@ from scripts.experiments.navigation_tasks import (  # noqa: E402
 )
 
 
-ARMS = ("baseline", "semantic_auto", "semantic_avail", "semantic_framed", "positive_control")
+ARMS = (
+    "baseline", "semantic_auto", "semantic_avail", "semantic_framed",
+    "semantic_span_control", "positive_control",
+)
 CORE_CELLS = (
     ("typed", "baseline"), ("typed", "semantic_auto"),
     ("erased", "baseline"), ("erased", "semantic_auto"),
 )
 DEPLOYMENT_CELLS = (
     ("typed", "semantic_avail"), ("typed", "semantic_framed"),
+)
+CONTROL_CELLS = (
+    ("typed", "semantic_span_control"), ("typed", "positive_control"),
 )
 
 TOOLS = """You are fixing one one-line Python bug in an implementation module under pkg/units/.
@@ -49,6 +57,11 @@ SEMANTIC = (
     "ask the language server which definition binds at a use site\n"
 )
 NEUTRAL_SYS = TOOLS + SEMANTIC
+AUTO_SYS = TOOLS + (
+    "A language-server result from the visible call site is supplied in the user message. It is the "
+    "current source definition, not a proposed fix. Use it as compact context; infer and apply a fix only "
+    "if the task evidence supports one.\n"
+)
 FRAMED_SYS = TOOLS + SEMANTIC + (
     "The semantic definition lookup is cheap and precise when same-named implementations are ambiguous. "
     "Prefer one lookup at the visible call site when it can replace registry tracing.\n"
@@ -57,8 +70,6 @@ POSITIVE_SYS = """You are completing an edit-only positive control. The user sup
 known-correct method with its file and line range. Copy it with <edit path="F" lines="A-B">...</edit>,
 then emit <test/> and <done/>. Do not retrieve or infer another implementation.
 """
-
-
 def _method_from_lsp(task: dict, variant: str, env) -> tuple[str, str | None, float]:
     use = task["variants"][variant]["use_site"]
     started = time.perf_counter()
@@ -81,8 +92,20 @@ def _method_from_lsp(task: dict, variant: str, env) -> tuple[str, str | None, fl
     if len(candidates) != 1:
         return f"# {path}\n{enclosing}", path, latency
     start, end, span = candidates[0]
+    return _format_method_span(path, start, end, span), path, latency
+
+
+def _format_method_span(path: str, start: int, end: int, span: str) -> str:
     numbered = "\n".join(f"{start + i:>4}| {line}" for i, line in enumerate(span.splitlines()))
-    return f"# {path}:{start}-{end}\n{numbered}", path, latency
+    return f"# {path}:{start}-{end}\n{numbered}"
+
+
+def _method_from_metadata(task: dict) -> tuple[str, str]:
+    data = task["target_method_span"]
+    return (
+        _format_method_span(task["target_path"], data["start"], data["end"], data["source"]),
+        task["target_path"],
+    )
 
 
 def _positive_result(task: dict) -> str:
@@ -136,8 +159,12 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("out")
     parser.add_argument("--model", default="Qwen/Qwen2.5-Coder-7B-Instruct")
+    parser.add_argument("--revision", default=None)
     parser.add_argument("--split", choices=("pilot", "apparatus", "confirmation"), default="pilot")
-    parser.add_argument("--cells", choices=("core", "deployment", "all", "positive"), default="core")
+    parser.add_argument(
+        "--cells", choices=("core", "deployment", "all", "positive", "span-control", "controls"),
+        default="core",
+    )
     parser.add_argument("--names", default=None)
     parser.add_argument("--seeds", type=int, default=1)
     parser.add_argument("--seed-start", type=int, default=0)
@@ -154,8 +181,10 @@ def main() -> int:
         "deployment": DEPLOYMENT_CELLS,
         "all": tuple(dict.fromkeys(CORE_CELLS + DEPLOYMENT_CELLS)),
         "positive": (("typed", "positive_control"),),
+        "span-control": (("typed", "semantic_span_control"),),
+        "controls": CONTROL_CELLS,
     }[args.cells]
-    root = args.tmp_root or str(Path(tempfile.gettempdir()) / "streams_navigation_v1_runs")
+    root = args.tmp_root or str(Path(tempfile.gettempdir()) / "streams_navigation_v2_runs")
     tasks = build_tasks(Path(root) / args.split, args.split)
     if args.names:
         wanted = set(args.names.split(","))
@@ -166,10 +195,10 @@ def main() -> int:
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    tokenizer = AutoTokenizer.from_pretrained(args.model)
+    tokenizer = AutoTokenizer.from_pretrained(args.model, revision=args.revision)
     device_map = {"": 0} if args.gpu_only else "auto"
     model = AutoModelForCausalLM.from_pretrained(
-        args.model, dtype=torch.bfloat16, device_map=device_map
+        args.model, revision=args.revision, dtype=torch.bfloat16, device_map=device_map
     ).eval()
     model_meta = {
         "revision": getattr(model.config, "_commit_hash", None),
@@ -193,8 +222,11 @@ def main() -> int:
                     supplied_path = None
                     lsp_latency = 0.0
                     prompt = build_prompt(task, variant)
-                    if arm == "semantic_auto":
-                        supplied, supplied_path, lsp_latency = _method_from_lsp(task, variant, env)
+                    if arm in ("semantic_auto", "semantic_span_control"):
+                        if arm == "semantic_auto":
+                            supplied, supplied_path, lsp_latency = _method_from_lsp(task, variant, env)
+                        else:
+                            supplied, supplied_path = _method_from_metadata(task)
                         if variant == "typed" and supplied_path != task["target_path"]:
                             raise RuntimeError(
                                 f"typed automatic result did not resolve the gold override: {supplied_path}"
@@ -205,7 +237,14 @@ def main() -> int:
                             )
                         if env.lsp_errors:
                             raise RuntimeError(f"automatic semantic query failed: {env.lsp_errors}")
-                        prompt += "\n\n<semantic_result>\n" + supplied + "\n</semantic_result>"
+                        if task["gold"]["new_text"] in supplied:
+                            raise RuntimeError("semantic context contains the gold replacement")
+                        prompt += (
+                            "\n\nThe following current source span was supplied from a language-server "
+                            "definition result at the visible call site. It is source context, not a "
+                            "proposed correction.\n<semantic_result kind=\"current_source\">\n"
+                            + supplied + "\n</semantic_result>"
+                        )
                     elif arm == "positive_control":
                         supplied = _positive_result(task)
                         supplied_path = task["target_path"]
@@ -218,10 +257,14 @@ def main() -> int:
                         )
 
                     system = FRAMED_SYS if arm == "semantic_framed" else NEUTRAL_SYS
+                    if arm in ("semantic_auto", "semantic_span_control"):
+                        system = AUTO_SYS
                     if arm == "positive_control":
                         system = POSITIVE_SYS
                     tool_enabled = arm in ("semantic_avail", "semantic_framed")
-                    if not tool_enabled and arm != "positive_control":
+                    if not tool_enabled and arm not in (
+                        "positive_control", "semantic_auto", "semantic_span_control"
+                    ):
                         system = TOOLS
                     agent = StreamAgent(
                         model, tokenizer, env, edit_mode="line", sys_override=system,
@@ -234,6 +277,10 @@ def main() -> int:
                     started = time.perf_counter()
                     result = agent.run(prompt, "pkg/app.py", editable=task["editable"])
                     elapsed = time.perf_counter() - started
+                    if arm == "semantic_span_control" and (
+                        result["n_lsp"] or env.lsp_latencies or env.lsp_errors
+                    ):
+                        raise RuntimeError("metadata span control unexpectedly queried the language server")
                     held_out_pass = run_heldout(task, variant)
                     row = {
                         "task": task["name"], "family": task["seed"], "split": args.split,
@@ -249,6 +296,13 @@ def main() -> int:
                                                      for value in env.lsp_latencies],
                         "server_errors": list(env.lsp_errors),
                         "semantic_supplied_path": supplied_path,
+                        "semantic_payload_sha256": (
+                            hashlib.sha256(supplied.encode()).hexdigest() if supplied else None
+                        ),
+                        "semantic_payload_source": (
+                            "live_lsp" if arm == "semantic_auto" else
+                            "pristine_task_metadata" if arm == "semantic_span_control" else None
+                        ),
                         **_metrics(task, result["events"], supplied_path),
                         "events": result["events"], "stream_tail": result["stream"][-2500:],
                     }
@@ -259,7 +313,7 @@ def main() -> int:
                     env.close()
                 Path(args.out).parent.mkdir(parents=True, exist_ok=True)
                 Path(args.out).write_text(json.dumps({
-                    "protocol": "navigation-v1", "model": args.model,
+                    "protocol": PROTOCOL_VERSION, "model": args.model,
                     "model_meta": model_meta, "config": vars(args), "cells": cells,
                     "protocol_source_sha256": _protocol_hashes(),
                     "pyrefly": {"path": pyrefly, "version": pyrefly_version}, "rows": rows,

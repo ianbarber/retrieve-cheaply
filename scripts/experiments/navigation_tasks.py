@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Generate and validate the paired types x semantic-navigation experiment.
 
-The pilot, apparatus-audit, and confirmation splits are deterministic and disjoint. Only the return
-annotation in ``pkg/factory.py`` changes between variants; runtime construction,
-implementation files, test, and gold patch are identical.
+The pilot, apparatus-audit, and confirmation splits are deterministic and disjoint. The typed factory stub
+adds sound per-key overloads; runtime construction, the factory implementation, implementation files,
+tests, and the gold patch are identical between variants.
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ from scaffold.real_env import RealRepoEnv  # noqa: E402
 from scaffold.tooling import find_pyrefly  # noqa: E402
 
 
-PROTOCOL_VERSION = "navigation-v1"
+PROTOCOL_VERSION = "navigation-v2"
 SPLIT_SEEDS = {
     "pilot": (17011, 17027, 17033, 17041),
     "apparatus": (
@@ -184,7 +184,7 @@ def _sources(spec: dict, variant: str) -> tuple[dict[str, str], dict]:
             class_to_path[class_name] = f"pkg/units/{module}.py"
         files[f"pkg/units/{module}.py"] = "".join(blocks)
 
-    imports = [f"from pkg.base import {base}", "from typing import cast"]
+    imports = [f"from pkg.base import {base}"]
     for module in spec["modules"]:
         names = [c for i, c in enumerate(spec["classes"])
                  if i % len(spec["modules"]) == spec["modules"].index(module)]
@@ -194,21 +194,44 @@ def _sources(spec: dict, variant: str) -> tuple[dict[str, str], dict]:
         for token, class_name in zip(spec["tokens"], spec["classes"])
     )
     target_class = spec["classes"][spec["target_idx"]]
-    return_type = target_class if variant == "typed" else base
-    cast_type = target_class if variant == "typed" else base
+    token = spec["tokens"][spec["target_idx"]]
+    stub_imports = [f"from pkg.base import {base}"]
+    overloads = ""
+    if variant == "typed":
+        stub_imports.append("from typing import Literal, overload")
+        for module in spec["modules"]:
+            names = [c for i, c in enumerate(spec["classes"])
+                     if i % len(spec["modules"]) == spec["modules"].index(module)]
+            stub_imports.append(f"from pkg.units.{module} import {', '.join(names)}")
+        overloads = "".join(
+            "@overload\n"
+            f'def make(token: Literal["{key}"]) -> {class_name}: ...\n\n'
+            for key, class_name in zip(spec["tokens"], spec["classes"])
+        )
+        overloads += f"@overload\ndef make(token: str) -> {base}: ...\n\n"
     files["pkg/factory.py"] = (
         "\n".join(imports) + "\n\n"
         f"_items: dict[str, type[{base}]] = {{\n{entries}\n}}\n\n"
-        f"def make(token: str) -> {return_type}:\n"
-        f"    return cast({cast_type}, _items[token]())\n"
+        f"def make(token: str) -> {base}:\n"
+        "    return _items[token]()\n"
+    )
+    files["pkg/factory.pyi"] = (
+        "\n".join(stub_imports) + "\n\n"
+        + (overloads if variant == "typed" else f"def make(token: str) -> {base}: ...\n")
     )
     files["pkg/app.py"] = (
+        "from typing import Literal\n\n"
         "from pkg.factory import make\n\n\n"
-        "def execute(token: str, value: int) -> int:\n"
+        f'def execute(token: Literal["{token}"], value: int) -> int:\n'
         "    x = make(token)\n"
         f"    return x.{method}(value)\n"
     )
-    token = spec["tokens"][spec["target_idx"]]
+    files["pkg/widened.py"] = (
+        "from pkg.factory import make\n\n\n"
+        "def execute_widened(token: str, value: int) -> int:\n"
+        "    x = make(token)\n"
+        f"    return x.{method}(value)\n"
+    )
     target_param = spec["params"][spec["target_idx"]]
     expected = _evaluate(spec["template"], spec["input"], target_param)
     held_input = spec["input"] + 7
@@ -250,6 +273,7 @@ def _sources(spec: dict, variant: str) -> tuple[dict[str, str], dict]:
         "expected": expected,
         "held_input": held_input,
         "held_expected": held_expected,
+        "registry_contract": dict(zip(spec["tokens"], spec["classes"])),
     }
     return files, meta
 
@@ -271,19 +295,25 @@ def build_tasks(root: str | Path, split: str = "pilot") -> list[dict]:
             repo.mkdir(parents=True)
             for rel, source in files.items():
                 _write(repo, rel, source)
-            _write(repo, "pyrefly.toml", 'project-includes = ["pkg/**/*.py"]\n')
+            _write(repo, "pyrefly.toml", 'project-includes = ["pkg/**/*.py", "pkg/**/*.pyi"]\n')
             _git(repo, "init", "-q")
             _git(repo, "add", "-A")
             _git(repo, "-c", "user.email=streams@local", "-c", "user.name=streams",
                  "commit", "-q", "-m", "base")
             base_commit = _git(repo, "rev-parse", "HEAD").stdout.strip()
             line, col = _line_of(files["pkg/app.py"], rf"\b{re.escape(spec['method'])}\b")
+            wide_line, wide_col = _line_of(
+                files["pkg/widened.py"], rf"\b{re.escape(spec['method'])}\b"
+            )
             paired[variant] = {
                 "repo_dir": str(repo),
                 "files": files,
                 "base_commit": base_commit,
                 "gold": meta["gold"],
                 "use_site": {"file": "pkg/app.py", "line": line, "col": col},
+                "widened_use_site": {
+                    "file": "pkg/widened.py", "line": wide_line, "col": wide_col,
+                },
             }
             shared_meta = meta
         tasks.append({
@@ -305,7 +335,7 @@ def make_env(task: dict, variant: str) -> RealRepoEnv:
     return StrictUseSiteEnv(
         data["repo_dir"], editable=task["editable"],
         test_spec=f"{sys.executable} test_behavior.py", base_commit=data["base_commit"],
-        file_glob="pkg/**/*.py", test_kind="command", test_cwd=".",
+        file_glob="pkg/**/*.*", test_kind="command", test_cwd=".",
         lsp_index_sleep=6.0, lsp_timeout=30.0,
     )
 
@@ -339,6 +369,7 @@ def _protocol_hashes() -> dict[str, str]:
         ROOT / "scaffold" / "real_env.py",
         ROOT / "scaffold" / "tooling.py",
         ROOT / "scripts" / "validate_pyrefly_lsp.py",
+        ROOT / "evidence" / "protocols.md",
     ]
     return {
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
@@ -356,6 +387,29 @@ def _probe_runtime(task: dict, variant: str) -> dict[str, int]:
     if run.returncode:
         raise RuntimeError(run.stderr)
     return json.loads(run.stdout)
+
+
+def _probe_factory_classes(task: dict, variant: str) -> dict[str, str]:
+    repo = task["variants"][variant]["repo_dir"]
+    code = (
+        "import json\nfrom pkg.factory import make\n"
+        f"print(json.dumps({{k: type(make(k)).__name__ for k in {task['tokens']!r}}}, sort_keys=True))\n"
+    )
+    run = subprocess.run([sys.executable, "-c", code], cwd=repo, capture_output=True, text=True)
+    if run.returncode:
+        raise RuntimeError(run.stderr)
+    return json.loads(run.stdout)
+
+
+def _type_errors(repo: str) -> list[dict]:
+    run = subprocess.run(
+        [find_pyrefly(), "check", "--output-format", "json", repo],
+        cwd=repo, capture_output=True, text=True, timeout=90,
+    )
+    try:
+        return json.loads(run.stdout or "{}").get("errors", [])
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"invalid Pyrefly check output: {run.stdout[:300]}") from exc
 
 
 def run_heldout(task: dict, variant: str) -> bool:
@@ -396,6 +450,17 @@ def _validate_task(task: dict) -> dict:
                 node = ast.parse(span or "").body[0]
                 if isinstance(node, ast.ClassDef):
                     lsp[variant]["resolved_class"] = node.name
+                    span_lines = (span or "").splitlines()
+                    method_nodes = [
+                        child for child in node.body
+                        if isinstance(child, ast.FunctionDef) and child.name == task["method"]
+                    ]
+                    if len(method_nodes) == 1:
+                        child = method_nodes[0]
+                        method_source = "\n".join(
+                            span_lines[child.lineno - 1:(child.end_lineno or child.lineno)]
+                        )
+                        lsp[variant]["resolved_method_span_hash"] = _hash(method_source)
             except (SyntaxError, IndexError):
                 pass
             if path is None:
@@ -406,6 +471,23 @@ def _validate_task(task: dict) -> dict:
                     "make", file="pkg/app.py", line=health_line, col=health_col
                 )
                 lsp[variant]["health_path"] = health_path
+            if variant == "typed":
+                wide = task["variants"][variant]["widened_use_site"]
+                wide_span, wide_path = env.lsp_definition(
+                    task["method"], file=wide["file"], line=wide["line"], col=wide["col"]
+                )
+                wide_class = None
+                try:
+                    node = ast.parse(wide_span or "").body[0]
+                    if isinstance(node, ast.ClassDef):
+                        wide_class = node.name
+                except (SyntaxError, IndexError):
+                    pass
+                lsp["typed_widened"] = {
+                    "path": wide_path,
+                    "span_hash": _hash(wide_span or ""),
+                    "resolved_class": wide_class,
+                }
             gold = task["gold"]
             applied, _ = env.apply_line_edit(gold["path"], gold["start"], gold["end"], gold["new_text"])
             tests[f"{variant}_gold_passes"] = bool(applied and env.run_tests()["resolved"])
@@ -416,9 +498,22 @@ def _validate_task(task: dict) -> dict:
 
     typed_files = task["variants"]["typed"]["files"]
     erased_files = task["variants"]["erased"]["files"]
-    runtime_files = sorted(p for p in typed_files if p != "pkg/factory.py")
+    runtime_files = sorted(p for p in typed_files if p.endswith(".py"))
     runtime_hashes_equal = all(_hash(typed_files[p]) == _hash(erased_files[p]) for p in runtime_files)
     runtime_outputs_equal = _probe_runtime(task, "typed") == _probe_runtime(task, "erased")
+    factory_classes = {
+        variant: _probe_factory_classes(task, variant) for variant in VARIANTS
+    }
+    expected_contract = task["registry_contract"]
+    typed_stub = typed_files["pkg/factory.pyi"]
+    declared_contract = dict(re.findall(
+        r'def make\(token: Literal\["([^"]+)"\]\) -> ([A-Za-z_][A-Za-z0-9_]*):',
+        typed_stub,
+    ))
+    fallback_signature = f"def make(token: str) -> {task['base']}: ..."
+    type_errors = {
+        variant: _type_errors(task["variants"][variant]["repo_dir"]) for variant in VARIANTS
+    }
     initial_surfaces = [
         build_prompt(task, "typed"),
         typed_files["pkg/app.py"],
@@ -436,6 +531,12 @@ def _validate_task(task: dict) -> dict:
         or (lsp["erased"]["path"] == base_path
             and lsp["erased"]["resolved_class"] == task["base"])
     )
+    widened = lsp.get("typed_widened", {})
+    widened_ok = (
+        widened.get("path") is None
+        or (widened.get("path") == base_path
+            and widened.get("resolved_class") == task["base"])
+    )
     implementation_files = [path for path in typed_files if path.startswith("pkg/units/")
                             and path.endswith(".py") and path != "pkg/units/__init__.py"]
     actual_overrides = sum(
@@ -443,6 +544,10 @@ def _validate_task(task: dict) -> dict:
         for path in implementation_files
     )
     factory = typed_files["pkg/factory.py"]
+    implementation_marker = f"def make(token: str) -> {task['base']}:\n"
+    typed_impl = implementation_marker + factory.rsplit(implementation_marker, 1)[1]
+    erased_factory = erased_files["pkg/factory.py"]
+    erased_impl = implementation_marker + erased_factory.rsplit(implementation_marker, 1)[1]
     registry_unique = (
         len(set(task["tokens"])) == task["n_overrides"]
         and factory.count(f'"{task["token"]}": {task["target_class"]}') == 1
@@ -451,6 +556,18 @@ def _validate_task(task: dict) -> dict:
         **tests,
         "runtime_files_identical": runtime_hashes_equal,
         "runtime_outputs_identical": runtime_outputs_equal,
+        "factory_implementation_identical": typed_impl == erased_impl,
+        "all_declared_returns_match_runtime": (
+            declared_contract == expected_contract
+            and factory_classes["typed"] == declared_contract
+            and factory_classes["erased"] == expected_contract
+        ),
+        "specific_overloads_precede_fallback": (
+            typed_stub.count(fallback_signature) == 1
+            and all(typed_stub.index(f'Literal["{key}"]') < typed_stub.index(fallback_signature)
+                    for key in task["tokens"])
+        ),
+        "variants_type_clean": not type_errors["typed"] and not type_errors["erased"],
         "gold_identical": (task["variants"]["typed"]["gold"]
                            == task["variants"]["erased"]["gold"] == task["gold"]),
         "override_count_valid": (8 <= actual_overrides <= 15
@@ -458,15 +575,24 @@ def _validate_task(task: dict) -> dict:
                                  and len(implementation_files) >= 3),
         "registry_trace_unique": registry_unique,
         "typed_lsp_discriminates": typed_ok,
+        "typed_lsp_span_matches_pristine_target": (
+            lsp["typed"].get("resolved_method_span_hash")
+            == _hash(task["target_method_span"]["source"])
+        ),
         "erased_lsp_nondiscriminating": erased_ok,
+        "literal_widening_removes_discrimination": widened_ok,
         "lsp_server_healthy": all(
-            data["health_path"] is not None for data in lsp.values()
+            data.get("health_path", data.get("path")) is not None for data in lsp.values()
         ),
         "lsp_no_errors": not lsp_errors,
         "prompt_has_no_target_leak": not leakage,
         "positive_control_materialized": bool(task["target_method_span"]["source"] and task["gold"]),
     }
     row.update({"checks": checks, "lsp": lsp, "lsp_errors": lsp_errors,
+                "runtime_factory_classes": factory_classes,
+                "declared_registry_contract": expected_contract,
+                "parsed_typed_stub_contract": declared_contract,
+                "type_errors": type_errors,
                 "leakage": leakage, "passed": all(checks.values())})
     return row
 
@@ -477,7 +603,7 @@ def main() -> int:
     parser.add_argument("--tmp-root", default=None)
     parser.add_argument("--out", default=None)
     args = parser.parse_args()
-    tmp_root = args.tmp_root or str(Path(tempfile.gettempdir()) / "streams_navigation_v1")
+    tmp_root = args.tmp_root or str(Path(tempfile.gettempdir()) / "streams_navigation_v2")
     tasks = build_tasks(Path(tmp_root) / args.split, args.split)
     rows = []
     for task in tasks:

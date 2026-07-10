@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 import math
 import random
@@ -29,21 +30,101 @@ def summarize_rows(rows: list[dict]) -> dict:
     def mean(field: str) -> float:
         return statistics.mean(float(row[field]) for row in rows)
 
-    tokens = [row["in_tokens"] + row["out_tokens"] for row in rows]
+    tokens = [
+        row.get("draft_in_tokens", 0) + row.get("draft_out_tokens", 0)
+        + row["in_tokens"] + row["out_tokens"]
+        for row in rows
+    ]
+    revision_tokens = [row["in_tokens"] + row["out_tokens"] for row in rows]
     accepted_defect = [bool(row["accepted"] and not row["type_clean"]) for row in rows]
+    accepted_correct = [bool(row["accepted"] and row["held_pass"]) for row in rows]
+    accepted_clean_correct = [
+        bool(row["accepted"] and row["held_pass"] and row["type_clean"]) for row in rows
+    ]
     return {
         "n": len(rows), "held_pass": mean("held_pass"),
         "type_clean": mean("type_clean"), "semantic_clean": mean("semantic_clean"),
         "accepted_type_clean": mean("accepted_type_clean"),
         "accepted_latent_defect": statistics.mean(accepted_defect),
+        "accepted_correct": statistics.mean(accepted_correct),
+        "accepted_type_clean_correct": statistics.mean(accepted_clean_correct),
         "abstained_or_rejected": mean("abstained_or_rejected"),
         "edited_diagnosed_location": mean("edited_diagnosed_location"),
         "diagnostics_eliminated": mean("diagnostics_eliminated"),
         "diagnostics_retained": mean("diagnostics_retained"),
         "diagnostics_introduced": mean("diagnostics_introduced"),
-        "tokens_mean": statistics.mean(tokens), "tokens_median": statistics.median(tokens),
+        "draft_plus_revision_tokens_mean": statistics.mean(tokens),
+        "draft_plus_revision_tokens_median": statistics.median(tokens),
+        "revision_tokens_mean": statistics.mean(revision_tokens),
+        "revision_tokens_median": statistics.median(revision_tokens),
         "turns_mean": mean("turns"), "checker_latency_ms_mean": mean("checker_latency_ms"),
         "wall_sec_mean": mean("wall_sec"),
+    }
+
+
+def expected_cost_per_accepted_correct(
+    drafts: list[dict], rows: list[dict], arm: str, opportunity_only: bool,
+    bootstrap: int, seed: int, require_type_clean: bool = False,
+) -> dict:
+    selected = [draft for draft in drafts if not opportunity_only or (
+        draft["coherent"] and any(
+            item["classification"] == "semantic" for item in draft["draft_diagnostics"]
+        )
+    )]
+    if not selected:
+        return {"n_tasks": 0, "estimable": False, "reason": "no selected natural drafts"}
+    by_draft: dict[str, list[dict]] = {}
+    for row in rows:
+        if row["arm"] == arm:
+            by_draft.setdefault(row["draft_id"], []).append(row)
+    missing = [
+        draft["draft_id"] for draft in selected
+        if draft["coherent"] and not by_draft.get(draft["draft_id"])
+    ]
+    if missing:
+        return {
+            "n_tasks": len({draft["task"] for draft in selected}),
+            "estimable": False,
+            "reason": "missing revision trajectories for coherent drafts",
+            "missing_draft_ids": missing,
+        }
+
+    attempts: dict[str, list[tuple[float, float]]] = {}
+    n_revisions = 0
+    for draft in selected:
+        draft_cost = float(draft.get("in_tokens", 0) + draft.get("out_tokens", 0))
+        revisions = by_draft.get(draft["draft_id"], [])
+        if not revisions:
+            attempts.setdefault(draft["task"], []).append((draft_cost, 0.0))
+            continue
+        for row in revisions:
+            n_revisions += 1
+            success = bool(row["accepted"] and row["held_pass"])
+            if require_type_clean:
+                success = success and bool(row["type_clean"])
+            cost = draft_cost + float(row["in_tokens"] + row["out_tokens"])
+            attempts.setdefault(draft["task"], []).append((cost, float(success)))
+
+    tasks = sorted(attempts)
+
+    def estimate(sample: list[str]) -> tuple[float, float, float]:
+        task_costs = [statistics.mean(cost for cost, _ in attempts[task]) for task in sample]
+        task_success = [statistics.mean(success for _, success in attempts[task]) for task in sample]
+        mean_cost = statistics.mean(task_costs)
+        success_rate = statistics.mean(task_success)
+        return mean_cost, success_rate, mean_cost / success_rate if success_rate else math.inf
+
+    mean_cost, success_rate, expected = estimate(tasks)
+    rng = random.Random(seed)
+    samples = [estimate([rng.choice(tasks) for _ in tasks])[2] for _ in range(bootstrap)]
+    return {
+        "n_tasks": len(tasks), "n_natural_drafts": len(selected),
+        "n_revision_trajectories": n_revisions, "estimable": True,
+        "mean_draft_plus_revision_tokens": mean_cost,
+        "accepted_correct_rate": success_rate,
+        "expected_tokens_per_accepted_correct_patch": expected,
+        "ci95": [quantile(samples, 0.025), quantile(samples, 0.975)],
+        "success_requires_type_clean": require_type_clean,
     }
 
 
@@ -57,6 +138,17 @@ def paired_contrast(
         by_arm.setdefault(row["arm"], {}).setdefault(row["task"], []).append(row)
     if "control" not in by_arm or arm not in by_arm:
         return {"n_tasks": 0}
+    control_grid = Counter(
+        (row["draft_id"], row.get("seed")) for row in selected if row["arm"] == "control"
+    )
+    treatment_grid = Counter(
+        (row["draft_id"], row.get("seed")) for row in selected if row["arm"] == arm
+    )
+    if control_grid != treatment_grid:
+        return {
+            "n_tasks": 0, "estimable": False,
+            "reason": "incomplete paired draft/seed grid",
+        }
     tasks = sorted(set(by_arm["control"]) & set(by_arm[arm]))
     if not tasks:
         return {"n_tasks": 0}
@@ -113,6 +205,17 @@ def main() -> None:
         print(subset)
         for arm in sorted({row["arm"] for row in selected}):
             print(f"  {arm}: {json.dumps(summarize_rows([row for row in selected if row['arm'] == arm]), allow_nan=True)}")
+            print("    deployment_cost: " + json.dumps(
+                expected_cost_per_accepted_correct(
+                    drafts, rows, arm, opportunity_only, args.bootstrap, args.seed
+                ), allow_nan=True,
+            ))
+            print("    type_clean_deployment_cost: " + json.dumps(
+                expected_cost_per_accepted_correct(
+                    drafts, rows, arm, opportunity_only, args.bootstrap, args.seed,
+                    require_type_clean=True,
+                ), allow_nan=True,
+            ))
         contrasts = {}
         for arm in sorted({row["arm"] for row in selected} - {"control"}):
             for field in ("held_pass", "accepted_type_clean"):

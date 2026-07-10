@@ -43,8 +43,6 @@ def main() -> None:
     run(py, "scripts/analyze_runtime.py")
     run(py, "scripts/analysis/analyze_checker_paired.py", "--drafts",
         "runs/pilot/checker_drafts_7b_smoke.json")
-    run(py, "scripts/analysis/analyze_navigation.py",
-        "runs/pilot/navigation_positive.json", "runs/pilot/navigation_all.json")
     for model in ("7b", "14b", "14b_ext"):
         drafts = f"runs/pilot/checker_drafts_{model}.json"
         run(py, "scripts/analysis/analyze_checker_paired.py", "--drafts", drafts)
@@ -64,6 +62,7 @@ def main() -> None:
             "runs/agent/exp2_7b_none.json", recovered)
         run(py, "scripts/analysis/analyze_checker_paired.py", "--drafts", recovered)
     run(py, "scripts/build_manifest.py", "--check")
+    run(py, "-m", "pytest", "-q")
     print("\nAll fast analyses and artifact checks passed.")
 
 

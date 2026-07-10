@@ -1,0 +1,494 @@
+{
+  "protocol": "navigation-v2",
+  "split": "pilot",
+  "generator": "scripts/experiments/navigation_tasks.py",
+  "seeds": [
+    17011,
+    17027,
+    17033,
+    17041
+  ],
+  "templates": [
+    "add",
+    "multiply"
+  ],
+  "protocol_source_sha256": {
+    "scripts/experiments/navigation_tasks.py": "f860fd07fdeb2d4f78d89a047c6804d79cc3babd60fab7e0a06e839679692d97",
+    "scripts/experiments/run_navigation.py": "82e1cb74292f6c86909cd05fea198c1873b2732c7f5554a9b28802049d96e8e5",
+    "scripts/analysis/analyze_navigation.py": "46b18b9f345dab8bff77d7fb01e58e55ffd1c94646e6d4fd83c7a4081b0d88a3",
+    "scripts/run_navigation_pilot.sh": "64b8acdd6c1fa9e55d1bf788a89114574396b84878a09823735d7f356bb9e8ff",
+    "scripts/run_navigation_confirmation.sh": "8d7cc8e4000bfe034dcdb522fe08f96eddf64c276d75df113a728be55790d2e0",
+    "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+    "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+    "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+    "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81",
+    "evidence/protocols.md": "dadfbf98fae7eb5d8b619d192d9504fcc72090ade05881ff54a82da649e82b66"
+  },
+  "pyrefly": {
+    "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+    "version": "pyrefly 1.0.0"
+  },
+  "rows": [
+    {
+      "task": "nav_pilot_17011",
+      "split": "pilot",
+      "template": "add",
+      "n_overrides": 15,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "factory_implementation_identical": true,
+        "all_declared_returns_match_runtime": true,
+        "specific_overloads_precede_fallback": true,
+        "variants_type_clean": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "typed_lsp_span_matches_pristine_target": true,
+        "erased_lsp_nondiscriminating": true,
+        "literal_widening_removes_discrimination": true,
+        "lsp_server_healthy": true,
+        "lsp_no_errors": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/uantyk.py",
+          "span_hash": "0fad91f03e035b5003294d915f37bc6ae909c371907e71027f4b8f45e6067c18",
+          "latency_ms": 6021.2,
+          "health_path": "pkg/units/uantyk.py",
+          "resolved_class": "Cccctrhg",
+          "resolved_method_span_hash": "7f6d99dd2aa3d1c63daca129108b9fba2c096db54b05d832a14c32d894c90fb6"
+        },
+        "typed_widened": {
+          "path": "pkg/base.py",
+          "span_hash": "ca533be1aa52d401e96e83d6314f319580a439627343c8089690eacddfdd75c8",
+          "resolved_class": "Bdnejktb"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "ca533be1aa52d401e96e83d6314f319580a439627343c8089690eacddfdd75c8",
+          "latency_ms": 6020.5,
+          "health_path": "pkg/base.py",
+          "resolved_class": "Bdnejktb",
+          "resolved_method_span_hash": "e9e7c82a50896594bf3cdffc6c953ea070cabddbb9b3d1a19d449965ba855d79"
+        }
+      },
+      "lsp_errors": [],
+      "runtime_factory_classes": {
+        "typed": {
+          "karlcu": "Cychplsp",
+          "kduztx": "Coiaobmb",
+          "kfmlnn": "Cindgrlk",
+          "kfqdiz": "Ckcahnwd",
+          "khprul": "Cwlicugw",
+          "kjihvp": "Cxpfxihy",
+          "kkuzwh": "Cmqemmtm",
+          "knaefm": "Cdeohsub",
+          "kooqjb": "Cjletsxe",
+          "krpzfr": "Cmcgjcpa",
+          "ksvgji": "Cwxikfkd",
+          "ktdqqf": "Cccctrhg",
+          "kxeatr": "Cfvhxfwn",
+          "kxkgbt": "Cfoqvpkq",
+          "kxxejc": "Cindphrl"
+        },
+        "erased": {
+          "karlcu": "Cychplsp",
+          "kduztx": "Coiaobmb",
+          "kfmlnn": "Cindgrlk",
+          "kfqdiz": "Ckcahnwd",
+          "khprul": "Cwlicugw",
+          "kjihvp": "Cxpfxihy",
+          "kkuzwh": "Cmqemmtm",
+          "knaefm": "Cdeohsub",
+          "kooqjb": "Cjletsxe",
+          "krpzfr": "Cmcgjcpa",
+          "ksvgji": "Cwxikfkd",
+          "ktdqqf": "Cccctrhg",
+          "kxeatr": "Cfvhxfwn",
+          "kxkgbt": "Cfoqvpkq",
+          "kxxejc": "Cindphrl"
+        }
+      },
+      "declared_registry_contract": {
+        "krpzfr": "Cmcgjcpa",
+        "kooqjb": "Cjletsxe",
+        "kfmlnn": "Cindgrlk",
+        "kxeatr": "Cfvhxfwn",
+        "kxkgbt": "Cfoqvpkq",
+        "kfqdiz": "Ckcahnwd",
+        "kxxejc": "Cindphrl",
+        "kduztx": "Coiaobmb",
+        "khprul": "Cwlicugw",
+        "kjihvp": "Cxpfxihy",
+        "ksvgji": "Cwxikfkd",
+        "knaefm": "Cdeohsub",
+        "karlcu": "Cychplsp",
+        "ktdqqf": "Cccctrhg",
+        "kkuzwh": "Cmqemmtm"
+      },
+      "parsed_typed_stub_contract": {
+        "krpzfr": "Cmcgjcpa",
+        "kooqjb": "Cjletsxe",
+        "kfmlnn": "Cindgrlk",
+        "kxeatr": "Cfvhxfwn",
+        "kxkgbt": "Cfoqvpkq",
+        "kfqdiz": "Ckcahnwd",
+        "kxxejc": "Cindphrl",
+        "kduztx": "Coiaobmb",
+        "khprul": "Cwlicugw",
+        "kjihvp": "Cxpfxihy",
+        "ksvgji": "Cwxikfkd",
+        "knaefm": "Cdeohsub",
+        "karlcu": "Cychplsp",
+        "ktdqqf": "Cccctrhg",
+        "kkuzwh": "Cmqemmtm"
+      },
+      "type_errors": {
+        "typed": [],
+        "erased": []
+      },
+      "leakage": [],
+      "passed": true
+    },
+    {
+      "task": "nav_pilot_17027",
+      "split": "pilot",
+      "template": "multiply",
+      "n_overrides": 8,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "factory_implementation_identical": true,
+        "all_declared_returns_match_runtime": true,
+        "specific_overloads_precede_fallback": true,
+        "variants_type_clean": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "typed_lsp_span_matches_pristine_target": true,
+        "erased_lsp_nondiscriminating": true,
+        "literal_widening_removes_discrimination": true,
+        "lsp_server_healthy": true,
+        "lsp_no_errors": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/umeewq.py",
+          "span_hash": "ad89f03f18c84913e9e8f5c59af541e2947afd1cd23797600a4f6c140ab65051",
+          "latency_ms": 6019.7,
+          "health_path": "pkg/units/umeewq.py",
+          "resolved_class": "Csxqghor",
+          "resolved_method_span_hash": "94d3f807f5110912765a4ff2c022949f5b629854b50f4a4d56755f2deffab761"
+        },
+        "typed_widened": {
+          "path": "pkg/base.py",
+          "span_hash": "ec96fa0692d06e1e20b71d45673ae7e693c2610ad1331b2db121748237bcc50b",
+          "resolved_class": "Bwstwmxd"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "ec96fa0692d06e1e20b71d45673ae7e693c2610ad1331b2db121748237bcc50b",
+          "latency_ms": 6019.4,
+          "health_path": "pkg/base.py",
+          "resolved_class": "Bwstwmxd",
+          "resolved_method_span_hash": "033be1e5a11800be32574ed6a924a38210c2b94a3644b4d70fc7da29aa8b2487"
+        }
+      },
+      "lsp_errors": [],
+      "runtime_factory_classes": {
+        "typed": {
+          "kbixla": "Cnnnzrpp",
+          "khhwry": "Chbravbf",
+          "kjnixq": "Cgpveshc",
+          "kjvegt": "Cqetbqln",
+          "kketrc": "Cmwylhkq",
+          "knaxzf": "Cbtgvvgq",
+          "kurteb": "Cmpujqfu",
+          "kyynmt": "Csxqghor"
+        },
+        "erased": {
+          "kbixla": "Cnnnzrpp",
+          "khhwry": "Chbravbf",
+          "kjnixq": "Cgpveshc",
+          "kjvegt": "Cqetbqln",
+          "kketrc": "Cmwylhkq",
+          "knaxzf": "Cbtgvvgq",
+          "kurteb": "Cmpujqfu",
+          "kyynmt": "Csxqghor"
+        }
+      },
+      "declared_registry_contract": {
+        "khhwry": "Chbravbf",
+        "kbixla": "Cnnnzrpp",
+        "kyynmt": "Csxqghor",
+        "kurteb": "Cmpujqfu",
+        "kjvegt": "Cqetbqln",
+        "kketrc": "Cmwylhkq",
+        "knaxzf": "Cbtgvvgq",
+        "kjnixq": "Cgpveshc"
+      },
+      "parsed_typed_stub_contract": {
+        "khhwry": "Chbravbf",
+        "kbixla": "Cnnnzrpp",
+        "kyynmt": "Csxqghor",
+        "kurteb": "Cmpujqfu",
+        "kjvegt": "Cqetbqln",
+        "kketrc": "Cmwylhkq",
+        "knaxzf": "Cbtgvvgq",
+        "kjnixq": "Cgpveshc"
+      },
+      "type_errors": {
+        "typed": [],
+        "erased": []
+      },
+      "leakage": [],
+      "passed": true
+    },
+    {
+      "task": "nav_pilot_17033",
+      "split": "pilot",
+      "template": "add",
+      "n_overrides": 10,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "factory_implementation_identical": true,
+        "all_declared_returns_match_runtime": true,
+        "specific_overloads_precede_fallback": true,
+        "variants_type_clean": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "typed_lsp_span_matches_pristine_target": true,
+        "erased_lsp_nondiscriminating": true,
+        "literal_widening_removes_discrimination": true,
+        "lsp_server_healthy": true,
+        "lsp_no_errors": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/uvrwsw.py",
+          "span_hash": "5a42daccba0cc7afde3a6bc5452ffc216902da888dfc3d371861d61c3289071f",
+          "latency_ms": 6011.1,
+          "health_path": "pkg/units/uvrwsw.py",
+          "resolved_class": "Crmjmwtm",
+          "resolved_method_span_hash": "73dc1ea5b0e7a55058748f8b0a1a9e84c4adafeb864b7f55a7bebd8bd07f5a82"
+        },
+        "typed_widened": {
+          "path": "pkg/base.py",
+          "span_hash": "b821c191894aab2eb50225cc9547bd9deb21996e4011d96ffc02ff23c25b797e",
+          "resolved_class": "Bbhmxojb"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "b821c191894aab2eb50225cc9547bd9deb21996e4011d96ffc02ff23c25b797e",
+          "latency_ms": 6019.9,
+          "health_path": "pkg/base.py",
+          "resolved_class": "Bbhmxojb",
+          "resolved_method_span_hash": "08ffdd30f6d363f690e625a56066e9c59b159816c54aaaff3f7384d0798a20fd"
+        }
+      },
+      "lsp_errors": [],
+      "runtime_factory_classes": {
+        "typed": {
+          "kfgpyn": "Cfsjycox",
+          "knnnvg": "Ciqzynun",
+          "kogobo": "Cppslsdx",
+          "koqlak": "Cbnljmom",
+          "kpgqeq": "Canaztry",
+          "kshpah": "Ctokwdqq",
+          "ktloti": "Cplrkatd",
+          "kxadeg": "Cufbadpu",
+          "kxnpzq": "Cafucuhw",
+          "kzennx": "Crmjmwtm"
+        },
+        "erased": {
+          "kfgpyn": "Cfsjycox",
+          "knnnvg": "Ciqzynun",
+          "kogobo": "Cppslsdx",
+          "koqlak": "Cbnljmom",
+          "kpgqeq": "Canaztry",
+          "kshpah": "Ctokwdqq",
+          "ktloti": "Cplrkatd",
+          "kxadeg": "Cufbadpu",
+          "kxnpzq": "Cafucuhw",
+          "kzennx": "Crmjmwtm"
+        }
+      },
+      "declared_registry_contract": {
+        "kxnpzq": "Cafucuhw",
+        "kpgqeq": "Canaztry",
+        "kogobo": "Cppslsdx",
+        "knnnvg": "Ciqzynun",
+        "kzennx": "Crmjmwtm",
+        "ktloti": "Cplrkatd",
+        "koqlak": "Cbnljmom",
+        "kfgpyn": "Cfsjycox",
+        "kshpah": "Ctokwdqq",
+        "kxadeg": "Cufbadpu"
+      },
+      "parsed_typed_stub_contract": {
+        "kxnpzq": "Cafucuhw",
+        "kpgqeq": "Canaztry",
+        "kogobo": "Cppslsdx",
+        "knnnvg": "Ciqzynun",
+        "kzennx": "Crmjmwtm",
+        "ktloti": "Cplrkatd",
+        "koqlak": "Cbnljmom",
+        "kfgpyn": "Cfsjycox",
+        "kshpah": "Ctokwdqq",
+        "kxadeg": "Cufbadpu"
+      },
+      "type_errors": {
+        "typed": [],
+        "erased": []
+      },
+      "leakage": [],
+      "passed": true
+    },
+    {
+      "task": "nav_pilot_17041",
+      "split": "pilot",
+      "template": "multiply",
+      "n_overrides": 9,
+      "checks": {
+        "typed_base_fails": true,
+        "typed_heldout_base_fails": true,
+        "typed_gold_passes": true,
+        "typed_heldout_gold_passes": true,
+        "erased_base_fails": true,
+        "erased_heldout_base_fails": true,
+        "erased_gold_passes": true,
+        "erased_heldout_gold_passes": true,
+        "runtime_files_identical": true,
+        "runtime_outputs_identical": true,
+        "factory_implementation_identical": true,
+        "all_declared_returns_match_runtime": true,
+        "specific_overloads_precede_fallback": true,
+        "variants_type_clean": true,
+        "gold_identical": true,
+        "override_count_valid": true,
+        "registry_trace_unique": true,
+        "typed_lsp_discriminates": true,
+        "typed_lsp_span_matches_pristine_target": true,
+        "erased_lsp_nondiscriminating": true,
+        "literal_widening_removes_discrimination": true,
+        "lsp_server_healthy": true,
+        "lsp_no_errors": true,
+        "prompt_has_no_target_leak": true,
+        "positive_control_materialized": true
+      },
+      "lsp": {
+        "typed": {
+          "path": "pkg/units/utpslm.py",
+          "span_hash": "2cde01ad2ad300a8a59bcf27b6aad2fe7424432ac6a7195a4e551bac457843db",
+          "latency_ms": 6019.1,
+          "health_path": "pkg/units/utpslm.py",
+          "resolved_class": "Cpzgejfr",
+          "resolved_method_span_hash": "dbb21107106013a893a80f84efcb595306aee388956315b12b3fcb788f4ab5bd"
+        },
+        "typed_widened": {
+          "path": "pkg/base.py",
+          "span_hash": "518cfcddd19be201fec0af6b64d75f3a4ec07b8f0451f9d9f71f7d148dcde362",
+          "resolved_class": "Bhvurntr"
+        },
+        "erased": {
+          "path": "pkg/base.py",
+          "span_hash": "518cfcddd19be201fec0af6b64d75f3a4ec07b8f0451f9d9f71f7d148dcde362",
+          "latency_ms": 6019.9,
+          "health_path": "pkg/base.py",
+          "resolved_class": "Bhvurntr",
+          "resolved_method_span_hash": "bd1b4ba448a35777647210c2241d8099322407d86514a78b27521e1b81177c41"
+        }
+      },
+      "lsp_errors": [],
+      "runtime_factory_classes": {
+        "typed": {
+          "kdhyla": "Cqbzzbpq",
+          "kicohn": "Cpzgejfr",
+          "kimhsv": "Cfovkvzp",
+          "kisuzk": "Cuyuesai",
+          "kizugf": "Cytltfxd",
+          "kmzojp": "Cjdojslg",
+          "kqbnrk": "Cjghvfhp",
+          "krvbqg": "Cjgivvif",
+          "kxtjcj": "Cziudjew"
+        },
+        "erased": {
+          "kdhyla": "Cqbzzbpq",
+          "kicohn": "Cpzgejfr",
+          "kimhsv": "Cfovkvzp",
+          "kisuzk": "Cuyuesai",
+          "kizugf": "Cytltfxd",
+          "kmzojp": "Cjdojslg",
+          "kqbnrk": "Cjghvfhp",
+          "krvbqg": "Cjgivvif",
+          "kxtjcj": "Cziudjew"
+        }
+      },
+      "declared_registry_contract": {
+        "kisuzk": "Cuyuesai",
+        "kxtjcj": "Cziudjew",
+        "kicohn": "Cpzgejfr",
+        "kimhsv": "Cfovkvzp",
+        "kqbnrk": "Cjghvfhp",
+        "kdhyla": "Cqbzzbpq",
+        "kmzojp": "Cjdojslg",
+        "kizugf": "Cytltfxd",
+        "krvbqg": "Cjgivvif"
+      },
+      "parsed_typed_stub_contract": {
+        "kisuzk": "Cuyuesai",
+        "kxtjcj": "Cziudjew",
+        "kicohn": "Cpzgejfr",
+        "kimhsv": "Cfovkvzp",
+        "kqbnrk": "Cjghvfhp",
+        "kdhyla": "Cqbzzbpq",
+        "kmzojp": "Cjdojslg",
+        "kizugf": "Cytltfxd",
+        "krvbqg": "Cjgivvif"
+      },
+      "type_errors": {
+        "typed": [],
+        "erased": []
+      },
+      "leakage": [],
+      "passed": true
+    }
+  ],
+  "passed": true
+}

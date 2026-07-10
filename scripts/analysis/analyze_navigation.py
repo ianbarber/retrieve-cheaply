@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 import math
 import random
@@ -38,12 +39,25 @@ def task_values(rows: list[dict], variant: str, arm: str, metric: str) -> dict[s
     return {task: statistics.mean(value(row) for row in group) for task, group in grouped.items()}
 
 
+def repetition_grid(rows: list[dict], variant: str, arm: str) -> Counter:
+    return Counter(
+        (row["task"], row.get("seed"))
+        for row in rows if row["variant"] == variant and row["arm"] == arm
+    )
+
+
 def paired_effect(
     rows: list[dict], base: tuple[str, str], treatment: tuple[str, str], metric: str,
     bootstrap: int, seed: int,
 ) -> dict:
     before = task_values(rows, *base, metric)
     after = task_values(rows, *treatment, metric)
+    if repetition_grid(rows, *base) != repetition_grid(rows, *treatment):
+        return {
+            "n_tasks": len(set(before) & set(after)), "estimable": False,
+            "reason": "incomplete paired task/seed grid",
+            "baseline_tasks": sorted(before), "treatment_tasks": sorted(after),
+        }
     tasks = sorted(set(before) & set(after))
     if not tasks:
         return {"n_tasks": 0}
@@ -60,13 +74,61 @@ def paired_effect(
     }
 
 
+def paired_ratio(
+    rows: list[dict], base: tuple[str, str], treatment: tuple[str, str], metric: str,
+    bootstrap: int, seed: int, margin: tuple[float, float] = (0.90, 1.10),
+) -> dict:
+    before = task_values(rows, *base, metric)
+    after = task_values(rows, *treatment, metric)
+    if repetition_grid(rows, *base) != repetition_grid(rows, *treatment):
+        return {
+            "n_tasks": len(set(before) & set(after)), "estimable": False,
+            "reason": "incomplete paired task/seed grid",
+            "baseline_tasks": sorted(before), "treatment_tasks": sorted(after),
+        }
+    tasks = sorted(set(before) & set(after))
+    if not tasks:
+        return {"n_tasks": 0}
+    if any(before[task] <= 0 for task in tasks):
+        return {"n_tasks": len(tasks), "undefined": "baseline metric is non-positive"}
+
+    def effect(sample: list[str]) -> float:
+        control_mean = statistics.mean(before[task] for task in sample)
+        if control_mean <= 0:
+            return math.inf
+        return statistics.mean(after[task] for task in sample) / control_mean
+
+    ratios = [after[task] / before[task] for task in tasks]
+    rng = random.Random(seed)
+    samples = [effect([rng.choice(tasks) for _ in tasks]) for _ in range(bootstrap)]
+    interval = [quantile(samples, 0.025), quantile(samples, 0.975)]
+    equivalent = interval[0] >= margin[0] and interval[1] <= margin[1]
+    return {
+        "n_tasks": len(tasks),
+        "ratio_of_task_weighted_means": effect(tasks),
+        "mean_task_ratio_descriptive": statistics.mean(ratios),
+        "median_task_ratio": statistics.median(ratios),
+        "ci95": interval,
+        "equivalence_margin": list(margin),
+        "equivalent": equivalent,
+        "interpretation": "equivalent" if equivalent else "inconclusive_or_different",
+    }
+
+
 def interaction(rows: list[dict], metric: str, bootstrap: int, seed: int) -> dict:
+    keys = (
+        ("typed", "baseline"), ("typed", "semantic_auto"),
+        ("erased", "baseline"), ("erased", "semantic_auto"),
+    )
+    grids = [repetition_grid(rows, *key) for key in keys]
+    if not grids[0] or any(grid != grids[0] for grid in grids[1:]):
+        return {
+            "n_tasks": 0, "estimable": False,
+            "reason": "incomplete factorial task/seed grid",
+        }
     cells = {
         key: task_values(rows, *key, metric)
-        for key in (
-            ("typed", "baseline"), ("typed", "semantic_auto"),
-            ("erased", "baseline"), ("erased", "semantic_auto"),
-        )
+        for key in keys
     }
     tasks = sorted(set.intersection(*(set(values) for values in cells.values())))
     if not tasks:
@@ -139,7 +201,7 @@ def main() -> None:
     if not rows:
         raise ValueError("no navigation rows")
 
-    print("NAVIGATION-V1 OUTCOMES (task is the generalization unit)")
+    print("NAVIGATION OUTCOMES (task is the generalization unit)")
     for variant, arm in sorted({(row["variant"], row["arm"]) for row in rows}):
         print(f"{variant}/{arm}")
         print(json.dumps(summarize_cell(rows, variant, arm), indent=2, allow_nan=True))
@@ -151,6 +213,10 @@ def main() -> None:
                 rows, (variant, "baseline"), (variant, "semantic_auto"), metric,
                 args.bootstrap, args.seed,
             )
+        contrasts[f"{variant}_semantic_auto_over_baseline_total_tokens"] = paired_ratio(
+            rows, (variant, "baseline"), (variant, "semantic_auto"), "total_tokens",
+            args.bootstrap, args.seed,
+        )
     for metric in ("pass", "total_tokens"):
         contrasts[f"typed_x_semantic_interaction_{metric}"] = interaction(
             rows, metric, args.bootstrap, args.seed
@@ -160,6 +226,7 @@ def main() -> None:
     core = [row for row in rows if row["arm"] in ("baseline", "semantic_auto")]
     if core and not any(row["held_out_pass"] for row in core):
         print("All causal cells are at floor; pass contrasts are non-identifying, not equivalence evidence.")
+        print("Token contrasts in failed cells measure failure cost, not useful-work efficiency.")
     elif core and all(row["held_out_pass"] for row in core):
         print("All causal cells are at ceiling; pass contrasts are non-identifying, not equivalence evidence.")
     else:

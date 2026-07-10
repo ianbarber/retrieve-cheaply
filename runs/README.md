@@ -66,16 +66,19 @@ Run `python3 scripts/analysis/analyze_authoring.py` from the repo root to summar
 
 | file | meaning |
 |---|---|
-| `protocol/navigation_pilot_validation.json` | four-instance mechanical typed/erased manipulation and leakage gate |
+| `protocol/navigation_pilot_validation.json` | historical v1 mechanical artifact; superseded because its typed contract was unsound |
 | `protocol/navigation_apparatus_validation_v0.json` | preserved pre-freeze validation of the 12 instances later designated apparatus-audit only |
-| `protocol/navigation_apparatus_validation.json` | twelve apparatus-audit instances pass the mechanical gates; not confirmation |
-| `protocol/navigation_confirmation_validation.json` | reserved disjoint confirmation instances and frozen source hashes; no model outcome |
+| `protocol/navigation_apparatus_validation.json` | historical v1 apparatus artifact; superseded |
+| `protocol/navigation_confirmation_validation.json` | historical v1 reserved-split artifact; never used for a model run |
+| `protocol/navigation_v2_pilot_validation.json` | four sound-stub pilot instances pass all-key runtime, type, widening, leakage, and live-LSP gates |
+| `protocol/navigation_v2_apparatus_validation.json` | twelve repaired apparatus-audit instances; not confirmation |
+| `protocol/navigation_v2_confirmation_validation.json` | twelve reserved v2 instances and frozen source hashes; no model outcome |
 | `protocol/checker_natural_drafts_legacy_7b.json` | five exact historical final workspaces; two coherent and both checker-positive |
 | `pilot/checker_drafts_7b_smoke.json` | pre-protocol partial-edit smoke; incoherent with 14 syntax/partial diagnostics |
 | `pilot/navigation_positive_invalid_v0.json` | rejected one-row control run: the apparatus accidentally supplied the buggy rather than gold method body |
 | `pilot/navigation_positive_floor_failed_v1.json` | excluded two-row pilot: corrected control passed 1/2 because one trajectory ignored supplied context |
-| `pilot/navigation_positive.json` | final edit-only 7B control: 2/2 held-out pass, one edit each |
-| `pilot/navigation_all.json` | exploratory 7B matrix: 0/12 held-out; typed automatic localization succeeds but actionability floors |
+| `pilot/navigation_positive.json` | v1 edit-only 7B control: 2/2, retained with the invalidated v1 apparatus |
+| `pilot/navigation_all.json` | invalidated v1 7B matrix: unsound gold-derived typed contract; outcome/token claims excluded |
 | `pilot/checker_drafts_7b.json` | current-protocol calibration: 3/3 submitted, 0/3 coherent; revisions blocked |
 | `pilot/checker_drafts_14b.json` | current-protocol calibration: 1/3 coherent and type-clean; revisions blocked |
 | `pilot/checker_drafts_14b_ext.json` | five-task extension: 1/5 coherent and type-clean; combined 14B opportunity remains 0/2 |

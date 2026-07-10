@@ -2,32 +2,41 @@
 
 ## Experiment 1: types x semantic navigation
 
-Protocol version `navigation-v1` uses four excluded pilot instances over two development templates, twelve
+Protocol version `navigation-v2` uses four excluded pilot instances over two development templates, twelve
 additional apparatus-audit instances over three templates, and twelve reserved confirmation instances over
 three new templates, with deterministic disjoint seeds in `scripts/experiments/navigation_tasks.py`.
 The apparatus set is explicitly not confirmation because it was inspected while validator behavior was
 still being repaired. Identifiers are neutral;
-each task has 8–15 overrides, factory/registry construction, identical implementation/test/gold files
-between variants, and a one-line gold fix. The only source difference is the remote factory return type.
+each task has 8–15 overrides, factory/registry construction, identical runtime `.py` files, tests, and gold
+patches between variants, and a one-line gold fix. Only `factory.pyi` differs. The typed stub has a sound
+`Literal` overload for every registry key plus a base-returning `str` fallback; the erased stub exposes only
+the base return. The visible call retains the selected key's `Literal` precision.
 
 The core cells are typed/textual, typed/automatic semantic result, erased/textual, and erased/automatic
 semantic result. Typed deployment cells are textual, neutral elective semantic tool, cheap/precise framed
-tool, and automatic semantic result. `positive_control` supplies the correct definition and must pass
-every selected pilot family before the driver continues to causal cells. Automatic results are composed:
+tool, and automatic semantic result. `semantic_span_control` supplies the same pristine buggy span with the
+same neutral framing and budget, but from frozen task metadata; it is an oracle localization/actionability
+control outside the factorial estimate. `positive_control` supplies the corrected definition and tests
+copy/edit competence. Both controls must pass 2/2 selected pilot instances before a navigation null is
+interpretable. Automatic results are composed:
 strict Pyrefly LSP definition resolution plus the enclosing method span. There is no AST fallback.
 
 Mechanical exclusions are fixed before model runs: reject a family if base does not fail, gold does not
 pass, runtime outputs differ across variants, gold differs, override count is outside 8–15, typed goto
 misses the gold override, erased goto is discriminating, the rendered prompt leaks the concrete class or
-gold path, or the positive control cannot be edited. Pilot and apparatus-audit families may be revised;
+gold path, any overload disagrees with runtime construction, either variant has type diagnostics, widening
+the typed call to `str` remains discriminating, the buggy-span payload contains the gold replacement, or a
+control cannot be acted on. Pilot and apparatus-audit instances may be revised;
 confirmation families may not. Confirmation is one shot after prompts, generator, metrics, exclusions,
 and source hashes are frozen.
 
 Primary outcome is task-level held-out pass@1. Other preregistered outcomes are correct-file localization
 before first edit, wrong-file edits, input/output tokens, calls, reads, turns, wall time, server latency,
 semantic election, semantic-then-read behavior, and expected tokens per successful task. Seeds are nested
-within task. Report task distributions, means and medians, and task bootstrap intervals. Equivalence
-margins, if a null is discussed, are +/-10 percentage points for pass@1 and a token ratio of 0.90–1.10;
+within task. Report task distributions, means and medians, and task bootstrap intervals. The token-ratio
+estimand is the treatment/control ratio of task-weighted mean unconditional tokens; paired task bootstrap
+recomputes that ratio. Per-task ratios are descriptive only. Equivalence margins, if a null is discussed,
+are +/-10 percentage points for pass@1 and a token ratio of 0.90–1.10;
 an interval crossing those bounds is inconclusive rather than equivalent.
 
 ## Experiment 2: checker opportunity and integration
@@ -47,23 +56,29 @@ in this opportunity set while retaining viable edit behavior. If none does, repo
 Control and treated revisions share the same token, turn, read, and test budgets. Outcomes include
 unconditional and opportunity-conditioned held-out pass, diagnostics eliminated/retained/introduced,
 edits overlapping diagnosed locations, type-clean accepted patches, gate rejection/abstention, tokens,
-turns, latency, and expected cost per accepted correct patch. A +/-10 percentage-point margin applies to
+turns, latency, and expected cost per accepted correct patch. The latter is task-weighted mean total
+draft-plus-revision tokens divided by the accepted-and-held-out-correct rate; rejected, abstained, and wrong
+attempts remain in the cost numerator. Report the stricter type-clean accepted-correct cost separately. A
++/-10 percentage-point margin applies to
 pass@1 or accepted-defect null claims.
 
 ## Run and spend budget
 
 No paid API run is authorized by this protocol. The executed development regimes use locally cached
-Qwen2.5-Coder 7B/14B models. The pilot is two navigation families across one positive-control cell,
-four core cells, and two incremental deployment cells (typed baseline/automatic are shared), followed by
-three checker development tasks. Monetary cap is **$0**. The frozen navigation confirmation is twelve
-families x six unique cells x three nested seeds; it remains
+Qwen2.5-Coder 7B/14B models. The pilot is two navigation instances across a gold-copy control, a buggy-span
+actionability control, four core cells, and two incremental deployment cells (typed baseline/automatic are
+shared), followed by three checker development tasks. Monetary cap is **$0**. The frozen navigation
+confirmation is twelve instances across three templates x six unique cells x three nested seeds; it remains
 unrun until the pilot clears every gate. Any OpenRouter or other paid confirmation requires a separate
 model/cell/cost proposal.
 
 ## Execution status
 
-The local 7B navigation positive control passes 2/2, but all 12 two-task causal/deployment pilot cells fail
-held-out behavior; confirmation is blocked as a uniform floor. Fresh checker calibration also blocks
+The historical `navigation-v1` 7B run used a gold-derived, unsound factory contract and is invalid for the
+typed/navigation causal question. Its 0/12 matrix and token differences are retained only as rejected
+apparatus history. The repaired `navigation-v2` pilot passes all mechanical checks; its gold-copy,
+buggy-span actionability, and causal/deployment model cells are unrun. Confirmation is blocked. Fresh
+checker calibration also blocks
 revisions: 7B yields 0/3 coherent submitted drafts. Across two development batches, 14B yields 2/8 coherent
 drafts; both are type-clean, for 0% semantic opportunity. These are exploratory stopping-gate results, not
 confirmation evidence. No paid API calls were made.

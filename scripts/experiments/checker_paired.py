@@ -197,9 +197,10 @@ def generate_drafts(args) -> int:
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    tokenizer = AutoTokenizer.from_pretrained(args.model)
+    tokenizer = AutoTokenizer.from_pretrained(args.model, revision=args.revision)
     model = AutoModelForCausalLM.from_pretrained(
-        args.model, dtype=torch.bfloat16, device_map={"": 0} if args.gpu_only else "auto"
+        args.model, revision=args.revision, dtype=torch.bfloat16,
+        device_map={"": 0} if args.gpu_only else "auto"
     ).eval()
     model_meta = {
         "revision": getattr(model.config, "_commit_hash", None),
@@ -371,9 +372,10 @@ def revise(args) -> int:
     unknown = set(arms) - set(ARMS)
     if unknown:
         raise ValueError(f"unknown arms: {sorted(unknown)}")
-    tokenizer = AutoTokenizer.from_pretrained(args.model)
+    tokenizer = AutoTokenizer.from_pretrained(args.model, revision=args.revision)
     model = AutoModelForCausalLM.from_pretrained(
-        args.model, dtype=torch.bfloat16, device_map={"": 0} if args.gpu_only else "auto"
+        args.model, revision=args.revision, dtype=torch.bfloat16,
+        device_map={"": 0} if args.gpu_only else "auto"
     ).eval()
     model_meta = {
         "revision": getattr(model.config, "_commit_hash", None),
@@ -426,6 +428,8 @@ def revise(args) -> int:
                     "gate_rejections": sum(event.get("type") == "gate_reject"
                                            for event in result["events"]),
                     "abstained_or_rejected": bool(arm == "gate" and not accepted),
+                    "draft_in_tokens": draft.get("in_tokens", 0),
+                    "draft_out_tokens": draft.get("out_tokens", 0),
                     "in_tokens": result["in_tokens"], "out_tokens": result["out_tokens"],
                     "turns": result["turns"], "n_edits": result["n_edits"],
                     "n_tests": result["n_tests"], "n_checks": result["n_checks"],
@@ -471,6 +475,7 @@ def parser() -> argparse.ArgumentParser:
     generate = commands.add_parser("generate")
     generate.add_argument("out")
     generate.add_argument("--model", default="Qwen/Qwen2.5-Coder-7B-Instruct")
+    generate.add_argument("--revision", default=None)
     generate.add_argument("--names", default=None)
     generate.add_argument("--seed", type=int, default=0)
     generate.add_argument("--temperature", type=float, default=0.7)
@@ -483,6 +488,7 @@ def parser() -> argparse.ArgumentParser:
     revision.add_argument("drafts")
     revision.add_argument("out")
     revision.add_argument("--model", default="Qwen/Qwen2.5-Coder-7B-Instruct")
+    revision.add_argument("--revision", default=None)
     revision.add_argument("--names", default=None)
     revision.add_argument("--arms", default=",".join(ARMS))
     revision.add_argument("--checker-positive-only", action="store_true")
