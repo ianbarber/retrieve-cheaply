@@ -26,39 +26,135 @@ def quantile(values: list[float], probability: float) -> float:
 def summarize_rows(rows: list[dict]) -> dict:
     if not rows:
         return {"n": 0}
+    grouped: dict[str, list[dict]] = {}
+    for row in rows:
+        grouped.setdefault(row["task"], []).append(row)
 
-    def mean(field: str) -> float:
-        return statistics.mean(float(row[field]) for row in rows)
+    def task_mean(value) -> float:
+        return statistics.mean(
+            statistics.mean(float(value(row)) for row in task_rows)
+            for task_rows in grouped.values()
+        )
 
-    tokens = [
-        row.get("draft_in_tokens", 0) + row.get("draft_out_tokens", 0)
-        + row["in_tokens"] + row["out_tokens"]
-        for row in rows
-    ]
-    revision_tokens = [row["in_tokens"] + row["out_tokens"] for row in rows]
-    accepted_defect = [bool(row["accepted"] and not row["type_clean"]) for row in rows]
-    accepted_correct = [bool(row["accepted"] and row["held_pass"]) for row in rows]
-    accepted_clean_correct = [
-        bool(row["accepted"] and row["held_pass"] and row["type_clean"]) for row in rows
-    ]
+    def task_median(value) -> float:
+        return statistics.median(
+            statistics.mean(float(value(row)) for row in task_rows)
+            for task_rows in grouped.values()
+        )
+
+    def draft_plus_revision_tokens(row: dict) -> float:
+        if "draft_in_tokens" not in row or "draft_out_tokens" not in row:
+            return math.nan
+        return row["draft_in_tokens"] + row["draft_out_tokens"] + row["in_tokens"] + row["out_tokens"]
+
     return {
-        "n": len(rows), "held_pass": mean("held_pass"),
-        "type_clean": mean("type_clean"), "semantic_clean": mean("semantic_clean"),
-        "accepted_type_clean": mean("accepted_type_clean"),
-        "accepted_latent_defect": statistics.mean(accepted_defect),
-        "accepted_correct": statistics.mean(accepted_correct),
-        "accepted_type_clean_correct": statistics.mean(accepted_clean_correct),
-        "abstained_or_rejected": mean("abstained_or_rejected"),
-        "edited_diagnosed_location": mean("edited_diagnosed_location"),
-        "diagnostics_eliminated": mean("diagnostics_eliminated"),
-        "diagnostics_retained": mean("diagnostics_retained"),
-        "diagnostics_introduced": mean("diagnostics_introduced"),
-        "draft_plus_revision_tokens_mean": statistics.mean(tokens),
-        "draft_plus_revision_tokens_median": statistics.median(tokens),
-        "revision_tokens_mean": statistics.mean(revision_tokens),
-        "revision_tokens_median": statistics.median(revision_tokens),
-        "turns_mean": mean("turns"), "checker_latency_ms_mean": mean("checker_latency_ms"),
-        "wall_sec_mean": mean("wall_sec"),
+        "n_tasks": len(grouped), "n_revision_trajectories": len(rows),
+        "final_held_pass": task_mean(lambda row: row["held_pass"]),
+        "accepted_rate": task_mean(lambda row: row["accepted"]),
+        "accepted_correct_rate": task_mean(lambda row: row["accepted"] and row["held_pass"]),
+        "type_clean_rate": task_mean(lambda row: row["type_clean"]),
+        "semantic_clean_rate": task_mean(lambda row: row["semantic_clean"]),
+        "accepted_type_clean_correct_rate": task_mean(
+            lambda row: row["accepted"] and row["held_pass"] and row["type_clean"]
+        ),
+        "accepted_behavioral_defect_rate": task_mean(
+            lambda row: row["accepted"] and not row["held_pass"]
+        ),
+        "accepted_semantic_defect_rate": task_mean(
+            lambda row: row["accepted"] and not row["semantic_clean"]
+        ),
+        "accepted_any_checker_defect_rate": task_mean(
+            lambda row: row["accepted"] and not row["type_clean"]
+        ),
+        "abstained_or_rejected_rate": task_mean(lambda row: row["abstained_or_rejected"]),
+        "edited_diagnosed_location_rate": task_mean(lambda row: row["edited_diagnosed_location"]),
+        "diagnostics_eliminated_mean": task_mean(lambda row: row["diagnostics_eliminated"]),
+        "diagnostics_retained_mean": task_mean(lambda row: row["diagnostics_retained"]),
+        "diagnostics_introduced_mean": task_mean(lambda row: row["diagnostics_introduced"]),
+        "draft_plus_revision_tokens_mean": task_mean(draft_plus_revision_tokens),
+        "draft_plus_revision_tokens_median": task_median(draft_plus_revision_tokens),
+        "revision_tokens_mean": task_mean(lambda row: row["in_tokens"] + row["out_tokens"]),
+        "revision_tokens_median": task_median(lambda row: row["in_tokens"] + row["out_tokens"]),
+        "turns_mean": task_mean(lambda row: row["turns"]),
+        "checker_latency_ms_mean": task_mean(lambda row: row["checker_latency_ms"]),
+        "wall_sec_mean": task_mean(lambda row: row["wall_sec"]),
+    }
+
+
+def end_to_end_summary(drafts: list[dict], rows: list[dict], arm: str) -> dict:
+    by_draft: dict[str, list[dict]] = {}
+    for row in rows:
+        if row["arm"] == arm:
+            by_draft.setdefault(row["draft_id"], []).append(row)
+    eligible = [draft for draft in drafts if draft.get("draft_submitted") and draft["coherent"]]
+    missing = [draft["draft_id"] for draft in eligible if not by_draft.get(draft["draft_id"])]
+    if missing:
+        return {
+            "estimable": False, "reason": "missing revision trajectories for eligible drafts",
+            "missing_draft_ids": missing,
+        }
+    if any("in_tokens" not in draft or "out_tokens" not in draft for draft in drafts):
+        return {"estimable": False, "reason": "natural draft token cost is missing"}
+
+    attempts: dict[str, list[dict]] = {}
+    for draft in drafts:
+        draft_tokens = draft["in_tokens"] + draft["out_tokens"]
+        revisions = by_draft.get(draft["draft_id"], [])
+        if not (draft.get("draft_submitted") and draft["coherent"]):
+            attempts.setdefault(draft["task"], []).append({
+                "held": 0.0, "accepted": 0.0, "accepted_correct": 0.0,
+                "accepted_clean_correct": 0.0, "accepted_behavioral_defect": 0.0,
+                "accepted_semantic_defect": 0.0, "pre_revision_failure": 1.0,
+                "gate_rejection": 0.0, "draft_tokens": draft_tokens,
+                "revision_tokens": 0.0, "total_tokens": draft_tokens,
+            })
+            continue
+        for row in revisions:
+            revision_tokens = row["in_tokens"] + row["out_tokens"]
+            attempts.setdefault(draft["task"], []).append({
+                "held": float(row["held_pass"]), "accepted": float(row["accepted"]),
+                "accepted_correct": float(row["accepted"] and row["held_pass"]),
+                "accepted_clean_correct": float(
+                    row["accepted"] and row["held_pass"] and row["type_clean"]
+                ),
+                "accepted_behavioral_defect": float(row["accepted"] and not row["held_pass"]),
+                "accepted_semantic_defect": float(row["accepted"] and not row["semantic_clean"]),
+                "pre_revision_failure": 0.0,
+                "gate_rejection": float(row["arm"] == "gate" and not row["accepted"]),
+                "draft_tokens": draft_tokens, "revision_tokens": revision_tokens,
+                "total_tokens": draft_tokens + revision_tokens,
+            })
+
+    def task_mean(field: str) -> float:
+        return statistics.mean(
+            statistics.mean(attempt[field] for attempt in task_attempts)
+            for task_attempts in attempts.values()
+        )
+
+    total_cost = task_mean("total_tokens")
+    accepted_correct = task_mean("accepted_correct")
+    accepted_clean_correct = task_mean("accepted_clean_correct")
+    return {
+        "estimable": True, "n_tasks": len(attempts), "n_generated_drafts": len(drafts),
+        "n_revision_eligible_drafts": len(eligible),
+        "n_pre_revision_failures": len(drafts) - len(eligible),
+        "final_held_pass_yield": task_mean("held"),
+        "accepted_yield": task_mean("accepted"),
+        "accepted_correct_yield": accepted_correct,
+        "accepted_type_clean_correct_yield": accepted_clean_correct,
+        "accepted_behavioral_defect_rate": task_mean("accepted_behavioral_defect"),
+        "accepted_semantic_defect_rate": task_mean("accepted_semantic_defect"),
+        "pre_revision_failure_rate": task_mean("pre_revision_failure"),
+        "gate_rejection_rate": task_mean("gate_rejection"),
+        "draft_tokens_mean": task_mean("draft_tokens"),
+        "revision_tokens_mean_including_pre_revision_zeros": task_mean("revision_tokens"),
+        "total_tokens_mean": total_cost,
+        "expected_tokens_per_accepted_correct_patch": (
+            total_cost / accepted_correct if accepted_correct else math.inf
+        ),
+        "expected_tokens_per_accepted_type_clean_correct_patch": (
+            total_cost / accepted_clean_correct if accepted_clean_correct else math.inf
+        ),
     }
 
 
@@ -73,13 +169,16 @@ def expected_cost_per_accepted_correct(
     )]
     if not selected:
         return {"n_tasks": 0, "estimable": False, "reason": "no selected natural drafts"}
+    if any("in_tokens" not in draft or "out_tokens" not in draft for draft in selected):
+        return {"n_tasks": 0, "estimable": False, "reason": "natural draft token cost is missing"}
     by_draft: dict[str, list[dict]] = {}
     for row in rows:
         if row["arm"] == arm:
             by_draft.setdefault(row["draft_id"], []).append(row)
     missing = [
         draft["draft_id"] for draft in selected
-        if draft["coherent"] and not by_draft.get(draft["draft_id"])
+        if draft.get("draft_submitted") and draft["coherent"]
+        and not by_draft.get(draft["draft_id"])
     ]
     if missing:
         return {
@@ -88,13 +187,24 @@ def expected_cost_per_accepted_correct(
             "reason": "missing revision trajectories for coherent drafts",
             "missing_draft_ids": missing,
         }
+    unexpected = [
+        draft["draft_id"] for draft in selected
+        if not (draft.get("draft_submitted") and draft["coherent"])
+        and by_draft.get(draft["draft_id"])
+    ]
+    if unexpected:
+        return {
+            "n_tasks": 0, "estimable": False,
+            "reason": "revision trajectories exist for ineligible drafts",
+            "unexpected_draft_ids": unexpected,
+        }
 
     attempts: dict[str, list[tuple[float, float]]] = {}
     n_revisions = 0
     for draft in selected:
-        draft_cost = float(draft.get("in_tokens", 0) + draft.get("out_tokens", 0))
+        draft_cost = float(draft["in_tokens"] + draft["out_tokens"])
         revisions = by_draft.get(draft["draft_id"], [])
-        if not revisions:
+        if not (draft.get("draft_submitted") and draft["coherent"]):
             attempts.setdefault(draft["task"], []).append((draft_cost, 0.0))
             continue
         for row in revisions:
@@ -195,27 +305,51 @@ def main() -> None:
         print(f"  {draft['task']}: submitted={draft.get('draft_submitted')} "
               f"coherent={draft['coherent']} visible={draft['visible_pass']} "
               f"held={draft['held_pass']} semantic={semantic} syntax/partial={partial}")
+    coherent_by_task: dict[str, list[dict]] = {}
+    for draft in coherent:
+        coherent_by_task.setdefault(draft["task"], []).append(draft)
+    task_weighted_opportunity = (
+        statistics.mean(
+            statistics.mean(any(
+                item["classification"] == "semantic" for item in draft["draft_diagnostics"]
+            ) for draft in task_drafts)
+            for task_drafts in coherent_by_task.values()
+        ) if coherent_by_task else math.nan
+    )
+    print("COHORT AUDIT " + json.dumps({
+        "tasks_generated": len({draft["task"] for draft in drafts}),
+        "drafts_generated": len(drafts),
+        "drafts_submitted": len(submitted),
+        "drafts_unsubmitted": len(drafts) - len(submitted),
+        "drafts_coherent_submitted": sum(
+            bool(draft.get("draft_submitted") and draft["coherent"]) for draft in drafts
+        ),
+        "drafts_submitted_incoherent": sum(
+            bool(draft.get("draft_submitted") and not draft["coherent"]) for draft in drafts
+        ),
+        "drafts_checker_positive": len(opportunities),
+        "task_weighted_opportunity_rate_among_coherent": task_weighted_opportunity,
+    }, allow_nan=True))
     if not args.revisions:
         return
 
     rows = json.loads(Path(args.revisions).read_text())["rows"]
-    print("\nPAIRED REVISIONS")
-    for opportunity_only, subset in ((False, "unconditional"), (True, "checker-positive")):
+    eligible_ids = {
+        draft["draft_id"] for draft in drafts
+        if draft.get("draft_submitted") and draft["coherent"]
+    }
+    unexpected = sorted({row["draft_id"] for row in rows} - eligible_ids)
+    if unexpected:
+        raise ValueError(f"revision rows exist for ineligible drafts: {unexpected}")
+    print("\nREVISION EFFICACY AMONG COHERENT SUBMITTED DRAFTS")
+    for opportunity_only, subset in (
+        (False, "coherent_submitted_revision"),
+        (True, "checker_positive_revision"),
+    ):
         selected = [row for row in rows if not opportunity_only or row["opportunity"]]
         print(subset)
         for arm in sorted({row["arm"] for row in selected}):
             print(f"  {arm}: {json.dumps(summarize_rows([row for row in selected if row['arm'] == arm]), allow_nan=True)}")
-            print("    deployment_cost: " + json.dumps(
-                expected_cost_per_accepted_correct(
-                    drafts, rows, arm, opportunity_only, args.bootstrap, args.seed
-                ), allow_nan=True,
-            ))
-            print("    type_clean_deployment_cost: " + json.dumps(
-                expected_cost_per_accepted_correct(
-                    drafts, rows, arm, opportunity_only, args.bootstrap, args.seed,
-                    require_type_clean=True,
-                ), allow_nan=True,
-            ))
         contrasts = {}
         for arm in sorted({row["arm"] for row in selected} - {"control"}):
             for field in ("held_pass", "accepted_type_clean"):
@@ -223,6 +357,20 @@ def main() -> None:
                     rows, arm, field, opportunity_only, args.bootstrap, args.seed
                 )
         print(json.dumps(contrasts, indent=2, allow_nan=True))
+    print("\nEND-TO-END OUTCOMES ACROSS ALL NATURAL DRAFTS")
+    for arm in sorted({row["arm"] for row in rows}):
+        print(f"  {arm}: {json.dumps(end_to_end_summary(drafts, rows, arm), allow_nan=True)}")
+        print("    deployment_cost: " + json.dumps(
+            expected_cost_per_accepted_correct(
+                drafts, rows, arm, False, args.bootstrap, args.seed
+            ), allow_nan=True,
+        ))
+        print("    type_clean_deployment_cost: " + json.dumps(
+            expected_cost_per_accepted_correct(
+                drafts, rows, arm, False, args.bootstrap, args.seed,
+                require_type_clean=True,
+            ), allow_nan=True,
+        ))
     print("A null is not equivalence unless its task-bootstrap pass CI lies inside +/-0.10.")
 
 

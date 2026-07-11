@@ -224,7 +224,9 @@ def main() -> None:
     print("PAIRED TASK-LEVEL CONTRASTS")
     print(json.dumps(contrasts, indent=2, allow_nan=True))
     core = [row for row in rows if row["arm"] in ("baseline", "semantic_auto")]
-    if core and not any(row["held_out_pass"] for row in core):
+    if not core:
+        print("Causal matrix absent; controls alone estimate competence/actionability, not a treatment effect.")
+    elif not any(row["held_out_pass"] for row in core):
         print("All causal cells are at floor; pass contrasts are non-identifying, not equivalence evidence.")
         print("Token contrasts in failed cells measure failure cost, not useful-work efficiency.")
     elif core and all(row["held_out_pass"] for row in core):

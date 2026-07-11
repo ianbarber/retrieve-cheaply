@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "git_revision_at_generation": "7653800fa33f187bf05d6dc14884c04228b3a9f8",
+  "git_revision_at_generation": "c3748a8a7e9cbec8a35c63273c3149d6ed50c908",
   "git_worktree_dirty_at_generation": true,
   "platform_at_generation": "Linux-6.11.0-1016-nvidia-aarch64-with-glibc2.39",
   "results": [
@@ -3273,6 +3273,124 @@
       ]
     },
     {
+      "path": "runs/pilot/navigation_v2_positive.json",
+      "sha256": "b4b8979c3f5bc1e985c2fda9c48bf82012c4d901640ddad35b6c2ed633f31b45",
+      "bytes": 6574,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.0,
+      "model_meta": {
+        "revision": "c03e6d358207e414f1eca0bb1891e29f1db0e242",
+        "transformers": "5.9.0",
+        "torch": "2.11.0+cu128",
+        "dtype": "torch.bfloat16"
+      },
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "out": "runs/pilot/navigation_v2_positive.json",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "revision": "c03e6d358207e414f1eca0bb1891e29f1db0e242",
+        "split": "pilot",
+        "cells": "positive",
+        "names": "nav_pilot_17011,nav_pilot_17027",
+        "seeds": 1,
+        "seed_start": 0,
+        "temperature": 0.0,
+        "max_new": 400,
+        "max_turns": 12,
+        "max_reads": 12,
+        "gpu_only": true,
+        "tmp_root": null
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 2,
+      "integration_mode": "mixed_textual_and_strict_live_language_server_composed_span",
+      "artifact_role": "navigation_v2_gold_copy_competence_control",
+      "source_run_files": [
+        "runs/pilot/navigation_v2_positive.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/navigation_tasks.py": "f860fd07fdeb2d4f78d89a047c6804d79cc3babd60fab7e0a06e839679692d97",
+        "scripts/experiments/run_navigation.py": "47a6dfcab580c5a0852c12e40ad9bb8346bdcd4b99a55d6d95a0c752438a4d5d",
+        "scripts/analysis/analyze_navigation.py": "46b18b9f345dab8bff77d7fb01e58e55ffd1c94646e6d4fd83c7a4081b0d88a3",
+        "scripts/run_navigation_pilot.sh": "64b8acdd6c1fa9e55d1bf788a89114574396b84878a09823735d7f356bb9e8ff",
+        "scripts/run_navigation_confirmation.sh": "23a5f48cdebc42857d9c172aa10b3da9e94e3fd43922b21382598e9cc0ac732e",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81",
+        "evidence/protocols.md": "5fd5d3cd42372fb68412b34226996271387b770105301a61b3d9b90e34b449c4"
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/analysis/analyze_navigation.py",
+        "evidence/protocols.md"
+      ]
+    },
+    {
+      "path": "runs/pilot/navigation_v2_span_control.json",
+      "sha256": "bf466ae10b2844b2ad8bcac1e496f553f67b7ebcd716c67f8919d8ad13e33065",
+      "bytes": 13368,
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "temperature": 0.0,
+      "model_meta": {
+        "revision": "c03e6d358207e414f1eca0bb1891e29f1db0e242",
+        "transformers": "5.9.0",
+        "torch": "2.11.0+cu128",
+        "dtype": "torch.bfloat16"
+      },
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "out": "runs/pilot/navigation_v2_span_control.json",
+        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "revision": "c03e6d358207e414f1eca0bb1891e29f1db0e242",
+        "split": "pilot",
+        "cells": "span-control",
+        "names": "nav_pilot_17011,nav_pilot_17027",
+        "seeds": 1,
+        "seed_start": 0,
+        "temperature": 0.0,
+        "max_new": 1000,
+        "max_turns": 12,
+        "max_reads": 12,
+        "gpu_only": true,
+        "tmp_root": null
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 2,
+      "integration_mode": "mixed_textual_and_strict_live_language_server_composed_span",
+      "artifact_role": "navigation_v2_failed_buggy_span_actionability_control",
+      "source_run_files": [
+        "runs/pilot/navigation_v2_span_control.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/navigation_tasks.py": "f860fd07fdeb2d4f78d89a047c6804d79cc3babd60fab7e0a06e839679692d97",
+        "scripts/experiments/run_navigation.py": "47a6dfcab580c5a0852c12e40ad9bb8346bdcd4b99a55d6d95a0c752438a4d5d",
+        "scripts/analysis/analyze_navigation.py": "46b18b9f345dab8bff77d7fb01e58e55ffd1c94646e6d4fd83c7a4081b0d88a3",
+        "scripts/run_navigation_pilot.sh": "64b8acdd6c1fa9e55d1bf788a89114574396b84878a09823735d7f356bb9e8ff",
+        "scripts/run_navigation_confirmation.sh": "23a5f48cdebc42857d9c172aa10b3da9e94e3fd43922b21382598e9cc0ac732e",
+        "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+        "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81",
+        "evidence/protocols.md": "5fd5d3cd42372fb68412b34226996271387b770105301a61b3d9b90e34b449c4"
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/analysis/analyze_navigation.py",
+        "evidence/protocols.md"
+      ]
+    },
+    {
       "path": "runs/protocol/checker_natural_drafts_legacy_7b.json",
       "sha256": "61f2e03ec1a02b1299f9dfff0edf7f1cded6de9fcd6d40e2954cd7fd37532638",
       "bytes": 50229,
@@ -3573,7 +3691,7 @@
     },
     {
       "path": "runs/protocol/navigation_v2_apparatus_validation.json",
-      "sha256": "3f0f7fd5587fbec21f002a057c0043eed5dd0ad58ed41df1087103676462db91",
+      "sha256": "d1d26110a73bb684c3f53e00aaf58e037d7e9dcc4d4ae640bca7d191f34826f4",
       "bytes": 48545,
       "model": null,
       "temperature": null,
@@ -3628,20 +3746,20 @@
       ],
       "recorded_protocol_source_sha256": {
         "scripts/experiments/navigation_tasks.py": "f860fd07fdeb2d4f78d89a047c6804d79cc3babd60fab7e0a06e839679692d97",
-        "scripts/experiments/run_navigation.py": "82e1cb74292f6c86909cd05fea198c1873b2732c7f5554a9b28802049d96e8e5",
-        "scripts/analysis/analyze_navigation.py": "46b18b9f345dab8bff77d7fb01e58e55ffd1c94646e6d4fd83c7a4081b0d88a3",
+        "scripts/experiments/run_navigation.py": "47a6dfcab580c5a0852c12e40ad9bb8346bdcd4b99a55d6d95a0c752438a4d5d",
+        "scripts/analysis/analyze_navigation.py": "3afeb993cd0950ea2b0b1fd4264807de3872b508623b58d90660c348b7dccedf",
         "scripts/run_navigation_pilot.sh": "64b8acdd6c1fa9e55d1bf788a89114574396b84878a09823735d7f356bb9e8ff",
-        "scripts/run_navigation_confirmation.sh": "8d7cc8e4000bfe034dcdb522fe08f96eddf64c276d75df113a728be55790d2e0",
+        "scripts/run_navigation_confirmation.sh": "23a5f48cdebc42857d9c172aa10b3da9e94e3fd43922b21382598e9cc0ac732e",
         "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
         "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81",
-        "evidence/protocols.md": "dadfbf98fae7eb5d8b619d192d9504fcc72090ade05881ff54a82da649e82b66"
+        "evidence/protocols.md": "f418b1a6c78e8ebecb5ab44986d7651012b0c4e88ece13b5ca3430c8cd76ba21"
       }
     },
     {
       "path": "runs/protocol/navigation_v2_confirmation_validation.json",
-      "sha256": "88bb9e34424c31ff7b4feb4247f1cb7690572f905dab39b717ed04ff40812b71",
+      "sha256": "14c445d7cc4e7bd38985fc8176c3a67ddb0477ff945b0f945211ade3ae1527ea",
       "bytes": 48820,
       "model": null,
       "temperature": null,
@@ -3696,20 +3814,20 @@
       ],
       "recorded_protocol_source_sha256": {
         "scripts/experiments/navigation_tasks.py": "f860fd07fdeb2d4f78d89a047c6804d79cc3babd60fab7e0a06e839679692d97",
-        "scripts/experiments/run_navigation.py": "82e1cb74292f6c86909cd05fea198c1873b2732c7f5554a9b28802049d96e8e5",
-        "scripts/analysis/analyze_navigation.py": "46b18b9f345dab8bff77d7fb01e58e55ffd1c94646e6d4fd83c7a4081b0d88a3",
+        "scripts/experiments/run_navigation.py": "47a6dfcab580c5a0852c12e40ad9bb8346bdcd4b99a55d6d95a0c752438a4d5d",
+        "scripts/analysis/analyze_navigation.py": "3afeb993cd0950ea2b0b1fd4264807de3872b508623b58d90660c348b7dccedf",
         "scripts/run_navigation_pilot.sh": "64b8acdd6c1fa9e55d1bf788a89114574396b84878a09823735d7f356bb9e8ff",
-        "scripts/run_navigation_confirmation.sh": "8d7cc8e4000bfe034dcdb522fe08f96eddf64c276d75df113a728be55790d2e0",
+        "scripts/run_navigation_confirmation.sh": "23a5f48cdebc42857d9c172aa10b3da9e94e3fd43922b21382598e9cc0ac732e",
         "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
         "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81",
-        "evidence/protocols.md": "dadfbf98fae7eb5d8b619d192d9504fcc72090ade05881ff54a82da649e82b66"
+        "evidence/protocols.md": "f418b1a6c78e8ebecb5ab44986d7651012b0c4e88ece13b5ca3430c8cd76ba21"
       }
     },
     {
       "path": "runs/protocol/navigation_v2_pilot_validation.json",
-      "sha256": "346db0c78fd5e582794ffc7704064464d6b5d0dff927e8731fc9589e8336d9f2",
+      "sha256": "39202878def69f933807254d82ca183c97ab0b9517504b7150c8684207642c0e",
       "bytes": 16764,
       "model": null,
       "temperature": null,
@@ -3747,15 +3865,15 @@
       ],
       "recorded_protocol_source_sha256": {
         "scripts/experiments/navigation_tasks.py": "f860fd07fdeb2d4f78d89a047c6804d79cc3babd60fab7e0a06e839679692d97",
-        "scripts/experiments/run_navigation.py": "82e1cb74292f6c86909cd05fea198c1873b2732c7f5554a9b28802049d96e8e5",
-        "scripts/analysis/analyze_navigation.py": "46b18b9f345dab8bff77d7fb01e58e55ffd1c94646e6d4fd83c7a4081b0d88a3",
+        "scripts/experiments/run_navigation.py": "47a6dfcab580c5a0852c12e40ad9bb8346bdcd4b99a55d6d95a0c752438a4d5d",
+        "scripts/analysis/analyze_navigation.py": "3afeb993cd0950ea2b0b1fd4264807de3872b508623b58d90660c348b7dccedf",
         "scripts/run_navigation_pilot.sh": "64b8acdd6c1fa9e55d1bf788a89114574396b84878a09823735d7f356bb9e8ff",
-        "scripts/run_navigation_confirmation.sh": "8d7cc8e4000bfe034dcdb522fe08f96eddf64c276d75df113a728be55790d2e0",
+        "scripts/run_navigation_confirmation.sh": "23a5f48cdebc42857d9c172aa10b3da9e94e3fd43922b21382598e9cc0ac732e",
         "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
         "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81",
-        "evidence/protocols.md": "dadfbf98fae7eb5d8b619d192d9504fcc72090ade05881ff54a82da649e82b66"
+        "evidence/protocols.md": "f418b1a6c78e8ebecb5ab44986d7651012b0c4e88ece13b5ca3430c8cd76ba21"
       }
     },
     {
@@ -4126,7 +4244,7 @@
     },
     {
       "path": "scripts/analysis/analyze_checker_paired.py",
-      "sha256": "6abf4a341d4746ec9bddaa7339fbc81fc47d4a8c19849ba1f3f6bf628a1278aa"
+      "sha256": "c190bde314573d4b8297dc9bd45752a0aea104a9f4b0154c95eb74d9ddb745c7"
     },
     {
       "path": "scripts/analysis/analyze_dispatch.py",
@@ -4138,7 +4256,7 @@
     },
     {
       "path": "scripts/analysis/analyze_navigation.py",
-      "sha256": "46b18b9f345dab8bff77d7fb01e58e55ffd1c94646e6d4fd83c7a4081b0d88a3"
+      "sha256": "3afeb993cd0950ea2b0b1fd4264807de3872b508623b58d90660c348b7dccedf"
     },
     {
       "path": "scripts/analysis/effic_real_stats.py",
@@ -4146,7 +4264,7 @@
     },
     {
       "path": "scripts/analysis/reproduce_all.py",
-      "sha256": "fbd7c95c309788e52fe04d93f28bb6d7cbdb006548f4964a573bc253859c7d6e"
+      "sha256": "64b698c8aff36fa7abfcc2f173b739a94a3927ba2953cec4908fdb23bfcba9a5"
     },
     {
       "path": "scripts/analysis/stats.py",
@@ -4168,7 +4286,7 @@
     },
     {
       "path": "scripts/experiments/run_navigation.py",
-      "sha256": "82e1cb74292f6c86909cd05fea198c1873b2732c7f5554a9b28802049d96e8e5"
+      "sha256": "47a6dfcab580c5a0852c12e40ad9bb8346bdcd4b99a55d6d95a0c752438a4d5d"
     },
     {
       "path": "scripts/experiments/checker_paired.py",
@@ -4212,11 +4330,11 @@
     },
     {
       "path": "scripts/run_navigation_confirmation.sh",
-      "sha256": "8d7cc8e4000bfe034dcdb522fe08f96eddf64c276d75df113a728be55790d2e0"
+      "sha256": "23a5f48cdebc42857d9c172aa10b3da9e94e3fd43922b21382598e9cc0ac732e"
     },
     {
       "path": "scripts/run_checker_paired.sh",
-      "sha256": "7c1ea1f77ed3b11a6399be13771cac08bb7b83fcc16944c057321caa49fa6641"
+      "sha256": "368c2e12e7930465e93a507628c0e066612533483f6717474a6374e4479fe705"
     },
     {
       "path": "pyproject.toml",

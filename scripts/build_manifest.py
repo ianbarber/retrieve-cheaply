@@ -66,6 +66,10 @@ def artifact_role(path: str, payload: dict) -> str:
     name = Path(path).name
     if payload.get("protocol") == "navigation-v1" and path.startswith(("runs/pilot/", "runs/protocol/")):
         return "invalidated_navigation_v1_unsound_gold_derived_contract"
+    if name == "navigation_v2_positive.json":
+        return "navigation_v2_gold_copy_competence_control"
+    if name == "navigation_v2_span_control.json":
+        return "navigation_v2_failed_buggy_span_actionability_control"
     if "navigation_" in name and path.startswith("runs/protocol/"):
         return "mechanical_manipulation_and_leakage_validation"
     if name == "checker_natural_drafts_legacy_7b.json":

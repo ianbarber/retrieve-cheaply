@@ -44,8 +44,9 @@ an interval crossing those bounds is inconclusive rather than equivalent.
 Protocol version `checker-paired-v1` first generates a natural draft with no checker access, stores every
 workspace file and its hash, then forks control, one-shot coherent-patch diagnostics, acceptance gate, and
 deliberately noisy after-every-edit trajectories from those exact bytes. Coherence means the target parses
-and contains no remaining explicit `raise NotImplementedError`. Failed/incoherent drafts remain in the
-unconditional denominator but are separated from semantic checker opportunities.
+and contains no remaining explicit `raise NotImplementedError`. Revision efficacy is conditional on a
+coherent submitted draft. A separate end-to-end estimand retains failed, unsubmitted, and incoherent drafts
+as pipeline failures; they are never silently removed from the denominator.
 
 Diagnostics are target-scoped deltas from the pristine workspace, deduplicated, uncapped in raw JSON, and
 presented with path, range, code, concise message, classification, and code frame. Tests execute outside
@@ -53,8 +54,9 @@ the checked tree. Opportunity means at least one new semantic diagnostic on the 
 syntax/partial-edit failures are separate. The model regime must put 20–70% of coherent development drafts
 in this opportunity set while retaining viable edit behavior. If none does, report that capability gap.
 
-Control and treated revisions share the same token, turn, read, and test budgets. Outcomes include
-unconditional and opportunity-conditioned held-out pass, diagnostics eliminated/retained/introduced,
+Control and treated revisions share the same token, turn, read, and test budgets. Outcomes separately
+include coherent-draft and opportunity-conditioned revision efficacy, plus end-to-end yields across every
+natural draft with pre-revision failures counted as failures. Other measures are diagnostics eliminated/retained/introduced,
 edits overlapping diagnosed locations, type-clean accepted patches, gate rejection/abstention, tokens,
 turns, latency, and expected cost per accepted correct patch. The latter is task-weighted mean total
 draft-plus-revision tokens divided by the accepted-and-held-out-correct rate; rejected, abstained, and wrong
@@ -76,8 +78,9 @@ model/cell/cost proposal.
 
 The historical `navigation-v1` 7B run used a gold-derived, unsound factory contract and is invalid for the
 typed/navigation causal question. Its 0/12 matrix and token differences are retained only as rejected
-apparatus history. The repaired `navigation-v2` pilot passes all mechanical checks; its gold-copy,
-buggy-span actionability, and causal/deployment model cells are unrun. Confirmation is blocked. Fresh
+apparatus history. The repaired `navigation-v2` pilot passes all mechanical checks. Its gold-copy control
+passes 2/2, while the pristine buggy-span actionability control fails 0/2. The driver exits at that floor;
+causal/deployment cells are unrun and confirmation is blocked. Fresh
 checker calibration also blocks
 revisions: 7B yields 0/3 coherent submitted drafts. Across two development batches, 14B yields 2/8 coherent
 drafts; both are type-clean, for 0% semantic opportunity. These are exploratory stopping-gate results, not

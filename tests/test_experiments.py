@@ -5,11 +5,19 @@ import sys
 
 from scaffold.mock_env import MultiFileEnv
 from scripts.analysis.effic_real_stats import binom_two_sided
-from scripts.analysis.analyze_checker_paired import expected_cost_per_accepted_correct, paired_contrast
+from scripts.analysis.analyze_checker_paired import (
+    end_to_end_summary,
+    expected_cost_per_accepted_correct,
+    paired_contrast,
+)
 from scripts.analysis.analyze_navigation import interaction, paired_ratio
 from scripts.experiments.diagnostics import collect_diagnostics, delta, format_diagnostics, is_coherent
 from scripts.experiments.navigation_tasks import build_prompt, build_tasks
-from scripts.experiments.run_navigation import _method_from_metadata, _positive_result
+from scripts.experiments.run_navigation import (
+    _control_floor_failure,
+    _method_from_metadata,
+    _positive_result,
+)
 
 
 def test_navigation_generator_pairs_runtime_and_hides_target(tmp_path):
@@ -110,9 +118,9 @@ def test_navigation_token_equivalence_uses_ratio_of_task_weighted_means():
 
 def test_checker_expected_cost_includes_draft_and_failed_attempts():
     drafts = [
-        {"draft_id": "d1", "task": "t1", "coherent": True,
+        {"draft_id": "d1", "task": "t1", "draft_submitted": True, "coherent": True,
          "draft_diagnostics": [], "in_tokens": 100, "out_tokens": 20},
-        {"draft_id": "d2", "task": "t2", "coherent": True,
+        {"draft_id": "d2", "task": "t2", "draft_submitted": True, "coherent": True,
          "draft_diagnostics": [], "in_tokens": 200, "out_tokens": 20},
     ]
     rows = [
@@ -128,6 +136,31 @@ def test_checker_expected_cost_includes_draft_and_failed_attempts():
     assert result["mean_draft_plus_revision_tokens"] == 220
     assert result["expected_tokens_per_accepted_correct_patch"] == 440
     assert math.isinf(result["ci95"][1])
+
+
+def test_checker_end_to_end_counts_incoherent_draft_as_failure():
+    drafts = [
+        {"draft_id": "d1", "task": "t1", "draft_submitted": True, "coherent": True,
+         "draft_diagnostics": [], "in_tokens": 100, "out_tokens": 20},
+        {"draft_id": "d2", "task": "t2", "draft_submitted": True, "coherent": False,
+         "draft_diagnostics": [], "in_tokens": 200, "out_tokens": 20},
+    ]
+    rows = [{
+        "draft_id": "d1", "task": "t1", "arm": "control", "accepted": True,
+        "held_pass": True, "type_clean": True, "semantic_clean": True,
+        "in_tokens": 50, "out_tokens": 10,
+    }]
+    result = end_to_end_summary(drafts, rows, "control")
+    assert result["final_held_pass_yield"] == 0.5
+    assert result["accepted_correct_yield"] == 0.5
+    assert result["pre_revision_failure_rate"] == 0.5
+
+
+def test_navigation_span_control_enforces_floor():
+    passed = [{"arm": "semantic_span_control", "held_out_pass": True}]
+    failed = [{"arm": "semantic_span_control", "held_out_pass": False}]
+    assert _control_floor_failure("span-control", passed) is None
+    assert _control_floor_failure("span-control", failed)
 
 
 def test_paired_analyzers_reject_incomplete_nested_grids():

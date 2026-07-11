@@ -22,12 +22,23 @@ set +e
 "$PY" scripts/experiments/checker_paired.py calibrate runs/pilot/checker_drafts_7b.json \
   --minimum 0.2 --maximum 0.7 --min-coherent 2
 gate_7b=$?
+if [ "$gate_7b" -ne 0 ] && [ "$gate_7b" -ne 2 ]; then
+  set -e
+  echo "7B calibration failed operationally with exit $gate_7b" >&2
+  exit "$gate_7b"
+fi
 "$PY" scripts/analysis/analyze_checker_calibration.py \
   runs/pilot/checker_drafts_14b.json runs/pilot/checker_drafts_14b_ext.json --enforce
 gate_14b=$?
+if [ "$gate_14b" -ne 0 ] && [ "$gate_14b" -ne 2 ]; then
+  set -e
+  echo "14B calibration failed operationally with exit $gate_14b" >&2
+  exit "$gate_14b"
+fi
 set -e
 if [ "$gate_7b" -eq 0 ] || [ "$gate_14b" -eq 0 ]; then
   echo "A calibration passed; freeze a paired-revision run specification before continuing." >&2
   exit 2
 fi
 echo "Both documented calibration regimes failed the opportunity gate; paired revisions remain blocked."
+exit 2

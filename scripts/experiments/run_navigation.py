@@ -155,6 +155,20 @@ def _metrics(task: dict, events: list[dict], supplied_path: str | None) -> dict:
     }
 
 
+def _control_floor_failure(cells: str, rows: list[dict]) -> str | None:
+    required = {
+        "positive": {"positive_control"},
+        "span-control": {"semantic_span_control"},
+        "controls": {"positive_control", "semantic_span_control"},
+    }.get(cells)
+    if required is None:
+        return None
+    observed = {row["arm"] for row in rows}
+    if not rows or observed != required or not all(row["held_out_pass"] for row in rows):
+        return f"{cells} floor failed; stop before causal pilot"
+    return None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("out")
@@ -318,8 +332,9 @@ def main() -> int:
                     "protocol_source_sha256": _protocol_hashes(),
                     "pyrefly": {"path": pyrefly, "version": pyrefly_version}, "rows": rows,
                 }, indent=2) + "\n", encoding="utf-8")
-    if args.cells == "positive" and (not rows or not all(row["held_out_pass"] for row in rows)):
-        print("positive-control floor failed; stop before causal pilot", file=sys.stderr)
+    floor_failure = _control_floor_failure(args.cells, rows)
+    if floor_failure:
+        print(floor_failure, file=sys.stderr)
         return 2
     return 0
 

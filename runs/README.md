@@ -79,6 +79,8 @@ Run `python3 scripts/analysis/analyze_authoring.py` from the repo root to summar
 | `pilot/navigation_positive_floor_failed_v1.json` | excluded two-row pilot: corrected control passed 1/2 because one trajectory ignored supplied context |
 | `pilot/navigation_positive.json` | v1 edit-only 7B control: 2/2, retained with the invalidated v1 apparatus |
 | `pilot/navigation_all.json` | invalidated v1 7B matrix: unsound gold-derived typed contract; outcome/token claims excluded |
+| `pilot/navigation_v2_positive.json` | sound-protocol gold-copy competence control: 2/2 held-out, one edit each |
+| `pilot/navigation_v2_span_control.json` | identically framed pristine buggy-span actionability control: 0/2; matrix blocked |
 | `pilot/checker_drafts_7b.json` | current-protocol calibration: 3/3 submitted, 0/3 coherent; revisions blocked |
 | `pilot/checker_drafts_14b.json` | current-protocol calibration: 1/3 coherent and type-clean; revisions blocked |
 | `pilot/checker_drafts_14b_ext.json` | five-task extension: 1/5 coherent and type-clean; combined 14B opportunity remains 0/2 |

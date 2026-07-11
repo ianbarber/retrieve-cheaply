@@ -10,6 +10,7 @@ for out in runs/confirmation/navigation_v2_core.json runs/confirmation/navigatio
   fi
 done
 MODEL="$MODEL" REVISION="$REVISION" "$PY" - <<'PY'
+from collections import Counter
 import hashlib, json, os, pathlib, subprocess
 from scaffold.tooling import find_pyrefly
 root = pathlib.Path.cwd()
@@ -41,6 +42,12 @@ if current_version != validation.get("pyrefly", {}).get("version"):
 positive = json.loads((root / "runs/pilot/navigation_v2_positive.json").read_text())
 rows = positive.get("rows", [])
 expected_tasks = {"nav_pilot_17011", "nav_pilot_17027"}
+expected_positive_grid = Counter(
+    (task, 0, "typed", "positive_control") for task in expected_tasks
+)
+positive_grid = Counter(
+    (row.get("task"), row.get("seed"), row.get("variant"), row.get("arm")) for row in rows
+)
 if (positive.get("protocol") != "navigation-v2" or positive.get("model") != os.environ["MODEL"]
         or positive.get("config", {}).get("split") != "pilot"
         or positive.get("config", {}).get("cells") != "positive"
@@ -52,7 +59,7 @@ if (positive.get("protocol") != "navigation-v2" or positive.get("model") != os.e
         or positive.get("config", {}).get("max_turns") != 12
         or positive.get("config", {}).get("max_reads") != 12
         or positive.get("pyrefly", {}).get("version") != current_version
-        or {row.get("task") for row in rows} != expected_tasks
+        or positive_grid != expected_positive_grid
         or not all(row.get("arm") == "positive_control" and row.get("variant") == "typed"
                    and row.get("held_out_pass") for row in rows)):
     raise SystemExit("positive-control artifact is absent or below the edit-competence floor")
@@ -65,6 +72,13 @@ if any(positive_hashes.get(rel) != hashes[rel] for rel in behavior_sources):
     raise SystemExit("positive-control behavior source differs from the frozen protocol")
 span_control = json.loads((root / "runs/pilot/navigation_v2_span_control.json").read_text())
 span_rows = span_control.get("rows", [])
+expected_span_grid = Counter(
+    (task, 0, "typed", "semantic_span_control") for task in expected_tasks
+)
+span_grid = Counter(
+    (row.get("task"), row.get("seed"), row.get("variant"), row.get("arm"))
+    for row in span_rows
+)
 if (span_control.get("protocol") != "navigation-v2"
         or span_control.get("model") != os.environ["MODEL"]
         or span_control.get("config", {}).get("split") != "pilot"
@@ -77,10 +91,11 @@ if (span_control.get("protocol") != "navigation-v2"
         or span_control.get("config", {}).get("max_turns") != 12
         or span_control.get("config", {}).get("max_reads") != 12
         or span_control.get("pyrefly", {}).get("version") != current_version
-        or {row.get("task") for row in span_rows} != expected_tasks
+        or span_grid != expected_span_grid
         or not all(row.get("arm") == "semantic_span_control" and row.get("variant") == "typed"
                    and row.get("semantic_payload_source") == "pristine_task_metadata"
                    and row.get("n_lsp") == 0 and row.get("server_latency_ms") == 0
+                   and not row.get("server_errors")
                    and row.get("held_out_pass") for row in span_rows)):
     raise SystemExit("buggy-span actionability control is absent or below its 2/2 floor")
 span_hashes = span_control.get("protocol_source_sha256", {})
@@ -88,6 +103,19 @@ if any(span_hashes.get(rel) != hashes[rel] for rel in behavior_sources):
     raise SystemExit("buggy-span control behavior source differs from the frozen protocol")
 pilot = json.loads((root / "runs/pilot/navigation_v2_all.json").read_text())
 pilot_rows = pilot.get("rows", [])
+expected_pilot_cells = {
+    ("typed", "baseline"), ("typed", "semantic_auto"),
+    ("erased", "baseline"), ("erased", "semantic_auto"),
+    ("typed", "semantic_avail"), ("typed", "semantic_framed"),
+}
+expected_pilot_grid = Counter(
+    (task, 0, variant, arm)
+    for task in expected_tasks for variant, arm in expected_pilot_cells
+)
+pilot_grid = Counter(
+    (row.get("task"), row.get("seed"), row.get("variant"), row.get("arm"))
+    for row in pilot_rows
+)
 if (pilot.get("protocol") != "navigation-v2" or pilot.get("model") != os.environ["MODEL"]
         or pilot.get("config", {}).get("split") != "pilot"
         or pilot.get("config", {}).get("cells") != "all"
@@ -99,23 +127,26 @@ if (pilot.get("protocol") != "navigation-v2" or pilot.get("model") != os.environ
         or pilot.get("config", {}).get("max_turns") != 12
         or pilot.get("config", {}).get("max_reads") != 12
         or pilot.get("pyrefly", {}).get("version") != current_version
-        or len(pilot_rows) != 12
-        or {row.get("task") for row in pilot_rows} != expected_tasks):
+        or pilot_grid != expected_pilot_grid):
     raise SystemExit("complete causal/deployment pilot artifact is absent")
 pilot_hashes = pilot.get("protocol_source_sha256", {})
 if any(pilot_hashes.get(rel) != hashes[rel] for rel in behavior_sources):
     raise SystemExit("causal pilot behavior source differs from the frozen protocol")
 auto_payloads = {
-    (row.get("task"), row.get("seed")): row.get("semantic_payload_sha256")
+    (row.get("task"), row.get("seed")): (
+        row.get("semantic_payload_sha256"), row.get("semantic_supplied_path")
+    )
     for row in pilot_rows
     if row.get("variant") == "typed" and row.get("arm") == "semantic_auto"
 }
 span_payloads = {
-    (row.get("task"), row.get("seed")): row.get("semantic_payload_sha256")
+    (row.get("task"), row.get("seed")): (
+        row.get("semantic_payload_sha256"), row.get("semantic_supplied_path")
+    )
     for row in span_rows
 }
 if not auto_payloads or auto_payloads != span_payloads or any(
-    payload is None for payload in auto_payloads.values()
+    payload_hash is None or path is None for payload_hash, path in auto_payloads.values()
 ):
     raise SystemExit("live automatic and metadata span-control payloads are not byte-identical")
 core = [row for row in pilot_rows if row.get("arm") in {"baseline", "semantic_auto"}]

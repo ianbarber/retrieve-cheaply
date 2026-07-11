@@ -39,8 +39,9 @@ contract, type-cleanliness, leakage, widened-call, and strict live-Pyrefly check
 apparatus-audit instances. Those 12 are not confirmation because validator changes followed their first
 inspection; a new disjoint 12-instance confirmation split passes mechanical checks and is reserved behind
 source hashes without model exposure. The earlier 7B `navigation-v1` pilot used an unsound gold-derived
-factory return and is retained only as invalid apparatus history; v2 model controls and causal cells are
-unrun. Fresh checker calibration stops correctly: 7B produces 0/3 coherent
+factory return and is retained only as invalid apparatus history. In v2, the gold-copy control passes 2/2,
+but the identically framed pristine buggy-span actionability control fails 0/2. The gated driver therefore
+does not run the causal matrix; no navigation treatment effect is claimed. Fresh checker calibration stops correctly: 7B produces 0/3 coherent
 drafts, while 14B produces 2/8 and both are type-clean. Neither reaches the 20–70% opportunity band;
 paired revisions and navigation confirmation remain unrun.
 
@@ -88,8 +89,8 @@ PYTHON=python3 scripts/run_checker_paired.sh
 ```
 
 The confirmation command is intentionally separate and runs only after the v2 gold-copy and buggy-span
-controls and pilot clear the preregistered gates. It currently exits before model loading because those v2
-model artifacts do not exist:
+controls and pilot clear the preregistered gates. It currently exits before model loading because the
+buggy-span control failed and no causal matrix exists:
 
 ```bash
 PYTHON=python3 scripts/run_navigation_confirmation.sh
@@ -100,15 +101,15 @@ Historical OpenRouter drivers still require `OPENROUTER_API_KEY` or `.orkey` and
 
 ## Decision recipe
 
-| condition | use |
-|---|---|
-| Fact is visible, lexically unique, and cheap to read | grep plus ranged textual retrieval |
-| Binding is ambiguous or remote; re-exports, overloads, factories, or inheritance defeat text | semantic pull navigation |
-| Compact result can replace a large read | automatic or elected definition/method span |
-| Valuable tool is not elected | cheap/precise prompt framing, then policy training |
-| Natural coherent drafts have checker-detectable errors and the model can revise | patch-boundary diagnostic deltas |
-| Self-repair is unreliable and accepted regressions matter | checker gate or offline reranking |
-| Invalid candidates should never enter the search | constrained decoding or training reward |
+| condition | use | evidence confidence |
+|---|---|---|
+| Fact is visible, lexically unique, and cheap to read | grep plus ranged textual retrieval | tentative repository guidance (C6, C9) |
+| Binding is ambiguous or remote; re-exports, overloads, factories, or inheritance defeat text | semantic pull navigation | mechanism supported; v2 agent benefit open (C15, C23) |
+| Compact result can replace a large read | automatic or elected definition/method span | high but narrow against whole-file reads (C1) |
+| Valuable automatic context is not elected | cheap/precise framing, then policy training if needed | tentative framing; model-specific training result (C2, C3) |
+| Natural coherent drafts have checker-detectable errors and the model can revise | patch-boundary diagnostic deltas | literature-motivated; repository effect open (C16, C22) |
+| Self-repair is unreliable and accepted regressions matter | checker gate or offline reranking | external/design guidance only (C14) |
+| Invalid candidates should never enter the search | constrained decoding or training reward | external evidence only |
 
 Always measure whether semantic retrieval substitutes for a read, the checker opportunity rate, whether
 the model edits diagnosed locations, and accepted-defect rate. Static tooling will not solve dynamic

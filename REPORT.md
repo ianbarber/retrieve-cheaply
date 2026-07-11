@@ -26,7 +26,9 @@ We therefore replace the old “types, not language servers” conclusion with a
 causal protocols. Experiment 1 pairs sound typed and erased factory stubs over byte-identical runtime code
 and automatically supplies strict live Pyrefly results to separate semantic information from election. Its
 repaired manipulation checks pass. The earlier 7B model pilot is invalid because its typed factory used a
-false gold-derived return contract, so no current causal model outcome is claimed. Experiment 2
+false gold-derived return contract. In the repaired v2 pilot, the gold-copy control passes 2/2 but the
+pristine buggy-span actionability control fails 0/2, so the causal matrix is correctly not run and no
+navigation treatment effect is claimed. Experiment 2
 freezes natural drafts before paired revisions; fresh 7B and 14B calibration misses the required
 coherence/opportunity band, so paired checker outcomes remain unrun.
 The practical conclusion is conditional: use the cheapest integration that supplies unique, actionable
@@ -209,10 +211,11 @@ source hashes and passes the same mechanical checks; no model has seen it.
 The earlier local 7B `navigation-v1` pilot is invalid for this causal question. Its typed factory promised
 the one gold class for every string key and reinforced the false annotation with a cast. The committed 0/12
 matrix and 2/2 gold-copy control are preserved as rejected apparatus history, but its localization and token
-differences are not evidence about normal typed code. `navigation-v2` has no model outcomes yet. Its runner
-now writes one canonical matrix at the recorded 1,000-token cap, a 400-token gold-copy control, and a
-1,000-token buggy-span actionability control. The one-shot confirmation remains blocked until those controls
-pass and the causal pilot is neither uniformly floored nor ceilinged.
+differences are not evidence about normal typed code. In `navigation-v2`, the 400-token gold-copy control
+passes 2/2 with one edit per task. The identically framed 1,000-token pristine buggy-span control fails 0/2:
+one trajectory makes five unsuccessful edits and the other makes none. The driver exits at this actionability
+floor, so no causal/deployment matrix is produced. This is evidence about the tested model's inability to act
+on the localized buggy span, not a null effect of types or semantic navigation. Confirmation remains blocked.
 
 ### 4.2 Experiment 2: paired checker opportunity and integration
 
@@ -223,8 +226,10 @@ deduplicated, uncapped in raw results, classified as syntax/partial versus seman
 file, range, code, concise message, and code frame. Tests run outside the checked tree.
 
 Opportunity is a new semantic diagnostic on the natural draft. Calibration requires 20–70% opportunity
-among coherent submitted drafts while preserving viable edits. Results will be reported unconditionally
-and on the pre-treatment opportunity subset. The gate rejects `done` while new errors remain; its product
+among coherent submitted drafts while preserving viable edits. Analysis reports revision efficacy among
+coherent submissions and on the pre-treatment opportunity subset, then separately reports end-to-end yield
+across every generated draft with unsubmitted and incoherent drafts counted as pipeline failures. The gate
+rejects `done` while new errors remain; its product
 metrics include accepted type-clean correctness, abstention, and task-weighted draft-plus-revision tokens
 per accepted held-out-correct patch. Rejected, abstained, and wrong attempts remain in the cost numerator.
 One older local 7B smoke artifact
@@ -286,19 +291,21 @@ elect or cannot repair, or latency/context exceeds saved work.
 
 ## 6. Practitioner decision table
 
-| situation | preferred integration | verify in telemetry |
-|---|---|---|
-| Fact is visible, lexically unique, and cheap to read | textual grep/ranged retrieval | localization success and bytes/tokens read |
-| Binding is ambiguous; type/definition is remote; re-exports, overloads, or inheritance defeat text | semantic pull navigation | correct unique resolution and wrong-file edit rate |
-| Compact definition can replace a large read | automatic or elected semantic span | whether it replaces, rather than precedes, the read; expected cost/success |
-| Tool is valuable when forced but rarely elected | cheaper/precise prompt framing, then policy training | election rate and downstream substitution, not calls alone |
-| Natural coherent drafts contain checker-detectable errors and the model can revise | patch-boundary diagnostic delta | opportunity rate, diagnosed-location edits, eliminated/new errors, held-out correctness |
-| Model cannot reliably self-repair, but latent regressions must not ship | acceptance gate or offline reranking | accepted-defect rate, rejection/abstention, false-positive cost |
-| Syntax/type constraints can be enforced before invalid candidates consume budget | constrained decoding or training reward | validity, search cost, and behavioral correctness |
-| Operation is structural and risky by text | server/AST structured rename, references, or edit | semantic preservation and rollback rate |
+| situation | recommended integration | evidence / claim | repository confidence | verify in telemetry |
+|---|---|---|---|---|
+| Fact is visible, lexically unique, and cheap to read | textual grep plus ranged reads | case-study boundary: [C6](evidence/claim_ledger.md#c6), [C9](evidence/claim_ledger.md#c9); counterfactual boundary of C1 | **Tentative guidance**: dispatch leaks and probe logs are incomplete | localization, bytes/tokens read, success |
+| Binding is ambiguous or remote; inheritance, overloads, factories, or re-exports defeat text | semantic pull navigation | v2 mechanism: [C15](evidence/claim_ledger.md#c15); model outcome open: [C23](evidence/claim_ledger.md#c23); prior work supports missing-context retrieval | **Mechanism supported; agent benefit open** | exact resolution, wrong-file edits, server errors/latency |
+| A compact result can replace a large read | automatic or elected definition/method span | direct repository result: [C1](evidence/claim_ledger.md#c1); live-first transfer: C4 | **High but narrow** for compact retrieval; pure live-server transfer tentative | substitution rather than semantic-then-read; expected cost/success |
+| Forced/automatic context helps but the elective tool is rarely chosen | first try explicit cheap/precise framing | model-dependent election: [C3](evidence/claim_ledger.md#c3); historical framed dispatch: C9 | **Tentative and model-specific** | election, substitution, correctness, added context |
+| Framing remains insufficient and the automatic upper bound is valuable | policy training or on-policy relabeling | direct repository policy result: [C2](evidence/claim_ledger.md#c2); C3 caveat | **Supported model-specifically**, not a capability law | election and behavioral retention on held-out opportunities |
+| Natural coherent drafts contain checker-detectable errors and the model can revise | patch-boundary diagnostic deltas | repo opportunity/calibration: [C16](evidence/claim_ledger.md#c16), [C22](evidence/claim_ledger.md#c22); CoCoGen externally | **Repository effect open; literature-motivated** | opportunity, diagnosed-location edits, error deltas, held-out correctness |
+| Self-repair is unreliable and preventing accepted latent defects matters | acceptance gate or offline reranking | no valid repository gate result: [C14](evidence/claim_ledger.md#c14); CompCoder externally | **External/design guidance only** | accepted defects, rejection/abstention, false-positive cost |
+| Invalid candidates can be excluded during generation or training | constrained decoding or compiler/type reward | CompCoder, type-constrained generation, and RLCSF externally; no direct repository claim | **External evidence only** | validity, search cost, behavioral correctness |
+| A structural operation is risky or non-unique as text | server/AST rename, references, or structured edit | CodeStruct externally; no direct repository claim | **External evidence only** | semantic preservation, rollback/failure rate |
 
-Do not expect static tooling to solve dynamic behavior, logical errors outside the type system, incorrect
-annotations, `Any`-heavy boundaries, environment/runtime failures, or errors the model cannot act on.
+Scope limits: static tooling should not be expected to solve dynamic behavior, logical errors outside the
+type system, incorrect annotations, `Any`-heavy boundaries, environment/runtime failures, or errors the
+model cannot act on. These are design boundaries, not all directly tested nulls in this repository.
 
 ## 7. Reproducibility and limitations
 
@@ -320,6 +327,11 @@ They cannot be regenerated from the repaired sound-contract generator and are ne
 `navigation-v2` confirmation gate. Current mechanical artifacts match the v2 source hashes; old raw rows
 remain unchanged.
 
+The v2 control rows retain their exact at-run behavior-source hashes. Their manifest mismatch list contains
+only `analyze_navigation.py`, which was updated to label a controls-only run explicitly, and the execution-
+status text in `evidence/protocols.md`, which was updated after observing the gate. Generator, prompt, model,
+tool, and control-gating code did not change after these rows ran.
+
 ## 8. Conclusion
 
 Language servers help coding agents when they expose correct and unique semantics, compress retrieval,
@@ -329,8 +341,9 @@ cost. They do not help merely because a server exists or a type system is presen
 The supported positive result is compact retrieval against whole-file reads. The historical realistic
 retrieval, checker, and execution results identify plausible negative regimes but are ceilings, leaky
 tasks, noisy integrations, or small case studies rather than universal nulls. The new experiments make
-the missing causal distinctions explicit. The repaired navigation model pilot is unrun, the checker regime
-is rejected at its draft-coherence/opportunity gate, and confirmation remains open.
+the missing causal distinctions explicit. The repaired navigation pilot stops at its buggy-span
+actionability floor before the causal matrix, the checker regime is rejected at its
+draft-coherence/opportunity gate, and confirmation remains open.
 
 The actionable recipe is: start with textual retrieval; add semantic pull for genuinely ambiguous or
 remote bindings; supply compact results automatically to measure the information upper bound; train

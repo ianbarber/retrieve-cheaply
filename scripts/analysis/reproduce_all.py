@@ -43,6 +43,9 @@ def main() -> None:
     run(py, "scripts/analyze_runtime.py")
     run(py, "scripts/analysis/analyze_checker_paired.py", "--drafts",
         "runs/pilot/checker_drafts_7b_smoke.json")
+    run(py, "scripts/analysis/analyze_navigation.py",
+        "runs/pilot/navigation_v2_positive.json",
+        "runs/pilot/navigation_v2_span_control.json")
     for model in ("7b", "14b", "14b_ext"):
         drafts = f"runs/pilot/checker_drafts_{model}.json"
         run(py, "scripts/analysis/analyze_checker_paired.py", "--drafts", drafts)

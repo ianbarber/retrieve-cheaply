@@ -38,8 +38,9 @@ task-level reanalysis, audits the checker artifacts, and revalidates the navigat
 - `analysis/analyze_dispatch.py`, `analyze_authoring.py`, `analyze_inference.py`, and
   `../analyze_runtime.py` reproduce scoped historical observations.
 - `analysis/analyze_navigation.py` implements paired task effects and the preregistered 0.90–1.10
-  task-weighted token-ratio equivalence test. `analyze_checker_paired.py` includes task-weighted total
-  draft-plus-revision cost per accepted correct patch.
+  task-weighted token-ratio equivalence test. `analyze_checker_paired.py` separates coherent-draft revision
+  efficacy from end-to-end yield over all natural drafts and includes task-weighted total draft-plus-revision
+  cost per accepted correct patch.
 
 ## Drivers and tools
 
