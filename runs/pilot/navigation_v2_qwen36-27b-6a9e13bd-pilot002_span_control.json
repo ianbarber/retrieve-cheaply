@@ -1,0 +1,248 @@
+{
+  "protocol": "navigation-v2",
+  "model": "Qwen/Qwen3.6-27B",
+  "model_meta": {
+    "revision": null,
+    "transformers": "5.9.0",
+    "torch": "2.11.0+cu128",
+    "dtype": "torch.bfloat16"
+  },
+  "config": {
+    "out": "runs/pilot/navigation_v2_qwen36-27b-6a9e13bd-pilot002_span_control.json",
+    "model": "Qwen/Qwen3.6-27B",
+    "revision": "6a9e13bd6fc8f0983b9b99948120bc37f49c13e9",
+    "split": "pilot",
+    "cells": "span-control",
+    "names": "nav_pilot_17011,nav_pilot_17027",
+    "seeds": 1,
+    "seed_start": 0,
+    "temperature": 0.0,
+    "max_new": 1000,
+    "max_turns": 12,
+    "max_reads": 12,
+    "gpu_only": true,
+    "tmp_root": null
+  },
+  "cells": [
+    [
+      "typed",
+      "semantic_span_control"
+    ]
+  ],
+  "protocol_source_sha256": {
+    "scripts/experiments/navigation_tasks.py": "f860fd07fdeb2d4f78d89a047c6804d79cc3babd60fab7e0a06e839679692d97",
+    "scripts/experiments/run_navigation.py": "319743150b0b49a86e8c52d5264f5736d887a396e89bb5bfa7280fdce4ea72b8",
+    "scripts/analysis/analyze_navigation.py": "3afeb993cd0950ea2b0b1fd4264807de3872b508623b58d90660c348b7dccedf",
+    "scripts/run_navigation_pilot.sh": "727d6780ae7d3fbac35b88e02ddbe554b3a6687293e329a1f11d05a62f2adb77",
+    "scripts/run_navigation_confirmation.sh": "af48c93caf45c9047828d5a7b76eed7977419290ad6863917a1df88fa50a1d56",
+    "scaffold/stream_agent.py": "cc052cb2882cf3b35dab51a9d0d55b49b811341d52c6dde105e03f535c9f2db8",
+    "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+    "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+    "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81",
+    "evidence/protocols.md": "a5c6b2f158808b8ba576f4fa773146bbc49339f1b98574e66a0160524f15aecf"
+  },
+  "pyrefly": {
+    "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+    "version": "pyrefly 1.0.0"
+  },
+  "rows": [
+    {
+      "task": "nav_pilot_17011",
+      "family": 17011,
+      "split": "pilot",
+      "variant": "typed",
+      "arm": "semantic_span_control",
+      "seed": 0,
+      "resolved": true,
+      "visible_pass": true,
+      "held_out_pass": true,
+      "bailed": false,
+      "in_tokens": 1217,
+      "out_tokens": 337,
+      "turns": 5,
+      "n_reads": 3,
+      "n_lsp": 0,
+      "n_tests": 1,
+      "n_edits": 1,
+      "wall_sec": 130.147,
+      "server_latency_ms": 0,
+      "server_call_latencies_ms": [],
+      "server_errors": [],
+      "semantic_supplied_path": "pkg/units/uantyk.py",
+      "semantic_payload_sha256": "c9d6ba6752ae37d2ba50e8f2515b323c7cb5a7db487c52f4596c85f9c29fb063",
+      "semantic_payload_source": "pristine_task_metadata",
+      "correct_file_localized_before_first_edit": true,
+      "first_edit_path": "pkg/units/uantyk.py",
+      "wrong_file_edits": 0,
+      "semantic_then_target_read": true,
+      "events": [
+        {
+          "tok": 94,
+          "type": "grep",
+          "n": 1,
+          "pat": "ktdqqf",
+          "nhits": 3,
+          "paths": [
+            "pkg/app.py",
+            "pkg/factory.py",
+            "pkg/factory.pyi"
+          ]
+        },
+        {
+          "tok": 138,
+          "type": "grep",
+          "n": 2,
+          "pat": "class Cccctrhg",
+          "nhits": 1,
+          "paths": [
+            "pkg/units/uantyk.py"
+          ]
+        },
+        {
+          "tok": 191,
+          "type": "read",
+          "n": 3,
+          "path": "pkg/units/uantyk.py",
+          "ranged": true
+        },
+        {
+          "tok": 335,
+          "type": "line_edit",
+          "path": "pkg/units/uantyk.py",
+          "lines": "20-21",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def mvzmgvtx(self, value: int) -> int:\n        return value + 43"
+        },
+        {
+          "tok": 335,
+          "type": "turn",
+          "n": 4,
+          "via": "eos"
+        },
+        {
+          "tok": 336,
+          "type": "test",
+          "n": 1,
+          "resolved": true
+        },
+        {
+          "tok": 336,
+          "type": "turn",
+          "n": 5,
+          "via": "test"
+        }
+      ],
+      "stream_tail": "> int:\npkg/factory.py:21: \"ktdqqf\": Cccctrhg,\npkg/factory.pyi:48: def make(token: Literal[\"ktdqqf\"]) -> Cccctrhg: ...\n</grep><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\nSo `ktdqqf` maps to class `Cccctrhg`. Let me find where `Cccctrhg` is defined.\n\n<grep pat=\"class Cccctrhg\"/><|im_end|>\n<|im_start|>user\n<grep pat=\"class Cccctrhg\" hits=\"1\">\npkg/units/uantyk.py:19: class Cccctrhg(Bdnejktb):\n</grep><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\nSo `Cccctrhg` is in `pkg/units/uantyk.py`. Let me read the full file to understand the context.\n\n<read path=\"pkg/units/uantyk.py\" lines=\"1-30\"/><|im_end|>\n<|im_start|>user\n<file path=\"pkg/units/uantyk.py\" lines=\"1-21\">\n   1| from pkg.base import Bdnejktb\n   2| \n   3| \n   4| class Cjletsxe(Bdnejktb):\n   5|     def mvzmgvtx(self, value: int) -> int:\n   6|         return value + 33\n   7| \n   8| \n   9| class Ckcahnwd(Bdnejktb):\n  10|     def mvzmgvtx(self, value: int) -> int:\n  11|         return value + 58\n  12| \n  13| \n  14| class Cxpfxihy(Bdnejktb):\n  15|     def mvzmgvtx(self, value: int) -> int:\n  16|         return value + 65\n  17| \n  18| \n  19| class Cccctrhg(Bdnejktb):\n  20|     def mvzmgvtx(self, value: int) -> int:\n  21|         return value + 44\n</file><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\nThe class `Cccctrhg` has `mvzmgvtx` returning `value + 44`. For `execute('ktdqqf', 4)` to return 47, we need `4 + x = 47`, so `x = 43`. The current code returns `value + 44` which gives 48. The fix is to change `44` to `43`.\n\n<edit path=\"pkg/units/uantyk.py\" lines=\"20-21\">    def mvzmgvtx(self, value: int) -> int:\n        return value + 43</edit><|im_end|>\n<|im_start|>user\nRun <test/> to check whether your edit fixed the tests.\n\nCurrent `pkg/units/uantyk.py` (edit against THIS exact text):\n  1| from pkg.base import Bdnejktb\n  2| \n  3| \n  4| class Cjletsxe(Bdnejktb):\n  5|     def mvzmgvtx(self, value: int) -> int:\n  6|         return value + 33\n  7| \n  8| \n  9| class Ckcahnwd(Bdnejktb):\n 10|     def mvzmgvtx(self, value: int) -> int:\n 11|         return value + 58\n 12| \n 13| \n 14| class Cxpfxihy(Bdnejktb):\n 15|     def mvzmgvtx(self, value: int) -> int:\n 16|         return value + 65\n 17| \n 18| \n 19| class Cccctrhg(Bdnejktb):\n 20|     def mvzmgvtx(self, value: int) -> int:\n 21|         return value + 43<|im_end|>\n<|im_start|>assistant\n<think><|im_end|>\n<|im_start|>user\n<test_result>\nALL TESTS PASS.\n</test_result>\nTests pass \u2014 emit <done/> if the fix is complete.<|im_end|>\n<|im_start|>assistant\n<think>"
+    },
+    {
+      "task": "nav_pilot_17027",
+      "family": 17027,
+      "split": "pilot",
+      "variant": "typed",
+      "arm": "semantic_span_control",
+      "seed": 0,
+      "resolved": true,
+      "visible_pass": true,
+      "held_out_pass": true,
+      "bailed": false,
+      "in_tokens": 1340,
+      "out_tokens": 180,
+      "turns": 6,
+      "n_reads": 4,
+      "n_lsp": 0,
+      "n_tests": 1,
+      "n_edits": 1,
+      "wall_sec": 76.928,
+      "server_latency_ms": 0,
+      "server_call_latencies_ms": [],
+      "server_errors": [],
+      "semantic_supplied_path": "pkg/units/umeewq.py",
+      "semantic_payload_sha256": "69f86afdcdd14305d8f535eebd444c10ab9ea0e28444dae849c65631a50dd580",
+      "semantic_payload_source": "pristine_task_metadata",
+      "correct_file_localized_before_first_edit": true,
+      "first_edit_path": "pkg/units/umeewq.py",
+      "wrong_file_edits": 0,
+      "semantic_then_target_read": true,
+      "events": [
+        {
+          "tok": 8,
+          "type": "grep",
+          "n": 1,
+          "pat": "mkcusinq",
+          "nhits": 11,
+          "paths": [
+            "pkg/app.py",
+            "pkg/base.py",
+            "pkg/units/uiiymg.py",
+            "pkg/units/uixtob.py",
+            "pkg/units/umeewq.py",
+            "pkg/units/urpfgf.py",
+            "pkg/widened.py"
+          ]
+        },
+        {
+          "tok": 20,
+          "type": "grep",
+          "n": 2,
+          "pat": "kyynmt",
+          "nhits": 3,
+          "paths": [
+            "pkg/app.py",
+            "pkg/factory.py",
+            "pkg/factory.pyi"
+          ]
+        },
+        {
+          "tok": 34,
+          "type": "grep",
+          "n": 3,
+          "pat": "Csxqghor",
+          "nhits": 5,
+          "paths": [
+            "pkg/factory.py",
+            "pkg/factory.pyi",
+            "pkg/units/umeewq.py"
+          ]
+        },
+        {
+          "tok": 58,
+          "type": "read",
+          "n": 4,
+          "path": "pkg/units/umeewq.py",
+          "ranged": true
+        },
+        {
+          "tok": 178,
+          "type": "line_edit",
+          "path": "pkg/units/umeewq.py",
+          "lines": "5-6",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def mkcusinq(self, value: int) -> int:\n        return value * 16"
+        },
+        {
+          "tok": 178,
+          "type": "turn",
+          "n": 5,
+          "via": "eos"
+        },
+        {
+          "tok": 179,
+          "type": "test",
+          "n": 1,
+          "resolved": true
+        },
+        {
+          "tok": 179,
+          "type": "turn",
+          "n": 6,
+          "via": "test"
+        }
+      ],
+      "stream_tail": "t:\npkg/units/umeewq.py:5: def mkcusinq(self, value: int) -> int:\npkg/units/umeewq.py:10: def mkcusinq(self, value: int) -> int:\npkg/units/urpfgf.py:5: def mkcusinq(self, value: int) -> int:\npkg/units/urpfgf.py:10: def mkcusinq(self, value: int) -> int:\npkg/widened.py:6: return x.mkcusinq(value)\n</grep><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n<grep pat=\"kyynmt\"/><|im_end|>\n<|im_start|>user\n<grep pat=\"kyynmt\" hits=\"3\">\npkg/app.py:6: def execute(token: Literal[\"kyynmt\"], value: int) -> int:\npkg/factory.py:10: \"kyynmt\": Csxqghor,\npkg/factory.pyi:15: def make(token: Literal[\"kyynmt\"]) -> Csxqghor: ...\n</grep><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n<grep pat=\"Csxqghor\"/><|im_end|>\n<|im_start|>user\n<grep pat=\"Csxqghor\" hits=\"5\">\npkg/factory.py:4: from pkg.units.umeewq import Csxqghor, Cbtgvvgq\npkg/factory.py:10: \"kyynmt\": Csxqghor,\npkg/factory.pyi:5: from pkg.units.umeewq import Csxqghor, Cbtgvvgq\npkg/factory.pyi:15: def make(token: Literal[\"kyynmt\"]) -> Csxqghor: ...\npkg/units/umeewq.py:4: class Csxqghor(Bwstwmxd):\n</grep><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n<read path=\"pkg/units/umeewq.py\" lines=\"1-15\"/><|im_end|>\n<|im_start|>user\n<file path=\"pkg/units/umeewq.py\" lines=\"1-11\">\n   1| from pkg.base import Bwstwmxd\n   2| \n   3| \n   4| class Csxqghor(Bwstwmxd):\n   5|     def mkcusinq(self, value: int) -> int:\n   6|         return value * 17\n   7| \n   8| \n   9| class Cbtgvvgq(Bwstwmxd):\n  10|     def mkcusinq(self, value: int) -> int:\n  11|         return value * 3\n</file><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n`execute('kyynmt', 5)` should return 80. The factory maps `\"kyynmt\"` to `Csxqghor`, which currently returns `value * 17` = `5 * 17` = 85. To get 80, it should be `value * 16`.\n\n<edit path=\"pkg/units/umeewq.py\" lines=\"5-6\">    def mkcusinq(self, value: int) -> int:\n        return value * 16</edit><|im_end|>\n<|im_start|>user\nRun <test/> to check whether your edit fixed the tests.\n\nCurrent `pkg/units/umeewq.py` (edit against THIS exact text):\n  1| from pkg.base import Bwstwmxd\n  2| \n  3| \n  4| class Csxqghor(Bwstwmxd):\n  5|     def mkcusinq(self, value: int) -> int:\n  6|         return value * 16\n  7| \n  8| \n  9| class Cbtgvvgq(Bwstwmxd):\n 10|     def mkcusinq(self, value: int) -> int:\n 11|         return value * 3<|im_end|>\n<|im_start|>assistant\n<think><|im_end|>\n<|im_start|>user\n<test_result>\nALL TESTS PASS.\n</test_result>\nTests pass \u2014 emit <done/> if the fix is complete.<|im_end|>\n<|im_start|>assistant\n<think>"
+    }
+  ]
+}

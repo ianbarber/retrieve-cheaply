@@ -1,0 +1,160 @@
+{
+  "protocol": "navigation-v2",
+  "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+  "model_meta": {
+    "revision": "aedcc2d42b622764e023cf882b6652e646b95671",
+    "transformers": "5.9.0",
+    "torch": "2.11.0+cu128",
+    "dtype": "torch.bfloat16"
+  },
+  "config": {
+    "out": "runs/pilot/navigation_v2_qwen25coder14b-aedcc2d4-pilot001_positive.json",
+    "model": "Qwen/Qwen2.5-Coder-14B-Instruct",
+    "revision": "aedcc2d42b622764e023cf882b6652e646b95671",
+    "split": "pilot",
+    "cells": "positive",
+    "names": "nav_pilot_17011,nav_pilot_17027",
+    "seeds": 1,
+    "seed_start": 0,
+    "temperature": 0.0,
+    "max_new": 400,
+    "max_turns": 12,
+    "max_reads": 12,
+    "gpu_only": true,
+    "tmp_root": null
+  },
+  "cells": [
+    [
+      "typed",
+      "positive_control"
+    ]
+  ],
+  "protocol_source_sha256": {
+    "scripts/experiments/navigation_tasks.py": "f860fd07fdeb2d4f78d89a047c6804d79cc3babd60fab7e0a06e839679692d97",
+    "scripts/experiments/run_navigation.py": "319743150b0b49a86e8c52d5264f5736d887a396e89bb5bfa7280fdce4ea72b8",
+    "scripts/analysis/analyze_navigation.py": "3afeb993cd0950ea2b0b1fd4264807de3872b508623b58d90660c348b7dccedf",
+    "scripts/run_navigation_pilot.sh": "727d6780ae7d3fbac35b88e02ddbe554b3a6687293e329a1f11d05a62f2adb77",
+    "scripts/run_navigation_confirmation.sh": "af48c93caf45c9047828d5a7b76eed7977419290ad6863917a1df88fa50a1d56",
+    "scaffold/stream_agent.py": "19dbc63f43be04d4349dc5e6109404dddedbec187006c88acf1bfbb56de79a12",
+    "scaffold/real_env.py": "a1b38f3d228d659a37329eb9088a80de20422f07712de9bdd9b3c7ad694ae70b",
+    "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+    "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81",
+    "evidence/protocols.md": "a5c6b2f158808b8ba576f4fa773146bbc49339f1b98574e66a0160524f15aecf"
+  },
+  "pyrefly": {
+    "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+    "version": "pyrefly 1.0.0"
+  },
+  "rows": [
+    {
+      "task": "nav_pilot_17011",
+      "family": 17011,
+      "split": "pilot",
+      "variant": "typed",
+      "arm": "positive_control",
+      "seed": 0,
+      "resolved": true,
+      "visible_pass": true,
+      "held_out_pass": true,
+      "bailed": false,
+      "in_tokens": 641,
+      "out_tokens": 61,
+      "turns": 1,
+      "n_reads": 0,
+      "n_lsp": 0,
+      "n_tests": 1,
+      "n_edits": 1,
+      "wall_sec": 14.719,
+      "server_latency_ms": 0,
+      "server_call_latencies_ms": [],
+      "server_errors": [],
+      "semantic_supplied_path": "pkg/units/uantyk.py",
+      "semantic_payload_sha256": "c7f8e734fe3702a975a7e3c391c5aaa2c23aef8aff7914b82b3e2495af281cb8",
+      "semantic_payload_source": "gold_corrected_task_metadata",
+      "correct_file_localized_before_first_edit": true,
+      "first_edit_path": "pkg/units/uantyk.py",
+      "wrong_file_edits": 0,
+      "semantic_then_target_read": false,
+      "events": [
+        {
+          "tok": 57,
+          "type": "line_edit",
+          "path": "pkg/units/uantyk.py",
+          "lines": "20-21",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def mvzmgvtx(self, value: int) -> int:\n        return value + 43"
+        },
+        {
+          "tok": 60,
+          "type": "test",
+          "n": 1,
+          "resolved": true
+        },
+        {
+          "tok": 60,
+          "type": "turn",
+          "n": 1,
+          "via": "test"
+        }
+      ],
+      "stream_tail": "<edit path=\"pkg/units/uantyk.py\" lines=\"20-21\">\n  20|     def mvzmgvtx(self, value: int) -> int:\n  21|         return value + 43\n</edit>\n<test/>\n<|im_end|>\n<|im_start|>user\n<test_result>\nALL TESTS PASS.\n</test_result>\nTests pass \u2014 emit <done/> if the fix is complete.\n\nCurrent `pkg/units/uantyk.py` (edit against THIS exact text):\n  1| from pkg.base import Bdnejktb\n  2| \n  3| \n  4| class Cjletsxe(Bdnejktb):\n  5|     def mvzmgvtx(self, value: int) -> int:\n  6|         return value + 33\n  7| \n  8| \n  9| class Ckcahnwd(Bdnejktb):\n 10|     def mvzmgvtx(self, value: int) -> int:\n 11|         return value + 58\n 12| \n 13| \n 14| class Cxpfxihy(Bdnejktb):\n 15|     def mvzmgvtx(self, value: int) -> int:\n 16|         return value + 65\n 17| \n 18| \n 19| class Cccctrhg(Bdnejktb):\n 20|     def mvzmgvtx(self, value: int) -> int:\n 21|         return value + 43<|im_end|>\n<|im_start|>assistant\n<"
+    },
+    {
+      "task": "nav_pilot_17027",
+      "family": 17027,
+      "split": "pilot",
+      "variant": "typed",
+      "arm": "positive_control",
+      "seed": 0,
+      "resolved": true,
+      "visible_pass": true,
+      "held_out_pass": true,
+      "bailed": false,
+      "in_tokens": 512,
+      "out_tokens": 56,
+      "turns": 1,
+      "n_reads": 0,
+      "n_lsp": 0,
+      "n_tests": 1,
+      "n_edits": 1,
+      "wall_sec": 12.649,
+      "server_latency_ms": 0,
+      "server_call_latencies_ms": [],
+      "server_errors": [],
+      "semantic_supplied_path": "pkg/units/umeewq.py",
+      "semantic_payload_sha256": "56e41e968d669299d9183a05bc57193550e70c0249bb05590a7dea09f5366225",
+      "semantic_payload_source": "gold_corrected_task_metadata",
+      "correct_file_localized_before_first_edit": true,
+      "first_edit_path": "pkg/units/umeewq.py",
+      "wrong_file_edits": 0,
+      "semantic_then_target_read": false,
+      "events": [
+        {
+          "tok": 52,
+          "type": "line_edit",
+          "path": "pkg/units/umeewq.py",
+          "lines": "5-6",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def mkcusinq(self, value: int) -> int:\n        return value * 16"
+        },
+        {
+          "tok": 55,
+          "type": "test",
+          "n": 1,
+          "resolved": true
+        },
+        {
+          "tok": 55,
+          "type": "turn",
+          "n": 1,
+          "via": "test"
+        }
+      ],
+      "stream_tail": "<edit path=\"pkg/units/umeewq.py\" lines=\"5-6\">\n   5|     def mkcusinq(self, value: int) -> int:\n   6|         return value * 16\n</edit>\n<test/>\n<|im_end|>\n<|im_start|>user\n<test_result>\nALL TESTS PASS.\n</test_result>\nTests pass \u2014 emit <done/> if the fix is complete.\n\nCurrent `pkg/units/umeewq.py` (edit against THIS exact text):\n  1| from pkg.base import Bwstwmxd\n  2| \n  3| \n  4| class Csxqghor(Bwstwmxd):\n  5|     def mkcusinq(self, value: int) -> int:\n  6|         return value * 16\n  7| \n  8| \n  9| class Cbtgvvgq(Bwstwmxd):\n 10|     def mkcusinq(self, value: int) -> int:\n 11|         return value * 3<|im_end|>\n<|im_start|>assistant\n<"
+    }
+  ]
+}

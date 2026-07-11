@@ -27,13 +27,49 @@ causal protocols. Experiment 1 pairs sound typed and erased factory stubs over b
 and automatically supplies strict live Pyrefly results to separate semantic information from election. Its
 repaired manipulation checks pass. The earlier 7B model pilot is invalid because its typed factory used a
 false gold-derived return contract. In the repaired v2 pilot, the gold-copy control passes 2/2 but the
-pristine buggy-span actionability control fails 0/2, so the causal matrix is correctly not run and no
-navigation treatment effect is claimed. Experiment 2
-freezes natural drafts before paired revisions; fresh 7B and 14B calibration misses the required
-coherence/opportunity band, so paired checker outcomes remain unrun.
+pristine buggy-span actionability control fails 0/2. A pinned Qwen3.6-27B pilot clears both repaired
+controls and runs the sound matrix, but all 12 causal/deployment cells pass and automatic results are
+followed by target reads, so correctness is non-identifying and useful compression is not demonstrated.
+Experiment 2 freezes natural drafts before paired revisions. Fresh 7B and 14B calibration misses the
+required coherence/opportunity band. A separately selected two-task checker-positive case series provides
+a valid conditional paired result: patch-boundary diagnostics improve final type cleanliness from 1/2 to
+2/2, but control, diagnostics, and gate all remain 1/2 on accepted-clean-correct outcome.
 The practical conclusion is conditional: use the cheapest integration that supplies unique, actionable
 information at an actual opportunity, and measure whether it replaces work rather than merely preceding
 it.
+
+## Practitioner recipe
+
+1. **Use text for local, lexically obvious facts.** Prefer grep and ranged reads when the binding is unique
+   and nearby. This is tentative repository guidance from historical case-study and leaky regimes, not an
+   equivalence result ([C6](evidence/claim_ledger.md#c6), [C9](evidence/claim_ledger.md#c9)).
+2. **Push semantic context for ambiguous or remote bindings.** Test an automatically supplied resolved
+   definition or editable method span before expecting tool election. The typed/erased mechanism is
+   validated. The two-task 27B pilot shows a type-by-context cost interaction but is ceilinged and does not
+   demonstrate useful compression ([C15](evidence/claim_ledger.md#c15),
+   [C24](evidence/claim_ledger.md#c24)).
+3. **Treat types as a precision multiplier, not an LSP alternative.** Sound readable or inferred types can
+   let a server select an override, overload, or implementation; erased boundaries reduce that signal.
+   This mechanism is supported mechanically in v2, while its behavioral value remains open ([C15](evidence/claim_ledger.md#c15)).
+4. **Solve election only after proving information value.** If pushed context helps but an elective tool is
+   ignored, improve framing and then consider retrieval-policy training. Election is model-dependent; the
+   training result is supported only for the tested policy/model ([C2](evidence/claim_ledger.md#c2),
+   [C3](evidence/claim_ledger.md#c3)).
+5. **Run checkers on coherent patches.** Avoid partial-edit flooding; test target-scoped diagnostic deltas at
+   patch boundaries on checker-positive drafts. A two-task selected case series supports diagnostic cleanup,
+   while joint outcome value remains open ([C16](evidence/claim_ledger.md#c16),
+   [C22](evidence/claim_ledger.md#c22), [C25](evidence/claim_ledger.md#c25)).
+6. **Use gates when diagnostics are reliable but repair is unreliable.** Judge gates by accepted clean and
+   behaviorally correct patches, prevented latent defects, abstention, and total cost. This is external/design
+   guidance: the case series observes rejection but no prevented accepted defect ([C14](evidence/claim_ledger.md#c14),
+   [C25](evidence/claim_ledger.md#c25)).
+7. **Keep semantic tools only when they replace work.** A definition call followed by the same reads is
+   overhead, not compression. Compact retrieval replacing whole-file reads is supported, narrow evidence;
+   transfer to a pure live server remains tentative ([C1](evidence/claim_ledger.md#c1),
+   [C4](evidence/claim_ledger.md#c4)).
+
+The procedure below explains how to establish these conditions and stopping gates. The recipe is the
+reader-facing result; historical experiments are retained as provenance and boundary evidence.
 
 ## 1. Terms and causal model
 
@@ -211,11 +247,20 @@ source hashes and passes the same mechanical checks; no model has seen it.
 The earlier local 7B `navigation-v1` pilot is invalid for this causal question. Its typed factory promised
 the one gold class for every string key and reinforced the false annotation with a cast. The committed 0/12
 matrix and 2/2 gold-copy control are preserved as rejected apparatus history, but its localization and token
-differences are not evidence about normal typed code. In `navigation-v2`, the 400-token gold-copy control
-passes 2/2 with one edit per task. The identically framed 1,000-token pristine buggy-span control fails 0/2:
-one trajectory makes five unsuccessful edits and the other makes none. The driver exits at this actionability
-floor, so no causal/deployment matrix is produced. This is evidence about the tested model's inability to act
-on the localized buggy span, not a null effect of types or semantic navigation. Confirmation remains blocked.
+differences are not evidence about normal typed code. In `navigation-v2`, 7B passes gold-copy 2/2 but fails
+buggy-span 0/2. A pinned 14B rung passes gold-copy 2/2 and buggy-span 1/2, so its matrix is withheld. The
+first Qwen3.6-27B attempt exposes a compact-edit parser incompatibility: it emits the correct edits on the
+same line as the opening tag, but the harness records zero edits. That attempt is preserved. A regression-
+tested parser repair accepts both compact and newline forms; under a new run tag, the same pinned 27B
+revision passes gold-copy and buggy-span controls 2/2 and opens the matrix.
+
+All 12 two-task matrix cells pass, so pass effects are non-identifying. Typed automatic context has a total-
+token ratio of 1.037 versus typed baseline (95% task bootstrap 0.988–1.093), within the preregistered
+0.90–1.10 margin. Erased automatic context costs 1.190x baseline (1.119–1.251), for an exploratory
+type-by-context interaction of -214 tokens (-402 to -26). This is not useful compression: every automatic
+semantic payload is followed by a target-file read. Neutral elective navigation is chosen 0/2; cheap/precise
+framing raises election to 1/2. The result supports a narrow precision/overhead mechanism, not a correctness
+benefit or deployable navigation win. Confirmation remains blocked because the pilot is at behavioral ceiling.
 
 ### 4.2 Experiment 2: paired checker opportunity and integration
 
@@ -243,7 +288,20 @@ and produces 2/8 coherent drafts; both pass held-out behavior and have no semant
 Thus neither regime reaches the
 preregistered minimum of two coherent drafts or the 20–70% opportunity band. This is a capability/calibration
 gap for the tested local models, not a checker null. Historical replay proves that checker-positive final
-workspaces can occur, but it cannot supply the missing paired first-draft counterfactual.
+workspaces can occur, but it cannot estimate natural opportunity prevalence or same-model end-to-end cost.
+
+The conditional case series therefore selects the two exact recovered coherent checker-positive workspaces
+before treatment and forks byte-identical control, one-shot patch-boundary diagnostics, and acceptance-gate
+revisions. A pinned Qwen3.6-27B revision runs one common seed per task/arm with an 800-token cap. On the
+harder task, every arm removes the three original semantic diagnostics but remains behaviorally wrong and
+unaccepted; control and gate introduce two new diagnostics, while the diagnostic arm remains type-clean.
+On the latent-defect task, all arms make the same diagnosed-location edit and finish accepted, type-clean,
+and held-out correct. Thus patch-boundary diagnostics raise type-clean final workspaces from 1/2 to 2/2,
+but held pass and the primary `accepted && type_clean && held_pass` outcome remain 1/2 in every arm.
+Diagnostics cost 1,653 mean revision tokens versus 1,296 for control. The gate explicitly rejects the
+unresolved task, but control also does not submit it, so no accepted-defect reduction is observed. This is
+a valid paired conditional-efficacy result on two selected opportunities, not evidence of prevalence,
+population effect, or same-model deployment value ([C25](evidence/claim_ledger.md#c25)).
 
 ### 4.3 External validity
 
@@ -294,12 +352,12 @@ elect or cannot repair, or latency/context exceeds saved work.
 | situation | recommended integration | evidence / claim | repository confidence | verify in telemetry |
 |---|---|---|---|---|
 | Fact is visible, lexically unique, and cheap to read | textual grep plus ranged reads | case-study boundary: [C6](evidence/claim_ledger.md#c6), [C9](evidence/claim_ledger.md#c9); counterfactual boundary of C1 | **Tentative guidance**: dispatch leaks and probe logs are incomplete | localization, bytes/tokens read, success |
-| Binding is ambiguous or remote; inheritance, overloads, factories, or re-exports defeat text | semantic pull navigation | v2 mechanism: [C15](evidence/claim_ledger.md#c15); model outcome open: [C23](evidence/claim_ledger.md#c23); prior work supports missing-context retrieval | **Mechanism supported; agent benefit open** | exact resolution, wrong-file edits, server errors/latency |
-| A compact result can replace a large read | automatic or elected definition/method span | direct repository result: [C1](evidence/claim_ledger.md#c1); live-first transfer: C4 | **High but narrow** for compact retrieval; pure live-server transfer tentative | substitution rather than semantic-then-read; expected cost/success |
+| Binding is ambiguous or remote; inheritance, overloads, factories, or re-exports defeat text | first test pushed semantic context, then semantic pull navigation | v2 mechanism: [C15](evidence/claim_ledger.md#c15); ceilinged two-task pilot: [C24](evidence/claim_ledger.md#c24); prior work supports missing-context retrieval | **Mechanism supported; useful agent benefit open** | exact resolution, wrong-file edits, substitution, server errors/latency |
+| A compact result can replace a large read | automatic or elected definition/method span | direct repository result: [C1](evidence/claim_ledger.md#c1); live-first transfer: [C4](evidence/claim_ledger.md#c4) | **Supported, narrow** for compact retrieval; pure live-server transfer tentative | substitution rather than semantic-then-read; expected cost/success |
 | Forced/automatic context helps but the elective tool is rarely chosen | first try explicit cheap/precise framing | model-dependent election: [C3](evidence/claim_ledger.md#c3); historical framed dispatch: C9 | **Tentative and model-specific** | election, substitution, correctness, added context |
 | Framing remains insufficient and the automatic upper bound is valuable | policy training or on-policy relabeling | direct repository policy result: [C2](evidence/claim_ledger.md#c2); C3 caveat | **Supported model-specifically**, not a capability law | election and behavioral retention on held-out opportunities |
-| Natural coherent drafts contain checker-detectable errors and the model can revise | patch-boundary diagnostic deltas | repo opportunity/calibration: [C16](evidence/claim_ledger.md#c16), [C22](evidence/claim_ledger.md#c22); CoCoGen externally | **Repository effect open; literature-motivated** | opportunity, diagnosed-location edits, error deltas, held-out correctness |
-| Self-repair is unreliable and preventing accepted latent defects matters | acceptance gate or offline reranking | no valid repository gate result: [C14](evidence/claim_ledger.md#c14); CompCoder externally | **External/design guidance only** | accepted defects, rejection/abstention, false-positive cost |
+| Natural coherent drafts contain checker-detectable errors and the model can revise | patch-boundary diagnostic deltas | calibration boundary: [C16](evidence/claim_ledger.md#c16), [C22](evidence/claim_ledger.md#c22); selected paired cleanup: [C25](evidence/claim_ledger.md#c25); CoCoGen externally | **Conditional cleanup supported on two selected tasks; joint outcome benefit open** | opportunity, diagnosed-location edits, error deltas, held-out correctness, revision cost |
+| Self-repair is unreliable and preventing accepted latent defects matters | acceptance gate or offline reranking | two-task gate behavior without prevented accepted defect: [C25](evidence/claim_ledger.md#c25); broader claim [C14](evidence/claim_ledger.md#c14); CompCoder externally | **Gate mechanics observed; prevention benefit remains external/design guidance** | accepted defects, rejection/abstention, false-positive cost |
 | Invalid candidates can be excluded during generation or training | constrained decoding or compiler/type reward | CompCoder, type-constrained generation, and RLCSF externally; no direct repository claim | **External evidence only** | validity, search cost, behavioral correctness |
 | A structural operation is risky or non-unique as text | server/AST rename, references, or structured edit | CodeStruct externally; no direct repository claim | **External evidence only** | semantic preservation, rollback/failure rate |
 
@@ -327,10 +385,12 @@ They cannot be regenerated from the repaired sound-contract generator and are ne
 `navigation-v2` confirmation gate. Current mechanical artifacts match the v2 source hashes; old raw rows
 remain unchanged.
 
-The v2 control rows retain their exact at-run behavior-source hashes. Their manifest mismatch list contains
-only `analyze_navigation.py`, which was updated to label a controls-only run explicitly, and the execution-
-status text in `evidence/protocols.md`, which was updated after observing the gate. Generator, prompt, model,
-tool, and control-gating code did not change after these rows ran.
+Every v2 row retains its exact at-run source hashes. The 14B and first 27B artifacts intentionally differ
+from current `stream_agent.py` because the observed compact-edit parser incompatibility was repaired before
+the tagged `pilot002` rerun; they are preserved as pre-repair calibration. The completed `pilot002` behavior
+sources match current code. Its only manifest mismatch is `evidence/protocols.md`, whose execution-status
+text was updated after observing the run. The checker selection and complete paired case-series artifacts
+match current behavior sources; the stopped three-seed attempt is labeled incomplete rather than analyzed.
 
 ## 8. Conclusion
 
@@ -341,12 +401,18 @@ cost. They do not help merely because a server exists or a type system is presen
 The supported positive result is compact retrieval against whole-file reads. The historical realistic
 retrieval, checker, and execution results identify plausible negative regimes but are ceilings, leaky
 tasks, noisy integrations, or small case studies rather than universal nulls. The new experiments make
-the missing causal distinctions explicit. The repaired navigation pilot stops at its buggy-span
-actionability floor before the causal matrix, the checker regime is rejected at its
-draft-coherence/opportunity gate, and confirmation remains open.
+the missing causal distinctions explicit. The repaired 7B and 14B navigation pilots stop at actionability
+floors. Qwen3.6-27B clears the controls, but its two-task matrix is behaviorally ceilinged and automatic
+context precedes the same target read; confirmation remains blocked by the non-degeneracy gate. Fresh
+checker calibration is rejected at its draft-coherence/opportunity gate; the separately selected
+checker-positive case series is a conditional efficacy study, not a prevalence estimate.
 
-The actionable recipe is: start with textual retrieval; add semantic pull for genuinely ambiguous or
-remote bindings; supply compact results automatically to measure the information upper bound; train
-election only if that upper bound is valuable; deliver checker deltas after coherent patches; use gates or
-reranking when prevention matters more than self-repair; and always measure opportunity, substitution,
-actionability, and accepted defects alongside pass@1.
+The practitioner recipe is a staged measurement policy. Start with text when retrieval is cheap. Test
+automatically supplied semantic context on genuinely ambiguous or remote bindings and measure whether it
+replaces reading before exposing a pull tool; prompt or train election only if that upper bound is useful.
+Evaluate patch-boundary diagnostic deltas on checker-positive coherent drafts before enabling feedback.
+Consider gates or reranking only when accepted-defect telemetry justifies their rejection cost. Always
+measure opportunity, substitution, actionability, and accepted defects alongside pass@1. These are
+conditional evaluation steps: useful ambiguous-navigation value and checker joint-outcome improvement
+remain open here. Conditional diagnostic cleanup is supported only on two selected tasks; gate/reranking
+prevention benefit remains external design guidance rather than a demonstrated repository result.

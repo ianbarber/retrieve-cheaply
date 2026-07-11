@@ -23,6 +23,13 @@ def quantile(values: list[float], probability: float) -> float:
     return ordered[low] * (high - position) + ordered[high] * (position - low)
 
 
+def revision_eligible(draft: dict) -> bool:
+    return bool(
+        draft["coherent"]
+        and (draft.get("draft_submitted") or draft.get("revision_case_series_eligible"))
+    )
+
+
 def summarize_rows(rows: list[dict]) -> dict:
     if not rows:
         return {"n": 0}
@@ -55,7 +62,7 @@ def summarize_rows(rows: list[dict]) -> dict:
         "type_clean_rate": task_mean(lambda row: row["type_clean"]),
         "semantic_clean_rate": task_mean(lambda row: row["semantic_clean"]),
         "accepted_type_clean_correct_rate": task_mean(
-            lambda row: row["accepted"] and row["held_pass"] and row["type_clean"]
+            lambda row: row["accepted_type_clean_correct"]
         ),
         "accepted_behavioral_defect_rate": task_mean(
             lambda row: row["accepted"] and not row["held_pass"]
@@ -86,7 +93,7 @@ def end_to_end_summary(drafts: list[dict], rows: list[dict], arm: str) -> dict:
     for row in rows:
         if row["arm"] == arm:
             by_draft.setdefault(row["draft_id"], []).append(row)
-    eligible = [draft for draft in drafts if draft.get("draft_submitted") and draft["coherent"]]
+    eligible = [draft for draft in drafts if revision_eligible(draft)]
     missing = [draft["draft_id"] for draft in eligible if not by_draft.get(draft["draft_id"])]
     if missing:
         return {
@@ -100,7 +107,7 @@ def end_to_end_summary(drafts: list[dict], rows: list[dict], arm: str) -> dict:
     for draft in drafts:
         draft_tokens = draft["in_tokens"] + draft["out_tokens"]
         revisions = by_draft.get(draft["draft_id"], [])
-        if not (draft.get("draft_submitted") and draft["coherent"]):
+        if not revision_eligible(draft):
             attempts.setdefault(draft["task"], []).append({
                 "held": 0.0, "accepted": 0.0, "accepted_correct": 0.0,
                 "accepted_clean_correct": 0.0, "accepted_behavioral_defect": 0.0,
@@ -115,7 +122,7 @@ def end_to_end_summary(drafts: list[dict], rows: list[dict], arm: str) -> dict:
                 "held": float(row["held_pass"]), "accepted": float(row["accepted"]),
                 "accepted_correct": float(row["accepted"] and row["held_pass"]),
                 "accepted_clean_correct": float(
-                    row["accepted"] and row["held_pass"] and row["type_clean"]
+                    row["accepted_type_clean_correct"]
                 ),
                 "accepted_behavioral_defect": float(row["accepted"] and not row["held_pass"]),
                 "accepted_semantic_defect": float(row["accepted"] and not row["semantic_clean"]),
@@ -177,7 +184,7 @@ def expected_cost_per_accepted_correct(
             by_draft.setdefault(row["draft_id"], []).append(row)
     missing = [
         draft["draft_id"] for draft in selected
-        if draft.get("draft_submitted") and draft["coherent"]
+        if revision_eligible(draft)
         and not by_draft.get(draft["draft_id"])
     ]
     if missing:
@@ -189,7 +196,7 @@ def expected_cost_per_accepted_correct(
         }
     unexpected = [
         draft["draft_id"] for draft in selected
-        if not (draft.get("draft_submitted") and draft["coherent"])
+        if not revision_eligible(draft)
         and by_draft.get(draft["draft_id"])
     ]
     if unexpected:
@@ -204,7 +211,7 @@ def expected_cost_per_accepted_correct(
     for draft in selected:
         draft_cost = float(draft["in_tokens"] + draft["out_tokens"])
         revisions = by_draft.get(draft["draft_id"], [])
-        if not (draft.get("draft_submitted") and draft["coherent"]):
+        if not revision_eligible(draft):
             attempts.setdefault(draft["task"], []).append((draft_cost, 0.0))
             continue
         for row in revisions:
@@ -277,6 +284,80 @@ def paired_contrast(
     }
 
 
+def end_to_end_contrast(
+    drafts: list[dict], rows: list[dict], arm: str, field: str,
+    bootstrap: int, seed: int,
+) -> dict:
+    """Contrast arms by task while retaining failed natural drafts as zero outcomes."""
+    if arm == "control":
+        raise ValueError("treatment arm must differ from control")
+    eligible = {
+        draft["draft_id"] for draft in drafts
+        if revision_eligible(draft)
+    }
+    selected = [row for row in rows if row["arm"] in {"control", arm}]
+    grids = {
+        which: Counter(
+            (row["draft_id"], row.get("seed"))
+            for row in selected if row["arm"] == which
+        )
+        for which in ("control", arm)
+    }
+    expected_ids = {draft_id for draft_id, _ in grids["control"]}
+    if grids["control"] != grids[arm] or expected_ids != eligible:
+        return {
+            "n_tasks": 0, "estimable": False,
+            "reason": "incomplete paired revision grid for coherent drafts",
+        }
+
+    outcome = {
+        "held": lambda row: row["held_pass"],
+        "accepted_correct": lambda row: row["accepted"] and row["held_pass"],
+        "accepted_type_clean_correct": lambda row: row["accepted_type_clean_correct"],
+        "accepted_behavioral_defect": lambda row: row["accepted"] and not row["held_pass"],
+        "accepted_semantic_defect": lambda row: row["accepted"] and not row["semantic_clean"],
+        "gate_rejection": lambda row: row["arm"] == "gate" and not row["accepted"],
+    }
+    if field not in outcome:
+        raise ValueError(f"unsupported end-to-end field: {field}")
+    by_arm_draft = {
+        which: {
+            draft_id: [row for row in selected
+                       if row["arm"] == which and row["draft_id"] == draft_id]
+            for draft_id in eligible
+        }
+        for which in ("control", arm)
+    }
+    task_drafts: dict[str, list[dict]] = {}
+    for draft in drafts:
+        task_drafts.setdefault(draft["task"], []).append(draft)
+
+    def task_value(which: str, task: str) -> float:
+        values = []
+        for draft in task_drafts[task]:
+            if draft["draft_id"] not in eligible:
+                values.append(0.0)
+                continue
+            values.append(statistics.mean(
+                float(outcome[field](row)) for row in by_arm_draft[which][draft["draft_id"]]
+            ))
+        return statistics.mean(values)
+
+    tasks = sorted(task_drafts)
+
+    def effect(sample: list[str]) -> float:
+        return statistics.mean(
+            task_value(arm, task) - task_value("control", task) for task in sample
+        )
+
+    rng = random.Random(seed)
+    samples = [effect([rng.choice(tasks) for _ in tasks]) for _ in range(bootstrap)]
+    return {
+        "n_tasks": len(tasks), "estimable": True, "mean_delta": effect(tasks),
+        "ci95": [quantile(samples, 0.025), quantile(samples, 0.975)],
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--drafts", required=True)
@@ -293,6 +374,8 @@ def main() -> None:
     )]
 
     print(f"CHECKER DRAFT AUDIT: {payload.get('kind', 'unknown')}")
+    if payload.get("selection_is_not_a_natural_opportunity_sample"):
+        print("CASE SERIES: opportunity-conditioned selection; prevalence and unconditional value are not estimable")
     print(f"drafts={len(drafts)} submitted={len(submitted)} coherent={len(coherent)} "
           f"semantic-opportunity={len(opportunities)}")
     print(f"unconditional opportunity rate={len(opportunities)/len(drafts):.3f}")
@@ -336,7 +419,7 @@ def main() -> None:
     rows = json.loads(Path(args.revisions).read_text())["rows"]
     eligible_ids = {
         draft["draft_id"] for draft in drafts
-        if draft.get("draft_submitted") and draft["coherent"]
+        if revision_eligible(draft)
     }
     unexpected = sorted({row["draft_id"] for row in rows} - eligible_ids)
     if unexpected:
@@ -352,7 +435,7 @@ def main() -> None:
             print(f"  {arm}: {json.dumps(summarize_rows([row for row in selected if row['arm'] == arm]), allow_nan=True)}")
         contrasts = {}
         for arm in sorted({row["arm"] for row in selected} - {"control"}):
-            for field in ("held_pass", "accepted_type_clean"):
+            for field in ("held_pass", "accepted_type_clean", "accepted_type_clean_correct"):
                 contrasts[f"{arm}_minus_control_{field}"] = paired_contrast(
                     rows, arm, field, opportunity_only, args.bootstrap, args.seed
                 )
@@ -371,6 +454,17 @@ def main() -> None:
                 require_type_clean=True,
             ), allow_nan=True,
         ))
+    end_to_end_contrasts = {}
+    for arm in sorted({row["arm"] for row in rows} - {"control"}):
+        for field in (
+            "held", "accepted_correct", "accepted_type_clean_correct",
+            "accepted_behavioral_defect", "accepted_semantic_defect", "gate_rejection",
+        ):
+            end_to_end_contrasts[f"{arm}_minus_control_{field}"] = end_to_end_contrast(
+                drafts, rows, arm, field, args.bootstrap, args.seed
+            )
+    print("END-TO-END TASK-BOOTSTRAP ARM CONTRASTS")
+    print(json.dumps(end_to_end_contrasts, indent=2, allow_nan=True))
     print("A null is not equivalence unless its task-bootstrap pass CI lies inside +/-0.10.")
 
 

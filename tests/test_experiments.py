@@ -1,12 +1,15 @@
 import math
 from pathlib import Path
+import re
 import subprocess
 import sys
 
 from scaffold.mock_env import MultiFileEnv
+from scaffold.stream_agent import LINE_EDIT_RE, _strip_fences
 from scripts.analysis.effic_real_stats import binom_two_sided
 from scripts.analysis.analyze_checker_paired import (
     end_to_end_summary,
+    end_to_end_contrast,
     expected_cost_per_accepted_correct,
     paired_contrast,
 )
@@ -98,6 +101,23 @@ def test_exact_sign_test_handles_all_ties_as_no_evidence():
     assert binom_two_sided(0, 0) == 1.0
 
 
+def test_line_edit_parser_accepts_same_line_body_without_losing_indentation():
+    match = LINE_EDIT_RE.search(
+        '<edit path="pkg/target.py" lines="5-6">    def f(self):\n        return 1</edit>'
+    )
+    assert match
+    assert _strip_fences(match["body"]) == "    def f(self):\n        return 1"
+
+
+def test_report_claim_links_have_row_level_ledger_anchors():
+    root = Path(__file__).resolve().parents[1]
+    report = (root / "REPORT.md").read_text()
+    ledger = (root / "evidence" / "claim_ledger.md").read_text()
+    references = set(re.findall(r"claim_ledger\.md#(c\d+)", report))
+    anchors = set(re.findall(r'<a id="(c\d+)"></a>C\d+', ledger))
+    assert references <= anchors
+
+
 def test_navigation_token_equivalence_uses_ratio_of_task_weighted_means():
     rows = []
     for task, base, treatment in (("small", 10, 20), ("large", 100, 100)):
@@ -148,12 +168,35 @@ def test_checker_end_to_end_counts_incoherent_draft_as_failure():
     rows = [{
         "draft_id": "d1", "task": "t1", "arm": "control", "accepted": True,
         "held_pass": True, "type_clean": True, "semantic_clean": True,
+        "accepted_type_clean_correct": True,
         "in_tokens": 50, "out_tokens": 10,
     }]
     result = end_to_end_summary(drafts, rows, "control")
     assert result["final_held_pass_yield"] == 0.5
     assert result["accepted_correct_yield"] == 0.5
     assert result["pre_revision_failure_rate"] == 0.5
+
+
+def test_checker_end_to_end_contrast_uses_joint_correct_clean_acceptance():
+    drafts = [
+        {"draft_id": "d1", "task": "t1", "draft_submitted": True, "coherent": True},
+        {"draft_id": "d2", "task": "t2", "draft_submitted": True, "coherent": False},
+    ]
+    common = {
+        "task": "t1", "draft_id": "d1", "seed": 0, "accepted": True,
+        "semantic_clean": True,
+    }
+    rows = [
+        {**common, "arm": "control", "held_pass": False,
+         "accepted_type_clean_correct": False},
+        {**common, "arm": "gate", "held_pass": True,
+         "accepted_type_clean_correct": True},
+    ]
+    result = end_to_end_contrast(
+        drafts, rows, "gate", "accepted_type_clean_correct", bootstrap=100, seed=1
+    )
+    assert result["estimable"]
+    assert result["mean_delta"] == 0.5
 
 
 def test_navigation_span_control_enforces_floor():

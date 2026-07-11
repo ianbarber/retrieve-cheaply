@@ -59,7 +59,7 @@ DEFN_RE     = re.compile(                                          # go-to-defin
 NUMPREFIX_RE = re.compile(r'(?m)^\s*\d+\|\s?')   # strip accidental "  3| " file-view prefixes
 # line-range edit: robust for weak models on big files (no string matching).
 LINE_EDIT_RE = re.compile(
-    r'<edit\s+path="(?P<path>[^"]+)"\s+lines="(?P<start>\d+)(?:\s*-\s*(?P<end>\d+))?"\s*>\s*\n'
+    r'<edit\s+path="(?P<path>[^"]+)"\s+lines="(?P<start>\d+)(?:\s*-\s*(?P<end>\d+))?"\s*>\r?\n?'
     r'(?P<body>.*?)\n?\s*</edit>', re.S)   # END optional: accept lines="N" and lines="N-M"
 
 def _strip_fences(s: str) -> str:

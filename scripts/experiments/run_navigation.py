@@ -189,6 +189,10 @@ def main() -> int:
     parser.add_argument("--gpu-only", action="store_true")
     parser.add_argument("--tmp-root", default=None)
     args = parser.parse_args()
+    out_path = Path(args.out)
+    if out_path.exists():
+        print(f"refusing to overwrite existing result: {out_path}", file=sys.stderr)
+        return 73
 
     cells = {
         "core": CORE_CELLS,
@@ -316,6 +320,7 @@ def main() -> int:
                         "semantic_payload_source": (
                             "live_lsp" if arm == "semantic_auto" else
                             "pristine_task_metadata" if arm == "semantic_span_control" else None
+                            if arm != "positive_control" else "gold_corrected_task_metadata"
                         ),
                         **_metrics(task, result["events"], supplied_path),
                         "events": result["events"], "stream_tail": result["stream"][-2500:],
@@ -325,8 +330,8 @@ def main() -> int:
                           f"in={row['in_tokens']} lsp={row['n_lsp']} edits={row['n_edits']}", flush=True)
                 finally:
                     env.close()
-                Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-                Path(args.out).write_text(json.dumps({
+                out_path.parent.mkdir(parents=True, exist_ok=True)
+                out_path.write_text(json.dumps({
                     "protocol": PROTOCOL_VERSION, "model": args.model,
                     "model_meta": model_meta, "config": vars(args), "cells": cells,
                     "protocol_source_sha256": _protocol_hashes(),

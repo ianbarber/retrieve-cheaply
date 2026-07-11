@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 import hashlib
+import itertools
 import json
 import sys
 import time
@@ -313,6 +314,70 @@ def calibrate_drafts(path: Path, minimum: float, maximum: float, min_coherent: i
     return 0
 
 
+def select_legacy_case_series(source: Path, out: Path, names: str) -> int:
+    """Freeze exact recovered checker-positive drafts without changing the source artifact."""
+    if out.exists():
+        raise FileExistsError(f"refusing to overwrite case-series selection: {out}")
+    payload = json.loads(source.read_text())
+    if payload.get("kind") != "natural_drafts_recovered_from_committed_run":
+        raise ValueError("case-series selection requires the recovered legacy artifact")
+    wanted = set(names.split(","))
+    tasks = _task_map()
+    selected = []
+    for draft in payload["drafts"]:
+        if draft["task"] not in wanted:
+            continue
+        hashes, workspace_hash = _workspace_hashes(draft["files"])
+        semantic = [item for item in draft["draft_diagnostics"]
+                    if item["classification"] == "semantic"]
+        if (not draft["coherent"] or not semantic or hashes != draft["file_sha256"]
+                or workspace_hash != draft["workspace_sha256"]):
+            raise ValueError(f"legacy draft is not an exact coherent opportunity: {draft['task']}")
+        task = tasks[draft["task"]]
+        gold_files = {**draft["files"], draft["target"]: task["gold_target"]}
+        gold_visible, gold_held = _score(gold_files, task)
+        env = MultiFileEnv(
+            gold_files, draft["target"], draft["test"], skip_pyrefly=False,
+            held_out_src=draft["held_out"],
+        )
+        try:
+            gold_current, _ = collect_diagnostics(env.ws, {draft["target"]})
+        finally:
+            env.close()
+        gold_delta = delta(gold_current, draft["baseline_diagnostics"])
+        if not (gold_visible and gold_held and not gold_delta):
+            raise ValueError(f"gold repair does not clear behavior and diagnostics: {draft['task']}")
+        selected.append({
+            **draft,
+            "revision_case_series_eligible": True,
+            "selection_basis": (
+                "exact recovered coherent workspace with at least one target-delta semantic diagnostic"
+            ),
+            "natural_submission_marker_available": False,
+            "gold_repair_validation": {
+                "visible_pass": gold_visible, "held_pass": gold_held,
+                "diagnostic_delta": gold_delta,
+                "gold_target_sha256": _sha(task["gold_target"]),
+            },
+        })
+    if {draft["task"] for draft in selected} != wanted:
+        raise ValueError("not every requested legacy task was selected")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps({
+        "protocol": PROTOCOL_VERSION,
+        "kind": "opportunity_conditioned_legacy_revision_case_series",
+        "source_artifact": str(source),
+        "source_artifact_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+        "selection_is_not_a_natural_opportunity_sample": True,
+        "draft_generation_token_cost_available": False,
+        "pyrefly": payload.get("pyrefly"),
+        "protocol_source_sha256": _protocol_hashes(),
+        "drafts": selected,
+    }, indent=2) + "\n")
+    print(f"selected {len(selected)} checker-positive legacy drafts -> {out}")
+    return 0
+
+
 def _revision_prompt(draft: dict, arm: str) -> str:
     source = draft["files"][draft["target"]]
     numbered = "\n".join(f"{i:>3}| {line}" for i, line in enumerate(source.splitlines(), 1))
@@ -357,8 +422,11 @@ def revise(args) -> int:
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
     payload = json.loads(Path(args.drafts).read_text())
+    if Path(args.out).exists():
+        raise FileExistsError(f"refusing to overwrite paired revisions: {args.out}")
     drafts = [draft for draft in payload["drafts"]
-              if draft.get("draft_submitted") and draft.get("coherent")]
+              if (draft.get("draft_submitted") or draft.get("revision_case_series_eligible"))
+              and draft.get("coherent")]
     if args.names:
         wanted = set(args.names.split(","))
         drafts = [draft for draft in drafts if draft["task"] in wanted]
@@ -383,75 +451,83 @@ def revise(args) -> int:
         "torch": torch.__version__, "dtype": str(model.dtype),
     }
     rows = []
-    for draft in drafts:
-        for arm in arms:
-            env = DeltaDiagnosticEnv(
-                draft["files"], draft["target"], draft["test"],
-                baseline_diagnostics=draft["baseline_diagnostics"],
-                diagnostic_scope={draft["target"]}, held_out_src=draft["held_out"],
-                skip_pyrefly=False,
+    for draft, seed, arm in itertools.product(
+        drafts, range(args.seed, args.seed + args.seeds), arms
+    ):
+        env = DeltaDiagnosticEnv(
+            draft["files"], draft["target"], draft["test"],
+            baseline_diagnostics=draft["baseline_diagnostics"],
+            diagnostic_scope={draft["target"]}, held_out_src=draft["held_out"],
+            skip_pyrefly=False,
+        )
+        try:
+            agent = StreamAgent(
+                model, tokenizer, env, edit_mode="line", sys_override=REVISION_SYS,
+                max_new_tokens=args.max_new, max_turns=args.max_turns,
+                max_reads=args.max_reads, temperature=args.temperature, seed=seed,
+                auto_check=(arm == "noisy"), acceptance_gate=(arm == "gate"),
+                lsp_disabled=True,
             )
-            try:
-                agent = StreamAgent(
-                    model, tokenizer, env, edit_mode="line", sys_override=REVISION_SYS,
-                    max_new_tokens=args.max_new, max_turns=args.max_turns,
-                    max_reads=args.max_reads, temperature=args.temperature, seed=args.seed,
-                    auto_check=(arm == "noisy"), acceptance_gate=(arm == "gate"),
-                    lsp_disabled=True,
-                )
-                started = time.perf_counter()
-                result = agent.run(_revision_prompt(draft, arm), draft["target"],
-                                   editable=[draft["target"]])
-                wall = time.perf_counter() - started
-                held = bool(env.score()["resolved"])
-                final_diags = env.raw_diagnostic_delta()
-                one_shot_latency = draft["checker_latency_ms"] if arm == "diagnostics" else 0.0
-                gate_accept = any(event.get("type") == "gate_accept" for event in result["events"])
-                accepted = gate_accept if arm == "gate" else bool(result.get("done_seen"))
-                row = {
-                    "draft_id": draft["draft_id"], "draft_hash": draft["draft_target_sha256"],
-                    "task": draft["task"], "group": draft["group"], "arm": arm, "seed": args.seed,
-                    "opportunity": any(item["classification"] == "semantic"
-                                       for item in draft["draft_diagnostics"]),
-                    "initial_diagnostics": draft["draft_diagnostics"],
-                    "final_diagnostics": final_diags,
-                    **_diag_effect(draft["draft_diagnostics"], final_diags),
-                    "edited_diagnosed_location": _edited_diagnosed_location(
-                        result["events"], draft["draft_diagnostics"]),
-                    "visible_pass": bool(result["resolved"]), "held_pass": held,
-                    "type_clean": not final_diags, "accepted": accepted,
-                    "semantic_clean": not any(item["classification"] == "semantic"
-                                               for item in final_diags),
-                    "syntax_clean": not any(item["classification"] == "syntax_or_partial"
-                                             for item in final_diags),
-                    "accepted_type_clean": bool(accepted and not final_diags),
-                    "gate_rejections": sum(event.get("type") == "gate_reject"
-                                           for event in result["events"]),
-                    "abstained_or_rejected": bool(arm == "gate" and not accepted),
-                    "draft_in_tokens": draft.get("in_tokens", 0),
-                    "draft_out_tokens": draft.get("out_tokens", 0),
-                    "in_tokens": result["in_tokens"], "out_tokens": result["out_tokens"],
-                    "turns": result["turns"], "n_edits": result["n_edits"],
-                    "n_tests": result["n_tests"], "n_checks": result["n_checks"],
-                    "checker_latency_ms": round(
-                        one_shot_latency + env.last_checker_latency * 1000, 1
-                    ),
-                    "wall_sec": round(wall, 3), "events": result["events"],
-                    "stream_tail": result["stream"][-2500:],
-                }
-                rows.append(row)
-            finally:
-                env.close()
-            Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-            Path(args.out).write_text(json.dumps({
-                "protocol": PROTOCOL_VERSION, "kind": "paired_revisions",
-                "model": args.model, "source_drafts": args.drafts,
-                "model_meta": model_meta, "config": vars(args),
-                "pyrefly": _pyrefly_meta(), "protocol_source_sha256": _protocol_hashes(),
-                "rows": rows,
-            }, indent=2) + "\n")
-            print(f"{draft['task']} {arm}: held={row['held_pass']} clean={row['type_clean']} "
-                  f"accepted={row['accepted']} edits={row['n_edits']}", flush=True)
+            started = time.perf_counter()
+            result = agent.run(_revision_prompt(draft, arm), draft["target"],
+                               editable=[draft["target"]])
+            wall = time.perf_counter() - started
+            held = bool(env.score()["resolved"])
+            final_diags = env.raw_diagnostic_delta()
+            one_shot_latency = draft["checker_latency_ms"] if arm == "diagnostics" else 0.0
+            gate_accept = any(event.get("type") == "gate_accept" for event in result["events"])
+            accepted = gate_accept if arm == "gate" else bool(result.get("done_seen"))
+            row = {
+                "draft_id": draft["draft_id"], "draft_hash": draft["draft_target_sha256"],
+                "task": draft["task"], "group": draft["group"], "arm": arm, "seed": seed,
+                "opportunity": any(item["classification"] == "semantic"
+                                   for item in draft["draft_diagnostics"]),
+                "initial_diagnostics": draft["draft_diagnostics"],
+                "final_diagnostics": final_diags,
+                **_diag_effect(draft["draft_diagnostics"], final_diags),
+                "edited_diagnosed_location": _edited_diagnosed_location(
+                    result["events"], draft["draft_diagnostics"]),
+                "visible_pass": bool(result["resolved"]), "held_pass": held,
+                "type_clean": not final_diags, "accepted": accepted,
+                "semantic_clean": not any(item["classification"] == "semantic"
+                                           for item in final_diags),
+                "syntax_clean": not any(item["classification"] == "syntax_or_partial"
+                                         for item in final_diags),
+                "accepted_type_clean": bool(accepted and not final_diags),
+                "accepted_type_clean_correct": bool(
+                    accepted and not final_diags and held
+                ),
+                "gate_rejections": sum(event.get("type") == "gate_reject"
+                                       for event in result["events"]),
+                "abstained_or_rejected": bool(arm == "gate" and not accepted),
+                "draft_in_tokens": draft.get("in_tokens", 0),
+                "draft_out_tokens": draft.get("out_tokens", 0),
+                "in_tokens": result["in_tokens"], "out_tokens": result["out_tokens"],
+                "turns": result["turns"], "n_edits": result["n_edits"],
+                "n_tests": result["n_tests"], "n_checks": result["n_checks"],
+                "checker_latency_ms": round(
+                    one_shot_latency + env.last_checker_latency * 1000, 1
+                ),
+                "wall_sec": round(wall, 3), "events": result["events"],
+                "stream_tail": result["stream"][-2500:],
+            }
+            rows.append(row)
+        finally:
+            env.close()
+        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.out).write_text(json.dumps({
+            "protocol": PROTOCOL_VERSION, "kind": (
+                "opportunity_conditioned_legacy_paired_revision_case_series"
+                if payload.get("selection_is_not_a_natural_opportunity_sample")
+                else "paired_revisions"
+            ),
+            "model": args.model, "source_drafts": args.drafts,
+            "model_meta": model_meta, "config": vars(args),
+            "pyrefly": _pyrefly_meta(), "protocol_source_sha256": _protocol_hashes(),
+            "rows": rows,
+        }, indent=2) + "\n")
+        print(f"{draft['task']} {arm}: held={row['held_pass']} clean={row['type_clean']} "
+              f"accepted={row['accepted']} edits={row['n_edits']}", flush=True)
     return 0
 
 
@@ -471,6 +547,11 @@ def parser() -> argparse.ArgumentParser:
     calibrate.add_argument("--minimum", type=float, default=0.2)
     calibrate.add_argument("--maximum", type=float, default=0.7)
     calibrate.add_argument("--min-coherent", type=int, default=2)
+
+    select = commands.add_parser("select-legacy-case-series")
+    select.add_argument("source", type=Path)
+    select.add_argument("out", type=Path)
+    select.add_argument("--names", required=True)
 
     generate = commands.add_parser("generate")
     generate.add_argument("out")
@@ -493,6 +574,7 @@ def parser() -> argparse.ArgumentParser:
     revision.add_argument("--arms", default=",".join(ARMS))
     revision.add_argument("--checker-positive-only", action="store_true")
     revision.add_argument("--seed", type=int, default=0)
+    revision.add_argument("--seeds", type=int, default=1)
     revision.add_argument("--temperature", type=float, default=0.0)
     revision.add_argument("--max-new", type=int, default=1200)
     revision.add_argument("--max-turns", type=int, default=6)
@@ -509,6 +591,8 @@ def main() -> int:
         return recheck_drafts(args.source, args.out)
     if args.command == "calibrate":
         return calibrate_drafts(args.drafts, args.minimum, args.maximum, args.min_coherent)
+    if args.command == "select-legacy-case-series":
+        return select_legacy_case_series(args.source, args.out, args.names)
     if args.command == "generate":
         return generate_drafts(args)
     return revise(args)

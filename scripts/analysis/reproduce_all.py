@@ -46,6 +46,10 @@ def main() -> None:
     run(py, "scripts/analysis/analyze_navigation.py",
         "runs/pilot/navigation_v2_positive.json",
         "runs/pilot/navigation_v2_span_control.json")
+    run(py, "scripts/analysis/analyze_navigation.py",
+        "runs/pilot/navigation_v2_qwen36-27b-6a9e13bd-pilot002_positive.json",
+        "runs/pilot/navigation_v2_qwen36-27b-6a9e13bd-pilot002_span_control.json",
+        "runs/pilot/navigation_v2_qwen36-27b-6a9e13bd-pilot002_all.json")
     for model in ("7b", "14b", "14b_ext"):
         drafts = f"runs/pilot/checker_drafts_{model}.json"
         run(py, "scripts/analysis/analyze_checker_paired.py", "--drafts", drafts)
@@ -53,6 +57,9 @@ def main() -> None:
                    "--minimum", "0.2", "--maximum", "0.7", "--min-coherent", "2")
     run(py, "scripts/analysis/analyze_checker_calibration.py",
         "runs/pilot/checker_drafts_14b.json", "runs/pilot/checker_drafts_14b_ext.json")
+    run(py, "scripts/analysis/analyze_checker_paired.py", "--drafts",
+        "runs/protocol/checker_opportunity_case_series_v3.json", "--revisions",
+        "runs/pilot/checker_case_series_qwen36_27b_6a9e13bd_s1.json")
     with tempfile.TemporaryDirectory(prefix="streams_fast_") as tmp:
         run(py, "scripts/experiments/navigation_tasks.py", "--split", "pilot",
             "--out", str(Path(tmp) / "navigation.json"))

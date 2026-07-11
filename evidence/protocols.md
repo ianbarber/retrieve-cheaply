@@ -64,6 +64,20 @@ attempts remain in the cost numerator. Report the stricter type-clean accepted-c
 +/-10 percentage-point margin applies to
 pass@1 or accepted-defect null claims.
 
+Because fresh 7B/14B development calibration did not enter the opportunity band, a separate
+**opportunity-conditioned case series** answers the narrower practitioner question: what happens when a
+coherent frozen draft already has a checker-detectable semantic error? Selection occurs before treatment
+using only the committed frozen workspace, coherence, and target-delta diagnostic state. The source
+artifact is not edited. A derived selection record preserves its hash, workspace hashes, selection rule,
+and a mechanical gold-repair check. Two exact recovered historical 7B workspaces qualify. A stronger
+pinned local model receives byte-identical workspaces under control, one-shot patch-boundary diagnostics,
+and acceptance-gate arms with common seeds. The primary product outcome is
+`accepted && type_clean && held_pass`; accepted semantic/behavioral defects, gate rejection, diagnostic
+changes, diagnosed-location edits, revision tokens, and latency are secondary outcomes. This selected
+case series estimates conditional revision efficacy only. It cannot estimate natural opportunity
+prevalence, same-model end-to-end value, or a population effect, and historical draft-generation token
+cost is unavailable.
+
 ## Run and spend budget
 
 No paid API run is authorized by this protocol. The executed development regimes use locally cached
@@ -76,12 +90,13 @@ model/cell/cost proposal.
 
 ## Execution status
 
-The historical `navigation-v1` 7B run used a gold-derived, unsound factory contract and is invalid for the
-typed/navigation causal question. Its 0/12 matrix and token differences are retained only as rejected
-apparatus history. The repaired `navigation-v2` pilot passes all mechanical checks. Its gold-copy control
-passes 2/2, while the pristine buggy-span actionability control fails 0/2. The driver exits at that floor;
-causal/deployment cells are unrun and confirmation is blocked. Fresh
-checker calibration also blocks
-revisions: 7B yields 0/3 coherent submitted drafts. Across two development batches, 14B yields 2/8 coherent
-drafts; both are type-clean, for 0% semantic opportunity. These are exploratory stopping-gate results, not
-confirmation evidence. No paid API calls were made.
+The historical `navigation-v1` 7B run is invalid because its factory contract is unsound. In repaired v2,
+7B fails buggy-span actionability 0/2 and 14B reaches 1/2, so both stop. After a tested compact-edit parser
+repair, pinned Qwen3.6-27B clears gold-copy and buggy-span controls 2/2 and runs the matrix. All 12 cells pass;
+typed automatic context is token-equivalent to typed baseline, erased automatic context adds cost, and
+automatic payloads always precede target reads. Confirmation remains blocked by the uniform-ceiling gate.
+Fresh checker calibration still misses the opportunity band. The separately selected two-task checker-
+positive case series completes paired control/diagnostics/gate revisions: diagnostics make 2/2 final
+workspaces type-clean versus 1/2 control, but all arms remain 1/2 on joint accepted-clean-correct outcome.
+The gate rejects one unresolved task without preventing a defect control would have accepted. These are
+exploratory conditional results, not confirmation or prevalence evidence. No paid API calls were made.

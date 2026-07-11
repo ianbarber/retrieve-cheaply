@@ -39,11 +39,19 @@ contract, type-cleanliness, leakage, widened-call, and strict live-Pyrefly check
 apparatus-audit instances. Those 12 are not confirmation because validator changes followed their first
 inspection; a new disjoint 12-instance confirmation split passes mechanical checks and is reserved behind
 source hashes without model exposure. The earlier 7B `navigation-v1` pilot used an unsound gold-derived
-factory return and is retained only as invalid apparatus history. In v2, the gold-copy control passes 2/2,
-but the identically framed pristine buggy-span actionability control fails 0/2. The gated driver therefore
-does not run the causal matrix; no navigation treatment effect is claimed. Fresh checker calibration stops correctly: 7B produces 0/3 coherent
-drafts, while 14B produces 2/8 and both are type-clean. Neither reaches the 20–70% opportunity band;
-paired revisions and navigation confirmation remain unrun.
+factory return and is retained only as invalid apparatus history. In v2, 7B fails the buggy-span control
+0/2 and a pinned 14B rung reaches 1/2, so neither runs a matrix. After a tested compact-edit parser fix,
+pinned Qwen3.6-27B clears both controls 2/2 and runs the sound matrix. All 12 cells pass, making correctness
+non-identifying; typed automatic context is token-equivalent to typed baseline on these two tasks, erased
+automatic context adds cost, and every automatic result is followed by a target read. This is a
+precision/overhead boundary, not the missing useful-compression result, so confirmation remains blocked.
+Fresh checker calibration stops correctly: 7B produces 0/3 coherent drafts, while 14B produces 2/8 and
+both are type-clean. Neither reaches the 20–70% opportunity band.
+A pre-treatment selection artifact therefore freezes the two exact recovered coherent checker-positive
+workspaces for a conditional case series. Pinned Qwen3.6-27B completes paired control, patch-boundary, and
+gate revisions: diagnostics finish type-clean on 2/2 versus 1/2 control, but every arm remains 1/2 on the
+joint accepted-clean-correct outcome. The gate rejects the unresolved task, which control also leaves
+unaccepted; this supports conditional diagnostic cleanup, not pass@1 or accepted-defect improvement.
 
 See [REPORT.md](REPORT.md) for the evidence, limitations, related work, and practitioner decision table;
 [evidence/claim_ledger.md](evidence/claim_ledger.md) for claim-by-claim status; and
@@ -79,21 +87,29 @@ python3 scripts/experiments/navigation_tasks.py --split pilot
 
 ## Expensive runs
 
-No paid API run is authorized. The local pilots use cached 7B/14B models with a monetary cap of `$0`.
-The navigation command writes new v2 artifacts and preserves invalidated v1 evidence; the checker command
-exactly regenerates the three reported 1,400-token calibration batches:
+No paid API run is authorized. Local pilots have a monetary cap of `$0`. Navigation model artifacts use
+an explicit run tag and refuse overwrites, preserving every model rung and the invalidated v1 evidence.
+The calibration driver exactly regenerates the three reported 1,400-token batches; the separate case-series
+driver runs the preselected checker-positive cohort:
 
 ```bash
-PYTHON=python3 scripts/run_navigation_pilot.sh
+RUN_ID=qwen25coder14b-pilot001 \
+  MODEL=Qwen/Qwen2.5-Coder-14B-Instruct \
+  REVISION=aedcc2d42b622764e023cf882b6652e646b95671 \
+  PYTHON=python3 scripts/run_navigation_pilot.sh
 PYTHON=python3 scripts/run_checker_paired.sh
+PYTHON=python3 scripts/run_checker_case_series.sh
 ```
 
 The confirmation command is intentionally separate and runs only after the v2 gold-copy and buggy-span
-controls and pilot clear the preregistered gates. It currently exits before model loading because the
-buggy-span control failed and no causal matrix exists:
+controls and pilot clear the preregistered gates. Against the completed 27B pilot below, it exits before
+model loading because the causal matrix is uniformly at ceiling:
 
 ```bash
-PYTHON=python3 scripts/run_navigation_confirmation.sh
+PILOT_RUN_ID=qwen36-27b-6a9e13bd-pilot002 RUN_ID=qwen36-27b-confirm001 \
+  MODEL=Qwen/Qwen3.6-27B \
+  REVISION=6a9e13bd6fc8f0983b9b99948120bc37f49c13e9 \
+  PYTHON=python3 scripts/run_navigation_confirmation.sh
 ```
 
 Historical OpenRouter drivers still require `OPENROUTER_API_KEY` or `.orkey` and enforce their own
@@ -101,15 +117,19 @@ Historical OpenRouter drivers still require `OPENROUTER_API_KEY` or `.orkey` and
 
 ## Decision recipe
 
-| condition | use | evidence confidence |
-|---|---|---|
-| Fact is visible, lexically unique, and cheap to read | grep plus ranged textual retrieval | tentative repository guidance (C6, C9) |
-| Binding is ambiguous or remote; re-exports, overloads, factories, or inheritance defeat text | semantic pull navigation | mechanism supported; v2 agent benefit open (C15, C23) |
-| Compact result can replace a large read | automatic or elected definition/method span | high but narrow against whole-file reads (C1) |
-| Valuable automatic context is not elected | cheap/precise framing, then policy training if needed | tentative framing; model-specific training result (C2, C3) |
-| Natural coherent drafts have checker-detectable errors and the model can revise | patch-boundary diagnostic deltas | literature-motivated; repository effect open (C16, C22) |
-| Self-repair is unreliable and accepted regressions matter | checker gate or offline reranking | external/design guidance only (C14) |
-| Invalid candidates should never enter the search | constrained decoding or training reward | external evidence only |
+1. Use grep and ranged reads for local, lexically obvious facts.
+2. Test automatically pushed semantic context for ambiguous or remote bindings before expecting LSP-tool election.
+3. Treat sound readable or inferred types as a server precision multiplier, not an LSP alternative.
+4. Improve framing or retrieval-policy training only after an automatic-context upper bound proves value.
+5. Deliver target-scoped checker deltas after coherent patches, not during partial edits.
+6. Consider gates when reliable diagnostics prevent accepted defects that the model cannot reliably repair.
+7. Keep semantic tools only when they replace reads or other work.
+
+The first, fourth, and seventh rules have narrow or model-specific repository support. The semantic
+navigation mechanism is validated but useful agent value remains open. The selected checker case series
+supports patch-boundary cleanup, not joint outcome improvement; gate prevention remains design guidance.
+The confidence-labeled decision table and claim links are in
+[REPORT.md](REPORT.md#6-practitioner-decision-table).
 
 Always measure whether semantic retrieval substitutes for a read, the checker opportunity rate, whether
 the model edits diagnosed locations, and accepted-defect rate. Static tooling will not solve dynamic

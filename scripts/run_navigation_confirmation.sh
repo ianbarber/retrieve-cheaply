@@ -3,13 +3,23 @@
 source "$(dirname -- "${BASH_SOURCE[0]}")/common.sh"
 MODEL="${MODEL:-Qwen/Qwen2.5-Coder-7B-Instruct}"
 REVISION="${REVISION:-c03e6d358207e414f1eca0bb1891e29f1db0e242}"
-for out in runs/confirmation/navigation_v2_core.json runs/confirmation/navigation_v2_deployment.json; do
+PILOT_RUN_ID="${PILOT_RUN_ID:?set PILOT_RUN_ID to the run tag of the accepted pilot}"
+RUN_ID="${RUN_ID:-${PILOT_RUN_ID}}"
+for value in "$PILOT_RUN_ID" "$RUN_ID"; do
+  if [[ ! "$value" =~ ^[A-Za-z0-9._-]+$ ]]; then
+    echo "run IDs may contain only letters, digits, dot, underscore, and hyphen" >&2
+    exit 64
+  fi
+done
+PILOT_PREFIX="runs/pilot/navigation_v2_${PILOT_RUN_ID}"
+OUT_PREFIX="runs/confirmation/navigation_v2_${RUN_ID}"
+for out in "${OUT_PREFIX}_core.json" "${OUT_PREFIX}_deployment.json"; do
   if [ -e "$out" ]; then
     echo "refusing to overwrite frozen confirmation output: $out" >&2
     exit 2
   fi
 done
-MODEL="$MODEL" REVISION="$REVISION" "$PY" - <<'PY'
+MODEL="$MODEL" REVISION="$REVISION" PILOT_PREFIX="$PILOT_PREFIX" "$PY" - <<'PY'
 from collections import Counter
 import hashlib, json, os, pathlib, subprocess
 from scaffold.tooling import find_pyrefly
@@ -39,7 +49,8 @@ current_version = subprocess.run(
 ).stdout.strip()
 if current_version != validation.get("pyrefly", {}).get("version"):
     raise SystemExit("Pyrefly version differs from frozen manipulation check")
-positive = json.loads((root / "runs/pilot/navigation_v2_positive.json").read_text())
+pilot_prefix = os.environ["PILOT_PREFIX"]
+positive = json.loads((root / f"{pilot_prefix}_positive.json").read_text())
 rows = positive.get("rows", [])
 expected_tasks = {"nav_pilot_17011", "nav_pilot_17027"}
 expected_positive_grid = Counter(
@@ -70,7 +81,7 @@ behavior_sources = {
 positive_hashes = positive.get("protocol_source_sha256", {})
 if any(positive_hashes.get(rel) != hashes[rel] for rel in behavior_sources):
     raise SystemExit("positive-control behavior source differs from the frozen protocol")
-span_control = json.loads((root / "runs/pilot/navigation_v2_span_control.json").read_text())
+span_control = json.loads((root / f"{pilot_prefix}_span_control.json").read_text())
 span_rows = span_control.get("rows", [])
 expected_span_grid = Counter(
     (task, 0, "typed", "semantic_span_control") for task in expected_tasks
@@ -101,7 +112,7 @@ if (span_control.get("protocol") != "navigation-v2"
 span_hashes = span_control.get("protocol_source_sha256", {})
 if any(span_hashes.get(rel) != hashes[rel] for rel in behavior_sources):
     raise SystemExit("buggy-span control behavior source differs from the frozen protocol")
-pilot = json.loads((root / "runs/pilot/navigation_v2_all.json").read_text())
+pilot = json.loads((root / f"{pilot_prefix}_all.json").read_text())
 pilot_rows = pilot.get("rows", [])
 expected_pilot_cells = {
     ("typed", "baseline"), ("typed", "semantic_auto"),
@@ -156,7 +167,7 @@ if not core or all(row.get("held_out_pass") for row in core) or not any(
     raise SystemExit("pilot is uniformly ceilinged or floored; confirmation remains blocked")
 print("frozen hashes and positive-control floor verified")
 PY
-"$PY" scripts/experiments/run_navigation.py runs/confirmation/navigation_v2_core.json \
+"$PY" scripts/experiments/run_navigation.py "${OUT_PREFIX}_core.json" \
   --model "$MODEL" --revision "$REVISION" --split confirmation --cells core --temperature 0.7 --seeds 3 --gpu-only
-"$PY" scripts/experiments/run_navigation.py runs/confirmation/navigation_v2_deployment.json \
+"$PY" scripts/experiments/run_navigation.py "${OUT_PREFIX}_deployment.json" \
   --model "$MODEL" --revision "$REVISION" --split confirmation --cells deployment --temperature 0.7 --seeds 3 --gpu-only

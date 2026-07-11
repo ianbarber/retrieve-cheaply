@@ -30,6 +30,34 @@ def rows(payload: dict) -> list[dict]:
     return result or payload.get("drafts", [])
 
 
+def navigation_integration_modes(payload: dict) -> dict[str, str]:
+    labels = {
+        "baseline": "textual_pull_grep_and_ranged_read",
+        "semantic_auto": "automatic_live_lsp_definition_plus_enclosing_method",
+        "semantic_avail": "elective_live_lsp_definition_tool_neutral_prompt",
+        "semantic_framed": "elective_live_lsp_definition_tool_cheap_precise_prompt",
+        "semantic_span_control": "oracle_pristine_buggy_method_span_from_task_metadata_no_lsp",
+        "positive_control": "oracle_gold_corrected_method_from_task_metadata_no_lsp",
+    }
+    return {
+        f"{row.get('variant')}:{row.get('arm')}": labels[row["arm"]]
+        for row in rows(payload) if row.get("arm") in labels
+    }
+
+
+def checker_integration_modes(payload: dict) -> dict[str, str]:
+    labels = {
+        "control": "normal_revision_without_checker_context",
+        "diagnostics": "one_shot_target_delta_after_coherent_patch",
+        "gate": "acceptance_gate_with_target_diagnostic_delta",
+        "noisy": "after_every_edit_diagnostic_feedback",
+    }
+    return {
+        row["arm"]: labels[row["arm"]]
+        for row in rows(payload) if row.get("arm") in labels
+    }
+
+
 def integration(path: str, payload: dict) -> str:
     name = Path(path).name
     if path.startswith("runs/realbench/scan/") or name in {"candidates.json", "dispatch_candidates.json"}:
@@ -37,7 +65,12 @@ def integration(path: str, payload: dict) -> str:
     if "navigation_" in name and path.startswith("runs/protocol/"):
         return "strict_live_language_server_manipulation_check"
     if "navigation_" in name and path.startswith(("runs/pilot/", "runs/confirmation/")):
-        return "mixed_textual_and_strict_live_language_server_composed_span"
+        modes = set(navigation_integration_modes(payload).values())
+        return next(iter(modes)) if len(modes) == 1 else "mixed_navigation_integrations"
+    if payload.get("kind") == "opportunity_conditioned_legacy_revision_case_series":
+        return "pre_treatment_checker_positive_cohort_selection"
+    if payload.get("kind") == "opportunity_conditioned_legacy_paired_revision_case_series":
+        return "mixed_checker_revision_integrations"
     if "checker_" in name and path.startswith(("runs/protocol/", "runs/pilot/")):
         return "pyrefly_cli_diagnostic_delta"
     if "/dispatch/" in path:
@@ -66,10 +99,32 @@ def artifact_role(path: str, payload: dict) -> str:
     name = Path(path).name
     if payload.get("protocol") == "navigation-v1" and path.startswith(("runs/pilot/", "runs/protocol/")):
         return "invalidated_navigation_v1_unsound_gold_derived_contract"
-    if name == "navigation_v2_positive.json":
-        return "navigation_v2_gold_copy_competence_control"
-    if name == "navigation_v2_span_control.json":
-        return "navigation_v2_failed_buggy_span_actionability_control"
+    if payload.get("config", {}).get("cells") == "positive":
+        return (
+            "navigation_v2_gold_copy_competence_control_passed"
+            if rows(payload) and all(row.get("held_out_pass") for row in rows(payload))
+            else "navigation_v2_gold_copy_competence_control_failed"
+        )
+    if payload.get("config", {}).get("cells") == "span-control":
+        return (
+            "navigation_v2_buggy_span_actionability_control_passed"
+            if rows(payload) and all(row.get("held_out_pass") for row in rows(payload))
+            else "navigation_v2_buggy_span_actionability_control_failed"
+        )
+    if payload.get("kind") == "opportunity_conditioned_legacy_revision_case_series":
+        return "checker_positive_cohort_selected_before_treatment"
+    if payload.get("kind") == "opportunity_conditioned_legacy_paired_revision_case_series":
+        config = payload.get("config", {})
+        expected = (
+            len((config.get("names") or "").split(","))
+            * len((config.get("arms") or "").split(","))
+            * int(config.get("seeds", 1))
+        )
+        return (
+            "checker_opportunity_conditioned_paired_case_series_complete"
+            if expected and len(rows(payload)) == expected
+            else "checker_opportunity_conditioned_paired_case_series_aborted_incomplete"
+        )
     if "navigation_" in name and path.startswith("runs/protocol/"):
         return "mechanical_manipulation_and_leakage_validation"
     if name == "checker_natural_drafts_legacy_7b.json":
@@ -119,6 +174,12 @@ def make_manifest() -> dict:
             "artifact_role": artifact_role(rel, payload),
             "source_run_files": source_runs,
         }
+        modes = navigation_integration_modes(payload)
+        if modes:
+            entry["row_integration_modes"] = modes
+        checker_modes = checker_integration_modes(payload)
+        if checker_modes:
+            entry["row_checker_integration_modes"] = checker_modes
         recorded_sources = payload.get("protocol_source_sha256")
         if recorded_sources:
             entry["recorded_protocol_source_sha256"] = recorded_sources
@@ -177,6 +238,7 @@ def make_manifest() -> dict:
             "navigation_pilot": "scripts/run_navigation_pilot.sh",
             "navigation_confirmation": "scripts/run_navigation_confirmation.sh",
             "checker_drafts_and_revisions": "scripts/run_checker_paired.sh",
+            "checker_opportunity_case_series": "scripts/run_checker_case_series.sh",
         },
         "provenance_notes": [
             "Raw JSON configs are authoritative where report prose previously disagreed.",

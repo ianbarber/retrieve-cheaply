@@ -1,0 +1,198 @@
+{
+  "protocol": "checker-paired-v1",
+  "kind": "opportunity_conditioned_legacy_paired_revision_case_series",
+  "model": "Qwen/Qwen3.6-27B",
+  "source_drafts": "runs/protocol/checker_opportunity_case_series_v2.json",
+  "model_meta": {
+    "revision": null,
+    "transformers": "5.9.0",
+    "torch": "2.11.0+cu128",
+    "dtype": "torch.bfloat16"
+  },
+  "config": {
+    "command": "revise",
+    "drafts": "runs/protocol/checker_opportunity_case_series_v2.json",
+    "out": "runs/pilot/checker_case_series_qwen36_27b_6a9e13bd.json",
+    "model": "Qwen/Qwen3.6-27B",
+    "revision": "6a9e13bd6fc8f0983b9b99948120bc37f49c13e9",
+    "names": "auth_fold_callable,auth_histogram_counter",
+    "arms": "control,diagnostics,gate",
+    "checker_positive_only": true,
+    "seed": 0,
+    "seeds": 3,
+    "temperature": 0.7,
+    "max_new": 1200,
+    "max_turns": 6,
+    "max_reads": 4,
+    "gpu_only": true
+  },
+  "pyrefly": {
+    "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+    "version": "pyrefly 1.0.0"
+  },
+  "protocol_source_sha256": {
+    "scripts/experiments/checker_paired.py": "b4f73d3651f41677b598fedec6865fc4732c8197d98e219976831e58bad8b32f",
+    "scripts/experiments/diagnostics.py": "98f3e55a2077055aa170ae6cbe09d839ae784a1605f58838478cc2e59d35b746",
+    "scripts/analysis/analyze_checker_paired.py": "552a43a8ecf47aa0d237930e071fcd373c42d22525b33ccbe6b4d60f317c6139",
+    "scripts/synth_tasks_authoring.py": "51af9d800d0f6812286343b74c9d578b5ad1a599f9a4bbf184246c7efb94a58e",
+    "scaffold/stream_agent.py": "cc052cb2882cf3b35dab51a9d0d55b49b811341d52c6dde105e03f535c9f2db8",
+    "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
+    "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+    "scripts/run_checker_paired.sh": "368c2e12e7930465e93a507628c0e066612533483f6717474a6374e4479fe705"
+  },
+  "rows": [
+    {
+      "draft_id": "legacy-exp2_7b_none-auth_fold_callable-s0",
+      "draft_hash": "8b202e0fc2949e0fa2c217c10499345a69b3b178f76a07d09ba463834af5815e",
+      "task": "auth_fold_callable",
+      "group": "tricky",
+      "arm": "control",
+      "seed": 0,
+      "opportunity": true,
+      "initial_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 4,
+          "column": 31,
+          "stop_line": 4,
+          "stop_column": 34,
+          "code": "bad-return",
+          "message": "Function declared to return `int` but is missing an explicit `return`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "   3| \n   4| def total(nums: list[int]) -> int:\n   5|     \"\"\"Sum of nums, computed with fold.\"\"\""
+        },
+        {
+          "path": "target.py",
+          "line": 8,
+          "column": 12,
+          "stop_line": 8,
+          "stop_column": 45,
+          "code": "bad-return",
+          "message": "Returned type `(x: Unknown, y: Unknown) -> Unknown` is not assignable to declared return type `int`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "   7|     \"\"\"Sum of nums, computed with fold.\"\"\"\n   8|     return fold(nums, lambda x, y: x + y, 0)"
+        },
+        {
+          "path": "target.py",
+          "line": 8,
+          "column": 43,
+          "stop_line": 8,
+          "stop_column": 44,
+          "code": "bad-argument-type",
+          "message": "Argument `Literal[0]` is not assignable to parameter `step` with type `((x: Unknown, y: Unknown) -> Unknown, int) -> (x: Unknown, y: Unknown) -> Unknown` in function `lib.fold`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "   7|     \"\"\"Sum of nums, computed with fold.\"\"\"\n   8|     return fold(nums, lambda x, y: x + y, 0)"
+        }
+      ],
+      "final_diagnostics": [],
+      "diagnostics_eliminated": 3,
+      "diagnostics_retained": 0,
+      "diagnostics_introduced": 0,
+      "edited_diagnosed_location": true,
+      "visible_pass": false,
+      "held_pass": false,
+      "type_clean": true,
+      "accepted": false,
+      "semantic_clean": true,
+      "syntax_clean": true,
+      "accepted_type_clean": false,
+      "accepted_type_clean_correct": false,
+      "gate_rejections": 0,
+      "abstained_or_rejected": false,
+      "draft_in_tokens": 0,
+      "draft_out_tokens": 0,
+      "in_tokens": 1273,
+      "out_tokens": 664,
+      "turns": 7,
+      "n_edits": 2,
+      "n_tests": 2,
+      "n_checks": 0,
+      "checker_latency_ms": 206.5,
+      "wall_sec": 244.005,
+      "events": [
+        {
+          "tok": 14,
+          "type": "read",
+          "n": 1,
+          "path": "target.py",
+          "ranged": true
+        },
+        {
+          "tok": 32,
+          "type": "read",
+          "n": 2,
+          "path": "target.py",
+          "ranged": true
+        },
+        {
+          "tok": 39,
+          "type": "test",
+          "n": 1,
+          "resolved": false
+        },
+        {
+          "tok": 39,
+          "type": "turn",
+          "n": 3,
+          "via": "test"
+        },
+        {
+          "tok": 181,
+          "type": "read",
+          "n": 3,
+          "path": "target.py",
+          "ranged": true
+        },
+        {
+          "tok": 413,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "1-8",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "from lib import fold\n\n\ndef total(nums: list[int]) -> int:\n    \"\"\"Sum of nums, computed with fold.\"\"\"\n    return fold(nums, lambda x, y: x + y, 0)\n\n\ndef concat(strs: list[str]) -> str:\n    \"\"\"Concatenate strings, computed with fold.\"\"\"\n    return fold(strs, lambda x, y: x + y, \"\")\n\n\ndef count_matchin"
+        },
+        {
+          "tok": 413,
+          "type": "turn",
+          "n": 5,
+          "via": "eos"
+        },
+        {
+          "tok": 414,
+          "type": "test",
+          "n": 2,
+          "resolved": false
+        },
+        {
+          "tok": 414,
+          "type": "turn",
+          "n": 6,
+          "via": "test"
+        },
+        {
+          "tok": 432,
+          "type": "read",
+          "n": 4,
+          "path": "lib.py",
+          "ranged": true
+        },
+        {
+          "tok": 664,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "1-16",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "from lib import fold\n\n\ndef total(nums: list[int]) -> int:\n    \"\"\"Sum of nums, computed with fold.\"\"\"\n    return fold(nums, 0, lambda acc, x: acc + x)\n\n\ndef concat(strs: list[str]) -> str:\n    \"\"\"Concatenate strings, computed with fold.\"\"\"\n    return fold(strs, \"\", lambda acc, x: acc + x)\n\n\ndef count"
+        }
+      ],
+      "stream_tail": " target: int) -> int:\n    \"\"\"Count elements matching target, computed with fold.\"\"\"\n    return fold(nums, lambda acc, x: acc + (1 if x == target else 0), 0)\n</edit><|im_end|>\n<|im_start|>user\nTests are still failing (see the result above). Make another SEARCH/REPLACE edit to fix the remaining problem, then <test/> again. If you cannot find the fix, re-read the failing assertion carefully.\n\nCurrent `target.py` (edit against THIS exact text):\n  1| from lib import fold\n  2| \n  3| \n  4| def total(nums: list[int]) -> int:\n  5|     \"\"\"Sum of nums, computed with fold.\"\"\"\n  6|     return fold(nums, lambda x, y: x + y, 0)\n  7| \n  8| \n  9| def concat(strs: list[str]) -> str:\n 10|     \"\"\"Concatenate strings, computed with fold.\"\"\"\n 11|     return fold(strs, lambda x, y: x + y, \"\")\n 12| \n 13| \n 14| def count_matching(nums: list[int], target: int) -> int:\n 15|     \"\"\"Count elements matching target, computed with fold.\"\"\"\n 16|     return fold(nums, lambda acc, x: acc + (1 if x == target else 0), 0)<|im_end|>\n<|im_start|>assistant\n<think><|im_end|>\n<|im_start|>user\n<test_result>\nFAIL: F2P 0/1, P2P 0/0.\nTypeError: 'int' object is not callable\n</test_result><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n<read path=\"lib.py\" lines=\"1-50\"/><|im_end|>\n<|im_start|>user\n<file path=\"lib.py\" lines=\"1-12\">\n   1| from typing import Callable, TypeVar\n   2| \n   3| T = TypeVar(\"T\")\n   4| U = TypeVar(\"U\")\n   5| \n   6| \n   7| def fold(items: list[T], init: U, step: Callable[[U, T], U]) -> U:\n   8|     \"\"\"Left fold: thread step(acc, item) across items starting from init.\"\"\"\n   9|     acc = init\n  10|     for item in items:\n  11|         acc = step(acc, item)\n  12|     return acc\n</file><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\nThe `fold` function signature is `fold(items, init, step)` \u2014 the `init` comes before `step`. But in my code, I'm calling `fold(nums, lambda x, y: x + y, 0)` which passes the lambda as `init` and `0` as `step`. That's the wrong order.\n\n<edit path=\"target.py\" lines=\"1-16\">from lib import fold\n\n\ndef total(nums: list[int]) -> int:\n    \"\"\"Sum of nums, computed with fold.\"\"\"\n    return fold(nums, 0, lambda acc, x: acc + x)\n\n\ndef concat(strs: list[str]) -> str:\n    \"\"\"Concatenate strings, computed with fold.\"\"\"\n    return fold(strs, \"\", lambda acc, x: acc + x)\n\n\ndef count_matching(nums: list[int], target: int) -> int:\n    \"\"\"Count elements matching target, computed with fold.\"\"\"\n    return fold(nums, 0, lambda acc, x: acc + (1 if x == target else 0))\n</edit>"
+    }
+  ]
+}
