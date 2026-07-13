@@ -126,6 +126,12 @@ def artifact_role(path: str, payload: dict) -> str:
                 if expected and len(rows(payload)) == expected
                 else "checker_opportunity_case_series_aborted_incomplete"
             )
+        if payload.get("protocol") == "checker-paired-v2":
+            return (
+                "checker_diagnostics_case_series_complete_gate_pairing_invalid"
+                if expected and len(rows(payload)) == expected
+                else "checker_opportunity_case_series_aborted_incomplete"
+            )
         return (
             "checker_opportunity_conditioned_paired_case_series_complete"
             if expected and len(rows(payload)) == expected
@@ -223,6 +229,7 @@ def make_manifest() -> dict:
         ROOT / "scripts" / "run_navigation_pilot.sh",
         ROOT / "scripts" / "run_navigation_confirmation.sh",
         ROOT / "scripts" / "run_checker_paired.sh",
+        ROOT / "scripts" / "run_checker_case_series.sh",
         ROOT / "pyproject.toml",
     ]
     revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()

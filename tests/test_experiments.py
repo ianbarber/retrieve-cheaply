@@ -1,4 +1,5 @@
 import math
+import json
 from pathlib import Path
 import re
 import subprocess
@@ -11,12 +12,17 @@ from scripts.analysis.analyze_checker_paired import (
     end_to_end_summary,
     end_to_end_contrast,
     expected_cost_per_accepted_correct,
+    gate_pairing_audit,
     paired_contrast,
     summarize_rows,
 )
 from scripts.analysis.analyze_navigation import interaction, paired_ratio
 from scripts.experiments.diagnostics import collect_diagnostics, delta, format_diagnostics, is_coherent
 from scripts.experiments.navigation_tasks import build_prompt, build_tasks
+from scripts.experiments.checker_paired import (
+    _publish_revision_payload,
+    _validate_case_series_rows,
+)
 from scripts.experiments.run_navigation import (
     _control_floor_failure,
     _method_from_metadata,
@@ -233,12 +239,82 @@ def test_unsubmitted_gate_is_not_a_rejection():
     common = {"draft_id": "d", "task": "t", "seed": 0, "accepted": False,
               "held_pass": False, "semantic_clean": False,
               "accepted_type_clean_correct": False, "unsubmitted": True,
-              "gate_invocations": 0, "gate_rejections": 0, "gate_acceptances": 0}
+              "gate_invocations": 0, "gate_rejections": 0, "gate_acceptances": 0,
+              "first_done_prefix_sha256": None, "trajectory_sha256": "same"}
     rows = [{**common, "arm": "control"}, {**common, "arm": "gate"}]
     rejected = end_to_end_contrast(drafts, rows, "gate", "gate_rejection", 100, 1)
     unsubmitted = end_to_end_contrast(drafts, rows, "gate", "unsubmitted", 100, 1)
     assert rejected["mean_delta"] == 0
     assert unsubmitted["mean_delta"] == 0
+
+
+def test_gate_pairing_rejects_divergent_trajectories_without_completion():
+    common = {
+        "draft_id": "d", "task": "t", "seed": 0,
+        "first_done_prefix_sha256": None, "serialization_failures": [],
+        "gate_invocations": 0, "gate_acceptances": 0, "gate_rejections": 0,
+        "n_checks": 0, "accepted_dirty": False,
+    }
+    rows = [
+        {**common, "arm": "control", "trajectory_sha256": "control"},
+        {**common, "arm": "gate", "trajectory_sha256": "gate"},
+    ]
+    audit = gate_pairing_audit(rows)
+    assert not audit["valid"]
+    assert audit["invalid_pairs"][0]["reason"] == (
+        "full trajectories differ without gate intervention"
+    )
+    try:
+        _validate_case_series_rows([{"draft_id": "d"}], rows, ["control", "gate"], 1)
+    except ValueError as error:
+        assert "diverge without a gate intervention" in str(error)
+    else:
+        raise AssertionError("divergent no-completion trajectories passed validation")
+
+
+def test_failed_case_series_validation_never_publishes_target(tmp_path):
+    common = {
+        "draft_id": "d", "task": "t", "seed": 0,
+        "first_done_prefix_sha256": None, "serialization_failures": [],
+        "gate_invocations": 0, "gate_acceptances": 0, "gate_rejections": 0,
+        "n_checks": 0, "accepted_dirty": False,
+    }
+    rows = [
+        {**common, "arm": "control", "trajectory_sha256": "control"},
+        {**common, "arm": "gate", "trajectory_sha256": "gate"},
+    ]
+    out = tmp_path / "result.json"
+    try:
+        _publish_revision_payload(
+            out, {"rows": rows}, [{"draft_id": "d"}], rows,
+            ["control", "gate"], 1, validate_case_series=True,
+        )
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("invalid case series was published")
+    assert not out.exists()
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_selected_case_series_analyzer_suppresses_natural_cohort_labels():
+    root = Path(__file__).resolve().parents[1]
+    result = subprocess.run([
+        sys.executable, "scripts/analysis/analyze_checker_paired.py",
+        "--drafts", "runs/protocol/checker_opportunity_case_series_v4.json",
+        "--revisions", "runs/pilot/checker_case_series_qwen36_27b_6a9e13bd_v2_s1.json",
+        "--bootstrap", "10",
+    ], cwd=root, capture_output=True, text=True, check=True)
+    assert "unconditional opportunity rate" not in result.stdout
+    assert "coherent_submitted_revision" not in result.stdout
+    assert "ALL NATURAL DRAFTS" not in result.stdout
+    assert "selected_checker_positive_revision" in result.stdout
+    pairing_line = next(
+        line for line in result.stdout.splitlines() if line.startswith("GATE PAIRING AUDIT ")
+    )
+    pairing = json.loads(pairing_line.removeprefix("GATE PAIRING AUDIT "))
+    assert not pairing["valid"]
+    assert "recorded trajectories differ" in pairing["invalid_pairs"][0]["reason"]
 
 
 def test_checker_end_to_end_contrast_uses_joint_correct_clean_acceptance():
@@ -248,7 +324,7 @@ def test_checker_end_to_end_contrast_uses_joint_correct_clean_acceptance():
     ]
     common = {
         "task": "t1", "draft_id": "d1", "seed": 0, "accepted": True,
-        "semantic_clean": True,
+        "semantic_clean": True, "first_done_prefix_sha256": "same",
     }
     rows = [
         {**common, "arm": "control", "held_pass": False,

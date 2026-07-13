@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Opportunity summaries and task-bootstrap contrasts for checker-paired-v1."""
+"""Opportunity summaries and task-bootstrap contrasts for paired checker protocols."""
 
 from __future__ import annotations
 
@@ -28,6 +28,63 @@ def revision_eligible(draft: dict) -> bool:
         draft["coherent"]
         and (draft.get("draft_submitted") or draft.get("revision_case_series_eligible"))
     )
+
+
+def gate_pairing_audit(rows: list[dict]) -> dict:
+    """Verify that a gate could not influence its paired control before completion."""
+    relevant = [row for row in rows if row.get("arm") in {"control", "gate"}]
+    by_cell = {
+        (row["draft_id"], row.get("seed"), row["arm"]): row
+        for row in relevant
+    }
+    cells = sorted({(row["draft_id"], row.get("seed")) for row in relevant})
+    invalid = []
+    for draft_id, seed in cells:
+        control = by_cell.get((draft_id, seed, "control"))
+        gate = by_cell.get((draft_id, seed, "gate"))
+        if control is None or gate is None:
+            invalid.append({"draft_id": draft_id, "seed": seed, "reason": "missing paired arm"})
+            continue
+        control_done = control.get("first_done_prefix_sha256")
+        gate_done = gate.get("first_done_prefix_sha256")
+        if bool(control_done) != bool(gate_done):
+            invalid.append({
+                "draft_id": draft_id, "seed": seed,
+                "reason": "completion boundaries differ before gate intervention",
+            })
+        elif control_done and control_done != gate_done:
+            invalid.append({
+                "draft_id": draft_id, "seed": seed,
+                "reason": "generated prefixes differ before first completion",
+            })
+        elif not control_done:
+            control_trajectory = control.get("trajectory_sha256")
+            gate_trajectory = gate.get("trajectory_sha256")
+            if not control_trajectory or not gate_trajectory:
+                observables = (
+                    "out_tokens", "in_tokens", "turns", "n_edits", "n_tests",
+                    "events", "final_workspace_sha256",
+                )
+                diverged = any(control.get(field) != gate.get(field) for field in observables)
+                invalid.append({
+                    "draft_id": draft_id, "seed": seed,
+                    "reason": (
+                        "recorded trajectories differ before any gate event; full trajectory hash unavailable"
+                        if diverged else
+                        "no completion and full trajectory hash unavailable"
+                    ),
+                })
+            elif control_trajectory != gate_trajectory:
+                invalid.append({
+                    "draft_id": draft_id, "seed": seed,
+                    "reason": "full trajectories differ without gate intervention",
+                })
+    return {
+        "valid": bool(cells) and not invalid,
+        "n_pairs": len(cells),
+        "n_invalid": len(invalid),
+        "invalid_pairs": invalid,
+    }
 
 
 def summarize_rows(rows: list[dict]) -> dict:
@@ -269,6 +326,14 @@ def paired_contrast(
     bootstrap: int, seed: int,
 ) -> dict:
     selected = [row for row in rows if not opportunity_only or row["opportunity"]]
+    if arm == "gate":
+        pairing = gate_pairing_audit(selected)
+        if not pairing["valid"]:
+            return {
+                "n_tasks": 0, "estimable": False,
+                "reason": "control/gate pre-intervention pairing is invalid",
+                "pairing_audit": pairing,
+            }
     by_arm: dict[str, dict[str, list[dict]]] = {}
     for row in selected:
         by_arm.setdefault(row["arm"], {}).setdefault(row["task"], []).append(row)
@@ -315,6 +380,14 @@ def end_to_end_contrast(
         if revision_eligible(draft)
     }
     selected = [row for row in rows if row["arm"] in {"control", arm}]
+    if arm == "gate":
+        pairing = gate_pairing_audit(selected)
+        if not pairing["valid"]:
+            return {
+                "n_tasks": 0, "estimable": False,
+                "reason": "control/gate pre-intervention pairing is invalid",
+                "pairing_audit": pairing,
+            }
     grids = {
         which: Counter(
             (row["draft_id"], row.get("seed"))
@@ -388,6 +461,7 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=20260710)
     args = parser.parse_args()
     payload = json.loads(Path(args.drafts).read_text())
+    case_series = bool(payload.get("selection_is_not_a_natural_opportunity_sample"))
     drafts = payload["drafts"]
     coherent = [draft for draft in drafts if draft["coherent"]]
     submitted = [draft for draft in drafts if draft.get("draft_submitted")]
@@ -396,13 +470,16 @@ def main() -> None:
     )]
 
     print(f"CHECKER DRAFT AUDIT: {payload.get('kind', 'unknown')}")
-    if payload.get("selection_is_not_a_natural_opportunity_sample"):
+    if case_series:
         print("CASE SERIES: opportunity-conditioned selection; prevalence and unconditional value are not estimable")
     print(f"drafts={len(drafts)} submitted={len(submitted)} coherent={len(coherent)} "
           f"semantic-opportunity={len(opportunities)}")
-    print(f"unconditional opportunity rate={len(opportunities)/len(drafts):.3f}")
-    if coherent:
-        print(f"opportunity rate among coherent={len(opportunities)/len(coherent):.3f}")
+    if case_series:
+        print(f"selection check: checker-positive={len(opportunities)}/{len(drafts)} selected workspaces")
+    else:
+        print(f"unconditional opportunity rate={len(opportunities)/len(drafts):.3f}")
+        if coherent:
+            print(f"opportunity rate among coherent={len(opportunities)/len(coherent):.3f}")
     for draft in drafts:
         semantic = sum(item["classification"] == "semantic"
                        for item in draft["draft_diagnostics"])
@@ -421,20 +498,28 @@ def main() -> None:
             for task_drafts in coherent_by_task.values()
         ) if coherent_by_task else math.nan
     )
-    print("COHORT AUDIT " + json.dumps({
-        "tasks_generated": len({draft["task"] for draft in drafts}),
-        "drafts_generated": len(drafts),
-        "drafts_submitted": len(submitted),
-        "drafts_unsubmitted": len(drafts) - len(submitted),
-        "drafts_coherent_submitted": sum(
-            bool(draft.get("draft_submitted") and draft["coherent"]) for draft in drafts
-        ),
-        "drafts_submitted_incoherent": sum(
-            bool(draft.get("draft_submitted") and not draft["coherent"]) for draft in drafts
-        ),
-        "drafts_checker_positive": len(opportunities),
-        "task_weighted_opportunity_rate_among_coherent": task_weighted_opportunity,
-    }, allow_nan=True))
+    if case_series:
+        print("SELECTED CASE AUDIT " + json.dumps({
+            "selected_tasks": len({draft["task"] for draft in drafts}),
+            "selected_workspaces": len(drafts),
+            "selected_checker_positive": len(opportunities),
+            "prevalence_estimable": False,
+        }))
+    else:
+        print("COHORT AUDIT " + json.dumps({
+            "tasks_generated": len({draft["task"] for draft in drafts}),
+            "drafts_generated": len(drafts),
+            "drafts_submitted": len(submitted),
+            "drafts_unsubmitted": len(drafts) - len(submitted),
+            "drafts_coherent_submitted": sum(
+                bool(draft.get("draft_submitted") and draft["coherent"]) for draft in drafts
+            ),
+            "drafts_submitted_incoherent": sum(
+                bool(draft.get("draft_submitted") and not draft["coherent"]) for draft in drafts
+            ),
+            "drafts_checker_positive": len(opportunities),
+            "task_weighted_opportunity_rate_among_coherent": task_weighted_opportunity,
+        }, allow_nan=True))
     if not args.revisions:
         return
 
@@ -446,14 +531,18 @@ def main() -> None:
     unexpected = sorted({row["draft_id"] for row in rows} - eligible_ids)
     if unexpected:
         raise ValueError(f"revision rows exist for ineligible drafts: {unexpected}")
-    heading = ("SELECTED RECOVERED-WORKSPACE REVISION EFFICACY"
-               if payload.get("selection_is_not_a_natural_opportunity_sample")
+    heading = ("SELECTED CHECKER-POSITIVE WORKSPACE REVISION EFFICACY"
+               if case_series
                else "REVISION EFFICACY AMONG COHERENT SUBMITTED DRAFTS")
     print(f"\n{heading}")
-    for opportunity_only, subset in (
-        (False, "coherent_submitted_revision"),
-        (True, "checker_positive_revision"),
-    ):
+    subsets = (
+        ((False, "selected_checker_positive_revision"),)
+        if case_series else (
+            (False, "coherent_submitted_revision"),
+            (True, "checker_positive_revision"),
+        )
+    )
+    for opportunity_only, subset in subsets:
         selected = [row for row in rows if not opportunity_only or row["opportunity"]]
         print(subset)
         for arm in sorted({row["arm"] for row in selected}):
@@ -465,7 +554,11 @@ def main() -> None:
                     rows, arm, field, opportunity_only, args.bootstrap, args.seed
                 )
         print(json.dumps(contrasts, indent=2, allow_nan=True))
-    print("\nEND-TO-END OUTCOMES ACROSS ALL NATURAL DRAFTS")
+    if case_series:
+        print("\nSELECTED-WORKSPACE DESCRIPTIVE OUTCOMES; END-TO-END VALUE NOT ESTIMABLE")
+        print("GATE PAIRING AUDIT " + json.dumps(gate_pairing_audit(rows), allow_nan=True))
+    else:
+        print("\nEND-TO-END OUTCOMES ACROSS ALL NATURAL DRAFTS")
     for arm in sorted({row["arm"] for row in rows}):
         print(f"  {arm}: {json.dumps(end_to_end_summary(drafts, rows, arm), allow_nan=True)}")
         print("    deployment_cost: " + json.dumps(
@@ -489,7 +582,8 @@ def main() -> None:
             end_to_end_contrasts[f"{arm}_minus_control_{field}"] = end_to_end_contrast(
                 drafts, rows, arm, field, args.bootstrap, args.seed
             )
-    print("END-TO-END TASK-BOOTSTRAP ARM CONTRASTS")
+    print("SELECTED-WORKSPACE ARM CONTRASTS" if case_series
+          else "END-TO-END TASK-BOOTSTRAP ARM CONTRASTS")
     print(json.dumps(end_to_end_contrasts, indent=2, allow_nan=True))
     print("A null is not equivalence unless its task-bootstrap pass CI lies inside +/-0.10.")
 

@@ -83,6 +83,12 @@ rejections, and acceptances as separate events. Inline edit bodies are normalize
 indentation equals the replaced line or differs by one unambiguous separator space; other inline indentation
 is rejected without mutation. Each row stores raw/applied edit-body hashes and final file/workspace hashes.
 
+Protocol `checker-paired-v3` closes the null-prefix pairing hole. Control and gate must have identical
+generated prefixes through the first completion attempt. If neither completes, their full generated
+trajectory hashes must match because the gate cannot yet affect behavior; one-sided completion is also a
+failure. The complete JSON is staged beside the destination, validated in memory, flushed, and atomically
+renamed. Validation failure removes the staged file and never creates the advertised result path.
+
 ## Run and spend budget
 
 No paid API run is authorized by this protocol. The executed development regimes use locally cached
@@ -108,5 +114,7 @@ invokes the gate, so no rejection or prevention evidence exists. Protocol `check
 serialization explicit relative to current indentation, records actual done/gate events separately, and
 preserves missing draft cost as null. Its immutable rerun has no serialization failures. Diagnostics end
 type-clean on 2/2 selected workspaces versus 1/2 control but add 217 mean revision tokens; every arm remains
-1/2 on held pass and joint accepted-clean-correct. The gate accepts the already-clean task, is never invoked
-on the unresolved task, and records zero rejections. No paid API calls were made.
+1/2 on held pass and joint accepted-clean-correct. The gate accepts the already-clean task and descriptively
+records zero rejections, but the unresolved control and gate trajectories diverge before any completion
+attempt. The v2 null-prefix validator misses that divergence, so the gate contrast is excluded. Protocol v3
+repairs the validator and atomic write path but has not been run. No paid API calls were made.

@@ -8,7 +8,9 @@ from collections import Counter
 import hashlib
 import itertools
 import json
+import os
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -31,7 +33,7 @@ from scripts.experiments.diagnostics import (  # noqa: E402
 from scripts.synth_tasks_authoring import TASKS_AUTHORING  # noqa: E402
 
 
-PROTOCOL_VERSION = "checker-paired-v2"
+PROTOCOL_VERSION = "checker-paired-v3"
 ARMS = ("control", "diagnostics", "gate", "noisy")
 REVISION_SYS = """You are revising an existing coherent Python draft.
 Tools:
@@ -78,6 +80,7 @@ def _protocol_hashes() -> dict[str, str]:
         ROOT / "scaffold" / "mock_env.py",
         ROOT / "scaffold" / "tooling.py",
         ROOT / "scripts" / "run_checker_paired.sh",
+        ROOT / "scripts" / "run_checker_case_series.sh",
     ]
     return {
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
@@ -463,8 +466,41 @@ def _validate_case_series_rows(drafts: list[dict], rows: list[dict], arms: list[
                           min(row["seed"] for row in rows) + seeds):
             control = by_cell[(draft["draft_id"], seed, "control")]
             gate = by_cell[(draft["draft_id"], seed, "gate")]
-            if control["first_done_prefix_sha256"] != gate["first_done_prefix_sha256"]:
+            control_done = control["first_done_prefix_sha256"]
+            gate_done = gate["first_done_prefix_sha256"]
+            if bool(control_done) != bool(gate_done):
+                raise ValueError("control/gate completion boundaries differ before gate intervention")
+            if control_done and control_done != gate_done:
                 raise ValueError("control/gate trajectories diverge before the first completion attempt")
+            if not control_done:
+                control_trajectory = control.get("trajectory_sha256")
+                gate_trajectory = gate.get("trajectory_sha256")
+                if not control_trajectory or not gate_trajectory:
+                    raise ValueError("full trajectory hashes are required when neither arm completes")
+                if control_trajectory != gate_trajectory:
+                    raise ValueError("control/gate trajectories diverge without a gate intervention")
+
+
+def _publish_revision_payload(
+    out: Path, result_payload: dict, drafts: list[dict], rows: list[dict],
+    arms: list[str], seeds: int, validate_case_series: bool,
+) -> None:
+    """Stage a complete result beside its destination, validate it, then publish atomically."""
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary_name = tempfile.mkstemp(prefix=f".{out.name}.", suffix=".tmp", dir=out.parent)
+    temporary = Path(temporary_name)
+    try:
+        with os.fdopen(fd, "w") as handle:
+            json.dump(result_payload, handle, indent=2)
+            handle.write("\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        if validate_case_series:
+            _validate_case_series_rows(drafts, rows, arms, seeds)
+        os.replace(temporary, out)
+    except BaseException:
+        temporary.unlink(missing_ok=True)
+        raise
 
 
 def revise(args) -> int:
@@ -574,6 +610,7 @@ def revise(args) -> int:
                     (event.get("prefix_sha256") for event in events
                      if event.get("type") == "done_attempt"), None
                 ),
+                "trajectory_sha256": _sha(result["stream"]),
                 "serialization_failures": serialization_failures,
                 "final_target_sha256": _sha(final_files[draft["target"]]),
                 "final_file_sha256": final_file_hashes,
@@ -593,22 +630,23 @@ def revise(args) -> int:
             rows.append(row)
         finally:
             env.close()
-        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-        Path(args.out).write_text(json.dumps({
-            "protocol": PROTOCOL_VERSION, "kind": (
-                "opportunity_conditioned_legacy_paired_revision_case_series"
-                if payload.get("selection_is_not_a_natural_opportunity_sample")
-                else "paired_revisions"
-            ),
-            "model": args.model, "source_drafts": args.drafts,
-            "model_meta": model_meta, "config": vars(args),
-            "pyrefly": _pyrefly_meta(), "protocol_source_sha256": _protocol_hashes(),
-            "rows": rows,
-        }, indent=2) + "\n")
         print(f"{draft['task']} {arm}: held={row['held_pass']} clean={row['type_clean']} "
               f"accepted={row['accepted']} edits={row['n_edits']}", flush=True)
-    if payload.get("selection_is_not_a_natural_opportunity_sample"):
-        _validate_case_series_rows(drafts, rows, arms, args.seeds)
+    result_payload = {
+        "protocol": PROTOCOL_VERSION, "kind": (
+            "opportunity_conditioned_legacy_paired_revision_case_series"
+            if payload.get("selection_is_not_a_natural_opportunity_sample")
+            else "paired_revisions"
+        ),
+        "model": args.model, "source_drafts": args.drafts,
+        "model_meta": model_meta, "config": vars(args),
+        "pyrefly": _pyrefly_meta(), "protocol_source_sha256": _protocol_hashes(),
+        "rows": rows,
+    }
+    _publish_revision_payload(
+        Path(args.out), result_payload, drafts, rows, arms, args.seeds,
+        validate_case_series=bool(payload.get("selection_is_not_a_natural_opportunity_sample")),
+    )
     return 0
 
 

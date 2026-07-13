@@ -32,8 +32,9 @@ controls and runs the sound matrix, but all 12 causal/deployment cells pass and 
 followed by target reads, so correctness is non-identifying and useful compression is not demonstrated.
 Experiment 2 freezes natural drafts before paired revisions. Fresh 7B and 14B calibration misses the
 required coherence/opportunity band. A repaired two-task selected replay finds one additional type-clean
-terminal workspace with one-shot diagnostics, but no held-out or accepted-clean-correct gain; its unresolved
-gate trajectory never invokes the gate.
+terminal workspace with one-shot diagnostics, but no held-out or accepted-clean-correct gain. Its unresolved
+control and gate trajectories diverge before either attempts completion, so the gate arm is excluded from
+causal interpretation.
 The practical conclusion is conditional: use the cheapest integration that supplies unique, actionable
 information at an actual opportunity, and measure whether it replaces work rather than merely preceding
 it.
@@ -303,8 +304,12 @@ held-out-correct, accepted targets. Diagnostics therefore end type-clean on 2/2 
 1,585 versus 1,368 mean revision tokens, but every arm remains 1/2 on held pass and
 `accepted && type_clean && held_pass`. This is descriptive intermediate-state evidence on two selected
 workspaces with one seed, not a correctness or population effect. The gate is checked and accepts only the
-already-clean task; the unresolved task never attempts completion, so `gate_rejections=0` and prevention is
-not estimable ([C26](evidence/claim_ledger.md#c26)).
+already-clean task. On the unresolved task, control makes two edits while gate makes none even though no
+gate can act before `<done/>`; both completion-prefix hashes are null. The v2 validator missed this divergence,
+so the gate arm is excluded from causal contrasts. Descriptively it records no completion, check, or rejection,
+but prevention is not estimable ([C26](evidence/claim_ledger.md#c26)). Protocol v3 records a full trajectory
+hash when no completion occurs, requires control/gate equality through that boundary, and validates a staged
+file before atomic publication. It has not been run.
 
 ### 4.3 External validity
 
@@ -360,7 +365,7 @@ elect or cannot repair, or latency/context exceeds saved work.
 | Forced/automatic context helps but the elective tool is rarely chosen | first try explicit cheap/precise framing | model-dependent election: [C3](evidence/claim_ledger.md#c3); historical framed dispatch: C9 | **Tentative and model-specific** | election, substitution, correctness, added context |
 | Framing remains insufficient and the automatic upper bound is valuable | policy training or on-policy relabeling | direct repository policy result: [C2](evidence/claim_ledger.md#c2); C3 caveat | **Supported model-specifically**, not a capability law | election and behavioral retention on held-out opportunities |
 | Natural coherent drafts contain checker-detectable errors and the model can revise | patch-boundary diagnostic deltas | calibration boundary: [C16](evidence/claim_ledger.md#c16), [C22](evidence/claim_ledger.md#c22); rejected replay: [C25](evidence/claim_ledger.md#c25); repaired selected replay: [C26](evidence/claim_ledger.md#c26); CoCoGen externally | **Intermediate checker-state effect on two selected workspaces; correctness benefit open** | opportunity, diagnosed-location edits, error deltas, held-out correctness, revision cost |
-| Self-repair is unreliable and preventing accepted latent defects matters | acceptance gate | local rejection path unexercised: [C26](evidence/claim_ledger.md#c26); broader claim [C14](evidence/claim_ledger.md#c14) | **Prevention benefit remains external/design guidance** | gate invocation, accepted defects, rejection, false-positive cost |
+| Self-repair is unreliable and preventing accepted latent defects matters | acceptance gate | local gate arm pairing invalid and rejection path unexercised: [C26](evidence/claim_ledger.md#c26); broader claim [C14](evidence/claim_ledger.md#c14) | **Prevention benefit remains external/design guidance** | pre-gate trajectory identity, gate invocation, accepted defects, rejection, false-positive cost |
 | Several candidates are available before acceptance | offline checker reranking | CompCoder externally; no direct repository arm | **External evidence only** | clean-correct ranking precision, candidate cost |
 | Invalid candidates can be excluded during generation or training | constrained decoding or compiler/type reward | CompCoder, type-constrained generation, and RLCSF externally; no direct repository claim | **External evidence only** | validity, search cost, behavioral correctness |
 | A structural operation is risky or non-unique as text | server/AST rename, references, or structured edit | CodeStruct externally; no direct repository claim | **External evidence only** | semantic preservation, rollback/failure rate |
@@ -394,8 +399,9 @@ from current `stream_agent.py` because the observed compact-edit parser incompat
 the tagged `pilot002` rerun; they are preserved as pre-repair calibration. After `pilot002`, inline
 serialization was tightened again to repair the checker replay, so the manifest records the exact
 `stream_agent.py` mismatch; all navigation cells nevertheless pass and their raw edits remain inspectable.
-The checker v1 replay is explicitly rejected, while the v2 selection and paired artifact match current
-behavior sources. The stopped three-seed attempt remains labeled incomplete rather than analyzed.
+The checker v1 replay is explicitly rejected. The v2 diagnostic rows remain descriptive evidence, but its
+gate contrast is excluded for pre-intervention divergence. Protocol v3 repairs that validator and atomic
+publication path; no v3 model artifact exists. The stopped three-seed attempt remains labeled incomplete.
 
 ## 8. Conclusion
 
@@ -410,7 +416,8 @@ the missing causal distinctions explicit. The repaired 7B and 14B navigation pil
 floors. Qwen3.6-27B clears the controls, but its two-task matrix is behaviorally ceilinged and automatic
 context precedes the same target read; confirmation remains blocked by the non-degeneracy gate. Fresh
 checker calibration is rejected at its draft-coherence/opportunity gate. The repaired selected replay shows
-a terminal checker-state difference without behavioral gain; its gate rejection path is unexercised.
+a terminal checker-state difference without behavioral gain; its gate arm is not a valid causal pair and
+its rejection path is unexercised.
 
 The operational recipe is: use text for unique local facts; use typed semantic resolution for genuinely
 non-lexical ambiguity; retain it only when it replaces work; treat patch-boundary checker cleanliness as an

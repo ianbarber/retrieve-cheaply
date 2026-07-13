@@ -56,9 +56,10 @@ arm remains 1/2 on joint accepted-clean-correct. The unresolved gate trajectory 
 the run supplies no gate-prevention evidence.
 A protocol-v2 rerun removes that artifact and records completion/gate events separately. One-shot
 diagnostics finish type-clean on 2/2 selected workspaces versus 1/2 control, but every arm remains 1/2 on
-held pass and accepted-clean-correct; diagnostics add 217 mean revision tokens. The gate accepts the clean
-task, while the unresolved task never invokes it. This is intermediate checker-state evidence, not a
-correctness, prevalence, or prevention result.
+held pass and accepted-clean-correct; diagnostics add 217 mean revision tokens. The unresolved control and
+gate trajectories diverge before either attempts completion, so the gate arm is excluded from causal
+contrasts. Protocol v3 repairs this pairing check and publishes only after validation; it has not been run.
+This is intermediate checker-state evidence, not a correctness, prevalence, or prevention result.
 
 See [REPORT.md](REPORT.md) for the evidence, limitations, related work, and practitioner decision table;
 [evidence/claim_ledger.md](evidence/claim_ledger.md) for claim-by-claim status; and
@@ -108,6 +109,10 @@ PYTHON=python3 scripts/run_checker_paired.sh
 PYTHON=python3 scripts/run_checker_case_series.sh
 ```
 
+The case-series driver now targets a new protocol-v3 output. It records full no-completion trajectory hashes,
+requires pre-gate control/gate identity, and atomically publishes only a validated result; it does not
+overwrite the preserved v2 artifact.
+
 The confirmation command is intentionally separate and runs only after the v2 gold-copy and buggy-span
 controls and pilot clear the preregistered gates. Against the completed 27B pilot below, it exits before
 model loading because the shared parser changed after the run; the at-run pilot is also uniformly at ceiling
@@ -132,7 +137,8 @@ Historical OpenRouter drivers still require `OPENROUTER_API_KEY` or `.orkey` and
 5. Gate only when telemetry shows prevention of defects the ungated agent would actually submit.
 
 Compact retrieval has narrow repository support; useful semantic-navigation value remains open. The repaired
-checker replay shows a selected terminal-state effect without correctness gain; gate prevention remains open.
+checker replay shows a selected terminal-state effect without correctness gain; its gate pairing is invalid
+and gate prevention remains open.
 The confidence-labeled decision table and claim links are in
 [REPORT.md](REPORT.md#6-practitioner-decision-table).
 

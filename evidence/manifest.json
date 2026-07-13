@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "git_revision_at_generation": "91820c38a93547541524bad711bdbe49d94a97a4",
+  "git_revision_at_generation": "c802f82e292f18edc830302d61c1b4c6e0ffe701",
   "git_worktree_dirty_at_generation": true,
   "platform_at_generation": "Linux-6.11.0-1016-nvidia-aarch64-with-glibc2.39",
   "results": [
@@ -2997,7 +2997,7 @@
       ],
       "n_rows": 6,
       "integration_mode": "mixed_checker_revision_integrations",
-      "artifact_role": "checker_opportunity_conditioned_paired_case_series_complete",
+      "artifact_role": "checker_diagnostics_case_series_complete_gate_pairing_invalid",
       "source_run_files": [
         "runs/pilot/checker_case_series_qwen36_27b_6a9e13bd_v2_s1.json"
       ],
@@ -3015,7 +3015,11 @@
         "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/run_checker_paired.sh": "368c2e12e7930465e93a507628c0e066612533483f6717474a6374e4479fe705"
-      }
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/checker_paired.py",
+        "scripts/analysis/analyze_checker_paired.py"
+      ]
     },
     {
       "path": "runs/pilot/checker_drafts_14b.json",
@@ -4143,7 +4147,11 @@
         "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/run_checker_paired.sh": "368c2e12e7930465e93a507628c0e066612533483f6717474a6374e4479fe705"
-      }
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/checker_paired.py",
+        "scripts/analysis/analyze_checker_paired.py"
+      ]
     },
     {
       "path": "runs/protocol/navigation_apparatus_validation.json",
@@ -4475,7 +4483,10 @@
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81",
         "evidence/protocols.md": "8de5e59edcc4e33f786ba12c9f8ad1a95cd11e2be0a9a8a725df254fc8d6f346"
-      }
+      },
+      "current_protocol_source_mismatches": [
+        "evidence/protocols.md"
+      ]
     },
     {
       "path": "runs/protocol/navigation_v2_confirmation_validation.json",
@@ -4543,7 +4554,10 @@
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81",
         "evidence/protocols.md": "8de5e59edcc4e33f786ba12c9f8ad1a95cd11e2be0a9a8a725df254fc8d6f346"
-      }
+      },
+      "current_protocol_source_mismatches": [
+        "evidence/protocols.md"
+      ]
     },
     {
       "path": "runs/protocol/navigation_v2_pilot_validation.json",
@@ -4594,7 +4608,10 @@
         "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
         "scripts/validate_pyrefly_lsp.py": "80576a08180d61f987bb8f51cc582727f8575f15c2ebec45a428c2e31e353e81",
         "evidence/protocols.md": "8de5e59edcc4e33f786ba12c9f8ad1a95cd11e2be0a9a8a725df254fc8d6f346"
-      }
+      },
+      "current_protocol_source_mismatches": [
+        "evidence/protocols.md"
+      ]
     },
     {
       "path": "runs/realbench/candidates.json",
@@ -4964,7 +4981,7 @@
     },
     {
       "path": "scripts/analysis/analyze_checker_paired.py",
-      "sha256": "3a073a36853a38ec2da47e52346158a95305aaec5401643b32332312c7b5091b"
+      "sha256": "7cc074395a6df9e3c2799564101e5b9707e54c76ea235e3ac3b4e861c857699a"
     },
     {
       "path": "scripts/analysis/analyze_dispatch.py",
@@ -5010,7 +5027,7 @@
     },
     {
       "path": "scripts/experiments/checker_paired.py",
-      "sha256": "fded4ebb93b43f17fc569fc2662b98bc928a31df361e10859dcf40122f41b91e"
+      "sha256": "c4bc79df89611d1db7ff77a0036b42ffe5615eff3b08c896b6ee2de528c3ff0c"
     },
     {
       "path": "scripts/experiments/diagnostics.py",
@@ -5055,6 +5072,10 @@
     {
       "path": "scripts/run_checker_paired.sh",
       "sha256": "368c2e12e7930465e93a507628c0e066612533483f6717474a6374e4479fe705"
+    },
+    {
+      "path": "scripts/run_checker_case_series.sh",
+      "sha256": "f4ec17229346358bac80d123da2e36b3d9c3f7ec4a36f62504e8cc5789d40eeb"
     },
     {
       "path": "pyproject.toml",
