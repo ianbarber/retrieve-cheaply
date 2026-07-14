@@ -5,9 +5,9 @@ they do not, and how to integrate them without adding redundant context or laten
 experiment artifacts, reproducible analysis, controlled experiment harnesses, and a practitioner-oriented
 technical report.
 
-The project does not treat "LSP" as one intervention. LSP is a transport; language servers implement
-semantic operations; types provide semantic information; type checkers produce diagnostics; and retrieval,
-pushed context, patch feedback, gates, reranking, and training are different integration choices.
+Language servers expose semantic retrieval, name resolution, diagnostics, and structured code operations.
+This project evaluates how type information affects those services and how agents consume them through
+on-demand retrieval, pushed context, patch feedback, gates, reranking, and training.
 
 ## Practitioner takeaways
 
@@ -28,15 +28,14 @@ replaces enough work to justify its token, latency, and integration cost.
 
 | Finding | Status | What it supports |
 |---|---|---|
-| Compact definition retrieval reduces input tokens 3.5-4.7x at unchanged success when the alternative is a whole-file library read. The treatment is cheaper on 11/11 local-27B tasks, 11/11 Sonnet tasks, and 10/11 DeepSeek tasks. | **Supported, narrow** | Compact retrieval can be valuable when it replaces large reads. Most headline runs use a static AST resolver, so this is not a general LSP claim. |
+| Compact definition retrieval reduces input tokens 3.5-4.7x at unchanged success when the alternative is a whole-file library read. The treatment is cheaper on 11/11 local-27B tasks, 11/11 Sonnet tasks, and 10/11 DeepSeek tasks. | **Supported, narrow** | Compact retrieval can be valuable when it replaces large reads. The three-model comparison uses a static AST resolver; live-server evidence comes from a separate hybrid suite. |
 | Retrieval-tool election changes with prompting, on-policy relabeling, and cost-reward training. | **Supported, model/policy-specific** | Prove that supplied context is useful before investing in tool-election prompting or training. |
 | In the sound typed/erased navigation pilot, all cells pass, typed automatic context falls within the token margin on two tasks, erased context costs more, and every automatic result is followed by a target read. Lookup itself takes about six seconds per task in this harness. | **Boundary evidence** | Types improve resolver precision, but this pilot does not show useful navigation compression or a correctness gain. |
 | On two selected checker-positive workspaces, one-shot diagnostics produce one additional type-clean final workspace but no held-out or accepted-clean-correct gain, while adding revision tokens. | **Descriptive, selected cases** | Checker state can improve without product outcome improvement. Prevalence and end-to-end value remain unknown. |
 | The local gate arm diverges from control before the gate can act and contains no rejection event. | **Invalid for causal comparison** | Gate prevention remains an open question and external design recommendation, not a repository result. |
 
-The evidence supports a conditional account: semantic tools help when they resolve otherwise missing
-ambiguity, compress retrieval, or catch actionable defects, and when the agent integration converts that
-signal into lower-cost correct work.
+Semantic tools help when they resolve otherwise missing ambiguity, compress retrieval, or catch actionable
+defects, and when the agent integration converts that signal into lower-cost correct work.
 
 ## Read the work
 

@@ -2,26 +2,27 @@
 
 ## Abstract
 
-Language servers help coding agents when they provide information the agent does not already have, return
-it more cheaply than the available alternative, and change the agent's action. LSP transport itself is not
-the intervention: types, semantic resolution, diagnostics, delivery policy, and acceptance rules are
-separate mechanisms.
+This report asks when semantic retrieval, name resolution, and diagnostics improve coding-agent correctness
+or reduce total cost compared with text search and file reads. In an 11-task unfamiliar-API benchmark,
+compact definition results reduced mean input tokens by 3.50x for Qwen3.6-27B, 3.65x for Claude Sonnet 4.5,
+and 4.70x for DeepSeek v3.1, with 44/44 successful attempts in both arms for every model. Definition
+retrieval was cheaper on 11/11, 11/11, and 10/11 tasks. This three-model comparison used a static AST
+resolver. A separate live-first Pyrefly/AST hybrid reduced mean input from 2,894 to 689 tokens and raised
+success from 14/24 to 24/24.
 
-The strongest result in this repository is compact retrieval. When the alternative is reading a whole
-library file, a compact definition result preserves success while reducing input tokens by 3.5-4.7x across
-a local 27B model and two frontier models. The result is consistent across tasks, but most headline runs use
-a static AST resolver rather than a live language server. It supports compact semantic retrieval in this
-specific baseline comparison, not a general claim for or against LSPs.
+Semantic navigation did not reduce work when the target was already cheap to identify from source. Across
+a 15-task dispatch suite, live goto and text retrieval had matched-success token ratios of 0.945-1.065. In
+a sound typed/erased experiment, typed factory overloads let Pyrefly resolve the correct override while the
+erased variant resolved only the base definition. On two Qwen3.6-27B tasks, however, all conditions passed
+and every automatic semantic result was followed by a target-file read. Typed automatic context used 1.037x
+the baseline tokens; erased automatic context used 1.190x, and lookup took about six seconds per task.
 
-Other experiments locate the boundaries. Semantic navigation adds little when the agent can cheaply infer
-the target and make a ranged read. A sound typed/erased pilot confirms that types improve resolver precision,
-but the agent still reads the target file and gains no correctness benefit. Checker feedback makes one extra
-selected workspace type-clean, but does not improve held-out correctness and costs more tokens. The local
-gate experiment is not causally valid.
-
-The resulting recipe is direct: use text for unique local facts; use typed semantic resolution for genuine
-ambiguity; keep retrieval tools only when they replace work; deliver diagnostics at coherent patch
-boundaries; and deploy gates only after telemetry shows that they prevent accepted defects.
+On two selected checker-positive workspaces, one-shot diagnostics increased type-clean outcomes from 1/2
+to 2/2 while held-out success remained 1/2 and mean revision cost increased by 217 tokens. The gate arms
+contained no valid prevention contrast or rejection event. Use text retrieval for visible, unique bindings;
+use typed semantic resolution for genuine ambiguity; retain semantic retrieval when it replaces larger
+reads; deliver diagnostics on coherent patches; and require accepted-defect telemetry before deploying a
+gate.
 
 ## Practitioner recipe
 
@@ -44,28 +45,26 @@ boundaries; and deploy gates only after telemetry shows that they prevent accept
 Measure substitution, not invocation: did the tool prevent a wrong-file edit, replace a larger read, repair
 an actionable defect, or reject a bad submission?
 
-## 1. Frame the question correctly
+## 1. Research question
 
-"LSP" is too broad to serve as a single experimental treatment:
+> When do semantic retrieval, name resolution, and diagnostics improve coding-agent correctness or reduce
+> total cost compared with text search and file reads?
 
-- **LSP** is the transport between a client and a semantic service.
-- A **language server** parses, indexes, infers, resolves, and validates code.
-- **Types** are semantic information written in or inferred from the program.
-- A **type checker** tests consistency and emits diagnostics; it need not use LSP.
-- An **integration** decides when the agent sees or acts on the signal: pull retrieval, pushed context,
-  patch feedback, a gate, reranking, constrained generation, or training reward.
+Language servers expose binding resolution, compact definitions and references, diagnostics, and structured
+code operations. Type information makes many of these operations precise; it may be written in source or
+inferred from the program. Type checkers turn that information into consistency diagnostics.
 
-Types and language servers are therefore not competitors. Types can make a server's answer precise; the
-same type may also be readable directly from source. The useful question is which signal and integration
-change behavior at acceptable cost.
+Agents can request these services, receive results automatically, or use them through patch feedback,
+acceptance gates, candidate reranking, constrained generation, and training rewards. The integration
+determines whether a correct semantic result changes the work or merely adds context and latency.
 
 For task `t`:
 
 `value(t) ~= opportunity x correctness x uniqueness x compression x election x actionability - cost`
 
-This decomposition explains most null results. A correct goto has no deployment value if the agent ignores
-it. A compact definition has no compression value if the agent then reads the same file. A checker has no
-revision value on a clean draft, and a correct diagnostic has no outcome value if the agent cannot repair it.
+A correct goto has no deployment value if the agent ignores it. A compact definition has no compression
+value if the agent then reads the same file. A checker has no revision value on a clean draft, and a correct
+diagnostic has no outcome value if the agent cannot repair it.
 
 | Mechanism | Useful when | Redundant or harmful when |
 |---|---|---|
@@ -76,7 +75,7 @@ revision value on a clean draft, and a correct diagnostic has no outcome value i
 | Structured operations | Text edits are ambiguous or unsafe | A simple local edit is already unique and reliable |
 | Training or reward | A valuable tool is available but rarely elected | The policy already chooses and uses it effectively |
 
-## 2. What the evidence says
+## 2. Results
 
 The [claim ledger](evidence/claim_ledger.md) maps every material claim to its artifacts and status. The
 [manifest](evidence/manifest.json) records hashes, configurations, and provenance warnings.
@@ -95,7 +94,7 @@ in both arms succeeds.
 
 The task-level medians are 3.83, 3.01, and 2.70. The gap between DeepSeek's mean and median is a reminder to
 report task distributions rather than only pooled totals. Seeds are repeated runs within tasks; intervals
-resample task means. Most of these files use the repository's static AST resolver, so the supported claim is
+resample task means. The three-model comparison uses the repository's static AST resolver and measures
 compact retrieval against whole-file reading ([C1](evidence/claim_ledger.md#c1)).
 
 Tool election is a policy question. In matched local 7B runs, definition-trained and read-trained policies
@@ -184,7 +183,7 @@ are:
 | Type-clean final workspace | 1/2 | 2/2 |
 | Held-out tests pass | 1/2 | 1/2 |
 | Accepted, type-clean, and held-out-correct | 1/2 | 1/2 |
-| Mean revision input tokens | 1,368 | 1,585 |
+| Mean revision tokens | 1,368 | 1,585 |
 
 Diagnostics improve an intermediate checker state on one selected task, at 217 extra revision tokens, but
 do not improve behavioral or joint success. The sample is two selected workspaces, one seed, and a different
