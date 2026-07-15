@@ -133,6 +133,22 @@ class DeltaDiagnosticEnv(MultiFileEnv):
         self.last_checker_latency = 0.0
         self.last_raw_diagnostics: list[dict] = []
 
+    def apply_edit(self, path: str, search: str, replace: str):
+        """Apply one exact, unique SEARCH/REPLACE block to a workspace file."""
+        path = path or self.target
+        source = self.read_file(path)
+        occurrences = source.count(search)
+        if occurrences != 1:
+            return False, f"search occurrence count is {occurrences}, expected 1"
+        updated = source.replace(search, replace, 1)
+        self.chars_written += len(replace)
+        if self.first_write_done:
+            self.chars_deleted_after_first += len(search)
+        self.first_write_done = True
+        self.n_edits += 1
+        Path(self._abspath(path)).write_text(updated, encoding="utf-8")
+        return True, "ok"
+
     def raw_diagnostic_delta(self) -> list[dict]:
         current, latency = collect_diagnostics(self.ws, self.diagnostic_scope)
         self.last_checker_latency += latency

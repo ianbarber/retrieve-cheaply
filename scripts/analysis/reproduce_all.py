@@ -60,6 +60,13 @@ def main() -> None:
     run(py, "scripts/analysis/analyze_checker_paired.py", "--drafts",
         "runs/protocol/checker_opportunity_case_series_v4.json", "--revisions",
         "runs/pilot/checker_case_series_qwen36_27b_6a9e13bd_v2_s1.json")
+    run(py, "scripts/analysis/analyze_retrieval_suite.py",
+        "runs/pilot/retrieval_paired_qwen35_27b_pilot3.json",
+        "runs/pilot/retrieval_paired_qwen35_27b_remaining8.json")
+    run(py, "scripts/analysis/analyze_checker_paired.py", "--drafts",
+        "runs/protocol/checker_hidden_v1_multiline_pilot3.json", "--revisions",
+        "runs/pilot/checker_hidden_qwen35_27b_multiline_pilot3.json")
+    run(py, "scripts/analysis/analyze_checker_gate_v2.py")
     with tempfile.TemporaryDirectory(prefix="streams_fast_") as tmp:
         run(py, "scripts/experiments/navigation_tasks.py", "--split", "pilot",
             "--out", str(Path(tmp) / "navigation.json"))
@@ -71,6 +78,11 @@ def main() -> None:
         run(py, "scripts/experiments/checker_paired.py", "import-legacy",
             "runs/agent/exp2_7b_none.json", recovered)
         run(py, "scripts/analysis/analyze_checker_paired.py", "--drafts", recovered)
+        run(py, "scripts/experiments/retrieval_paired.py",
+            str(Path(tmp) / "unused_retrieval_result.json"), "--validate-only",
+            "--validation-out", str(Path(tmp) / "retrieval_validation.json"))
+        run(py, "scripts/experiments/checker_hidden.py",
+            str(Path(tmp) / "checker_hidden.json"))
     run(py, "scripts/build_manifest.py", "--check")
     run(py, "-m", "pytest", "-q")
     print("\nAll fast analyses and artifact checks passed.")

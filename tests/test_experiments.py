@@ -9,6 +9,7 @@ from scaffold.mock_env import MultiFileEnv
 from scaffold.stream_agent import LINE_EDIT_RE, _normalize_inline_edit, _strip_fences
 from scripts.analysis.effic_real_stats import binom_two_sided
 from scripts.analysis.analyze_checker_paired import (
+    controlled_gate_cohort_audit,
     end_to_end_summary,
     end_to_end_contrast,
     expected_cost_per_accepted_correct,
@@ -16,10 +17,21 @@ from scripts.analysis.analyze_checker_paired import (
     paired_contrast,
     summarize_rows,
 )
+from scripts.analysis.analyze_checker_gate_v2 import analyze as analyze_checker_gate_v2
 from scripts.analysis.analyze_navigation import interaction, paired_ratio
-from scripts.experiments.diagnostics import collect_diagnostics, delta, format_diagnostics, is_coherent
+from scripts.analysis.analyze_retrieval_paired import _paired as retrieval_paired
+from scripts.analysis.analyze_retrieval_suite import load_suite
+from scripts.experiments.diagnostics import (
+    DeltaDiagnosticEnv,
+    collect_diagnostics,
+    delta,
+    format_diagnostics,
+    is_coherent,
+)
 from scripts.experiments.navigation_tasks import build_prompt, build_tasks
 from scripts.experiments.checker_paired import (
+    REVISION_SYS,
+    _edited_diagnosed_location,
     _publish_revision_payload,
     _validate_case_series_rows,
 )
@@ -92,6 +104,19 @@ def test_behavioral_test_runner_does_not_pollute_workspace():
         env.close()
 
 
+def test_checker_environment_applies_unique_exact_search_edit():
+    env = DeltaDiagnosticEnv(
+        {"target.py": "def f() -> int:\n    return 0\n"}, "target.py", "",
+        baseline_diagnostics=[], diagnostic_scope={"target.py"}, skip_pyrefly=True,
+    )
+    try:
+        assert env.apply_edit("target.py", "    return 0", "    return 1") == (True, "ok")
+        assert "return 1" in env.read_file("target.py")
+        assert env.apply_edit("target.py", "missing", "replacement")[0] is False
+    finally:
+        env.close()
+
+
 def test_collect_diagnostics_resolves_pyrefly_relative_paths():
     env = MultiFileEnv({"target.py": 'def f() -> int:\n    return "wrong"\n'}, "target.py", "",
                        skip_pyrefly=False)
@@ -106,6 +131,82 @@ def test_collect_diagnostics_resolves_pyrefly_relative_paths():
 
 def test_exact_sign_test_handles_all_ties_as_no_evidence():
     assert binom_two_sided(0, 0) == 1.0
+
+
+def test_retrieval_suite_combines_disjoint_frozen_shards():
+    root = Path(__file__).resolve().parents[1]
+    rows, payload = load_suite([
+        root / "runs/pilot/retrieval_paired_qwen35_27b_pilot3.json",
+        root / "runs/pilot/retrieval_paired_qwen35_27b_remaining8.json",
+    ])
+    assert payload["protocol"] == "retrieval-paired-v1"
+    assert len(rows) == 25
+    result = retrieval_paired(rows, "text", "definition", draws=1_000)
+    assert result["n_matched_success"] == 11
+    assert result["tasks_treatment_cheaper"] == 10
+    assert result["ratio_baseline_over_treatment"] > 1
+
+
+def test_hidden_defect_gate_result_exercises_valid_rejection_and_repair():
+    root = Path(__file__).resolve().parents[1]
+    rows = json.loads((
+        root / "runs/pilot/checker_hidden_qwen35_27b_multiline_pilot3.json"
+    ).read_text())["rows"]
+    assert gate_pairing_audit(rows)["valid"]
+    control = [row for row in rows if row["arm"] == "control"]
+    diagnostics = [row for row in rows if row["arm"] == "diagnostics"]
+    gate = [row for row in rows if row["arm"] == "gate"]
+    assert len(control) == len(diagnostics) == len(gate) == 3
+    assert all(row["accepted"] and not row["held_pass"] for row in control + diagnostics)
+    assert all(
+        row["gate_rejections"] == 1
+        and row["post_rejection_edits"] == 1
+        and row["held_pass"]
+        and row["type_clean"]
+        and not row["accepted"]
+        and not row["serialization_failures"]
+        for row in gate
+    )
+    # V5 predates the observation/action cursor boundary. Its first completion
+    # cannot be certified as model-generated and is superseded by the v6 cohort.
+    assert all(not row.get("first_done_model_generated") for row in rows)
+
+
+def test_checker_gate_v2_recovers_bad_completions_and_accepts_clean_controls():
+    root = Path(__file__).resolve().parents[1]
+    result = analyze_checker_gate_v2(
+        json.loads((root / "runs/protocol/checker_gate_v2_pilot3.json").read_text()),
+        json.loads((root / "runs/pilot/checker_gate_qwen35_27b_pilot3.json").read_text()),
+    )
+    assert result["gate_pairing"]["valid"]
+    assert result["all_completions_model_generated"]
+    assert result["defect_cohort"]["bad_completion_opportunities_reached"] == 2
+    assert result["defect_cohort"]["conditional_accepted_recovery_rate"] == 1
+    assert result["defect_cohort"]["gate_accepted_type_clean_correct"] == 3
+    assert result["clean_cohort"]["false_rejection_rate"] == 0
+    assert result["clean_cohort"]["first_submission_accepted"] == 3
+
+
+def test_controlled_gate_cohort_audit_separates_recovery_from_false_rejection():
+    rows = [
+        {
+            "arm": "gate", "opportunity": True, "gate_rejections": 1,
+            "gate_acceptances": 1, "gate_rejected_then_accepted": True,
+            "accepted": True, "accepted_type_clean_correct": True,
+            "held_pass": True, "accepted_dirty": False,
+        },
+        {
+            "arm": "gate", "opportunity": False, "gate_rejections": 0,
+            "gate_acceptances": 1, "gate_rejected_then_accepted": False,
+            "accepted": True, "accepted_type_clean_correct": True,
+            "held_pass": True, "accepted_dirty": False,
+        },
+    ]
+    audit = controlled_gate_cohort_audit(rows)
+    assert audit["estimable"]
+    assert audit["defect_rejected_then_accepted_rate"] == 1
+    assert audit["clean_false_rejection_rate"] == 0
+    assert audit["clean_first_submission_accepted_rate"] == 1
 
 
 def test_line_edit_parser_accepts_same_line_body_without_losing_indentation():
@@ -134,6 +235,17 @@ def test_inline_edit_serialization_is_anchored_to_current_indentation():
 def test_inline_edit_serialization_rejects_ambiguous_indentation():
     assert _normalize_inline_edit("  from lib import fold", "from lib import fold\n", 1) == (
         None, "ambiguous_inline_indentation"
+    )
+
+
+def test_checker_revision_requires_multiline_line_edit_and_diff_localizes_repair():
+    assert '<edit path="F" lines="A-B">\nnew code' in REVISION_SYS
+    assert "same line as the opening tag" in REVISION_SYS
+    diagnostics = [{"path": "target.py", "line": 2}]
+    assert _edited_diagnosed_location(
+        [{"type": "edit", "path": "target.py", "ok": True}], diagnostics,
+        {"target.py": "def f() -> int:\n    return 'bad'\n"},
+        {"target.py": "def f() -> int:\n    return 0\n"},
     )
     assert _normalize_inline_edit("\treturn 1", "\treturn 0\n", 1) == (
         None, "ambiguous_inline_indentation"

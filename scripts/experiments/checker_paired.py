@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+import difflib
 import hashlib
 import itertools
 import json
@@ -33,15 +34,23 @@ from scripts.experiments.diagnostics import (  # noqa: E402
 from scripts.synth_tasks_authoring import TASKS_AUTHORING  # noqa: E402
 
 
-PROTOCOL_VERSION = "checker-paired-v3"
+PROTOCOL_VERSION = "checker-paired-v6"
 ARMS = ("control", "diagnostics", "gate", "noisy")
 REVISION_SYS = """You are revising an existing coherent Python draft.
 Tools:
   <read path="F" lines="A-B"/>     inspect a numbered source range
-  <edit path="F" lines="A-B">...code...</edit>  replace a numbered range
   <test/>                            run the visible behavioral test
   <done/>                            submit the revised draft
+To edit, replace a numbered range using EXACTLY this multiline form:
+<edit path="F" lines="A-B">
+new code with exact indentation
+</edit>
+There must be a newline immediately after the opening `>`; never put replacement code on the
+same line as the opening tag. Ranges are inclusive and use the latest numbered source view.
+
 Review the current draft, make only justified edits, and use the test within the revision budget.
+If an acceptance gate rejects a completion, repair the reported error, run the visible test, and
+emit a fresh <done/> to resubmit the repaired workspace.
 """
 DRAFT_SYS = """You are producing one natural first draft of a typed Python module.
 Tools:
@@ -74,6 +83,7 @@ def _protocol_hashes() -> dict[str, str]:
     paths = [
         Path(__file__).resolve(),
         ROOT / "scripts" / "experiments" / "diagnostics.py",
+        ROOT / "scripts" / "experiments" / "checker_hidden.py",
         ROOT / "scripts" / "analysis" / "analyze_checker_paired.py",
         ROOT / "scripts" / "synth_tasks_authoring.py",
         ROOT / "scaffold" / "stream_agent.py",
@@ -81,6 +91,8 @@ def _protocol_hashes() -> dict[str, str]:
         ROOT / "scaffold" / "tooling.py",
         ROOT / "scripts" / "run_checker_paired.sh",
         ROOT / "scripts" / "run_checker_case_series.sh",
+        ROOT / "scripts" / "run_checker_hidden.sh",
+        ROOT / "scripts" / "run_checker_gate_v2.sh",
     ]
     return {
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
@@ -406,7 +418,10 @@ def _diag_effect(initial: list[dict], final: list[dict]) -> dict:
     }
 
 
-def _edited_diagnosed_location(events: list[dict], diagnostics: list[dict]) -> bool:
+def _edited_diagnosed_location(
+    events: list[dict], diagnostics: list[dict], initial_files: dict | None = None,
+    final_files: dict | None = None,
+) -> bool:
     for event in events:
         if event.get("type") != "line_edit" or not event.get("ok"):
             continue
@@ -417,6 +432,17 @@ def _edited_diagnosed_location(events: list[dict], diagnostics: list[dict]) -> b
         if any(item["path"] == event.get("path") and start <= item["line"] <= end
                for item in diagnostics):
             return True
+    if initial_files is None or final_files is None:
+        return False
+    for item in diagnostics:
+        path, line = item["path"], item["line"] - 1
+        if path not in initial_files or path not in final_files:
+            continue
+        before = initial_files[path].splitlines()
+        after = final_files[path].splitlines()
+        for tag, start, end, _, _ in difflib.SequenceMatcher(a=before, b=after).get_opcodes():
+            if tag != "equal" and start <= line < max(end, start + 1):
+                return True
     return False
 
 
@@ -432,7 +458,7 @@ def _post_rejection_metrics(events: list[dict]) -> tuple[int, bool]:
         for item in event.get("diagnostics", [])
     }
     edits = [event for event in events[rejected_at + 1:]
-             if event.get("type") == "line_edit" and event.get("ok")]
+             if event.get("type") in {"line_edit", "edit"} and event.get("ok")]
     overlaps = False
     for event in edits:
         try:
@@ -453,6 +479,8 @@ def _validate_case_series_rows(drafts: list[dict], rows: list[dict], arms: list[
     if any(row.get("serialization_failures") for row in rows):
         raise ValueError("ambiguous inline edit serialization occurred")
     for row in rows:
+        if row.get("done_attempts") and not row.get("first_done_model_generated"):
+            raise ValueError("completion attempt was not verified as model-generated")
         if row["arm"] == "gate":
             if row["gate_invocations"] != row["gate_acceptances"] + row["gate_rejections"]:
                 raise ValueError("gate event counts are inconsistent")
@@ -562,6 +590,7 @@ def revise(args) -> int:
             final_diags = env.raw_diagnostic_delta()
             one_shot_latency = draft["checker_latency_ms"] if arm == "diagnostics" else 0.0
             events = result["events"]
+            done_events = [event for event in events if event.get("type") == "done_attempt"]
             done_attempts = sum(event.get("type") == "done_attempt" for event in events)
             gate_invocations = sum(event.get("type") == "gate_check" for event in events)
             gate_acceptances = sum(event.get("type") == "gate_accept" for event in events)
@@ -578,13 +607,16 @@ def revise(args) -> int:
             row = {
                 "draft_id": draft["draft_id"], "draft_hash": draft["draft_target_sha256"],
                 "task": draft["task"], "group": draft["group"], "arm": arm, "seed": seed,
+                "cohort": draft.get("cohort"),
+                "initial_visible_pass": draft.get("visible_pass"),
+                "initial_held_pass": draft.get("held_pass"),
                 "opportunity": any(item["classification"] == "semantic"
                                    for item in draft["draft_diagnostics"]),
                 "initial_diagnostics": draft["draft_diagnostics"],
                 "final_diagnostics": final_diags,
                 **_diag_effect(draft["draft_diagnostics"], final_diags),
                 "edited_diagnosed_location": _edited_diagnosed_location(
-                    result["events"], draft["draft_diagnostics"]),
+                    result["events"], draft["draft_diagnostics"], draft["files"], final_files),
                 "visible_pass": bool(result["resolved"]), "held_pass": held,
                 "type_clean": not final_diags, "accepted": accepted,
                 "semantic_clean": not any(item["classification"] == "semantic"
@@ -597,6 +629,9 @@ def revise(args) -> int:
                 ),
                 "unsubmitted": not bool(done_attempts),
                 "done_attempts": done_attempts,
+                "first_done_model_generated": bool(
+                    done_events and done_events[0].get("source") == "model"
+                ),
                 "gate_invocations": gate_invocations,
                 "gate_acceptances": gate_acceptances,
                 "gate_rejections": gate_rejections,
@@ -634,7 +669,7 @@ def revise(args) -> int:
               f"accepted={row['accepted']} edits={row['n_edits']}", flush=True)
     result_payload = {
         "protocol": PROTOCOL_VERSION, "kind": (
-            "opportunity_conditioned_legacy_paired_revision_case_series"
+            f"{payload.get('kind', 'opportunity_conditioned')}_paired_revisions"
             if payload.get("selection_is_not_a_natural_opportunity_sample")
             else "paired_revisions"
         ),

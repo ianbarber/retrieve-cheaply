@@ -1,0 +1,252 @@
+{
+  "protocol": "checker-paired-v5",
+  "benchmark": "checker-hidden-v1",
+  "kind": "controlled_hidden_defect_case_series",
+  "selection_is_not_a_natural_opportunity_sample": true,
+  "draft_generation_token_cost_available": false,
+  "selection_rule": "coherent and visible-test-passing; held-out failing; exactly one new target-scoped semantic diagnostic; mechanically validated clean gold repair",
+  "generator": "scripts/experiments/checker_hidden.py",
+  "generator_sha256": "1aa643630718195542874a9b4c0a41931c019acf7f4b52ab3f07df9fac751a57",
+  "drafts": [
+    {
+      "draft_id": "hidden-auth_cart_typeddict",
+      "task": "auth_cart_typeddict",
+      "group": "easy",
+      "seed": 0,
+      "model": "controlled_mutation",
+      "files": {
+        "target.py": "from lib import Item, line_total\n\n\ndef make_item(name: str, qty: int, price: int) -> Item:\n    \"\"\"Build an Item from its fields.\"\"\"\n    return {\"name\": name, \"qty\": qty, \"price\": price}\n\n\ndef cart_total(items: list[Item]) -> int:\n    \"\"\"Total cents across every item's line_total.\"\"\"\n    if not items:\n        return \"empty\"\n    return sum(line_total(it) for it in items)\n\n\ndef priciest(items: list[Item]) -> str:\n    \"\"\"Name of the item with the largest line_total. `items` is non-empty;\n    on a tie return the earliest such item.\"\"\"\n    return max(items, key=line_total)[\"name\"]\n",
+        "lib.py": "from typing import TypedDict\n\n\nclass Item(TypedDict):\n    name: str\n    qty: int\n    price: int\n\n\ndef line_total(item: Item) -> int:\n    \"\"\"Total cents for one line: quantity times unit price.\"\"\"\n    return item[\"qty\"] * item[\"price\"]\n"
+      },
+      "target": "target.py",
+      "test": "from target import make_item, cart_total, priciest\na = make_item(\"pen\", 2, 150)\nb = make_item(\"mug\", 1, 500)\nassert cart_total([a, b]) == 800\nassert priciest([a, b]) == \"mug\"\n",
+      "held_out": "from target import make_item, cart_total, priciest\nassert cart_total([]) == 0\none = make_item(\"x\", 3, 100)\nassert priciest([one]) == \"x\"\ntwo = make_item(\"y\", 5, 60)\nthree = make_item(\"z\", 3, 100)\nassert priciest([two, three]) == \"y\"\nassert cart_total([two, three]) == 600\n",
+      "initial_target_sha256": "4926a7634450d595a2f5281fbae0d4aa37f70aa4e0b3c190ea5a321c23eff719",
+      "draft_target_sha256": "50249062a844fd935004fa941bfbaf7de69ee6e6c6cdaac215e543e4fa90ab86",
+      "file_sha256": {
+        "lib.py": "40a74f72116f7c8c9ac59a9257bb565b83cb3b89dddd4442277b5c78c9654eb0",
+        "target.py": "50249062a844fd935004fa941bfbaf7de69ee6e6c6cdaac215e543e4fa90ab86"
+      },
+      "workspace_sha256": "2d5d242e0c7061abaaf8b2833246c79a27458ba42df8cf15f1f897693c453736",
+      "coherent": true,
+      "visible_pass": true,
+      "held_pass": false,
+      "baseline_diagnostics": [],
+      "draft_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 12,
+          "column": 16,
+          "stop_line": 12,
+          "stop_column": 23,
+          "code": "bad-return",
+          "message": "Returned type `Literal['empty']` is not assignable to declared return type `int`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  11|     if not items:\n  12|         return \"empty\"\n  13|     return sum(line_total(it) for it in items)"
+        }
+      ],
+      "checker_latency_ms": 143.9,
+      "revision_case_series_eligible": true,
+      "selection_basis": "controlled coherent mutation that passes visible behavior, fails held-out behavior, and adds exactly one target-scoped semantic diagnostic",
+      "mutation_label": "empty-input wrong return type",
+      "natural_submission_marker_available": false,
+      "gold_repair_validation": {
+        "visible_pass": true,
+        "held_pass": true,
+        "diagnostic_delta": [],
+        "gold_target_sha256": "4926a7634450d595a2f5281fbae0d4aa37f70aa4e0b3c190ea5a321c23eff719"
+      }
+    },
+    {
+      "draft_id": "hidden-auth_multimap_generic",
+      "task": "auth_multimap_generic",
+      "group": "med",
+      "seed": 0,
+      "model": "controlled_mutation",
+      "files": {
+        "target.py": "from typing import Generic, TypeVar\nfrom lib import Pair\n\nK = TypeVar(\"K\")\nV = TypeVar(\"V\")\n\n\nclass MultiMap(Generic[K, V]):\n    \"\"\"A map from each key to a list of values, in insertion order.\"\"\"\n\n    def __init__(self) -> None:\n        self._data: dict[K, list[V]] = {}\n\n    def add(self, key: K, value: V) -> None:\n        self._data.setdefault(key, []).append(value)\n\n    def get(self, key: K) -> list[V]:\n        return list(self._data.get(key, []))\n\n    def pairs(self) -> list[Pair[K, V]]:\n        out: list[Pair[K, V]] = []\n        for key, values in self._data.items():\n            for value in values:\n                out.append((key, value))\n        return out\n",
+        "lib.py": "from typing import Generic, TypeVar\n\nK = TypeVar(\"K\")\nV = TypeVar(\"V\")\n\n\nclass Pair(Generic[K, V]):\n    \"\"\"An immutable key/value pair.\"\"\"\n\n    def __init__(self, key: K, value: V) -> None:\n        self.key = key\n        self.value = value\n"
+      },
+      "target": "target.py",
+      "test": "from target import MultiMap\nm: MultiMap[str, int] = MultiMap()\nm.add(\"a\", 1)\nm.add(\"a\", 2)\nm.add(\"b\", 3)\nassert m.get(\"a\") == [1, 2]\nassert m.get(\"z\") == []\n",
+      "held_out": "from target import MultiMap\nm: MultiMap[str, int] = MultiMap()\nm.add(\"x\", 10)\nm.add(\"y\", 20)\nm.add(\"x\", 11)\nps = m.pairs()\nassert [(p.key, p.value) for p in ps] == [(\"x\", 10), (\"x\", 11), (\"y\", 20)]\n",
+      "initial_target_sha256": "30f01ec9c08aedb79246692d4eb52fe0acdc4f542b344f27b4a567e82722b9bf",
+      "draft_target_sha256": "0f404e6df24a234b095365ed2987dcd67b58a22ec094147f54ff4cdc6a9d411e",
+      "file_sha256": {
+        "lib.py": "9efd11dc3d77aa3103b83cd48ed00c7055da35695ecddb1f74e6e15068d32a9b",
+        "target.py": "0f404e6df24a234b095365ed2987dcd67b58a22ec094147f54ff4cdc6a9d411e"
+      },
+      "workspace_sha256": "a48593db0f45262d465971c0c1063ba2df4bba86ce0473ab9199176df18b2b85",
+      "coherent": true,
+      "visible_pass": true,
+      "held_pass": false,
+      "baseline_diagnostics": [],
+      "draft_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 24,
+          "column": 28,
+          "stop_line": 24,
+          "stop_column": 40,
+          "code": "bad-argument-type",
+          "message": "Argument `tuple[K, V]` is not assignable to parameter `object` with type `Pair[K, V]` in function `list.append`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  23|             for value in values:\n  24|                 out.append((key, value))\n  25|         return out"
+        }
+      ],
+      "checker_latency_ms": 131.0,
+      "revision_case_series_eligible": true,
+      "selection_basis": "controlled coherent mutation that passes visible behavior, fails held-out behavior, and adds exactly one target-scoped semantic diagnostic",
+      "mutation_label": "generic pair represented by the wrong type",
+      "natural_submission_marker_available": false,
+      "gold_repair_validation": {
+        "visible_pass": true,
+        "held_pass": true,
+        "diagnostic_delta": [],
+        "gold_target_sha256": "30f01ec9c08aedb79246692d4eb52fe0acdc4f542b344f27b4a567e82722b9bf"
+      }
+    },
+    {
+      "draft_id": "hidden-auth_graph_edges",
+      "task": "auth_graph_edges",
+      "group": "tricky",
+      "seed": 0,
+      "model": "controlled_mutation",
+      "files": {
+        "target.py": "from lib import Edge\n\n\nclass Graph:\n    \"\"\"A directed weighted graph accumulated from edges.\"\"\"\n\n    def __init__(self) -> None:\n        self._edges: list[Edge] = []\n\n    def add(self, edge: Edge) -> None:\n        self._edges.append(edge)\n\n    def neighbors(self, node: str) -> list[str]:\n        return [e.dst for e in self._edges if e.src == node]\n\n    def cost(self, src: str, dst: str) -> int | None:\n        for e in self._edges:\n            if e.src == src and e.dst == dst:\n                return e.weight\n        return \"missing\"\n\n    def out_degree(self, node: str) -> int:\n        return sum(1 for e in self._edges if e.src == node)\n",
+        "lib.py": "class Edge:\n    \"\"\"A weighted directed edge.\"\"\"\n\n    def __init__(self, src: str, dst: str, weight: int) -> None:\n        self.src = src\n        self.dst = dst\n        self.weight = weight\n"
+      },
+      "target": "target.py",
+      "test": "from target import Graph\nfrom lib import Edge\ng = Graph()\ng.add(Edge(\"a\", \"b\", 5))\ng.add(Edge(\"a\", \"c\", 2))\nassert g.neighbors(\"a\") == [\"b\", \"c\"]\nassert g.cost(\"a\", \"b\") == 5\nassert g.out_degree(\"a\") == 2\n",
+      "held_out": "from target import Graph\nfrom lib import Edge\ng = Graph()\ng.add(Edge(\"a\", \"b\", 5))\nassert g.cost(\"a\", \"z\") is None\nassert g.neighbors(\"z\") == []\nassert g.out_degree(\"z\") == 0\n",
+      "initial_target_sha256": "3fba3c321de73699348b5cb1699eb4d5cf1ea7eb1bcd865d0b9209cfe938f7fd",
+      "draft_target_sha256": "2fc482a72459101847dcc3954020fc471ee024eee902c158384fb198ab1559f2",
+      "file_sha256": {
+        "lib.py": "b265f6ceecb89ba05b9accd4948db4a9fc96c7150be05deec5af4c21d1c06b53",
+        "target.py": "2fc482a72459101847dcc3954020fc471ee024eee902c158384fb198ab1559f2"
+      },
+      "workspace_sha256": "e29e365482ad5b49435a40a48841612c575b1e1c1a0edd96efcdeec668c195f9",
+      "coherent": true,
+      "visible_pass": true,
+      "held_pass": false,
+      "baseline_diagnostics": [],
+      "draft_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 20,
+          "column": 16,
+          "stop_line": 20,
+          "stop_column": 25,
+          "code": "bad-return",
+          "message": "Returned type `Literal['missing']` is not assignable to declared return type `int | None`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  19|                 return e.weight\n  20|         return \"missing\"\n  21| "
+        }
+      ],
+      "checker_latency_ms": 109.1,
+      "revision_case_series_eligible": true,
+      "selection_basis": "controlled coherent mutation that passes visible behavior, fails held-out behavior, and adds exactly one target-scoped semantic diagnostic",
+      "mutation_label": "missing-edge wrong sentinel type",
+      "natural_submission_marker_available": false,
+      "gold_repair_validation": {
+        "visible_pass": true,
+        "held_pass": true,
+        "diagnostic_delta": [],
+        "gold_target_sha256": "3fba3c321de73699348b5cb1699eb4d5cf1ea7eb1bcd865d0b9209cfe938f7fd"
+      }
+    }
+  ],
+  "audit": [
+    {
+      "task": "auth_cart_typeddict",
+      "mutation_label": "empty-input wrong return type",
+      "checks": {
+        "coherent": true,
+        "visible_pass": true,
+        "held_out_fails": true,
+        "exactly_one_semantic_diagnostic": true,
+        "no_syntax_diagnostic": true,
+        "gold_visible_pass": true,
+        "gold_held_out_pass": true,
+        "gold_type_clean": true
+      },
+      "diagnostics": [
+        {
+          "path": "target.py",
+          "line": 12,
+          "column": 16,
+          "stop_line": 12,
+          "stop_column": 23,
+          "code": "bad-return",
+          "message": "Returned type `Literal['empty']` is not assignable to declared return type `int`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  11|     if not items:\n  12|         return \"empty\"\n  13|     return sum(line_total(it) for it in items)"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "task": "auth_multimap_generic",
+      "mutation_label": "generic pair represented by the wrong type",
+      "checks": {
+        "coherent": true,
+        "visible_pass": true,
+        "held_out_fails": true,
+        "exactly_one_semantic_diagnostic": true,
+        "no_syntax_diagnostic": true,
+        "gold_visible_pass": true,
+        "gold_held_out_pass": true,
+        "gold_type_clean": true
+      },
+      "diagnostics": [
+        {
+          "path": "target.py",
+          "line": 24,
+          "column": 28,
+          "stop_line": 24,
+          "stop_column": 40,
+          "code": "bad-argument-type",
+          "message": "Argument `tuple[K, V]` is not assignable to parameter `object` with type `Pair[K, V]` in function `list.append`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  23|             for value in values:\n  24|                 out.append((key, value))\n  25|         return out"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "task": "auth_graph_edges",
+      "mutation_label": "missing-edge wrong sentinel type",
+      "checks": {
+        "coherent": true,
+        "visible_pass": true,
+        "held_out_fails": true,
+        "exactly_one_semantic_diagnostic": true,
+        "no_syntax_diagnostic": true,
+        "gold_visible_pass": true,
+        "gold_held_out_pass": true,
+        "gold_type_clean": true
+      },
+      "diagnostics": [
+        {
+          "path": "target.py",
+          "line": 20,
+          "column": 16,
+          "stop_line": 20,
+          "stop_column": 25,
+          "code": "bad-return",
+          "message": "Returned type `Literal['missing']` is not assignable to declared return type `int | None`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  19|                 return e.weight\n  20|         return \"missing\"\n  21| "
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "passed": true
+}

@@ -1,5 +1,29 @@
 # Frozen protocols and run budget
 
+## Experiment 0: compact retrieval substitution
+
+Protocol `retrieval-paired-v1` retains the eleven `effic_real2` tasks and holds the model, prompt,
+line-edit interface, visible tests, seed, and budgets fixed. The `whole` arm exposes whole-file reads;
+the `text` arm exposes grep, ranged reads, and a whole-file fallback; the `definition` arm adds compact
+static-AST definition lookup while retaining every text fallback. The primary contrast is text versus
+definition, so the treatment estimates the incremental value of compact lookup for an agent that already
+has an efficient shell-like retrieval interface. The whole arm is a historical-counterfactual calibration,
+not the main practitioner baseline.
+
+Before model execution, every task must fail in its base state, pass with the gold target, localize through
+text search, resolve an exact AST definition, have a valid ranged-read span, and return a definition at
+least five times smaller than its defining file. Outcomes include held-out success, unconditional total
+tokens, grep/ranged/whole/definition calls, retrieval-response characters, and whether a definition is
+followed by a read of the defining file. Temperature-zero cells use one deterministic rollout per task.
+Ratios use task-weighted means and paired task bootstraps over matched-success tasks. Disjoint frozen
+result shards may be combined only when their model, revision, budgets, temperature, and seed configuration
+match and no `(task, arm, seed)` cell overlaps.
+
+The executed local Qwen3.5-27B run passes both main arms 11/11. Mean total tokens are 1,602 for text and
+1,235 for definition, a text/definition ratio of 1.297 (task-bootstrap 95% CI 1.093–1.527); definition is
+cheaper on 10/11 tasks and is followed by zero defining-file rereads. This is a controlled-suite estimate,
+not a live-LSP or natural-repository prevalence claim.
+
 ## Experiment 1: types x semantic navigation
 
 Protocol version `navigation-v2` uses four excluded pilot instances over two development templates, twelve
@@ -89,15 +113,47 @@ trajectory hashes must match because the gate cannot yet affect behavior; one-si
 failure. The complete JSON is staged beside the destination, validated in memory, flushed, and atomically
 renamed. Validation failure removes the staged file and never creates the advertised result path.
 
+Protocol `checker-paired-v4` removes inline line-edit serialization from paired revisions. Revisions use
+an exact SEARCH/REPLACE/END block whose search text must match the live file verbatim; draft generation
+continues to use line edits. Diagnosed-location repair is recovered from the exact frozen/final file diff.
+The v3 completion-boundary and atomic-publication rules remain unchanged. This transport change was made
+after two local v3 hidden-defect attempts were atomically rejected for ambiguous inline serialization;
+neither rejected attempt is a result artifact.
+
+The local v4 development attempt was stopped after control and diagnostic cells both exhausted the budget,
+made three edits, never submitted, and retained the defect. Protocol `checker-paired-v5` therefore restores
+the actionable numbered line-edit interface but advertises only a multiline edit block with a required
+newline immediately after the opening tag. That path bypasses inline indentation normalization completely;
+any inline deviation remains a recorded serialization failure and atomically rejects the grid. V3's
+completion pairing, event accounting, and atomic publication remain in force.
+
+A post-run action-origin audit invalidates v5's completion interpretation. The model emits `<test/>` at
+token 3; the passing-test user observation contains a literal `<done/>`; and the first `done_attempt` fires
+at token 4 while the new assistant turn contains only `<think>`. Protocol `checker-paired-v6` makes tool
+observations an explicit parser boundary by advancing every action cursor beyond delivered user text. Every
+completion event records `source=model`, and selected-case publication rejects an uncertified completion.
+A successful edit invalidates any earlier passing-test state. After gate rejection, the agent must repair,
+run a fresh visible test, and emit a new model-generated `<done/>`; acceptance without that resubmission is
+impossible.
+
+`checker-gate-v2` freezes three of the preselected hidden-defect workspaces and pairs each with its exact
+validated gold counterpart. Defects are coherent, visible-passing, held-out-failing, and add exactly one
+target-scoped semantic diagnostic. Clean controls pass visible and held-out behavior with no diagnostic
+delta. Control and gate use identical prompts and deterministic seeds through the first model completion.
+Primary defect outcomes are reached bad completions, rejection sensitivity, diagnosed-location repair,
+fresh test, resubmission, and accepted type-clean held-out correctness. Primary clean outcomes are false
+rejection and first-submission acceptance. Selection is controlled and cannot estimate natural prevalence.
+
 ## Run and spend budget
 
 No paid API run is authorized by this protocol. The executed development regimes use locally cached
-Qwen2.5-Coder 7B/14B models. The pilot is two navigation instances across a gold-copy control, a buggy-span
+Qwen2.5-Coder 7B/14B, Qwen3.5-27B, and Qwen3.6-27B models. The pilot is two navigation instances across a gold-copy control, a buggy-span
 actionability control, four core cells, and two incremental deployment cells (typed baseline/automatic are
 shared), followed by three checker development tasks. Monetary cap is **$0**. The frozen navigation
 confirmation is twelve instances across three templates x six unique cells x three nested seeds; it remains
 unrun until the pilot clears every gate. Any OpenRouter or other paid confirmation requires a separate
-model/cell/cost proposal.
+model/cell/cost proposal. The v6 controlled extension adds three defect/clean pairs across control and gate
+(12 local-model cells) under the same $0 monetary cap.
 
 ## Execution status
 
@@ -116,5 +172,21 @@ preserves missing draft cost as null. Its immutable rerun has no serialization f
 type-clean on 2/2 selected workspaces versus 1/2 control but add 217 mean revision tokens; every arm remains
 1/2 on held pass and joint accepted-clean-correct. The gate accepts the already-clean task and descriptively
 records zero rejections, but the unresolved control and gate trajectories diverge before any completion
-attempt. The v2 null-prefix validator misses that divergence, so the gate contrast is excluded. Protocol v3
-repairs the validator and atomic write path but has not been run. No paid API calls were made.
+attempt. The v2 null-prefix validator misses that divergence, so the gate contrast is excluded.
+
+The controlled `checker-hidden-v1` generator mechanically validates twelve coherent, visible-passing,
+held-out-failing workspaces with exactly one semantic diagnostic and a clean gold repair. Two v3 model
+attempts are atomically rejected for ambiguous inline serialization, and the v4 search-edit development
+attempt is stopped for actionability before publication. V5 runs three preselected cases, but its first
+completion is triggered by literal action text in the passing-test observation; model-submission and
+one-shot-effect claims are therefore invalidated.
+
+V6 runs three frozen defect/clean pairs with pinned local Qwen3.5-27B. All six control/gate first-completion
+prefixes are identical and model-generated. One seeded defect self-repairs in both arms before completion.
+Control accepts the other two bad completions; the gate rejects both, after which each trajectory makes one
+diagnosed-location edit, retests, resubmits with a second model-generated `<done/>`, and is accepted clean
+and held-out-correct. Gate accepted-clean-correct is 3/3 versus 1/3 control on defects. Every matched clean
+draft is accepted on the first gate check, for 0/3 false rejections. Mean revision tokens are 1,211 gate
+versus 838 control on defects and 643 in both arms on clean controls. This supports controlled conditional
+recovery, not natural opportunity prevalence, population rejection precision, or deployment value. No paid
+API calls were made.

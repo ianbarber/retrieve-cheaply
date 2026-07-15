@@ -1,0 +1,305 @@
+{
+  "protocol": "retrieval-paired-v1",
+  "kind": "retrieval_mechanical_validation",
+  "protocol_source_sha256": {
+    "scripts/experiments/retrieval_paired.py": "e3734d0db14779b3fc7014298ac39093cc69ca440818c24a1af68af387b8712a",
+    "scripts/analysis/analyze_retrieval_paired.py": "2fbbb050babd67982c3921929bb1c0436eed587e8c50b63423a19da4bf0fa111",
+    "scripts/synth_tasks_effic_real2.py": "911611398dbbd197bf75457379a2557e00db30001893c56f7a8aecd567fc7881",
+    "scaffold/stream_agent.py": "0a37d01bc1394aa1efce28d48a762686ef76a1dd346f8f5d3d5c620aca5b466b",
+    "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1"
+  },
+  "rows": [
+    {
+      "task": "effic_real2_reduceby",
+      "symbol": "reduceby",
+      "definition_path": "toolz/itertoolz.py",
+      "definition_start": 547,
+      "definition_end": 624,
+      "definition_lines": 78,
+      "file_lines": 1057,
+      "grep_hits": [
+        [
+          "toolz/itertoolz.py",
+          547
+        ]
+      ],
+      "checks": {
+        "base_fails": true,
+        "gold_passes": true,
+        "definition_resolves": true,
+        "definition_span_matches": true,
+        "text_search_localizes": true,
+        "compact_vs_file": true,
+        "range_valid": true
+      },
+      "passed": true
+    },
+    {
+      "task": "effic_real2_interleave",
+      "symbol": "interleave",
+      "definition_path": "toolz/itertoolz.py",
+      "definition_start": 218,
+      "definition_end": 239,
+      "definition_lines": 22,
+      "file_lines": 1057,
+      "grep_hits": [
+        [
+          "toolz/itertoolz.py",
+          218
+        ]
+      ],
+      "checks": {
+        "base_fails": true,
+        "gold_passes": true,
+        "definition_resolves": true,
+        "definition_span_matches": true,
+        "text_search_localizes": true,
+        "compact_vs_file": true,
+        "range_valid": true
+      },
+      "passed": true
+    },
+    {
+      "task": "effic_real2_merge_with",
+      "symbol": "merge_with",
+      "definition_path": "toolz/dicttoolz.py",
+      "definition_start": 43,
+      "definition_end": 70,
+      "definition_lines": 28,
+      "file_lines": 339,
+      "grep_hits": [
+        [
+          "toolz/dicttoolz.py",
+          43
+        ]
+      ],
+      "checks": {
+        "base_fails": true,
+        "gold_passes": true,
+        "definition_resolves": true,
+        "definition_span_matches": true,
+        "text_search_localizes": true,
+        "compact_vs_file": true,
+        "range_valid": true
+      },
+      "passed": true
+    },
+    {
+      "task": "effic_real2_itemmap",
+      "symbol": "itemmap",
+      "definition_path": "toolz/dicttoolz.py",
+      "definition_start": 105,
+      "definition_end": 118,
+      "definition_lines": 14,
+      "file_lines": 339,
+      "grep_hits": [
+        [
+          "toolz/dicttoolz.py",
+          105
+        ]
+      ],
+      "checks": {
+        "base_fails": true,
+        "gold_passes": true,
+        "definition_resolves": true,
+        "definition_span_matches": true,
+        "text_search_localizes": true,
+        "compact_vs_file": true,
+        "range_valid": true
+      },
+      "passed": true
+    },
+    {
+      "task": "effic_real2_valfilter",
+      "symbol": "valfilter",
+      "definition_path": "toolz/dicttoolz.py",
+      "definition_start": 121,
+      "definition_end": 138,
+      "definition_lines": 18,
+      "file_lines": 339,
+      "grep_hits": [
+        [
+          "toolz/dicttoolz.py",
+          121
+        ]
+      ],
+      "checks": {
+        "base_fails": true,
+        "gold_passes": true,
+        "definition_resolves": true,
+        "definition_span_matches": true,
+        "text_search_localizes": true,
+        "compact_vs_file": true,
+        "range_valid": true
+      },
+      "passed": true
+    },
+    {
+      "task": "effic_real2_update_in",
+      "symbol": "update_in",
+      "definition_path": "toolz/dicttoolz.py",
+      "definition_start": 245,
+      "definition_end": 300,
+      "definition_lines": 56,
+      "file_lines": 339,
+      "grep_hits": [
+        [
+          "toolz/dicttoolz.py",
+          245
+        ]
+      ],
+      "checks": {
+        "base_fails": true,
+        "gold_passes": true,
+        "definition_resolves": true,
+        "definition_span_matches": true,
+        "text_search_localizes": true,
+        "compact_vs_file": true,
+        "range_valid": true
+      },
+      "passed": true
+    },
+    {
+      "task": "effic_real2_thread_first",
+      "symbol": "thread_first",
+      "definition_path": "toolz/functoolz.py",
+      "definition_start": 46,
+      "definition_end": 77,
+      "definition_lines": 32,
+      "file_lines": 1049,
+      "grep_hits": [
+        [
+          "toolz/functoolz.py",
+          46
+        ]
+      ],
+      "checks": {
+        "base_fails": true,
+        "gold_passes": true,
+        "definition_resolves": true,
+        "definition_span_matches": true,
+        "text_search_localizes": true,
+        "compact_vs_file": true,
+        "range_valid": true
+      },
+      "passed": true
+    },
+    {
+      "task": "effic_real2_iter_except",
+      "symbol": "iter_except",
+      "definition_path": "more_itertools/recipes.py",
+      "definition_start": 541,
+      "definition_end": 567,
+      "definition_lines": 27,
+      "file_lines": 1599,
+      "grep_hits": [
+        [
+          "more_itertools/recipes.py",
+          541
+        ],
+        [
+          "more_itertools/recipes.pyi",
+          130
+        ],
+        [
+          "more_itertools/recipes.pyi",
+          136
+        ]
+      ],
+      "checks": {
+        "base_fails": true,
+        "gold_passes": true,
+        "definition_resolves": true,
+        "definition_span_matches": true,
+        "text_search_localizes": true,
+        "compact_vs_file": true,
+        "range_valid": true
+      },
+      "passed": true
+    },
+    {
+      "task": "effic_real2_roundrobin",
+      "symbol": "roundrobin",
+      "definition_path": "more_itertools/recipes.py",
+      "definition_start": 391,
+      "definition_end": 406,
+      "definition_lines": 16,
+      "file_lines": 1599,
+      "grep_hits": [
+        [
+          "more_itertools/recipes.py",
+          391
+        ],
+        [
+          "more_itertools/recipes.pyi",
+          113
+        ]
+      ],
+      "checks": {
+        "base_fails": true,
+        "gold_passes": true,
+        "definition_resolves": true,
+        "definition_span_matches": true,
+        "text_search_localizes": true,
+        "compact_vs_file": true,
+        "range_valid": true
+      },
+      "passed": true
+    },
+    {
+      "task": "effic_real2_grouper",
+      "symbol": "grouper",
+      "definition_path": "more_itertools/recipes.py",
+      "definition_start": 350,
+      "definition_end": 388,
+      "definition_lines": 39,
+      "file_lines": 1599,
+      "grep_hits": [
+        [
+          "more_itertools/recipes.py",
+          350
+        ],
+        [
+          "more_itertools/recipes.pyi",
+          107
+        ]
+      ],
+      "checks": {
+        "base_fails": true,
+        "gold_passes": true,
+        "definition_resolves": true,
+        "definition_span_matches": true,
+        "text_search_localizes": true,
+        "compact_vs_file": true,
+        "range_valid": true
+      },
+      "passed": true
+    },
+    {
+      "task": "effic_real2_merge_sorted",
+      "symbol": "merge_sorted",
+      "definition_path": "toolz/itertoolz.py",
+      "definition_start": 107,
+      "definition_end": 132,
+      "definition_lines": 26,
+      "file_lines": 1057,
+      "grep_hits": [
+        [
+          "toolz/itertoolz.py",
+          107
+        ]
+      ],
+      "checks": {
+        "base_fails": true,
+        "gold_passes": true,
+        "definition_resolves": true,
+        "definition_span_matches": true,
+        "text_search_localizes": true,
+        "compact_vs_file": true,
+        "range_valid": true
+      },
+      "passed": true
+    }
+  ],
+  "passed": true
+}

@@ -2,16 +2,16 @@
 
 ## Abstract
 
-Language servers can help coding agents by resolving bindings that text cannot distinguish, returning compact code context, and checking patches. The experiments show a narrow but clear effect: compact definition retrieval cut input tokens by 3.5–4.7x at unchanged success when it replaced whole-file reads, and a live-first Pyrefly/AST hybrid showed the same direction. Semantic navigation was near token-neutral when text already exposed the target. In sound typed/erased tasks, type information let Pyrefly distinguish the correct implementation from many same-named alternatives, but the two-task agent pilot reread every target file and gained neither correctness nor lower cost. On two selected workspaces with checker-detectable errors, one-shot diagnostics produced one additional type-clean result at 217 extra revision tokens without improving held-out correctness. The gate comparison logged zero rejections, so prevention is unevaluated.
+Language servers can help coding agents by resolving bindings that text cannot distinguish, returning compact code context, and checking patches. The experiments show a narrow but clear retrieval effect: compact definitions cut total tokens by 1.30x at unchanged 11/11 success against a capable grep-plus-ranged-read interface, and by much more against historical whole-file counterfactuals. Definitions were cheaper on 10/11 tasks and were never followed by a defining-file reread. Semantic navigation was near token-neutral when text already exposed the target. In sound typed/erased tasks, type information let Pyrefly distinguish the correct implementation from many same-named alternatives, but the two-task agent pilot reread every target file and gained neither correctness nor lower cost. In a corrected controlled gate pilot, one of three seeded defects self-repairs before submission. Control accepts the other two bad completions; the gate rejects both, elicits repair, retest, and explicit resubmission, then accepts both clean and held-out-correct. Three exact matched clean drafts pass the gate on their first submission with zero false rejections.
 
-For practitioners, start with the cheapest workflow that resolves the task. Add typed semantic resolution when it prevents wrong-target work, compact semantic spans when they replace broad retrieval, and diagnostics when coherent patches contain actionable static errors. Measure changed actions and outcomes rather than tool calls. Improve election only after demonstrating service value, and deploy gates only when measurements show that bad submissions are actually rejected.
+For practitioners, start with the cheapest workflow that resolves the task. Add typed semantic resolution when it prevents wrong-target work, compact semantic spans when they replace retrieval, and diagnostics when coherent patches contain actionable static errors. Measure changed actions and outcomes rather than tool calls. Improve election only after demonstrating service value, and require gates to prove model-origin completion, repair, retest, resubmission, accepted yield, and clean-draft precision.
 
 ## Evidence limits at a glance
 
-- **Compact retrieval:** supported against whole-file reads on constructed tasks; advantage over efficient grep plus ranged reads is unmeasured.
+- **Compact retrieval:** supported on constructed tasks against both whole-file reads and an efficient grep-plus-ranged-read interface; real-repository and live-LSP generalization remain open.
 - **Typed navigation:** mechanism supported (sound types sharpen resolution); agent-level benefit not shown — only two pilot tasks, every automatic result followed by a target read.
-- **Checker feedback:** descriptive intermediate-state effect on two selected recovered workspaces; no held-out correctness gain.
-- **Gates:** unevaluated — no rejection event was observed.
+- **Checker feedback:** a valid selected case series shows an intermediate checker-state effect but no joint-outcome gain; the earlier v5 hidden-defect one-shot comparison has observation/action leakage and is excluded.
+- **Gates:** accepted recovery is shown on 2/2 reached bad completions, with 0/3 false rejections on matched clean controls. Natural prevalence and population precision remain open.
 - **Real-repository generalization:** unresolved — the bounded scan found no fully admissible task.
 
 ## Decision checklist
@@ -21,7 +21,7 @@ Before adding a language-server integration, check:
 1. **Is there a concrete bottleneck the server removes?** Ambiguous binding, broad retrieval, or repairable static error.
 2. **Does the integration change what the agent does?** Fewer reads, correct target, or repaired defect.
 3. **Is the outcome better or cheaper?** Held-out tests pass, total tokens fall, or wall time drops.
-4. **Have you measured the failure mode?** Gates need rejection events; diagnostics need coherent drafts.
+4. **Have you measured the full failure path?** Gates need rejection, repair, and resubmission events; diagnostics need coherent, repairable drafts.
 
 ## Practitioner guide
 
@@ -29,10 +29,10 @@ Before adding a language-server integration, check:
 |---|---|---|---|---|
 | The binding is local, visible, and unique | Text search plus ranged reads | Navigation is near token-neutral when prompts expose the receiver and target ([C6](evidence/claim_ledger.md#c6), [C9](evidence/claim_ledger.md#c9)) | Wrong-file edits, target reads avoided, total tokens | The prompt already names the target file and line |
 | Overloads, inheritance, factories, or re-exports make the target ambiguous | Typed semantic resolution | Sound types improve resolver precision; agent-level benefit remains open ([C15](evidence/claim_ledger.md#c15), [C24](evidence/claim_ledger.md#c24)) | Wrong-target work prevented, retrieval reduced, not just tool calls | Text already identifies the exact target |
-| A compact result can replace broad reading | Definition or enclosing-method span | 3.5–4.7x fewer input tokens vs. whole-file reads; the live-first result uses a composed Pyrefly/AST integration ([C1](evidence/claim_ledger.md#c1), [C4](evidence/claim_ledger.md#c4)) | Confirm the agent does not reread the full file | The agent still reads the whole file after receiving the span |
-| A coherent patch contains checker-detectable errors | Show new relevant checker errors after the patch | One extra type-clean result in two selected cases; no correctness gain ([C26](evidence/claim_ledger.md#c26)) | Held-out tests pass and total cost including diagnostics | The draft is incoherent or the error is not repairable |
+| A compact result can replace search and reading | Definition or enclosing-method span | 1.30x fewer total tokens vs. grep plus ranged reads at 11/11 success, with zero defining-file rereads ([C27](evidence/claim_ledger.md#c27)); historical whole-file contrasts are larger ([C1](evidence/claim_ledger.md#c1)) | Retrieval-response bytes, total tokens, and post-definition rereads | The agent still performs the same search and reads after receiving the span |
+| A coherent patch contains checker-detectable errors | Deliver new relevant checker errors at completion, with a repair loop | A corrected gate rejects and recovers both checker-detectable defects that survive to completion ([C29](evidence/claim_ledger.md#c29)); valid one-shot evidence has not improved joint outcome ([C26](evidence/claim_ledger.md#c26)) | Diagnosed-location edits, held-out pass, and total diagnostic cost | The draft is incoherent or the error is not repairable |
 | A useful service is available but rarely chosen | Improve tool description or policy | Prompting and training change election in model-specific runs ([C2](evidence/claim_ledger.md#c2), [C3](evidence/claim_ledger.md#c3)) | Higher election retains correctness and lowers total cost | The service has not first shown value when available |
-| Bad submission prevention | **Unevaluated** — gates need a rejection event before deployment | No valid gate contrast; zero rejections observed ([C14](evidence/claim_ledger.md#c14), [C26](evidence/claim_ledger.md#c26)) | Controlled experiment in which the gate rejects bad submissions that would otherwise be accepted | You have not observed the gate block a real bad submission |
+| Bad submission prevention | Staged acceptance gate with explicit repair and resubmit | Two reached bad completions are rejected, repaired, retested, resubmitted, and accepted; three matched clean drafts pass first try ([C29](evidence/claim_ledger.md#c29)) | False rejections, resubmission, accepted-correct yield, and total cost | Abstention is unacceptable or rejection precision is unknown |
 
 ## 1. How language-server assistance creates value
 
@@ -66,11 +66,20 @@ The `effic` and `effic_real2` tasks ask an agent to implement a small target wit
 
 The task-level medians are 3.83, 3.01, and 2.70; DeepSeek's distribution is strongly skewed. Seeds are repeated runs within tasks, and intervals resample task means. The three-model comparison uses the repository's static AST resolver and measures compact retrieval against whole-file reading ([C1](evidence/claim_ledger.md#c1)).
 
+The harder counterfactual keeps grep, ranged reads, and a whole-file fallback available. On the same eleven `effic_real2` tasks, pinned Qwen3.5-27B at temperature zero succeeds 11/11 with both interfaces:
+
+| Interface | Mean total tokens | Mean retrieval characters | Whole-file reads | Success |
+|---|---:|---:|---:|---:|
+| Grep plus ranged reads | 1,602 | 1,640 | 4 | 11/11 |
+| Compact definition plus text fallback | 1,235 | 1,264 | 0 | 11/11 |
+
+The paired ratio is 1.297 text/definition (task-bootstrap 95% CI 1.093–1.527), and definitions are cheaper on 10/11 tasks. The model elects the definition operation on every task and never follows it with a read of the defining file. The one exception is informative: on `reduceby`, text costs 1,670 tokens and the definition arm 1,959. Compact lookup is a favorable default here, not a per-task dominance claim. A three-task whole-file pilot under the same model produces a 5.67 ratio (2.97–8.96), showing why whole-file-only comparisons overstate the advantage relevant to capable shell agents ([C27](evidence/claim_ledger.md#c27)).
+
 Tool election is a policy question. In matched local 7B runs, definition-trained and read-trained policies both solve 40 cells while mean input falls from 3,191 to 684 tokens. Relabeling raises definition use from approximately zero to 100%; cost-reward training reaches 86% use with 36/36 success. Prompting and training can change election, but these runs do not establish a model-size law ([C2](evidence/claim_ledger.md#c2), [C3](evidence/claim_ledger.md#c3)).
 
 A live-first Pyrefly suite reduces mean input from 2,894 to 689 tokens and raises success from 14/24 to 24/24. The tool combines live lookup with AST-selected use sites, span expansion, and fallback, and the rows do not record which backend answered. The estimate therefore applies to the composed integration ([C4](evidence/claim_ledger.md#c4)).
 
-**Takeaway:** compact definitions reduce cost when they replace coarse retrieval. Their advantage over efficient grep plus ranged reads remains unmeasured here.
+**Takeaway:** compact definitions reduce cost when they substitute for retrieval rather than precede it. In this controlled suite the effect survives the realistic text baseline; the remaining question is how often that substitution occurs in natural repositories and with live language-server spans.
 
 ### Recipe 2: Use typed semantic resolution when it prevents wrong-target work
 
@@ -110,9 +119,27 @@ A paired case series forks each of the two recovered workspaces into control and
 
 Diagnostics improve an intermediate checker state on one selected task, at 217 extra revision tokens, but do not improve behavioral or joint success. The sample contains two selected workspaces and one seed; draft-generation cost is unavailable ([C26](evidence/claim_ledger.md#c26)).
 
-The paired gate arm diverges from control before either attempts completion and records no rejection event, so prevention is unmeasured.
+The earlier paired gate arm diverges from control before either attempts completion and records no rejection event, so that historical contrast remains invalid.
 
-**Takeaway:** diagnostics can improve checker state without improving behavior. Their value depends on coherent patches with actionable diagnostics, successful repair, and a better accepted outcome at acceptable cost.
+The first hidden-defect development result exposes an apparatus bug rather than a valid submission effect. After the model emits `<test/>`, the passing-test user observation literally says to emit `<done/>`; v5 leaves action cursors before that observation. Its recorded first `done_attempt` therefore fires at token 4 from user text while the assistant has emitted only `<think>`. V5 still shows that gate feedback can precede repair, but it cannot identify model submission, one-shot acceptance, or resubmission effects and is excluded from those claims ([C28](evidence/claim_ledger.md#c28)).
+
+Protocol v6 advances every action cursor beyond tool observations, marks completion origin, invalidates stale passing-test state after any edit, and requires a fresh test and model-generated `<done/>` after rejection. `checker-gate-v2` pairs each of three seeded hidden defects with its exact validated clean gold counterpart. Control and gate receive identical prompts and have identical model-generated prefixes through the first completion:
+
+| Controlled cohort outcome | Control | Gate |
+|---|---:|---:|
+| Seeded defect self-repaired before submission | 1/3 | 1/3 |
+| Reached bad completion accepted | 2/2 | 0/2 |
+| Reached bad completion rejected | 0/2 | 2/2 |
+| Rejected, repaired, retested, resubmitted, accepted clean/correct | 0/2 | 2/2 |
+| Accepted type-clean and held-out-correct across defect workspaces | 1/3 | 3/3 |
+| Matched clean first submission accepted | 3/3 | 3/3 |
+| Matched clean false rejection | — | 0/3 |
+| Mean revision tokens, defect cohort | 838 | 1,211 |
+| Mean revision tokens, clean cohort | 643 | 643 |
+
+The gate pairing audit passes 6/6 and every completion is verified as model-generated. On the two actual bad-completion opportunities, each rejection is followed by one diagnosed-location edit, a passing visible test, a second `<done/>`, a clean gate check, and acceptance. The third seeded defect is repaired identically in control and gate before completion, so it is retained as a spontaneous-repair case rather than post-selected away. Clean controls receive the checker call and latency but no extra model tokens because all three pass on the first check ([C29](evidence/claim_ledger.md#c29)).
+
+**Takeaway:** delivery phase and lifecycle semantics matter. In this controlled pilot, a staged gate converts every reached checker-detectable bad completion into an accepted correct patch without rejecting matched clean submissions. The remaining deployment question is how often those opportunities and false rejections occur in a larger natural workload.
 
 ### Execution feedback and external validity
 
@@ -148,16 +175,16 @@ The reproducer verifies the manifest, reruns retained analyzers, recomputes task
 The main limits are:
 
 - Static tooling does not address dynamic behavior, incorrect annotations, `Any`-heavy boundaries, environment failures, or logic outside the checker.
-- Compact-retrieval tasks are synthetic and compare against whole-file reads; efficient ranged retrieval is the harder baseline.
+- Compact-retrieval tasks are synthetic. The efficient ranged-retrieval baseline now supports a within-suite effect, but natural-repository frequency and live-LSP latency remain unmeasured.
 - The typed navigation outcome comes from two pilot tasks with ceilinged correctness; there is no outcome headroom or retrieval substitution to justify confirmation.
-- The checker result comes from two selected recovered workspaces. It does not estimate natural opportunity prevalence or full end-to-end cost, and the gate comparison logged no rejections.
+- The checker evidence combines two selected recovered workspaces with three controlled defect/clean pairs. V6 exercises explicit rejection, repair, retest, resubmission, acceptance, and a matched-clean control, but does not estimate natural opportunity prevalence, population false rejection, or draft-plus-revision cost.
 - The real-repository scan found no fully admissible case, so external validity is unresolved.
 - Some retained artifacts contain provenance gaps, including unavailable seed shards, incomplete server backend/version records, source-hash mismatches, and invalidated runs. Exclusion reasons and discrepancies are reported in the claim ledger and manifest.
 
-Within these limits, the evidence supports compact retrieval against whole-file reads and the mechanistic claim that sound types sharpen semantic resolution.
+Within these limits, the evidence supports compact retrieval against both whole-file and efficient text retrieval in the controlled suite, and the mechanistic claim that sound types sharpen semantic resolution.
 
 ## Conclusion
 
-Language-server services can create value by resolving ambiguity, compressing retrieval, or validating a patch. The experiments demonstrate compact retrieval against broad reads and type-driven gains in resolver precision. They do not yet demonstrate a general navigation benefit, a checker-driven correctness gain, or gate prevention.
+Language-server services can create value by resolving ambiguity, compressing retrieval, or validating a patch. The experiments demonstrate compact retrieval against both broad and efficient text reads, type-driven gains in resolver precision, and accepted recovery after gate rejection on selected checker-detectable defects with matched clean controls. They do not yet demonstrate a general navigation benefit or natural-workload checker value.
 
 The deployment standard is the same for each service: identify a real opportunity, verify that the semantic signal changes the agent's action, and measure whether that change lowers cost or improves correctness. Availability and invocation are not outcomes. The useful integration is the smallest targeted operation that removes work or prevents an error the agent would otherwise carry forward.
