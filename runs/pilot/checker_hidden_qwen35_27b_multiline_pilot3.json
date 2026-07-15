@@ -1,0 +1,1068 @@
+{
+  "protocol": "checker-paired-v5",
+  "kind": "controlled_hidden_defect_case_series_paired_revisions",
+  "model": "Qwen/Qwen3.5-27B",
+  "source_drafts": "runs/protocol/checker_hidden_v1_multiline.json",
+  "model_meta": {
+    "revision": null,
+    "transformers": "5.9.0",
+    "torch": "2.11.0+cu128",
+    "dtype": "torch.bfloat16"
+  },
+  "config": {
+    "command": "revise",
+    "drafts": "runs/protocol/checker_hidden_v1_multiline.json",
+    "out": "runs/pilot/checker_hidden_qwen35_27b_multiline_pilot3.json",
+    "model": "Qwen/Qwen3.5-27B",
+    "revision": "b7ca741b86de18df552fd2cc952861e04621a4bd",
+    "names": "auth_cart_typeddict,auth_multimap_generic,auth_graph_edges",
+    "arms": "control,diagnostics,gate",
+    "checker_positive_only": true,
+    "seed": 0,
+    "seeds": 1,
+    "temperature": 0.0,
+    "max_new": 1000,
+    "max_turns": 8,
+    "max_reads": 4,
+    "gpu_only": true
+  },
+  "pyrefly": {
+    "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+    "version": "pyrefly 1.0.0"
+  },
+  "protocol_source_sha256": {
+    "scripts/experiments/checker_paired.py": "1eba79fdf545f4fa536005ed8adebbca3ea4bfef16a7e184c4faba6a630e0312",
+    "scripts/experiments/diagnostics.py": "ebf3358c31cc129fb85d40d66a7f00994a7e1fafa8b87b6fe91bb0acee9a7b83",
+    "scripts/experiments/checker_hidden.py": "1aa643630718195542874a9b4c0a41931c019acf7f4b52ab3f07df9fac751a57",
+    "scripts/analysis/analyze_checker_paired.py": "7cc074395a6df9e3c2799564101e5b9707e54c76ea235e3ac3b4e861c857699a",
+    "scripts/synth_tasks_authoring.py": "51af9d800d0f6812286343b74c9d578b5ad1a599f9a4bbf184246c7efb94a58e",
+    "scaffold/stream_agent.py": "0a37d01bc1394aa1efce28d48a762686ef76a1dd346f8f5d3d5c620aca5b466b",
+    "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
+    "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+    "scripts/run_checker_paired.sh": "368c2e12e7930465e93a507628c0e066612533483f6717474a6374e4479fe705",
+    "scripts/run_checker_case_series.sh": "f4ec17229346358bac80d123da2e36b3d9c3f7ec4a36f62504e8cc5789d40eeb",
+    "scripts/run_checker_hidden.sh": "87d631b643d5d721b05e563dd6778fd94c9109c053554d60c4f64b2bd8529ef0"
+  },
+  "rows": [
+    {
+      "draft_id": "hidden-auth_cart_typeddict",
+      "draft_hash": "50249062a844fd935004fa941bfbaf7de69ee6e6c6cdaac215e543e4fa90ab86",
+      "task": "auth_cart_typeddict",
+      "group": "easy",
+      "arm": "control",
+      "seed": 0,
+      "opportunity": true,
+      "initial_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 12,
+          "column": 16,
+          "stop_line": 12,
+          "stop_column": 23,
+          "code": "bad-return",
+          "message": "Returned type `Literal['empty']` is not assignable to declared return type `int`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  11|     if not items:\n  12|         return \"empty\"\n  13|     return sum(line_total(it) for it in items)"
+        }
+      ],
+      "final_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 12,
+          "column": 16,
+          "stop_line": 12,
+          "stop_column": 23,
+          "code": "bad-return",
+          "message": "Returned type `Literal['empty']` is not assignable to declared return type `int`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  11|     if not items:\n  12|         return \"empty\"\n  13|     return sum(line_total(it) for it in items)"
+        }
+      ],
+      "diagnostics_eliminated": 0,
+      "diagnostics_retained": 1,
+      "diagnostics_introduced": 0,
+      "edited_diagnosed_location": false,
+      "visible_pass": true,
+      "held_pass": false,
+      "type_clean": false,
+      "accepted": true,
+      "semantic_clean": false,
+      "syntax_clean": true,
+      "accepted_type_clean": false,
+      "accepted_type_clean_correct": false,
+      "unsubmitted": false,
+      "done_attempts": 1,
+      "gate_invocations": 0,
+      "gate_acceptances": 0,
+      "gate_rejections": 0,
+      "gate_never_invoked": false,
+      "gate_rejected_then_accepted": false,
+      "gate_rejected_unresolved": false,
+      "post_rejection_edits": 0,
+      "edited_rejected_location": false,
+      "accepted_dirty": true,
+      "first_done_prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4",
+      "trajectory_sha256": "5349c620fbe4c4604b5557a8ea90dee5f6ebc134dc1ac4c3559de9a5385fb84f",
+      "serialization_failures": [],
+      "final_target_sha256": "50249062a844fd935004fa941bfbaf7de69ee6e6c6cdaac215e543e4fa90ab86",
+      "final_file_sha256": {
+        "lib.py": "40a74f72116f7c8c9ac59a9257bb565b83cb3b89dddd4442277b5c78c9654eb0",
+        "target.py": "50249062a844fd935004fa941bfbaf7de69ee6e6c6cdaac215e543e4fa90ab86"
+      },
+      "final_workspace_sha256": "2d5d242e0c7061abaaf8b2833246c79a27458ba42df8cf15f1f897693c453736",
+      "draft_in_tokens": null,
+      "draft_out_tokens": null,
+      "in_tokens": 573,
+      "out_tokens": 4,
+      "turns": 1,
+      "n_edits": 0,
+      "n_tests": 1,
+      "n_checks": 0,
+      "checker_latency_ms": 189.1,
+      "wall_sec": 8.654,
+      "termination_reason": "done",
+      "events": [
+        {
+          "tok": 3,
+          "type": "test",
+          "n": 1,
+          "resolved": true
+        },
+        {
+          "tok": 3,
+          "type": "turn",
+          "n": 1,
+          "via": "test"
+        },
+        {
+          "tok": 4,
+          "type": "done_attempt",
+          "prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4"
+        }
+      ],
+      "stream_tail": "<test/><|im_end|>\n<|im_start|>user\n<test_result>\nALL TESTS PASS.\n</test_result>\nTests pass \u2014 emit <done/> if the fix is complete.<|im_end|>\n<|im_start|>assistant\n<think>"
+    },
+    {
+      "draft_id": "hidden-auth_cart_typeddict",
+      "draft_hash": "50249062a844fd935004fa941bfbaf7de69ee6e6c6cdaac215e543e4fa90ab86",
+      "task": "auth_cart_typeddict",
+      "group": "easy",
+      "arm": "diagnostics",
+      "seed": 0,
+      "opportunity": true,
+      "initial_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 12,
+          "column": 16,
+          "stop_line": 12,
+          "stop_column": 23,
+          "code": "bad-return",
+          "message": "Returned type `Literal['empty']` is not assignable to declared return type `int`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  11|     if not items:\n  12|         return \"empty\"\n  13|     return sum(line_total(it) for it in items)"
+        }
+      ],
+      "final_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 12,
+          "column": 16,
+          "stop_line": 12,
+          "stop_column": 23,
+          "code": "bad-return",
+          "message": "Returned type `Literal['empty']` is not assignable to declared return type `int`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  11|     if not items:\n  12|         return \"empty\"\n  13|     return sum(line_total(it) for it in items)"
+        }
+      ],
+      "diagnostics_eliminated": 0,
+      "diagnostics_retained": 1,
+      "diagnostics_introduced": 0,
+      "edited_diagnosed_location": false,
+      "visible_pass": true,
+      "held_pass": false,
+      "type_clean": false,
+      "accepted": true,
+      "semantic_clean": false,
+      "syntax_clean": true,
+      "accepted_type_clean": false,
+      "accepted_type_clean_correct": false,
+      "unsubmitted": false,
+      "done_attempts": 1,
+      "gate_invocations": 0,
+      "gate_acceptances": 0,
+      "gate_rejections": 0,
+      "gate_never_invoked": false,
+      "gate_rejected_then_accepted": false,
+      "gate_rejected_unresolved": false,
+      "post_rejection_edits": 0,
+      "edited_rejected_location": false,
+      "accepted_dirty": true,
+      "first_done_prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4",
+      "trajectory_sha256": "5349c620fbe4c4604b5557a8ea90dee5f6ebc134dc1ac4c3559de9a5385fb84f",
+      "serialization_failures": [],
+      "final_target_sha256": "50249062a844fd935004fa941bfbaf7de69ee6e6c6cdaac215e543e4fa90ab86",
+      "final_file_sha256": {
+        "lib.py": "40a74f72116f7c8c9ac59a9257bb565b83cb3b89dddd4442277b5c78c9654eb0",
+        "target.py": "50249062a844fd935004fa941bfbaf7de69ee6e6c6cdaac215e543e4fa90ab86"
+      },
+      "final_workspace_sha256": "2d5d242e0c7061abaaf8b2833246c79a27458ba42df8cf15f1f897693c453736",
+      "draft_in_tokens": null,
+      "draft_out_tokens": null,
+      "in_tokens": 669,
+      "out_tokens": 4,
+      "turns": 1,
+      "n_edits": 0,
+      "n_tests": 1,
+      "n_checks": 0,
+      "checker_latency_ms": 206.5,
+      "wall_sec": 7.925,
+      "termination_reason": "done",
+      "events": [
+        {
+          "tok": 3,
+          "type": "test",
+          "n": 1,
+          "resolved": true
+        },
+        {
+          "tok": 3,
+          "type": "turn",
+          "n": 1,
+          "via": "test"
+        },
+        {
+          "tok": 4,
+          "type": "done_attempt",
+          "prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4"
+        }
+      ],
+      "stream_tail": "<test/><|im_end|>\n<|im_start|>user\n<test_result>\nALL TESTS PASS.\n</test_result>\nTests pass \u2014 emit <done/> if the fix is complete.<|im_end|>\n<|im_start|>assistant\n<think>"
+    },
+    {
+      "draft_id": "hidden-auth_cart_typeddict",
+      "draft_hash": "50249062a844fd935004fa941bfbaf7de69ee6e6c6cdaac215e543e4fa90ab86",
+      "task": "auth_cart_typeddict",
+      "group": "easy",
+      "arm": "gate",
+      "seed": 0,
+      "opportunity": true,
+      "initial_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 12,
+          "column": 16,
+          "stop_line": 12,
+          "stop_column": 23,
+          "code": "bad-return",
+          "message": "Returned type `Literal['empty']` is not assignable to declared return type `int`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  11|     if not items:\n  12|         return \"empty\"\n  13|     return sum(line_total(it) for it in items)"
+        }
+      ],
+      "final_diagnostics": [],
+      "diagnostics_eliminated": 1,
+      "diagnostics_retained": 0,
+      "diagnostics_introduced": 0,
+      "edited_diagnosed_location": true,
+      "visible_pass": true,
+      "held_pass": true,
+      "type_clean": true,
+      "accepted": false,
+      "semantic_clean": true,
+      "syntax_clean": true,
+      "accepted_type_clean": false,
+      "accepted_type_clean_correct": false,
+      "unsubmitted": false,
+      "done_attempts": 1,
+      "gate_invocations": 1,
+      "gate_acceptances": 0,
+      "gate_rejections": 1,
+      "gate_never_invoked": false,
+      "gate_rejected_then_accepted": false,
+      "gate_rejected_unresolved": true,
+      "post_rejection_edits": 1,
+      "edited_rejected_location": true,
+      "accepted_dirty": false,
+      "first_done_prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4",
+      "trajectory_sha256": "0f0a2a41065e63d8337c77f986fef9ddde29f7ceea71b4650699ce0d7ca79f07",
+      "serialization_failures": [],
+      "final_target_sha256": "bf36f92bf86871babb56b57acf247fa9480920574a70af2ed741ae3d017496bd",
+      "final_file_sha256": {
+        "lib.py": "40a74f72116f7c8c9ac59a9257bb565b83cb3b89dddd4442277b5c78c9654eb0",
+        "target.py": "bf36f92bf86871babb56b57acf247fa9480920574a70af2ed741ae3d017496bd"
+      },
+      "final_workspace_sha256": "cf192fbde4c218ac1d1d4f773cae1756082df58bbcf7e062010dd94d551e14c5",
+      "draft_in_tokens": null,
+      "draft_out_tokens": null,
+      "in_tokens": 693,
+      "out_tokens": 51,
+      "turns": 2,
+      "n_edits": 1,
+      "n_tests": 1,
+      "n_checks": 1,
+      "checker_latency_ms": 255.0,
+      "wall_sec": 25.105,
+      "termination_reason": "tests_passed_without_done",
+      "events": [
+        {
+          "tok": 3,
+          "type": "test",
+          "n": 1,
+          "resolved": true
+        },
+        {
+          "tok": 3,
+          "type": "turn",
+          "n": 1,
+          "via": "test"
+        },
+        {
+          "tok": 4,
+          "type": "done_attempt",
+          "prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4"
+        },
+        {
+          "tok": 4,
+          "type": "gate_check",
+          "n": 1,
+          "n_diag": 1,
+          "diagnostics": [
+            {
+              "path": "target.py",
+              "line": 12,
+              "column": 16,
+              "stop_line": 12,
+              "stop_column": 23,
+              "code": "bad-return",
+              "message": "Returned type `Literal['empty']` is not assignable to declared return type `int`",
+              "severity": "error",
+              "classification": "semantic",
+              "frame": "  11|     if not items:\n  12|         return \"empty\"\n  13|     return sum(line_total(it) for it in items)"
+            }
+          ]
+        },
+        {
+          "tok": 4,
+          "type": "gate_reject",
+          "n": 1,
+          "n_diag": 1,
+          "diagnostics": [
+            {
+              "path": "target.py",
+              "line": 12,
+              "column": 16,
+              "stop_line": 12,
+              "stop_column": 23,
+              "code": "bad-return",
+              "message": "Returned type `Literal['empty']` is not assignable to declared return type `int`",
+              "severity": "error",
+              "classification": "semantic",
+              "frame": "  11|     if not items:\n  12|         return \"empty\"\n  13|     return sum(line_total(it) for it in items)"
+            }
+          ]
+        },
+        {
+          "tok": 51,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "11-13",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    if not items:\n        return 0\n    return sum(line_total(it) for it in items)",
+          "serialization_mode": "newline",
+          "raw_body_sha256": "0116bcd7b94b36a8faca7e193bf4e5ca75c4a364cfc8a4dcfd82560014cc37c1",
+          "applied_body_sha256": "0116bcd7b94b36a8faca7e193bf4e5ca75c4a364cfc8a4dcfd82560014cc37c1"
+        }
+      ],
+      "stream_tail": "<test/><|im_end|>\n<|im_start|>user\n<test_result>\nALL TESTS PASS.\n</test_result>\nTests pass \u2014 emit <done/> if the fix is complete.<|im_end|>\n<|im_start|>assistant\n<think><|im_end|>\n<|im_start|>user\n<acceptance_gate status=\"rejected\">\nNew type errors remain; revise the coherent patch before finishing.\n<check_result>\n[semantic] target.py:12:16 bad-return: Returned type `Literal['empty']` is not assignable to declared return type `int`\n  11|     if not items:\n  12|         return \"empty\"\n  13|     return sum(line_total(it) for it in items)\n</check_result>\n</acceptance_gate><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n<edit path=\"target.py\" lines=\"11-13\">\n    if not items:\n        return 0\n    return sum(line_total(it) for it in items)\n</edit>"
+    },
+    {
+      "draft_id": "hidden-auth_multimap_generic",
+      "draft_hash": "0f404e6df24a234b095365ed2987dcd67b58a22ec094147f54ff4cdc6a9d411e",
+      "task": "auth_multimap_generic",
+      "group": "med",
+      "arm": "control",
+      "seed": 0,
+      "opportunity": true,
+      "initial_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 24,
+          "column": 28,
+          "stop_line": 24,
+          "stop_column": 40,
+          "code": "bad-argument-type",
+          "message": "Argument `tuple[K, V]` is not assignable to parameter `object` with type `Pair[K, V]` in function `list.append`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  23|             for value in values:\n  24|                 out.append((key, value))\n  25|         return out"
+        }
+      ],
+      "final_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 24,
+          "column": 28,
+          "stop_line": 24,
+          "stop_column": 40,
+          "code": "bad-argument-type",
+          "message": "Argument `tuple[K, V]` is not assignable to parameter `object` with type `Pair[K, V]` in function `list.append`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  23|             for value in values:\n  24|                 out.append((key, value))\n  25|         return out"
+        }
+      ],
+      "diagnostics_eliminated": 0,
+      "diagnostics_retained": 1,
+      "diagnostics_introduced": 0,
+      "edited_diagnosed_location": false,
+      "visible_pass": true,
+      "held_pass": false,
+      "type_clean": false,
+      "accepted": true,
+      "semantic_clean": false,
+      "syntax_clean": true,
+      "accepted_type_clean": false,
+      "accepted_type_clean_correct": false,
+      "unsubmitted": false,
+      "done_attempts": 1,
+      "gate_invocations": 0,
+      "gate_acceptances": 0,
+      "gate_rejections": 0,
+      "gate_never_invoked": false,
+      "gate_rejected_then_accepted": false,
+      "gate_rejected_unresolved": false,
+      "post_rejection_edits": 0,
+      "edited_rejected_location": false,
+      "accepted_dirty": true,
+      "first_done_prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4",
+      "trajectory_sha256": "5349c620fbe4c4604b5557a8ea90dee5f6ebc134dc1ac4c3559de9a5385fb84f",
+      "serialization_failures": [],
+      "final_target_sha256": "0f404e6df24a234b095365ed2987dcd67b58a22ec094147f54ff4cdc6a9d411e",
+      "final_file_sha256": {
+        "lib.py": "9efd11dc3d77aa3103b83cd48ed00c7055da35695ecddb1f74e6e15068d32a9b",
+        "target.py": "0f404e6df24a234b095365ed2987dcd67b58a22ec094147f54ff4cdc6a9d411e"
+      },
+      "final_workspace_sha256": "a48593db0f45262d465971c0c1063ba2df4bba86ce0473ab9199176df18b2b85",
+      "draft_in_tokens": null,
+      "draft_out_tokens": null,
+      "in_tokens": 627,
+      "out_tokens": 4,
+      "turns": 1,
+      "n_edits": 0,
+      "n_tests": 1,
+      "n_checks": 0,
+      "checker_latency_ms": 127.1,
+      "wall_sec": 7.944,
+      "termination_reason": "done",
+      "events": [
+        {
+          "tok": 3,
+          "type": "test",
+          "n": 1,
+          "resolved": true
+        },
+        {
+          "tok": 3,
+          "type": "turn",
+          "n": 1,
+          "via": "test"
+        },
+        {
+          "tok": 4,
+          "type": "done_attempt",
+          "prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4"
+        }
+      ],
+      "stream_tail": "<test/><|im_end|>\n<|im_start|>user\n<test_result>\nALL TESTS PASS.\n</test_result>\nTests pass \u2014 emit <done/> if the fix is complete.<|im_end|>\n<|im_start|>assistant\n<think>"
+    },
+    {
+      "draft_id": "hidden-auth_multimap_generic",
+      "draft_hash": "0f404e6df24a234b095365ed2987dcd67b58a22ec094147f54ff4cdc6a9d411e",
+      "task": "auth_multimap_generic",
+      "group": "med",
+      "arm": "diagnostics",
+      "seed": 0,
+      "opportunity": true,
+      "initial_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 24,
+          "column": 28,
+          "stop_line": 24,
+          "stop_column": 40,
+          "code": "bad-argument-type",
+          "message": "Argument `tuple[K, V]` is not assignable to parameter `object` with type `Pair[K, V]` in function `list.append`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  23|             for value in values:\n  24|                 out.append((key, value))\n  25|         return out"
+        }
+      ],
+      "final_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 24,
+          "column": 28,
+          "stop_line": 24,
+          "stop_column": 40,
+          "code": "bad-argument-type",
+          "message": "Argument `tuple[K, V]` is not assignable to parameter `object` with type `Pair[K, V]` in function `list.append`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  23|             for value in values:\n  24|                 out.append((key, value))\n  25|         return out"
+        }
+      ],
+      "diagnostics_eliminated": 0,
+      "diagnostics_retained": 1,
+      "diagnostics_introduced": 0,
+      "edited_diagnosed_location": false,
+      "visible_pass": true,
+      "held_pass": false,
+      "type_clean": false,
+      "accepted": true,
+      "semantic_clean": false,
+      "syntax_clean": true,
+      "accepted_type_clean": false,
+      "accepted_type_clean_correct": false,
+      "unsubmitted": false,
+      "done_attempts": 1,
+      "gate_invocations": 0,
+      "gate_acceptances": 0,
+      "gate_rejections": 0,
+      "gate_never_invoked": false,
+      "gate_rejected_then_accepted": false,
+      "gate_rejected_unresolved": false,
+      "post_rejection_edits": 0,
+      "edited_rejected_location": false,
+      "accepted_dirty": true,
+      "first_done_prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4",
+      "trajectory_sha256": "5349c620fbe4c4604b5557a8ea90dee5f6ebc134dc1ac4c3559de9a5385fb84f",
+      "serialization_failures": [],
+      "final_target_sha256": "0f404e6df24a234b095365ed2987dcd67b58a22ec094147f54ff4cdc6a9d411e",
+      "final_file_sha256": {
+        "lib.py": "9efd11dc3d77aa3103b83cd48ed00c7055da35695ecddb1f74e6e15068d32a9b",
+        "target.py": "0f404e6df24a234b095365ed2987dcd67b58a22ec094147f54ff4cdc6a9d411e"
+      },
+      "final_workspace_sha256": "a48593db0f45262d465971c0c1063ba2df4bba86ce0473ab9199176df18b2b85",
+      "draft_in_tokens": null,
+      "draft_out_tokens": null,
+      "in_tokens": 733,
+      "out_tokens": 4,
+      "turns": 1,
+      "n_edits": 0,
+      "n_tests": 1,
+      "n_checks": 0,
+      "checker_latency_ms": 245.9,
+      "wall_sec": 8.36,
+      "termination_reason": "done",
+      "events": [
+        {
+          "tok": 3,
+          "type": "test",
+          "n": 1,
+          "resolved": true
+        },
+        {
+          "tok": 3,
+          "type": "turn",
+          "n": 1,
+          "via": "test"
+        },
+        {
+          "tok": 4,
+          "type": "done_attempt",
+          "prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4"
+        }
+      ],
+      "stream_tail": "<test/><|im_end|>\n<|im_start|>user\n<test_result>\nALL TESTS PASS.\n</test_result>\nTests pass \u2014 emit <done/> if the fix is complete.<|im_end|>\n<|im_start|>assistant\n<think>"
+    },
+    {
+      "draft_id": "hidden-auth_multimap_generic",
+      "draft_hash": "0f404e6df24a234b095365ed2987dcd67b58a22ec094147f54ff4cdc6a9d411e",
+      "task": "auth_multimap_generic",
+      "group": "med",
+      "arm": "gate",
+      "seed": 0,
+      "opportunity": true,
+      "initial_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 24,
+          "column": 28,
+          "stop_line": 24,
+          "stop_column": 40,
+          "code": "bad-argument-type",
+          "message": "Argument `tuple[K, V]` is not assignable to parameter `object` with type `Pair[K, V]` in function `list.append`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  23|             for value in values:\n  24|                 out.append((key, value))\n  25|         return out"
+        }
+      ],
+      "final_diagnostics": [],
+      "diagnostics_eliminated": 1,
+      "diagnostics_retained": 0,
+      "diagnostics_introduced": 0,
+      "edited_diagnosed_location": true,
+      "visible_pass": true,
+      "held_pass": true,
+      "type_clean": true,
+      "accepted": false,
+      "semantic_clean": true,
+      "syntax_clean": true,
+      "accepted_type_clean": false,
+      "accepted_type_clean_correct": false,
+      "unsubmitted": false,
+      "done_attempts": 1,
+      "gate_invocations": 1,
+      "gate_acceptances": 0,
+      "gate_rejections": 1,
+      "gate_never_invoked": false,
+      "gate_rejected_then_accepted": false,
+      "gate_rejected_unresolved": true,
+      "post_rejection_edits": 1,
+      "edited_rejected_location": true,
+      "accepted_dirty": false,
+      "first_done_prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4",
+      "trajectory_sha256": "cdc31a0cdc95f85643dca176d001b50351cfec6a0b9d95c47d5cb6c71f01652c",
+      "serialization_failures": [],
+      "final_target_sha256": "30f01ec9c08aedb79246692d4eb52fe0acdc4f542b344f27b4a567e82722b9bf",
+      "final_file_sha256": {
+        "lib.py": "9efd11dc3d77aa3103b83cd48ed00c7055da35695ecddb1f74e6e15068d32a9b",
+        "target.py": "30f01ec9c08aedb79246692d4eb52fe0acdc4f542b344f27b4a567e82722b9bf"
+      },
+      "final_workspace_sha256": "eccd39b107077ecb9180c3e05452940309c2476644aecf8a4a5f28b14bd761eb",
+      "draft_in_tokens": null,
+      "draft_out_tokens": null,
+      "in_tokens": 757,
+      "out_tokens": 88,
+      "turns": 2,
+      "n_edits": 1,
+      "n_tests": 1,
+      "n_checks": 1,
+      "checker_latency_ms": 264.0,
+      "wall_sec": 38.572,
+      "termination_reason": "tests_passed_without_done",
+      "events": [
+        {
+          "tok": 3,
+          "type": "test",
+          "n": 1,
+          "resolved": true
+        },
+        {
+          "tok": 3,
+          "type": "turn",
+          "n": 1,
+          "via": "test"
+        },
+        {
+          "tok": 4,
+          "type": "done_attempt",
+          "prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4"
+        },
+        {
+          "tok": 4,
+          "type": "gate_check",
+          "n": 1,
+          "n_diag": 1,
+          "diagnostics": [
+            {
+              "path": "target.py",
+              "line": 24,
+              "column": 28,
+              "stop_line": 24,
+              "stop_column": 40,
+              "code": "bad-argument-type",
+              "message": "Argument `tuple[K, V]` is not assignable to parameter `object` with type `Pair[K, V]` in function `list.append`",
+              "severity": "error",
+              "classification": "semantic",
+              "frame": "  23|             for value in values:\n  24|                 out.append((key, value))\n  25|         return out"
+            }
+          ]
+        },
+        {
+          "tok": 4,
+          "type": "gate_reject",
+          "n": 1,
+          "n_diag": 1,
+          "diagnostics": [
+            {
+              "path": "target.py",
+              "line": 24,
+              "column": 28,
+              "stop_line": 24,
+              "stop_column": 40,
+              "code": "bad-argument-type",
+              "message": "Argument `tuple[K, V]` is not assignable to parameter `object` with type `Pair[K, V]` in function `list.append`",
+              "severity": "error",
+              "classification": "semantic",
+              "frame": "  23|             for value in values:\n  24|                 out.append((key, value))\n  25|         return out"
+            }
+          ]
+        },
+        {
+          "tok": 88,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "20-25",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "    def pairs(self) -> list[Pair[K, V]]:\n        out: list[Pair[K, V]] = []\n        for key, values in self._data.items():\n            for value in values:\n                out.append(Pair(key, value))\n        return out",
+          "serialization_mode": "newline",
+          "raw_body_sha256": "7783cd73b8105d322dfb495b1b060f212ce2c76f142c2bc5913722ef3dffebd9",
+          "applied_body_sha256": "7783cd73b8105d322dfb495b1b060f212ce2c76f142c2bc5913722ef3dffebd9"
+        }
+      ],
+      "stream_tail": "<test/><|im_end|>\n<|im_start|>user\n<test_result>\nALL TESTS PASS.\n</test_result>\nTests pass \u2014 emit <done/> if the fix is complete.<|im_end|>\n<|im_start|>assistant\n<think><|im_end|>\n<|im_start|>user\n<acceptance_gate status=\"rejected\">\nNew type errors remain; revise the coherent patch before finishing.\n<check_result>\n[semantic] target.py:24:28 bad-argument-type: Argument `tuple[K, V]` is not assignable to parameter `object` with type `Pair[K, V]` in function `list.append`\n  23|             for value in values:\n  24|                 out.append((key, value))\n  25|         return out\n</check_result>\n</acceptance_gate><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n<edit path=\"target.py\" lines=\"20-25\">\n    def pairs(self) -> list[Pair[K, V]]:\n        out: list[Pair[K, V]] = []\n        for key, values in self._data.items():\n            for value in values:\n                out.append(Pair(key, value))\n        return out\n</edit>"
+    },
+    {
+      "draft_id": "hidden-auth_graph_edges",
+      "draft_hash": "2fc482a72459101847dcc3954020fc471ee024eee902c158384fb198ab1559f2",
+      "task": "auth_graph_edges",
+      "group": "tricky",
+      "arm": "control",
+      "seed": 0,
+      "opportunity": true,
+      "initial_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 20,
+          "column": 16,
+          "stop_line": 20,
+          "stop_column": 25,
+          "code": "bad-return",
+          "message": "Returned type `Literal['missing']` is not assignable to declared return type `int | None`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  19|                 return e.weight\n  20|         return \"missing\"\n  21| "
+        }
+      ],
+      "final_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 20,
+          "column": 16,
+          "stop_line": 20,
+          "stop_column": 25,
+          "code": "bad-return",
+          "message": "Returned type `Literal['missing']` is not assignable to declared return type `int | None`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  19|                 return e.weight\n  20|         return \"missing\"\n  21| "
+        }
+      ],
+      "diagnostics_eliminated": 0,
+      "diagnostics_retained": 1,
+      "diagnostics_introduced": 0,
+      "edited_diagnosed_location": false,
+      "visible_pass": true,
+      "held_pass": false,
+      "type_clean": false,
+      "accepted": true,
+      "semantic_clean": false,
+      "syntax_clean": true,
+      "accepted_type_clean": false,
+      "accepted_type_clean_correct": false,
+      "unsubmitted": false,
+      "done_attempts": 1,
+      "gate_invocations": 0,
+      "gate_acceptances": 0,
+      "gate_rejections": 0,
+      "gate_never_invoked": false,
+      "gate_rejected_then_accepted": false,
+      "gate_rejected_unresolved": false,
+      "post_rejection_edits": 0,
+      "edited_rejected_location": false,
+      "accepted_dirty": true,
+      "first_done_prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4",
+      "trajectory_sha256": "5349c620fbe4c4604b5557a8ea90dee5f6ebc134dc1ac4c3559de9a5385fb84f",
+      "serialization_failures": [],
+      "final_target_sha256": "2fc482a72459101847dcc3954020fc471ee024eee902c158384fb198ab1559f2",
+      "final_file_sha256": {
+        "lib.py": "b265f6ceecb89ba05b9accd4948db4a9fc96c7150be05deec5af4c21d1c06b53",
+        "target.py": "2fc482a72459101847dcc3954020fc471ee024eee902c158384fb198ab1559f2"
+      },
+      "final_workspace_sha256": "e29e365482ad5b49435a40a48841612c575b1e1c1a0edd96efcdeec668c195f9",
+      "draft_in_tokens": null,
+      "draft_out_tokens": null,
+      "in_tokens": 614,
+      "out_tokens": 4,
+      "turns": 1,
+      "n_edits": 0,
+      "n_tests": 1,
+      "n_checks": 0,
+      "checker_latency_ms": 113.2,
+      "wall_sec": 7.63,
+      "termination_reason": "done",
+      "events": [
+        {
+          "tok": 3,
+          "type": "test",
+          "n": 1,
+          "resolved": true
+        },
+        {
+          "tok": 3,
+          "type": "turn",
+          "n": 1,
+          "via": "test"
+        },
+        {
+          "tok": 4,
+          "type": "done_attempt",
+          "prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4"
+        }
+      ],
+      "stream_tail": "<test/><|im_end|>\n<|im_start|>user\n<test_result>\nALL TESTS PASS.\n</test_result>\nTests pass \u2014 emit <done/> if the fix is complete.<|im_end|>\n<|im_start|>assistant\n<think>"
+    },
+    {
+      "draft_id": "hidden-auth_graph_edges",
+      "draft_hash": "2fc482a72459101847dcc3954020fc471ee024eee902c158384fb198ab1559f2",
+      "task": "auth_graph_edges",
+      "group": "tricky",
+      "arm": "diagnostics",
+      "seed": 0,
+      "opportunity": true,
+      "initial_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 20,
+          "column": 16,
+          "stop_line": 20,
+          "stop_column": 25,
+          "code": "bad-return",
+          "message": "Returned type `Literal['missing']` is not assignable to declared return type `int | None`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  19|                 return e.weight\n  20|         return \"missing\"\n  21| "
+        }
+      ],
+      "final_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 20,
+          "column": 16,
+          "stop_line": 20,
+          "stop_column": 25,
+          "code": "bad-return",
+          "message": "Returned type `Literal['missing']` is not assignable to declared return type `int | None`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  19|                 return e.weight\n  20|         return \"missing\"\n  21| "
+        }
+      ],
+      "diagnostics_eliminated": 0,
+      "diagnostics_retained": 1,
+      "diagnostics_introduced": 0,
+      "edited_diagnosed_location": false,
+      "visible_pass": true,
+      "held_pass": false,
+      "type_clean": false,
+      "accepted": true,
+      "semantic_clean": false,
+      "syntax_clean": true,
+      "accepted_type_clean": false,
+      "accepted_type_clean_correct": false,
+      "unsubmitted": false,
+      "done_attempts": 1,
+      "gate_invocations": 0,
+      "gate_acceptances": 0,
+      "gate_rejections": 0,
+      "gate_never_invoked": false,
+      "gate_rejected_then_accepted": false,
+      "gate_rejected_unresolved": false,
+      "post_rejection_edits": 0,
+      "edited_rejected_location": false,
+      "accepted_dirty": true,
+      "first_done_prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4",
+      "trajectory_sha256": "5349c620fbe4c4604b5557a8ea90dee5f6ebc134dc1ac4c3559de9a5385fb84f",
+      "serialization_failures": [],
+      "final_target_sha256": "2fc482a72459101847dcc3954020fc471ee024eee902c158384fb198ab1559f2",
+      "final_file_sha256": {
+        "lib.py": "b265f6ceecb89ba05b9accd4948db4a9fc96c7150be05deec5af4c21d1c06b53",
+        "target.py": "2fc482a72459101847dcc3954020fc471ee024eee902c158384fb198ab1559f2"
+      },
+      "final_workspace_sha256": "e29e365482ad5b49435a40a48841612c575b1e1c1a0edd96efcdeec668c195f9",
+      "draft_in_tokens": null,
+      "draft_out_tokens": null,
+      "in_tokens": 699,
+      "out_tokens": 4,
+      "turns": 1,
+      "n_edits": 0,
+      "n_tests": 1,
+      "n_checks": 0,
+      "checker_latency_ms": 221.6,
+      "wall_sec": 8.348,
+      "termination_reason": "done",
+      "events": [
+        {
+          "tok": 3,
+          "type": "test",
+          "n": 1,
+          "resolved": true
+        },
+        {
+          "tok": 3,
+          "type": "turn",
+          "n": 1,
+          "via": "test"
+        },
+        {
+          "tok": 4,
+          "type": "done_attempt",
+          "prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4"
+        }
+      ],
+      "stream_tail": "<test/><|im_end|>\n<|im_start|>user\n<test_result>\nALL TESTS PASS.\n</test_result>\nTests pass \u2014 emit <done/> if the fix is complete.<|im_end|>\n<|im_start|>assistant\n<think>"
+    },
+    {
+      "draft_id": "hidden-auth_graph_edges",
+      "draft_hash": "2fc482a72459101847dcc3954020fc471ee024eee902c158384fb198ab1559f2",
+      "task": "auth_graph_edges",
+      "group": "tricky",
+      "arm": "gate",
+      "seed": 0,
+      "opportunity": true,
+      "initial_diagnostics": [
+        {
+          "path": "target.py",
+          "line": 20,
+          "column": 16,
+          "stop_line": 20,
+          "stop_column": 25,
+          "code": "bad-return",
+          "message": "Returned type `Literal['missing']` is not assignable to declared return type `int | None`",
+          "severity": "error",
+          "classification": "semantic",
+          "frame": "  19|                 return e.weight\n  20|         return \"missing\"\n  21| "
+        }
+      ],
+      "final_diagnostics": [],
+      "diagnostics_eliminated": 1,
+      "diagnostics_retained": 0,
+      "diagnostics_introduced": 0,
+      "edited_diagnosed_location": true,
+      "visible_pass": true,
+      "held_pass": true,
+      "type_clean": true,
+      "accepted": false,
+      "semantic_clean": true,
+      "syntax_clean": true,
+      "accepted_type_clean": false,
+      "accepted_type_clean_correct": false,
+      "unsubmitted": false,
+      "done_attempts": 1,
+      "gate_invocations": 1,
+      "gate_acceptances": 0,
+      "gate_rejections": 1,
+      "gate_never_invoked": false,
+      "gate_rejected_then_accepted": false,
+      "gate_rejected_unresolved": true,
+      "post_rejection_edits": 1,
+      "edited_rejected_location": true,
+      "accepted_dirty": false,
+      "first_done_prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4",
+      "trajectory_sha256": "10d76b49f148d4e81c01dff282a4769cf0003f6b4acddd8aaa98262b4ac6c864",
+      "serialization_failures": [],
+      "final_target_sha256": "3fba3c321de73699348b5cb1699eb4d5cf1ea7eb1bcd865d0b9209cfe938f7fd",
+      "final_file_sha256": {
+        "lib.py": "b265f6ceecb89ba05b9accd4948db4a9fc96c7150be05deec5af4c21d1c06b53",
+        "target.py": "3fba3c321de73699348b5cb1699eb4d5cf1ea7eb1bcd865d0b9209cfe938f7fd"
+      },
+      "final_workspace_sha256": "a1a99f449b59abcf3be96726c027eb7482e0ea2cde29766e2ff0707abd58f91b",
+      "draft_in_tokens": null,
+      "draft_out_tokens": null,
+      "in_tokens": 723,
+      "out_tokens": 31,
+      "turns": 2,
+      "n_edits": 1,
+      "n_tests": 1,
+      "n_checks": 1,
+      "checker_latency_ms": 248.6,
+      "wall_sec": 18.362,
+      "termination_reason": "tests_passed_without_done",
+      "events": [
+        {
+          "tok": 3,
+          "type": "test",
+          "n": 1,
+          "resolved": true
+        },
+        {
+          "tok": 3,
+          "type": "turn",
+          "n": 1,
+          "via": "test"
+        },
+        {
+          "tok": 4,
+          "type": "done_attempt",
+          "prefix_sha256": "bc329699993227b8c774bbf80f3bbfe3e9773f0be9f13c845b510469d01addd4"
+        },
+        {
+          "tok": 4,
+          "type": "gate_check",
+          "n": 1,
+          "n_diag": 1,
+          "diagnostics": [
+            {
+              "path": "target.py",
+              "line": 20,
+              "column": 16,
+              "stop_line": 20,
+              "stop_column": 25,
+              "code": "bad-return",
+              "message": "Returned type `Literal['missing']` is not assignable to declared return type `int | None`",
+              "severity": "error",
+              "classification": "semantic",
+              "frame": "  19|                 return e.weight\n  20|         return \"missing\"\n  21| "
+            }
+          ]
+        },
+        {
+          "tok": 4,
+          "type": "gate_reject",
+          "n": 1,
+          "n_diag": 1,
+          "diagnostics": [
+            {
+              "path": "target.py",
+              "line": 20,
+              "column": 16,
+              "stop_line": 20,
+              "stop_column": 25,
+              "code": "bad-return",
+              "message": "Returned type `Literal['missing']` is not assignable to declared return type `int | None`",
+              "severity": "error",
+              "classification": "semantic",
+              "frame": "  19|                 return e.weight\n  20|         return \"missing\"\n  21| "
+            }
+          ]
+        },
+        {
+          "tok": 31,
+          "type": "line_edit",
+          "path": "target.py",
+          "lines": "20-20",
+          "ok": true,
+          "info": "ok",
+          "fail_streak": 0,
+          "replace": "        return None",
+          "serialization_mode": "newline",
+          "raw_body_sha256": "06f93fd8836bc5141d525662030a4f6967471f5377ee0cd01f5e1a836299dbae",
+          "applied_body_sha256": "06f93fd8836bc5141d525662030a4f6967471f5377ee0cd01f5e1a836299dbae"
+        }
+      ],
+      "stream_tail": "<test/><|im_end|>\n<|im_start|>user\n<test_result>\nALL TESTS PASS.\n</test_result>\nTests pass \u2014 emit <done/> if the fix is complete.<|im_end|>\n<|im_start|>assistant\n<think><|im_end|>\n<|im_start|>user\n<acceptance_gate status=\"rejected\">\nNew type errors remain; revise the coherent patch before finishing.\n<check_result>\n[semantic] target.py:20:16 bad-return: Returned type `Literal['missing']` is not assignable to declared return type `int | None`\n  19|                 return e.weight\n  20|         return \"missing\"\n  21|\n</check_result>\n</acceptance_gate><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n<edit path=\"target.py\" lines=\"20-20\">\n        return None\n</edit>"
+    }
+  ]
+}

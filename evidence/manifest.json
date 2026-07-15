@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "git_revision_at_generation": "c802f82e292f18edc830302d61c1b4c6e0ffe701",
+  "git_revision_at_generation": "8683f5eb8199b3a28b1ee7e188d5d6747ddff71c",
   "git_worktree_dirty_at_generation": true,
   "platform_at_generation": "Linux-6.11.0-1016-nvidia-aarch64-with-glibc2.39",
   "results": [
@@ -2873,7 +2873,7 @@
       "integration_mode": "mixed_checker_revision_integrations",
       "artifact_role": "checker_opportunity_case_series_aborted_incomplete",
       "source_run_files": [
-        "runs/pilot/checker_case_series_qwen36_27b_6a9e13bd.json"
+        "runs/protocol/checker_opportunity_case_series_v2.json"
       ],
       "row_checker_integration_modes": {
         "control": "normal_revision_without_checker_context"
@@ -2890,6 +2890,7 @@
       },
       "current_protocol_source_mismatches": [
         "scripts/experiments/checker_paired.py",
+        "scripts/experiments/diagnostics.py",
         "scripts/analysis/analyze_checker_paired.py",
         "scaffold/stream_agent.py"
       ]
@@ -2935,7 +2936,7 @@
       "integration_mode": "mixed_checker_revision_integrations",
       "artifact_role": "rejected_checker_case_series_ambiguous_inline_serialization",
       "source_run_files": [
-        "runs/pilot/checker_case_series_qwen36_27b_6a9e13bd_s1.json"
+        "runs/protocol/checker_opportunity_case_series_v3.json"
       ],
       "row_checker_integration_modes": {
         "control": "normal_revision_without_checker_context",
@@ -2954,6 +2955,7 @@
       },
       "current_protocol_source_mismatches": [
         "scripts/experiments/checker_paired.py",
+        "scripts/experiments/diagnostics.py",
         "scripts/analysis/analyze_checker_paired.py",
         "scaffold/stream_agent.py"
       ]
@@ -2999,7 +3001,7 @@
       "integration_mode": "mixed_checker_revision_integrations",
       "artifact_role": "checker_diagnostics_case_series_complete_gate_pairing_invalid",
       "source_run_files": [
-        "runs/pilot/checker_case_series_qwen36_27b_6a9e13bd_v2_s1.json"
+        "runs/protocol/checker_opportunity_case_series_v4.json"
       ],
       "row_checker_integration_modes": {
         "control": "normal_revision_without_checker_context",
@@ -3018,7 +3020,9 @@
       },
       "current_protocol_source_mismatches": [
         "scripts/experiments/checker_paired.py",
-        "scripts/analysis/analyze_checker_paired.py"
+        "scripts/experiments/diagnostics.py",
+        "scripts/analysis/analyze_checker_paired.py",
+        "scaffold/stream_agent.py"
       ]
     },
     {
@@ -3071,6 +3075,7 @@
       },
       "current_protocol_source_mismatches": [
         "scripts/experiments/checker_paired.py",
+        "scripts/experiments/diagnostics.py",
         "scripts/analysis/analyze_checker_paired.py",
         "scaffold/stream_agent.py",
         "scripts/run_checker_paired.sh"
@@ -3126,6 +3131,7 @@
       },
       "current_protocol_source_mismatches": [
         "scripts/experiments/checker_paired.py",
+        "scripts/experiments/diagnostics.py",
         "scripts/analysis/analyze_checker_paired.py",
         "scaffold/stream_agent.py",
         "scripts/run_checker_paired.sh"
@@ -3181,6 +3187,7 @@
       },
       "current_protocol_source_mismatches": [
         "scripts/experiments/checker_paired.py",
+        "scripts/experiments/diagnostics.py",
         "scripts/analysis/analyze_checker_paired.py",
         "scaffold/stream_agent.py",
         "scripts/run_checker_paired.sh"
@@ -3236,9 +3243,140 @@
       },
       "current_protocol_source_mismatches": [
         "scripts/experiments/checker_paired.py",
+        "scripts/experiments/diagnostics.py",
         "scripts/analysis/analyze_checker_paired.py",
         "scaffold/stream_agent.py",
         "scripts/run_checker_paired.sh"
+      ]
+    },
+    {
+      "path": "runs/pilot/checker_gate_qwen35_27b_pilot3.json",
+      "sha256": "42f486af5fdaf5e34f9ee1d1dfbbb63f2089a3f75144e34e284eb818cb732e36",
+      "bytes": 56705,
+      "model": "Qwen/Qwen3.5-27B",
+      "temperature": 0.0,
+      "model_meta": {
+        "revision": null,
+        "transformers": "5.9.0",
+        "torch": "2.11.0+cu128",
+        "dtype": "torch.bfloat16"
+      },
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "command": "revise",
+        "drafts": "runs/protocol/checker_gate_v2_pilot3.json",
+        "out": "runs/pilot/checker_gate_qwen35_27b_pilot3.json",
+        "model": "Qwen/Qwen3.5-27B",
+        "revision": "b7ca741b86de18df552fd2cc952861e04621a4bd",
+        "names": null,
+        "arms": "control,gate",
+        "checker_positive_only": false,
+        "seed": 0,
+        "seeds": 1,
+        "temperature": 0.0,
+        "max_new": 1400,
+        "max_turns": 12,
+        "max_reads": 4,
+        "gpu_only": true
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 12,
+      "integration_mode": "pyrefly_cli_diagnostic_delta",
+      "artifact_role": "controlled_gate_repair_resubmit_and_false_rejection_case_series",
+      "source_run_files": [
+        "runs/protocol/checker_gate_v2_pilot3.json"
+      ],
+      "row_checker_integration_modes": {
+        "control": "normal_revision_without_checker_context",
+        "gate": "acceptance_gate_with_target_diagnostic_delta"
+      },
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/checker_paired.py": "cbcb0ad92cc4d529f6dc4c0fa77d691df93c067835bd3db13ad643b8023400f4",
+        "scripts/experiments/diagnostics.py": "ebf3358c31cc129fb85d40d66a7f00994a7e1fafa8b87b6fe91bb0acee9a7b83",
+        "scripts/experiments/checker_hidden.py": "618643783f57044132c014a5a4439e8046b06a2f624a94824864dff50225d4b6",
+        "scripts/analysis/analyze_checker_paired.py": "240052949c46a286e9ad12325c3d004fc42efe944192051eb6623e51d5e73d77",
+        "scripts/synth_tasks_authoring.py": "51af9d800d0f6812286343b74c9d578b5ad1a599f9a4bbf184246c7efb94a58e",
+        "scaffold/stream_agent.py": "4d628d7ccf033e9cc53153477ff180623fec0ec244e4d9d6bc9c1f626cb552c9",
+        "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/run_checker_paired.sh": "368c2e12e7930465e93a507628c0e066612533483f6717474a6374e4479fe705",
+        "scripts/run_checker_case_series.sh": "f4ec17229346358bac80d123da2e36b3d9c3f7ec4a36f62504e8cc5789d40eeb",
+        "scripts/run_checker_hidden.sh": "87d631b643d5d721b05e563dd6778fd94c9109c053554d60c4f64b2bd8529ef0",
+        "scripts/run_checker_gate_v2.sh": "d77165a1fb2367044ede19a4db6181836029ccdd77a23039ddf6294de4aed757"
+      }
+    },
+    {
+      "path": "runs/pilot/checker_hidden_qwen35_27b_multiline_pilot3.json",
+      "sha256": "fa0fcf4abfac824ca2b84651086198430abfbb79930b1f08bd741eeac939eaf2",
+      "bytes": 41543,
+      "model": "Qwen/Qwen3.5-27B",
+      "temperature": 0.0,
+      "model_meta": {
+        "revision": null,
+        "transformers": "5.9.0",
+        "torch": "2.11.0+cu128",
+        "dtype": "torch.bfloat16"
+      },
+      "pyrefly": {
+        "path": "/home/ianbarber/Projects/Streams/.venv-streams/bin/pyrefly",
+        "version": "pyrefly 1.0.0"
+      },
+      "config": {
+        "command": "revise",
+        "drafts": "runs/protocol/checker_hidden_v1_multiline.json",
+        "out": "runs/pilot/checker_hidden_qwen35_27b_multiline_pilot3.json",
+        "model": "Qwen/Qwen3.5-27B",
+        "revision": "b7ca741b86de18df552fd2cc952861e04621a4bd",
+        "names": "auth_cart_typeddict,auth_multimap_generic,auth_graph_edges",
+        "arms": "control,diagnostics,gate",
+        "checker_positive_only": true,
+        "seed": 0,
+        "seeds": 1,
+        "temperature": 0.0,
+        "max_new": 1000,
+        "max_turns": 8,
+        "max_reads": 4,
+        "gpu_only": true
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 9,
+      "integration_mode": "pyrefly_cli_diagnostic_delta",
+      "artifact_role": "controlled_hidden_defect_paired_revision_case_series",
+      "source_run_files": [
+        "runs/protocol/checker_hidden_v1_multiline.json"
+      ],
+      "row_checker_integration_modes": {
+        "control": "normal_revision_without_checker_context",
+        "diagnostics": "one_shot_target_delta_after_coherent_patch",
+        "gate": "acceptance_gate_with_target_diagnostic_delta"
+      },
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/checker_paired.py": "1eba79fdf545f4fa536005ed8adebbca3ea4bfef16a7e184c4faba6a630e0312",
+        "scripts/experiments/diagnostics.py": "ebf3358c31cc129fb85d40d66a7f00994a7e1fafa8b87b6fe91bb0acee9a7b83",
+        "scripts/experiments/checker_hidden.py": "1aa643630718195542874a9b4c0a41931c019acf7f4b52ab3f07df9fac751a57",
+        "scripts/analysis/analyze_checker_paired.py": "7cc074395a6df9e3c2799564101e5b9707e54c76ea235e3ac3b4e861c857699a",
+        "scripts/synth_tasks_authoring.py": "51af9d800d0f6812286343b74c9d578b5ad1a599f9a4bbf184246c7efb94a58e",
+        "scaffold/stream_agent.py": "0a37d01bc1394aa1efce28d48a762686ef76a1dd346f8f5d3d5c620aca5b466b",
+        "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1",
+        "scaffold/tooling.py": "96d5c8a25940094ee81bde6570f03755b350d29758fde8c7aa790cd35222e3b5",
+        "scripts/run_checker_paired.sh": "368c2e12e7930465e93a507628c0e066612533483f6717474a6374e4479fe705",
+        "scripts/run_checker_case_series.sh": "f4ec17229346358bac80d123da2e36b3d9c3f7ec4a36f62504e8cc5789d40eeb",
+        "scripts/run_checker_hidden.sh": "87d631b643d5d721b05e563dd6778fd94c9109c053554d60c4f64b2bd8529ef0"
+      },
+      "current_protocol_source_mismatches": [
+        "scripts/experiments/checker_paired.py",
+        "scripts/experiments/checker_hidden.py",
+        "scripts/analysis/analyze_checker_paired.py",
+        "scaffold/stream_agent.py"
       ]
     },
     {
@@ -4002,6 +4140,177 @@
       ]
     },
     {
+      "path": "runs/pilot/retrieval_paired_qwen35_27b_pilot3.json",
+      "sha256": "99fc5e91eb51d3b709f0fb0570b16b5d50ed1dd79f39f5f6366a561b5674b19e",
+      "bytes": 50219,
+      "model": "Qwen/Qwen3.5-27B",
+      "temperature": 0.0,
+      "model_meta": {
+        "revision": null,
+        "transformers": "5.9.0",
+        "torch": "2.11.0+cu128",
+        "dtype": "torch.bfloat16"
+      },
+      "pyrefly": null,
+      "config": {
+        "out": "runs/pilot/retrieval_paired_qwen35_27b_pilot3.json",
+        "validation_out": null,
+        "validate_only": false,
+        "model": "Qwen/Qwen3.5-27B",
+        "revision": "b7ca741b86de18df552fd2cc952861e04621a4bd",
+        "arms": "whole,text,definition",
+        "names": "effic_real2_interleave,effic_real2_merge_with,effic_real2_iter_except",
+        "temperature": 0.0,
+        "seeds": 1,
+        "seed_start": 0,
+        "max_new": 1200,
+        "max_turns": 10,
+        "max_reads": 6,
+        "live_lsp": false,
+        "gpu_only": true
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 9,
+      "integration_mode": "mixed_paired_retrieval_integrations",
+      "artifact_role": "paired_compact_definition_vs_text_and_whole_file_retrieval",
+      "source_run_files": [
+        "runs/pilot/retrieval_paired_qwen35_27b_pilot3.json"
+      ],
+      "row_retrieval_integration_modes": {
+        "whole": "whole_file_read_only",
+        "text": "grep_plus_ranged_read_with_whole_file_fallback",
+        "definition": "compact_static_definition_with_text_fallback"
+      },
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/retrieval_paired.py": "e3734d0db14779b3fc7014298ac39093cc69ca440818c24a1af68af387b8712a",
+        "scripts/analysis/analyze_retrieval_paired.py": "2fbbb050babd67982c3921929bb1c0436eed587e8c50b63423a19da4bf0fa111",
+        "scripts/synth_tasks_effic_real2.py": "911611398dbbd197bf75457379a2557e00db30001893c56f7a8aecd567fc7881",
+        "scaffold/stream_agent.py": "0a37d01bc1394aa1efce28d48a762686ef76a1dd346f8f5d3d5c620aca5b466b",
+        "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1"
+      },
+      "current_protocol_source_mismatches": [
+        "scaffold/stream_agent.py"
+      ]
+    },
+    {
+      "path": "runs/pilot/retrieval_paired_qwen35_27b_remaining8.json",
+      "sha256": "97bc9fc23fe358641373b8a4d187b386ba988045f026424f1f92a04904178845",
+      "bytes": 80452,
+      "model": "Qwen/Qwen3.5-27B",
+      "temperature": 0.0,
+      "model_meta": {
+        "revision": null,
+        "transformers": "5.9.0",
+        "torch": "2.11.0+cu128",
+        "dtype": "torch.bfloat16"
+      },
+      "pyrefly": null,
+      "config": {
+        "out": "runs/pilot/retrieval_paired_qwen35_27b_remaining8.json",
+        "validation_out": null,
+        "validate_only": false,
+        "model": "Qwen/Qwen3.5-27B",
+        "revision": "b7ca741b86de18df552fd2cc952861e04621a4bd",
+        "arms": "text,definition",
+        "names": "effic_real2_reduceby,effic_real2_itemmap,effic_real2_valfilter,effic_real2_update_in,effic_real2_thread_first,effic_real2_roundrobin,effic_real2_grouper,effic_real2_merge_sorted",
+        "temperature": 0.0,
+        "seeds": 1,
+        "seed_start": 0,
+        "max_new": 1200,
+        "max_turns": 10,
+        "max_reads": 6,
+        "live_lsp": false,
+        "gpu_only": true
+      },
+      "declared_seeds": 1,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 16,
+      "integration_mode": "mixed_paired_retrieval_integrations",
+      "artifact_role": "paired_compact_definition_vs_text_and_whole_file_retrieval",
+      "source_run_files": [
+        "runs/pilot/retrieval_paired_qwen35_27b_remaining8.json"
+      ],
+      "row_retrieval_integration_modes": {
+        "text": "grep_plus_ranged_read_with_whole_file_fallback",
+        "definition": "compact_static_definition_with_text_fallback"
+      },
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/retrieval_paired.py": "e3734d0db14779b3fc7014298ac39093cc69ca440818c24a1af68af387b8712a",
+        "scripts/analysis/analyze_retrieval_paired.py": "2fbbb050babd67982c3921929bb1c0436eed587e8c50b63423a19da4bf0fa111",
+        "scripts/synth_tasks_effic_real2.py": "911611398dbbd197bf75457379a2557e00db30001893c56f7a8aecd567fc7881",
+        "scaffold/stream_agent.py": "0a37d01bc1394aa1efce28d48a762686ef76a1dd346f8f5d3d5c620aca5b466b",
+        "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1"
+      },
+      "current_protocol_source_mismatches": [
+        "scaffold/stream_agent.py"
+      ]
+    },
+    {
+      "path": "runs/protocol/checker_gate_v2_pilot3.json",
+      "sha256": "f2dbfdf5f1b3fa57edb9022412f115c9411d5c3f8758bd85b5c223b02d344f98",
+      "bytes": 24334,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 6,
+      "integration_mode": "pyrefly_cli_diagnostic_delta",
+      "artifact_role": "controlled_hidden_defect_and_matched_clean_gate_cohort",
+      "source_run_files": [
+        "runs/protocol/checker_gate_v2_pilot3.json"
+      ]
+    },
+    {
+      "path": "runs/protocol/checker_hidden_v1_multiline.json",
+      "sha256": "1890618a69cbbf666e410ae6e6524cccc124faf41f2d36cc3e9a34f28f64154e",
+      "bytes": 51621,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 12,
+      "integration_mode": "pyrefly_cli_diagnostic_delta",
+      "artifact_role": "controlled_hidden_defect_opportunity_set",
+      "source_run_files": [
+        "runs/protocol/checker_hidden_v1_multiline.json"
+      ]
+    },
+    {
+      "path": "runs/protocol/checker_hidden_v1_multiline_pilot3.json",
+      "sha256": "5175eeffbab21b4f122e5c75d335095ee4387463f9126f00d9609022b7e13182",
+      "bytes": 13680,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [
+        0
+      ],
+      "n_rows": 3,
+      "integration_mode": "pyrefly_cli_diagnostic_delta",
+      "artifact_role": "controlled_hidden_defect_opportunity_set",
+      "source_run_files": [
+        "runs/protocol/checker_hidden_v1_multiline_pilot3.json"
+      ]
+    },
+    {
       "path": "runs/protocol/checker_natural_drafts_legacy_7b.json",
       "sha256": "61f2e03ec1a02b1299f9dfff0edf7f1cded6de9fcd6d40e2954cd7fd37532638",
       "bytes": 50229,
@@ -4035,6 +4344,7 @@
       },
       "current_protocol_source_mismatches": [
         "scripts/experiments/checker_paired.py",
+        "scripts/experiments/diagnostics.py",
         "scripts/analysis/analyze_checker_paired.py",
         "scaffold/stream_agent.py",
         "scripts/run_checker_paired.sh"
@@ -4074,6 +4384,7 @@
       },
       "current_protocol_source_mismatches": [
         "scripts/experiments/checker_paired.py",
+        "scripts/experiments/diagnostics.py",
         "scripts/analysis/analyze_checker_paired.py",
         "scaffold/stream_agent.py"
       ]
@@ -4112,6 +4423,7 @@
       },
       "current_protocol_source_mismatches": [
         "scripts/experiments/checker_paired.py",
+        "scripts/experiments/diagnostics.py",
         "scripts/analysis/analyze_checker_paired.py",
         "scaffold/stream_agent.py"
       ]
@@ -4150,7 +4462,9 @@
       },
       "current_protocol_source_mismatches": [
         "scripts/experiments/checker_paired.py",
-        "scripts/analysis/analyze_checker_paired.py"
+        "scripts/experiments/diagnostics.py",
+        "scripts/analysis/analyze_checker_paired.py",
+        "scaffold/stream_agent.py"
       ]
     },
     {
@@ -4485,6 +4799,7 @@
         "evidence/protocols.md": "8de5e59edcc4e33f786ba12c9f8ad1a95cd11e2be0a9a8a725df254fc8d6f346"
       },
       "current_protocol_source_mismatches": [
+        "scaffold/stream_agent.py",
         "evidence/protocols.md"
       ]
     },
@@ -4556,6 +4871,7 @@
         "evidence/protocols.md": "8de5e59edcc4e33f786ba12c9f8ad1a95cd11e2be0a9a8a725df254fc8d6f346"
       },
       "current_protocol_source_mismatches": [
+        "scaffold/stream_agent.py",
         "evidence/protocols.md"
       ]
     },
@@ -4610,7 +4926,36 @@
         "evidence/protocols.md": "8de5e59edcc4e33f786ba12c9f8ad1a95cd11e2be0a9a8a725df254fc8d6f346"
       },
       "current_protocol_source_mismatches": [
+        "scaffold/stream_agent.py",
         "evidence/protocols.md"
+      ]
+    },
+    {
+      "path": "runs/protocol/retrieval_paired_v1_validation.json",
+      "sha256": "45e35588eeabf1afa3310e2d16fa50c276a6970a2e9edfe73aa4b58c63ce1b38",
+      "bytes": 7891,
+      "model": null,
+      "temperature": null,
+      "model_meta": null,
+      "pyrefly": null,
+      "config": {},
+      "declared_seeds": null,
+      "actual_seeds": [],
+      "n_rows": 11,
+      "integration_mode": "mixed_paired_retrieval_integrations",
+      "artifact_role": "retrieval_mechanical_validation",
+      "source_run_files": [
+        "runs/protocol/retrieval_paired_v1_validation.json"
+      ],
+      "recorded_protocol_source_sha256": {
+        "scripts/experiments/retrieval_paired.py": "e3734d0db14779b3fc7014298ac39093cc69ca440818c24a1af68af387b8712a",
+        "scripts/analysis/analyze_retrieval_paired.py": "2fbbb050babd67982c3921929bb1c0436eed587e8c50b63423a19da4bf0fa111",
+        "scripts/synth_tasks_effic_real2.py": "911611398dbbd197bf75457379a2557e00db30001893c56f7a8aecd567fc7881",
+        "scaffold/stream_agent.py": "0a37d01bc1394aa1efce28d48a762686ef76a1dd346f8f5d3d5c620aca5b466b",
+        "scaffold/mock_env.py": "2b21b215076bb2d1877b1cad6bb844af4e5044e3d70deff1a95d7b1458b989e1"
+      },
+      "current_protocol_source_mismatches": [
+        "scaffold/stream_agent.py"
       ]
     },
     {
@@ -4980,8 +5325,12 @@
       "sha256": "b7c7b7b3b51ec21968104dd32e3a3b7e269ce5053fd6b9c89bbcdbe6c5d5fd54"
     },
     {
+      "path": "scripts/analysis/analyze_checker_gate_v2.py",
+      "sha256": "81fe10a7f877ed3d8e2433b43ef53e0fa3b2bfa4b6d11bae7fed1d036d3bdd53"
+    },
+    {
       "path": "scripts/analysis/analyze_checker_paired.py",
-      "sha256": "7cc074395a6df9e3c2799564101e5b9707e54c76ea235e3ac3b4e861c857699a"
+      "sha256": "240052949c46a286e9ad12325c3d004fc42efe944192051eb6623e51d5e73d77"
     },
     {
       "path": "scripts/analysis/analyze_dispatch.py",
@@ -4996,12 +5345,20 @@
       "sha256": "c48d2c7b696244107665c0b07f2cd6c4fc2febb7b6f6d67b931ea02cc9be5a77"
     },
     {
+      "path": "scripts/analysis/analyze_retrieval_paired.py",
+      "sha256": "2fbbb050babd67982c3921929bb1c0436eed587e8c50b63423a19da4bf0fa111"
+    },
+    {
+      "path": "scripts/analysis/analyze_retrieval_suite.py",
+      "sha256": "8dac1651cbfb74dde57317bd985c82ce88dca5d22a41262d120028497331cbbc"
+    },
+    {
       "path": "scripts/analysis/effic_real_stats.py",
       "sha256": "d4c238a16177b98836cabbf80b76e7dfede76ecf2c91e6e9c5823d8229eaf4b1"
     },
     {
       "path": "scripts/analysis/reproduce_all.py",
-      "sha256": "d13fece08d3ad836a90d1d4adc41d99ebcccfb96b7cfcb23d0e3afdf6ea940fe"
+      "sha256": "c9bda52879cde997af45056ec40c8dbac9d71a7ba8929f1a242aa407be6834b8"
     },
     {
       "path": "scripts/analysis/stats.py",
@@ -5027,15 +5384,23 @@
     },
     {
       "path": "scripts/experiments/checker_paired.py",
-      "sha256": "c4bc79df89611d1db7ff77a0036b42ffe5615eff3b08c896b6ee2de528c3ff0c"
+      "sha256": "cbcb0ad92cc4d529f6dc4c0fa77d691df93c067835bd3db13ad643b8023400f4"
+    },
+    {
+      "path": "scripts/experiments/checker_hidden.py",
+      "sha256": "618643783f57044132c014a5a4439e8046b06a2f624a94824864dff50225d4b6"
+    },
+    {
+      "path": "scripts/experiments/retrieval_paired.py",
+      "sha256": "e3734d0db14779b3fc7014298ac39093cc69ca440818c24a1af68af387b8712a"
     },
     {
       "path": "scripts/experiments/diagnostics.py",
-      "sha256": "98f3e55a2077055aa170ae6cbe09d839ae784a1605f58838478cc2e59d35b746"
+      "sha256": "ebf3358c31cc129fb85d40d66a7f00994a7e1fafa8b87b6fe91bb0acee9a7b83"
     },
     {
       "path": "scaffold/stream_agent.py",
-      "sha256": "a614735b30ab0df1b1248d5583272d2c4707d5fc0cf8626f624bd8a83d59b5ca"
+      "sha256": "4d628d7ccf033e9cc53153477ff180623fec0ec244e4d9d6bc9c1f626cb552c9"
     },
     {
       "path": "scaffold/mock_env.py",
@@ -5078,6 +5443,14 @@
       "sha256": "f4ec17229346358bac80d123da2e36b3d9c3f7ec4a36f62504e8cc5789d40eeb"
     },
     {
+      "path": "scripts/run_checker_hidden.sh",
+      "sha256": "87d631b643d5d721b05e563dd6778fd94c9109c053554d60c4f64b2bd8529ef0"
+    },
+    {
+      "path": "scripts/run_checker_gate_v2.sh",
+      "sha256": "d77165a1fb2367044ede19a4db6181836029ccdd77a23039ddf6294de4aed757"
+    },
+    {
       "path": "pyproject.toml",
       "sha256": "94eeedc48fedbea0f98116f399351470cc360c777113ba38ad5d6ba40abebd6c"
     }
@@ -5087,7 +5460,10 @@
     "navigation_pilot": "scripts/run_navigation_pilot.sh",
     "navigation_confirmation": "scripts/run_navigation_confirmation.sh",
     "checker_drafts_and_revisions": "scripts/run_checker_paired.sh",
-    "checker_opportunity_case_series": "scripts/run_checker_case_series.sh"
+    "checker_opportunity_case_series": "scripts/run_checker_case_series.sh",
+    "checker_hidden_defect_case_series": "scripts/run_checker_hidden.sh",
+    "checker_gate_repair_resubmit_and_clean_control": "scripts/run_checker_gate_v2.sh",
+    "retrieval_paired": "python3 scripts/experiments/retrieval_paired.py <out.json> --model Qwen/Qwen3.5-27B --revision <pinned-revision>"
   },
   "provenance_notes": [
     "Raw JSON configs are authoritative where report prose previously disagreed.",

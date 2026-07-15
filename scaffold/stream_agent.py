@@ -424,10 +424,11 @@ class StreamAgent:
         grep_from = 0         # char index from which to look for <grep/>
         lsp_from = 0          # char index from which to look for <findrefs/>/<defn/>
         check_from = 0        # char index from which to look for <check/> (Exp 2 checker arm)
-        n_tests = n_edits = n_reads = n_lsp = n_checks = turns = 0
+        n_tests = n_edits = n_reads = n_greps = n_lsp = n_checks = turns = 0
         fail_streak = 0       # consecutive non-applying / no-op edits (anti-degeneracy)
         changed_files = set()  # files edited since the last turn -> re-show their numbered view
         done_seen = resolved = bailed = draft_submitted = False
+        gate_pending = False
         last_test = None
         events = []           # trajectory log
         eos = tok.eos_token_id
@@ -437,6 +438,8 @@ class StreamAgent:
             new assistant turn. Tool results go here (not raw-spliced into the assistant
             stream — chat models parrot in-stream content). The current file view is
             appended so SEARCH blocks match the live file."""
+            nonlocal applied_upto, done_from, submit_from, test_from, read_from
+            nonlocal grep_from, lsp_from, check_from
             nudge = ""
             if fail_streak > 0:
                 if self.edit_mode == "line":
@@ -452,6 +455,13 @@ class StreamAgent:
             changed_files.clear()
             body = obs_text + nudge + ("\n\n" + fv if fv else "")
             splice("<|im_end|>\n<|im_start|>user\n" + body + "<|im_end|>\n<|im_start|>assistant\n")
+            # Tool observations often mention literal action syntax such as <test/> or
+            # <done/>. No parser may treat those user-message examples as assistant
+            # actions. Any assistant actions emitted before this observation are also
+            # stale because the model had not yet seen the tool result.
+            cursor = len(emitted)
+            applied_upto = done_from = submit_from = test_from = cursor
+            read_from = grep_from = lsp_from = check_from = cursor
 
         def splice(text):
             nonlocal logits, cache, emitted, out_ids, in_toks
@@ -476,10 +486,15 @@ class StreamAgent:
             if nxt == eos:
                 # EOS = end of THIS turn, not necessarily the task. Continue into a
                 # new turn with an observation, unless done/resolved/turn-capped.
-                if done_seen or resolved or turns >= self.max_turns:
+                if done_seen or (resolved and not gate_pending) or turns >= self.max_turns:
                     break
                 turns += 1
-                obs = self._turn_obs(last_test, n_edits)
+                obs = (
+                    "The acceptance gate rejected the previous completion. Finish the repair, "
+                    "run <test/>, and emit a fresh <done/> so the repaired workspace is checked "
+                    "again."
+                    if gate_pending else self._turn_obs(last_test, n_edits)
+                )
                 deliver_turn(obs)
                 events.append({"tok": t, "type": "turn", "n": turns, "via": "eos"})
                 continue
@@ -514,6 +529,10 @@ class StreamAgent:
                         ok, info = False, "line edits unsupported by env"
                     if ok:
                         n_edits += 1; fail_streak = 0; changed_files.add(epath)
+                        # Any earlier passing test is stale after a successful edit. This is
+                        # especially important after a gate rejection: the repaired workspace
+                        # must be tested and explicitly resubmitted before it can be accepted.
+                        resolved = False; last_test = None
                     else:
                         fail_streak += 1
                     events.append({"tok": t, "type": "line_edit", "path": epath, "lines": f"{s}-{e}",
@@ -550,6 +569,7 @@ class StreamAgent:
                     info = (res[1] if isinstance(res, tuple) else res.reason)
                 if ok:
                     n_edits += 1; fail_streak = 0; changed_files.add(target_file)
+                    resolved = False; last_test = None
                 else:
                     fail_streak += 1
                 events.append({"tok": t, "type": "edit", "path": target_file, "ok": ok,
@@ -596,7 +616,12 @@ class StreamAgent:
                 events.append({"tok": t, "type": "test", "n": n_tests, "resolved": resolved})
                 obs = "<test_result>\n" + self._fmt_test(tr) + "\n</test_result>"
                 if resolved:
-                    obs += "\nTests pass — emit <done/> if the fix is complete."
+                    obs += (
+                        "\nTests pass. The previous completion was rejected; emit a fresh "
+                        "<done/> to resubmit the repaired workspace."
+                        if gate_pending else
+                        "\nTests pass — emit <done/> if the fix is complete."
+                    )
                 turns += 1
                 deliver_turn(obs)
                 events.append({"tok": t, "type": "turn", "n": turns, "via": "test"})
@@ -644,13 +669,13 @@ class StreamAgent:
                 turns += 1
                 deliver_turn(obs)
                 events.append({"tok": t, "type": "read", "n": n_reads, "path": rpath,
-                               "ranged": ranged})
+                               "ranged": ranged, "response_chars": len(obs)})
                 continue
 
             # detect <grep pat="..."/> -> textual search across the repo (the baseline retrieval)
             gm = GREP_RE.search(emitted, grep_from)
             if gm and n_reads < self.max_reads:
-                grep_from = gm.end(); n_reads += 1
+                grep_from = gm.end(); n_reads += 1; n_greps += 1
                 pat = gm["pat"]; hits = []
                 try:
                     hits, capped = self._grep(pat, gm["gpath"])
@@ -666,6 +691,7 @@ class StreamAgent:
                 events.append({
                     "tok": t, "type": "grep", "n": n_reads, "pat": pat, "nhits": len(hits),
                     "paths": sorted({hit.split(":", 1)[0] for hit in hits}),
+                    "response_chars": len(obs),
                 })
                 continue
 
@@ -695,7 +721,7 @@ class StreamAgent:
                                                      line=dfm.group("line"), col=dfm.group("col"))
                     obs = self._fmt_defn(sym, defn, dpath)
                     events.append({"tok": t, "type": "defn", "n": n_lsp, "sym": sym, "found": bool(defn),
-                                   "path": dpath})
+                                   "path": dpath, "response_chars": len(obs)})
                 turns += 1
                 deliver_turn(obs)
                 continue
@@ -706,6 +732,7 @@ class StreamAgent:
                 events.append({
                     "tok": t, "type": "done_attempt",
                     "prefix_sha256": hashlib.sha256(emitted[:dm.end()].encode()).hexdigest(),
+                    "source": "model",
                 })
                 if self.acceptance_gate:
                     obs, n_diag = self._check_obs()
@@ -714,10 +741,14 @@ class StreamAgent:
                     events.append({"tok": t, "type": "gate_check", "n": n_checks,
                                    "n_diag": n_diag, "diagnostics": diagnostics})
                     if n_diag:
+                        gate_pending = True
+                        resolved = False
+                        last_test = None
                         turns += 1
                         deliver_turn(
                             "<acceptance_gate status=\"rejected\">\n"
-                            "New type errors remain; revise the coherent patch before finishing.\n"
+                            "New type errors remain. Revise the coherent patch, run <test/>, "
+                            "then emit a fresh <done/> to resubmit it.\n"
                             + obs + "\n</acceptance_gate>"
                         )
                         events.append({"tok": t, "type": "gate_reject", "n": n_checks,
@@ -725,6 +756,7 @@ class StreamAgent:
                         continue
                     events.append({"tok": t, "type": "gate_accept", "n": n_checks,
                                    "n_diag": 0})
+                    gate_pending = False
                 done_seen = True
                 break
 
@@ -739,7 +771,8 @@ class StreamAgent:
                 "tests": result, "metrics": self.env.metrics(),
                 "events": events, "stream": emitted,
                 "out_tokens": t, "in_tokens": in_toks, "n_tokens": t,
-                "n_edits": n_edits, "n_tests": n_tests, "n_reads": n_reads, "n_greps": 0, "n_lsp": n_lsp,
+                "n_edits": n_edits, "n_tests": n_tests, "n_reads": n_reads,
+                "n_greps": n_greps, "n_lsp": n_lsp,
                 "n_checks": n_checks, "turns": turns,
                 "termination_reason": (
                     "done" if done_seen else "bailed" if bailed else

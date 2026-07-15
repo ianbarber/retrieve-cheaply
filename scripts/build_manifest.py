@@ -58,8 +58,23 @@ def checker_integration_modes(payload: dict) -> dict[str, str]:
     }
 
 
+def retrieval_integration_modes(payload: dict) -> dict[str, str]:
+    labels = {
+        "whole": "whole_file_read_only",
+        "text": "grep_plus_ranged_read_with_whole_file_fallback",
+        "definition": "compact_static_definition_with_text_fallback",
+    }
+    return {
+        row["arm"]: labels[row["arm"]]
+        for row in rows(payload) if row.get("arm") in labels
+    }
+
+
 def integration(path: str, payload: dict) -> str:
     name = Path(path).name
+    if payload.get("protocol") == "retrieval-paired-v1":
+        modes = set(retrieval_integration_modes(payload).values())
+        return next(iter(modes)) if len(modes) == 1 else "mixed_paired_retrieval_integrations"
     if path.startswith("runs/realbench/scan/") or name in {"candidates.json", "dispatch_candidates.json"}:
         return "candidate_scan"
     if "navigation_" in name and path.startswith("runs/protocol/"):
@@ -97,6 +112,22 @@ def integration(path: str, payload: dict) -> str:
 
 def artifact_role(path: str, payload: dict) -> str:
     name = Path(path).name
+    if payload.get("protocol") == "retrieval-paired-v1":
+        return (
+            "retrieval_mechanical_validation"
+            if payload.get("kind") == "retrieval_mechanical_validation"
+            else "paired_compact_definition_vs_text_and_whole_file_retrieval"
+        )
+    if payload.get("benchmark") == "checker-hidden-v1":
+        return "controlled_hidden_defect_opportunity_set"
+    if payload.get("benchmark") == "checker-gate-v2":
+        return "controlled_hidden_defect_and_matched_clean_gate_cohort"
+    if payload.get("kind", "").startswith(
+        "controlled_gate_defect_and_clean_case_series_paired"
+    ):
+        return "controlled_gate_repair_resubmit_and_false_rejection_case_series"
+    if payload.get("kind", "").startswith("controlled_hidden_defect_case_series_paired"):
+        return "controlled_hidden_defect_paired_revision_case_series"
     if payload.get("protocol") == "navigation-v1" and path.startswith(("runs/pilot/", "runs/protocol/")):
         return "invalidated_navigation_v1_unsound_gold_derived_contract"
     if payload.get("config", {}).get("cells") == "positive":
@@ -175,7 +206,8 @@ def make_manifest() -> dict:
         data_rows = rows(payload)
         actual_seeds = sorted({row.get("seed") for row in data_rows if row.get("seed") is not None})
         temp = config.get("temp", config.get("temperature"))
-        source_runs = [payload["source_run"]] if payload.get("source_run") else [rel]
+        source_ref = payload.get("source_run") or payload.get("source_drafts")
+        source_runs = [source_ref] if source_ref else [rel]
         entry = {
             "path": rel, "sha256": sha(path), "bytes": path.stat().st_size,
             "model": payload.get("model"), "temperature": temp,
@@ -192,6 +224,9 @@ def make_manifest() -> dict:
         checker_modes = checker_integration_modes(payload)
         if checker_modes:
             entry["row_checker_integration_modes"] = checker_modes
+        retrieval_modes = retrieval_integration_modes(payload)
+        if retrieval_modes:
+            entry["row_retrieval_integration_modes"] = retrieval_modes
         recorded_sources = payload.get("protocol_source_sha256")
         if recorded_sources:
             entry["recorded_protocol_source_sha256"] = recorded_sources
@@ -218,6 +253,8 @@ def make_manifest() -> dict:
         ROOT / "scripts" / "experiments" / "navigation_tasks.py",
         ROOT / "scripts" / "experiments" / "run_navigation.py",
         ROOT / "scripts" / "experiments" / "checker_paired.py",
+        ROOT / "scripts" / "experiments" / "checker_hidden.py",
+        ROOT / "scripts" / "experiments" / "retrieval_paired.py",
         ROOT / "scripts" / "experiments" / "diagnostics.py",
         ROOT / "scaffold" / "stream_agent.py",
         ROOT / "scaffold" / "mock_env.py",
@@ -230,6 +267,8 @@ def make_manifest() -> dict:
         ROOT / "scripts" / "run_navigation_confirmation.sh",
         ROOT / "scripts" / "run_checker_paired.sh",
         ROOT / "scripts" / "run_checker_case_series.sh",
+        ROOT / "scripts" / "run_checker_hidden.sh",
+        ROOT / "scripts" / "run_checker_gate_v2.sh",
         ROOT / "pyproject.toml",
     ]
     revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
@@ -252,6 +291,12 @@ def make_manifest() -> dict:
             "navigation_confirmation": "scripts/run_navigation_confirmation.sh",
             "checker_drafts_and_revisions": "scripts/run_checker_paired.sh",
             "checker_opportunity_case_series": "scripts/run_checker_case_series.sh",
+            "checker_hidden_defect_case_series": "scripts/run_checker_hidden.sh",
+            "checker_gate_repair_resubmit_and_clean_control": "scripts/run_checker_gate_v2.sh",
+            "retrieval_paired": (
+                "python3 scripts/experiments/retrieval_paired.py <out.json> "
+                "--model Qwen/Qwen3.5-27B --revision <pinned-revision>"
+            ),
         },
         "provenance_notes": [
             "Raw JSON configs are authoritative where report prose previously disagreed.",

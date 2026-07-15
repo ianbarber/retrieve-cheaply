@@ -133,6 +133,15 @@ def summarize_rows(rows: list[dict]) -> dict:
         "gate_checked_rate": task_mean(lambda row: bool(row["gate_invocations"])),
         "gate_rejected_rate": task_mean(lambda row: bool(row["gate_rejections"])),
         "gate_accepted_rate": task_mean(lambda row: bool(row["gate_acceptances"])),
+        "gate_rejected_then_accepted_rate": task_mean(
+            lambda row: bool(row.get("gate_rejected_then_accepted"))
+        ),
+        "gate_rejected_unresolved_rate": task_mean(
+            lambda row: bool(row.get("gate_rejected_unresolved"))
+        ),
+        "gate_first_pass_accepted_rate": task_mean(
+            lambda row: bool(row.get("gate_acceptances") and not row.get("gate_rejections"))
+        ),
         "edited_diagnosed_location_rate": task_mean(lambda row: row["edited_diagnosed_location"]),
         "diagnostics_eliminated_mean": task_mean(lambda row: row["diagnostics_eliminated"]),
         "diagnostics_retained_mean": task_mean(lambda row: row["diagnostics_retained"]),
@@ -322,10 +331,14 @@ def expected_cost_per_accepted_correct(
 
 
 def paired_contrast(
-    rows: list[dict], arm: str, field: str, opportunity_only: bool,
+    rows: list[dict], arm: str, field: str, opportunity_filter: bool | str,
     bootstrap: int, seed: int,
 ) -> dict:
-    selected = [row for row in rows if not opportunity_only or row["opportunity"]]
+    selected = [row for row in rows if (
+        (opportunity_filter == "negative" and not row.get("opportunity"))
+        or (opportunity_filter is True and row.get("opportunity"))
+        or opportunity_filter is False
+    )]
     if arm == "gate":
         pairing = gate_pairing_audit(selected)
         if not pairing["valid"]:
@@ -365,6 +378,47 @@ def paired_contrast(
     return {
         "n_tasks": len(tasks), "mean_delta": effect(tasks),
         "ci95": [quantile(samples, 0.025), quantile(samples, 0.975)],
+    }
+
+
+def controlled_gate_cohort_audit(rows: list[dict]) -> dict:
+    """Report recovery on seeded defects and false rejection on matched clean drafts."""
+    gate = [row for row in rows if row.get("arm") == "gate"]
+    defects = [row for row in gate if row.get("opportunity")]
+    clean = [row for row in gate if not row.get("opportunity")]
+
+    def rate(group: list[dict], predicate) -> float | None:
+        return statistics.mean(float(predicate(row)) for row in group) if group else None
+
+    return {
+        "estimable": bool(defects) and bool(clean),
+        "n_defect_trajectories": len(defects),
+        "n_clean_trajectories": len(clean),
+        "defect_first_submission_rejected_rate": rate(
+            defects, lambda row: bool(row.get("gate_rejections"))
+        ),
+        "defect_rejected_then_accepted_rate": rate(
+            defects, lambda row: bool(row.get("gate_rejected_then_accepted"))
+        ),
+        "defect_accepted_type_clean_correct_rate": rate(
+            defects, lambda row: bool(row.get("accepted_type_clean_correct"))
+        ),
+        "defect_accepted_behavioral_error_rate": rate(
+            defects, lambda row: bool(row.get("accepted") and not row.get("held_pass"))
+        ),
+        "clean_false_rejection_rate": rate(
+            clean, lambda row: bool(row.get("gate_rejections"))
+        ),
+        "clean_first_submission_accepted_rate": rate(
+            clean,
+            lambda row: bool(row.get("gate_acceptances") and not row.get("gate_rejections")),
+        ),
+        "clean_accepted_type_clean_correct_rate": rate(
+            clean, lambda row: bool(row.get("accepted_type_clean_correct"))
+        ),
+        "clean_accepted_dirty_rate": rate(
+            clean, lambda row: bool(row.get("accepted_dirty"))
+        ),
     }
 
 
@@ -535,15 +589,35 @@ def main() -> None:
                if case_series
                else "REVISION EFFICACY AMONG COHERENT SUBMITTED DRAFTS")
     print(f"\n{heading}")
+    has_controlled_negative = case_series and any(
+        not any(item["classification"] == "semantic" for item in draft["draft_diagnostics"])
+        for draft in coherent
+    )
     subsets = (
-        ((False, "selected_checker_positive_revision"),)
-        if case_series else (
-            (False, "coherent_submitted_revision"),
-            (True, "checker_positive_revision"),
+        (
+            (False, "controlled_all_revision"),
+            (True, "controlled_checker_positive_revision"),
+            ("negative", "controlled_checker_negative_revision"),
+        )
+        if has_controlled_negative else (
+            ((True, "selected_checker_positive_revision"),)
+            if case_series else (
+                (False, "coherent_submitted_revision"),
+                (True, "checker_positive_revision"),
+            )
         )
     )
-    for opportunity_only, subset in subsets:
-        selected = [row for row in rows if not opportunity_only or row["opportunity"]]
+    for opportunity_filter, subset in subsets:
+        selected = [
+            row for row in rows
+            if (
+                (opportunity_filter == "negative" and not row.get("opportunity"))
+                or (opportunity_filter is True and row.get("opportunity"))
+                or opportunity_filter is False
+            )
+        ]
+        if not selected:
+            continue
         print(subset)
         for arm in sorted({row["arm"] for row in selected}):
             print(f"  {arm}: {json.dumps(summarize_rows([row for row in selected if row['arm'] == arm]), allow_nan=True)}")
@@ -551,12 +625,15 @@ def main() -> None:
         for arm in sorted({row["arm"] for row in selected} - {"control"}):
             for field in ("held_pass", "accepted_type_clean", "accepted_type_clean_correct"):
                 contrasts[f"{arm}_minus_control_{field}"] = paired_contrast(
-                    rows, arm, field, opportunity_only, args.bootstrap, args.seed
+                    rows, arm, field, opportunity_filter, args.bootstrap, args.seed
                 )
         print(json.dumps(contrasts, indent=2, allow_nan=True))
     if case_series:
         print("\nSELECTED-WORKSPACE DESCRIPTIVE OUTCOMES; END-TO-END VALUE NOT ESTIMABLE")
         print("GATE PAIRING AUDIT " + json.dumps(gate_pairing_audit(rows), allow_nan=True))
+        print("CONTROLLED GATE COHORT AUDIT " + json.dumps(
+            controlled_gate_cohort_audit(rows), allow_nan=True
+        ))
     else:
         print("\nEND-TO-END OUTCOMES ACROSS ALL NATURAL DRAFTS")
     for arm in sorted({row["arm"] for row in rows}):
