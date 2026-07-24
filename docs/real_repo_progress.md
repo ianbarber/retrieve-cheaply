@@ -667,3 +667,353 @@ correctness for a capable agent) is itself the publishable result.
   minutes on a trivial task. Kimi has no CLI installed. Per the agreed fallback, the build was done solo.
 - Cloned repos live under `runs/realbench/repos/` (gitignored, large). The scan JSONs and
   `candidates.json` are small and committed.
+
+## Checker-gate v3 build: expanded cohort + phase-gradient dry run (2026-07-19)
+
+Apparatus only — no model runs, CPU only, nothing under runs/ modified (new files added).
+
+**Expanded seeded cohort.** `checker_hidden.py --mutation-set gate-v3 --include-clean` builds
+`checker-gate-v3`: 12 defect/clean pairs (24 workspaces), one guarded mutation per authoring task,
+spanning 8 checker-detectable defect families with at most 2 per family: wrong-return-type 2 (cart,
+graph), misused-generic-container 1 (multimap), attribute-typo 2 (bank, shapes),
+wrong-typeddict-dict-key 2 (machine, config), wrong-call-arity 2 (grid, fold), wrong-argument-type 1
+(histogram), undefined-name 1 (tokenizer), bad-missing-import 1 (pipeline). The three
+checker-gate-v2 pairs are reused byte-identically (workspace hashes match pilot3). Every pair passes
+the SAME mechanical gates as v2 — defect: coherent, visible-pass, held-out-fail, exactly one
+target-scoped semantic diagnostic, no syntax diagnostic; clean: exact validated gold, visible+held
+pass, zero diagnostic delta — 24/24 rows PASS, one distinct pyrefly code per defect (bad-return,
+bad-argument-type, missing-attribute, bad-index, unknown-name, missing-argument,
+missing-module-attribute, bad-typed-dict-key). **0 candidates discarded**: all 12 authored mutations
+cleared every gate on the first mechanical validation. Default `--mutation-set v1` output verified
+identical to the HEAD generator (drafts+audit, latency excluded); tests 28/28 pass. Artifact:
+`runs/protocol/checker_gate_v3_validation.json`.
+
+**Phase-gradient arms + scripted dry run.** All four delivery arms run on this one cohort through
+the existing revise grid: `control` (no checker), `diagnostics` (one-shot delta at revision, C26
+delivery), `gate` (v6 acceptance gate at submission), `noisy` (after-every-edit volunteered
+feedback, the authoring `feedback` arm). New `checker_paired.py dry-run` subcommand +
+`scripts/experiments/stub_policy.py` replay deterministic action scripts through the LIVE
+StreamAgent loop (char-level stub tokenizer/model, no weights loaded): the 96-cell grid (24 drafts x
+4 arms) is all green under the v6 case-series validator, and 4 targeted mechanics scenarios pass —
+(1) a user observation containing literal `<done/>` fires no completion; (2) a successful edit
+invalidates stale passing-test state (EOS after the edit does not terminate); (3) full
+reject -> repair -> retest -> resubmit -> accept cycle with two distinct model-origin completions and
+exact gold restoration; (4) documented property: after rejection the gate mechanically requires a
+fresh model-generated `<done/>` and has invalidated stale test state, but re-checks diagnostics only
+(the retest is instructed, not enforced). Control/gate scripted prefixes are identical through the
+first completion; diagnostics/noisy diverge earlier by design (C26/C29 handling, recorded in the
+artifact's `arm_divergence_notes`). Artifact: `runs/protocol/checker_gate_v3_dryrun.json`.
+
+**Launch later (local 27B, temp 0, GPU):**
+
+```
+PYTHON=.venv-streams/bin/python bash scripts/run_checker_gate_v3.sh
+# equivalently:
+.venv-streams/bin/python scripts/experiments/checker_paired.py revise \
+  runs/protocol/checker_gate_v3_validation.json runs/pilot/checker_gate_v3_qwen35_27b_pilot.json \
+  --model Qwen/Qwen3.5-27B --revision b7ca741b86de18df552fd2cc952861e04621a4bd \
+  --arms control,diagnostics,gate,noisy --temperature 0 --seed 0 --seeds 1 \
+  --max-new 1400 --max-turns 12 --max-reads 4 --gpu-only
+.venv-streams/bin/python scripts/analysis/analyze_checker_paired.py \
+  --drafts runs/protocol/checker_gate_v3_validation.json \
+  --revisions runs/pilot/checker_gate_v3_qwen35_27b_pilot.json
+```
+
+### Exp 1 follow-up: L3 hidden-type dispatch (closes the "type always visible" caveat) (2026-07-20)
+
+The L0/L1/L2 ladder always SHOWS app.py + the test, so the receiver type is readable in the prompt at
+every rung (design caveat, ~line 481). This is the variant the log itself proposed: HIDE app.py AND the
+test source, so the receiver type must be RETRIEVED (read app.py, read the test, grep, or one `<defn>`
+at the given use-site) rather than read off the prompt. Same 15 annotated (L0) repos, same 27B
+(Qwen3.6-27B rev 6a9e13bd, temp 0, one rollout/task), same three arms. Gated behind a new
+`--visibility hidden` flag (default `visible` is byte-identical; existing suites unchanged). The prompt
+keeps the behavioral spec as the test's assert lines with the receiver construction redacted to `x`
+(AST-mechanical), keeps the use-site line/col as metadata so `<defn>` stays callable without a prior
+read, and passes a mechanical leak guard (buggy class name + buggy file path absent from every prompt).
+Artifact `runs/realbench/dispatch/local_Qwen3.6-27B_hidden.json` (45 rows; run split across two
+sequential temp-0 processes after the first was killed externally at 18/45 — the reran record_to_dict
+grep_base cell reproduced byte-for-byte, confirming determinism; merge note + shard paths in the file).
+
+```
+                resolved  mean_in_toks(res)  n_grep  n_defn  read_whole   fails
+grep_base       12/15      1390              2.9     0.0     2.1          record_to_dict, job_priority, resource_cost
+defn_avail      13/15      1454              1.7     0.4     2.0          field_validate, job_priority
+defn_prompt     14/15      1349              0.7     1.0     0.9          job_priority
+```
+
+**(a) How much is readable type info worth?** The cost shows up as RESOLUTION, not tokens. grep_base
+falls 15/15 (L0 visible) -> 12/15 (hidden); on the 12 tasks it solves in BOTH regimes the token cost is
+essentially flat (hidden/visible = 1.016, +21 toks) and its action mix flips from "read the type, go
+straight to the class" (visible n_grep 0.3, ~1 read) to a real retrieval hunt (hidden n_grep 2.9, 2.1
+whole reads). So a readable receiver type is worth ~3/15 of grep_base's resolution plus the conversion
+of a multi-grep hunt into a direct lookup — it does NOT raise the per-solve token cost, because when
+blind grep does localize, it localizes about as cheaply as reading the annotation.
+
+**(b) Does `<defn>` finally beat text once retrieval is required?** On RESOLUTION, yes — the first
+dispatch regime in this whole investigation where it does: defn_prompt 14/15 > defn_avail 13/15 >
+grep_base 12/15. Two concrete rescues (record_to_dict, resource_cost): grep_base thrashes on 9-10 `def
+NAME` candidates without ever editing; with the tool the model emits one `<defn sym=... file=app.py
+line=L col=C/>` at the use-site, gets the exact binding class, and solves cleanly (e.g. resource_cost
+defn_avail: 0 grep, 1 defn, correct storage-charge fix). On TOKENS among matched successes `<defn>` is
+still only ~neutral-to-slightly-cheaper (defn_avail ratio 1.009, defn_prompt 1.051), so the tool's win
+here is localization, not efficiency. This is the report's "for a weak model the LSP's value looks like
+resolution" — now shown for the CAPABLE 27B, but only once readable source is artificially removed.
+
+**(c) Does accuracy drop?** grep_base drops 3 (above). One task, job_priority, fails in ALL three arms:
+in defn_prompt the tool resolved the RIGHT class (DeadlineJob in pkg/jobs/basic.py) and the model edited
+it — but mis-reasoned the comparison flip (`> 24` -> `>= 24` instead of `< 24`), so it is an
+edit-competence failure, not a localization one (localization != correctness, again). defn_avail newly
+loses field_validate to a different failure mode hiding introduces: with the test redacted the model
+spends its budget hunting for the test file (9 greps, 0 edits) instead of reading app.py or electing
+`<defn>`; defn_prompt's stronger framing avoids that and loses nothing beyond the universal
+job_priority.
+
+**Read.** Closing the caveat does NOT overturn the reframe, it bounds it precisely. When the receiver
+type sits in readable source (every real repo), the capable model reads it and the LSP is redundant on
+both tokens and resolution (L0-L2). The ONE regime where go-to-definition earns its keep is when
+readable source is forcibly hidden — an artificial setup — and even there the payoff is a modest
+resolution assist (~+2/15, driven by two localization rescues), not the synthetic 3.5-4.7x token
+efficiency, because a solved retrieval is about as cheap by read as by defn. The LSP's ceiling stays
+small: its best case is rescuing a localization the model would otherwise thrash, and that only appears
+off the readable-source path real code never leaves.
+
+### Exp 2: reread-after-span — substitution is not promptable-away (2026-07-20)
+
+Context (C24, C27): in the navigation-v2 pilot every AUTOMATICALLY delivered definition span was
+followed by a read of the target file (the span did not substitute for the read), while in the
+retrieval suite an ELECTED definition was never re-read. Question at larger n: is the auto-span reread
+persistent under an explicit sufficiency instruction (=> substitution needs training) or promptable-away
+(=> prompting suffices)? Driver `scripts/experiments/run_navigation_reread.py` (a SEPARATE driver; the
+frozen navigation protocol sources are imported read-only and unchanged; the reserved confirmation split
+is refused by construction). Qwen3.6-27B rev 6a9e13bd, temp 0, one rollout/task, the 12 apparatus-audit
+instances (NOT the 12 reserved confirmation instances — C15). Three arms, typed variant:
+`auto_neutral` (auto span, neutral framing = the pilot cell), `auto_sufficient` (auto span + explicit
+"the span is the complete definition; do not open the defining file unless it is insufficient"),
+`framed_elective` (model must call `<defn>` itself, strong framing). Artifact
+`runs/pilot/navigation_v2_reread_qwen36_27b_apparatus.json` (36 rows).
+
+```
+arm              pass    reread_target   mean_in_toks
+auto_neutral     11/12   11/12           1157
+auto_sufficient  10/12   12/12           1452
+framed_elective  11/12    0/12 (vacuous) 1640
+paired auto_neutral -> auto_sufficient (n=12): reread persisted 11, removed by instruction 0, induced 1
+paired auto tokens (resolved in both, n=10): neutral 1157 -> sufficient 1429 (+272)
+```
+
+**Answer: persistent, and prompting makes it WORSE, not better.** The explicit sufficiency instruction
+removes the reread in ZERO of 12 tasks; auto_sufficient rereads the defining file 12/12 (vs 11/12
+neutral — the one neutral non-reread, 29089, flips TO a reread under the instruction). The instruction
+also costs +272 tokens/task on matched successes (it adds prompt text and the model reads anyway) and
+nudges pass@1 down (10/12 vs 11/12). So the model that receives an LSP result still issues the file
+read, and telling it the span is sufficient does not stop it — this is evidence that getting SUBSTITUTION
+(span replaces read) requires TRAINING, not prompting. It aligns with the report arc: election was a
+trainable policy (DAgger), and substitution looks the same — a behavior the base model won't adopt from
+an instruction.
+
+**Elective arm is vacuous for substitution (honest caveat).** The strongly-framed 27B does try to elect
+`<defn>` (9/12 emit one), but under the strict use-site env its elected lookup resolves a usable span in
+0/12 — the model does not supply a valid file/line/col use-site, so the server returns nothing. It then
+localizes by reading `pkg/factory.py` (the registry) + the target unit and edits: target file read
+12/12. So "reread 0/12" for this arm is NOT substitution — there is no span to substitute; it is the
+C24 "framed election rarely produces a usable result" behavior, and the target file is read anyway. Net
+across ALL three arms: the defining/target file is read every time (auto: after the delivered span;
+elective: because the elected tool returns nothing). The 27B never substitutes a span for the read.
+
+Caveat: temp 0 single-seed, 12 apparatus instances (not confirmation), one capable local model;
+this measures a behavioral tendency (reread-after-span and its non-response to an instruction), not a
+population equivalence. The reserved 12 confirmation instances remain unconsumed (mechanically
+re-validated 12/12 this session before the run).
+
+**Exp 2b: strong-model validation (OpenRouter, tool-calling api_agent path).** Ran arms auto_neutral
+and auto_sufficient of the same 12 apparatus instances through `scripts/experiments/api_reread.py`
+(reuses `scripts/api_agent.py`'s key/pricing/budget guard + tool-executing Rollout; navigation tasks
+imported read-only; tools = read_file/edit_lines/run_tests/done, no defn — the span is auto-delivered as
+in the local automatic arms). temp 0, seed 0, budget guard on. Artifacts
+`runs/pilot/navigation_v2_reread_api_{sonnet45,deepseek}_apparatus.json`.
+
+```
+claude-sonnet-4.5   auto_neutral     pass 12/12   reread_target 12/12
+                    auto_sufficient  pass 12/12   reread_target 12/12     spend $0.9363
+deepseek-v3.1       auto_neutral     pass 12/12   reread_target 12/12
+                    auto_sufficient  pass 12/12   reread_target 10/12     spend $0.0639
+```
+
+Sonnet rereads the auto-delivered span in 24/24 rollouts — 100%, INCLUDING all 12 auto_sufficient
+rollouts under the explicit "do not open the defining file" instruction (even 29089, the one task where
+the local 27B substituted, sonnet rereads). deepseek-v3.1 rereads 12/12 neutral and 10/12 under the
+instruction — so the instruction shaves off at most 2/12 for the weaker API model and leaves it the
+majority behavior. Across all three tested models (27B, sonnet, deepseek) the picture is the same:
+neutral-arm reread is ~universal (11-12/12) and the sufficiency instruction does NOT reliably stop it
+(sonnet 0 removed, 27B 0 removed, deepseek 2 removed). So reread-after-span is not a weak-model artifact
+and is not promptable-away for a frontier tool-calling agent: the agent opens the file to confirm before
+editing regardless of being told the supplied span is complete. This is the cross-capability
+confirmation that substitution is a trained behavior, not a prompted one. Total API spend $1.00,
+tracked by the budget guard; both runs within budget.
+
+### Checker-gate v3: phase-gradient run — 12 pairs x 4 delivery phases (2026-07-20)
+
+The build's launch command, run as specified: `checker_paired.py revise` over the 12 defect/clean
+`checker-gate-v3` pairs, arms `control,diagnostics,gate,noisy`, Qwen3.5-27B rev `b7ca741b…`, temp 0,
+seed 0, one rollout/cell, `--max-new 1400 --max-turns 12 --max-reads 4 --gpu-only`. 96 cells (24
+workspaces x 4 arms), ~58 min wall. Artifact `runs/pilot/checker_gate_v3_qwen35_27b_pilot.json`
+(96 rows; run split into 4 sequential temp-0 shards of 3 pairs each so an external kill could not lose
+the grid — the driver has no checkpointing and publishes atomically; cells are independent, each shard
+was v6-validated on publication and the merged grid re-validated; merge note + shard paths/sha256 in
+the artifact's `merge_note`). Env deviation: `HF_HUB_CACHE` pointed at the local snapshot instead of
+the NAS mirror, `HF_HUB_OFFLINE=1` (known hub-metadata hang); same pinned revision, identical weights.
+`nvidia-smi` is broken on this host (NVML/driver version mismatch) but torch sees the GB10 fine.
+
+```
+DEFECT cohort (n=12)     acc_clean_correct  held  type_clean  accepted_bad  gate_rej  rej>acc  tok  turns
+control                        1/12         1/12    2/12         11/12          -        -     787   1.5
+diagnostics (at revision)     10/12        10/12   11/12          2/12          -        -    1210   3.0
+gate (at submission)          11/12        11/12   12/12          1/12        10/12    10/10   1380   4.6
+noisy (after every edit)       1/12         1/12    1/12         11/12          -        -     754   1.2
+
+CLEAN cohort (n=12)      acc_clean_correct  held  type_clean  false_rej  first_pass_acc  tok  turns
+control                       12/12        12/12   12/12          -           -          591   1.0
+diagnostics                   12/12        12/12   12/12          -           -          619   1.0
+gate                          12/12        12/12   12/12         0/12       12/12        591   1.0
+noisy                         12/12        12/12   12/12          -           -          651   1.0
+
+task-bootstrap contrasts over all 24 workspaces (accepted_type_clean_correct):
+  diagnostics - control  +0.375 [+0.250,+0.500]
+  gate        - control  +0.417 [+0.292,+0.500]
+  noisy       - control  +0.000 [-0.125,+0.125]
+```
+
+**(1) Does the phase gradient hold on identical defects?** Yes, monotonically: 1/12 (no checker) ->
+1/12 (in-loop) -> 10/12 (revision) -> 11/12 (submission). Later delivery is better, and the whole
+gradient is a step function at "delivered at all, but not in-loop": the two late arms are 10-11/12 and
+the two early arms are 1/12. Gate > diagnostics by exactly one task (`auth_pipeline_handler`, where
+diagnostics hands the model the delta and it submits anyway with 0 edits; the gate blocks the same
+submission and it then repairs). The mechanism separating gate from diagnostics is not better
+information — it is the same information plus a refusal to accept.
+
+**(2) Does the noisy in-loop arm reproduce the authoring harm?** It does not measurably harm, but it
+delivers nothing: noisy - control = +0.000 [-0.125,+0.125], and per task it is a 1-for-1 swap (control
+solves `auth_multimap_generic` and noisy does not; noisy solves `auth_shapes_protocol` and control does
+not). The reason is degeneracy, not feedback quality — the after-every-edit channel fires in 1/12
+defect rows because the model edits in only 1/12 rows (mean edits before first submission: control
+0.17, noisy 0.08). Under the volunteered-feedback system-prompt advert the 27B mostly reads, tests, and
+submits the frozen draft unchanged. So at revision-time the authoring experiment's in-loop harm does
+not reproduce as harm; it reproduces as a null with the feedback channel almost never exercised. The
+noisy arm diverges from control at the system prompt by design (`arm_divergence_notes`), so it is not
+prefix-matched to control the way gate is.
+
+**(3) Does gate rejection precision hold at n=12?** Yes. 0/12 false rejections on the matched clean
+controls; all 12 clean drafts gate-checked and accepted on the first submission, 12/12 accepted
+type-clean and held-out correct, 0 accepted-dirty. On the defect side 10/12 first submissions were
+rejected and 10/10 completed reject -> repair -> retest -> resubmit -> accept, type-clean and held-out
+correct. The other 2/12 defects (`auth_multimap_generic`, `auth_shapes_protocol`) self-repaired before
+submission and passed the gate first try, so there was nothing to reject.
+
+**The gate's one miss is a blind spot, not a precision failure.** `auth_shapes_protocol` gate: the
+model self-repairs before submitting, the repair removes the seeded type error (final diagnostics
+empty), the gate sees 0 diagnostics and accepts — but the held-out test still fails. A type-clean
+acceptance gate is exactly as behaviorally blind as the checker behind it; it stops defects the checker
+can name and passes a wrong-but-well-typed edit. Diagnostics loses the same task the same way, plus
+`auth_pipeline_handler` (delta delivered, 0 edits, submitted dirty).
+
+**(4) Costs.** On defects, revision tokens 787 control -> 1210 diagnostics (+54%) -> 1380 gate (+75%);
+turns 1.5 -> 3.0 -> 4.6. The gate's premium buys +10/12 accepted-clean-and-correct, so cost per
+accepted-correct submission falls sharply (control 787 tok/(1/12) vs gate 1380 tok/(11/12)). On clean
+drafts the gate is free: 591 tokens in both control and gate, byte-identical trajectories, the only
+cost being one checker invocation (+135 ms mean checker latency, 122 -> 257 ms). Diagnostics pays its
+one-shot delta on every draft including the 12 clean ones (619 vs 591 tok, +233 ms latency) because it
+is delivered unconditionally; the gate pays only where a submission is actually attempted. That is the
+deployment asymmetry: revision-time delivery taxes clean work, submission-time delivery does not.
+
+**v6 integrity.** 106 `done_attempt` events, 0 non-model-origin; 0 rows whose first completion is not
+model-generated; control/gate identical first-completion prefixes 24/24 pairs (gate pairing audit
+`valid: true`, 0 invalid); 0 serialization failures; gate invoked in 24/24 gate rows; all 96 cells
+terminate `done` (no truncation, no unsubmitted rows). Merged grid re-validated by the driver's own v6
+case-series validator: PASS.
+
+Caveats unchanged from C29 and now at n=12: constructed single-diagnostic defects, one model, temp 0,
+one seed, 8 defect families, draft-generation cost excluded. This is a within-design phase gradient on
+identical seeded defects, not a natural-prevalence or population claim.
+
+### Exp 2b: substitution TRAINING — the reread that prompting could not remove, training removes (2026-07-20)
+
+Direct follow-up to the reread null above (C31). Prompting removed the post-span reread on 0/12 for the
+27B and 2/36 across three models. Election was a trainable policy on a 7B (C2, `run_relabel2.sh`); this
+run asks whether SUBSTITUTION is trainable on the SAME model where the null was measured.
+Qwen3.6-27B rev `6a9e13bd`, local GPU only, no API calls.
+
+**Apparatus.** New driver `scripts/experiments/run_substitution_train.py` (harvest) +
+`scripts/run_substitution_train.sh` (harvest -> LoRA SFT -> retest) +
+`scripts/analysis/analyze_substitution.py`. Structure mirrors `run_relabel2.sh` exactly: the model
+rolls out with the span auto-delivered, chooses `<read>` of the span's own file, a rule oracle DENIES
+the read and states the span is complete, and the read-attempt+redirect prefix is DROPPED so the
+model's own next action is the first trained action from a CLEAN prompt (the relabel2 fix). Only the
+span's file is denied, only before the first applied edit; grep and other reads stay available.
+
+`scaffold/stream_agent.py` is NOT modified — it is hash-gated by `run_navigation_confirmation.sh`, so
+the oracle patches the env instance and the relabel trace is mirrored bit-for-bit by wrapping the
+agent's `_ids`/`_prefill`. The mirror is asserted equal to the agent's own decoded stream before any
+row is kept: **48/48 rows verified**. Additive, default-off flags only elsewhere: `sft_lora.py` gains
+`--revision`/`--filter sft_keep`, `run_navigation_reread.py` gains `--adapter` (inert when absent).
+
+**Splits (disjoint by construction).** Training = a FRESH `substrain` split, 12 instances, seeds
+53003-53101, templates `add`/`multiply` — disjoint seeds AND templates from the apparatus retest set
+(subtract/affine/xor) and from the reserved confirmation set, which is never built and whose seeds
+appear in no artifact of this run. Full navigation-v2 mechanical validation **12/12 PASS**
+(`runs/protocol/navigation_v2_substrain_validation.json`). Retest = the 12 HELD-OUT apparatus
+instances, the exact set where the reread null was measured. Harvest/retest overlap: NONE.
+
+**Harvest** (48 rollouts = 12 tasks x 4 seeds, temp 0.7): held-out pass 46/48, **redirect fired 46/48**
+(the model attempts the reread in 96% of rollouts — the C31 behavior replicated on fresh templates at
+temp 0.7), 39/48 clean substitution demos kept (mean 190 trained tokens each; rejects are mostly
+retrieval reappearing inside the kept segment, 12, plus 2 held-out failures and 2 spontaneous
+substitutions with no redirect to drop). Artifact `runs/agent/substitution_harvest_qwen36_27b.json`.
+
+**SFT.** LoRA r16/alpha32 on q,k,v,o,gate,up,down; 79.7M trainable (0.295% of 27.0B); 39 examples,
+3 epochs, lr 1e-4, bs 1 x accum 4, 117 micro-steps; loss 0.39 -> 0.15. Adapter
+`runs/sft/substitution_lora_27b`.
+
+**Retest** on the 12 held-out apparatus instances, `auto_neutral` arm, temp 0, seed 0.
+
+```
+arm                        pass    read_after_span   mean_in   mean_total   mean_reads
+baseline (untrained)       11/12    11/12             1157      1543         3.42
+substitution-trained       10/12     0/12              748      1030         0.08
+paired (n=12): removed 11, persisted 0, induced 0, absent 1
+tokens on the 9 instances resolved in BOTH arms: 1493 -> 938 (base/trained 1.591, -555/task)
+for contrast, C31 prompting: removed 0/12 for this model, +272 tokens/task
+```
+
+**Answer: trainable.** The behavior that an explicit "the span is the complete definition; do not open
+the file" instruction could not shift at all — 0/12 removed, and it made tokens and pass@1 worse — is
+removed on 11/11 instances where it occurred by 39 demonstrations of the model's OWN post-redirect
+action, generalizing across disjoint seeds and disjoint task templates. Total agent reads fall 3.42 ->
+0.08/task and matched-success tokens fall 37%. This closes the loop the report's arc predicted:
+election was a trainable policy, and substitution is the same kind of object — a behavior the base
+model will not adopt from an instruction but adopts readily from on-policy demonstrations.
+
+**Untrained control (determinism).** The untrained baseline was re-run through the modified driver on
+the same 12 instances: pass 11/12, read_after_span 11/12, mean_in 1157.0 — **byte-identical** to the
+frozen C31 artifact on every outcome, token and stream field for all 12 rows
+(`runs/pilot/navigation_v2_reread_qwen36_27b_apparatus_baseline_rerun.json`). The change is
+attributable to the adapter, not to driver drift.
+
+**Correctness caveat (honest).** Held-out pass moves 11/12 -> 10/12: one rescue (29021, which the
+baseline failed) and two losses (29033, 29077, both `xor` tasks). All three trained failures/successes
+edit the CORRECT file — `wrong_file_edits` is 0/12 and first-edit path is right 12/12 — so localization
+is intact; the two losses pass the visible test and fail the held-out oracle, i.e. partial-spec
+overfit on the constant. The adapter also compressed deliberation to an empty `<think>` block before
+editing, which plausibly drives the extra arithmetic slips. At n=12 and one seed this -1 is not
+distinguishable from noise, but it is the direction to watch: substitution buys ~37% of tokens and may
+cost a little checking.
+
+**Scope.** One model, one seed at retest, one task family (navigation-v2 dispatch), 12 held-out
+instances, and an oracle that denies only the span's own file. This shows substitution is trainable
+for this model on this family — not that a substitution-trained agent is safe to deploy, and not that
+the token saving survives on tasks where the span is genuinely insufficient (no read-required boundary
+set was included, unlike the relabel2 boundary arm).
+
+Artifacts: `runs/protocol/navigation_v2_substrain_validation.json`,
+`runs/agent/substitution_harvest_qwen36_27b.json`, `runs/sft/substitution_lora_27b/`,
+`runs/pilot/navigation_v2_reread_qwen36_27b_apparatus_trained.json`,
+`runs/pilot/navigation_v2_reread_qwen36_27b_apparatus_baseline_rerun.json`.
