@@ -1,8 +1,16 @@
 # When Do Language Servers Help Coding Agents?
 
-**Start with cheap text search and ranged reads. Add language-server features when a binding is genuinely ambiguous, a compact definition replaces search and reading, or a checker gate can catch a defective submission. Measure whether the service changes what the agent actually does — not how often it is called.**
+*TL;DR*
 
-## Findings
+Agents do well with with cheap text search and ranged reads. Add language-server features when:
+* bindings are genuinely ambiguous
+* compact definitions can actually replaces search and reading
+
+A type-checker gate can catch a defective submission.
+
+WHen trying it: Measure whether the service changes what the agent actually does (success or token efficiency), not how often it is called.
+
+## Findings: where do LSPs help
 
 **1. Resolution: mostly no, because readable types already do the work.** A capable model resolves dispatch-ambiguous targets by reading the receiver's type wherever it appears in visible source, then opens the right file directly. Live go-to-definition is token-neutral (ratios 0.94–1.07) even when the type sits behind factory indirection only the language server can statically resolve. The exception marks the boundary: hide the type-bearing source so the type must be *retrieved*, and text resolution falls from 15/15 to 12/15 while framed definition lookup reaches 14/15, including two tasks where grep thrashed to failure and one definition call solved it. Sound types also sharpen the *resolver's* precision among 8–15 same-named overrides, though in the agent pilot that precision changed no outcome.
 
