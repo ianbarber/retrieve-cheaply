@@ -6,9 +6,9 @@ Agents do well with with cheap text search and ranged reads. Add language-server
 * bindings are genuinely ambiguous
 * compact definitions can actually replace search and reading
 
-A type-checker gate can catch a defective submission.
+A type-checker gate can catch a defective submissions, but add it at submission time, not after edits.
 
-WHen trying it: Measure whether the service changes what the agent actually does (success or token efficiency), not how often it is called.
+When trying it, measure whether the service changes what the agent actually does (in terms of task success or token efficiency), not how often it is called.
 
 ## Findings: where do LSPs help
 
