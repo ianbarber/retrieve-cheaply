@@ -4,7 +4,7 @@
 
 Agents do well with with cheap text search and ranged reads. Add language-server features when:
 * bindings are genuinely ambiguous
-* compact definitions can actually replaces search and reading
+* compact definitions can actually replace search and reading
 
 A type-checker gate can catch a defective submission.
 
